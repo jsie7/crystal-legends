@@ -4,6 +4,7 @@ roms := \
 	pokecrystal_au.gbc \
 	pokecrystal_debug.gbc \
 	pokecrystal11_debug.gbc
+project_roms := crystallegends.gbc
 patches := pokecrystal11.patch
 
 rom_obj := \
@@ -31,6 +32,7 @@ pokecrystal_au_obj      := $(rom_obj:.o=_au.o)
 pokecrystal_debug_obj   := $(rom_obj:.o=_debug.o)
 pokecrystal11_debug_obj := $(rom_obj:.o=11_debug.o)
 pokecrystal11_vc_obj    := $(rom_obj:.o=11_vc.o)
+crystallegends_obj      := $(rom_obj:.o=_crystallegends.o)
 
 
 ### Build tools
@@ -67,6 +69,7 @@ RGBGFXFLAGS  ?= -Weverything
 	crystal_debug \
 	crystal11_debug \
 	crystal11_vc \
+	crystallegends \
 	clean \
 	tidy \
 	compare \
@@ -79,6 +82,7 @@ crystal_au:      pokecrystal_au.gbc
 crystal_debug:   pokecrystal_debug.gbc
 crystal11_debug: pokecrystal11_debug.gbc
 crystal11_vc:    pokecrystal11.patch
+crystallegends:  crystallegends.gbc
 
 clean: tidy
 	find gfx \
@@ -99,6 +103,9 @@ tidy:
 	$(RM) $(roms) \
 	      $(roms:.gbc=.sym) \
 	      $(roms:.gbc=.map) \
+	      $(project_roms) \
+	      $(project_roms:.gbc=.sym) \
+	      $(project_roms:.gbc=.map) \
 	      $(patches) \
 	      $(patches:.patch=_vc.gbc) \
 	      $(patches:.patch=_vc.sym) \
@@ -110,6 +117,7 @@ tidy:
 	      $(pokecrystal_au_obj) \
 	      $(pokecrystal_debug_obj) \
 	      $(pokecrystal11_debug_obj) \
+	      $(crystallegends_obj) \
 	      rgbdscheck.o
 	$(MAKE) clean -C tools/
 
@@ -132,6 +140,7 @@ $(pokecrystal_au_obj):      RGBASMFLAGS += -D _CRYSTAL11 -D _CRYSTAL_AU
 $(pokecrystal_debug_obj):   RGBASMFLAGS += -D _DEBUG
 $(pokecrystal11_debug_obj): RGBASMFLAGS += -D _CRYSTAL11 -D _DEBUG
 $(pokecrystal11_vc_obj):    RGBASMFLAGS += -D _CRYSTAL11 -D _CRYSTAL11_VC
+$(crystallegends_obj):      RGBASMFLAGS += -D _CRYSTAL11 -D _CRYSTALLEGENDS
 
 %.patch: %_vc.gbc %.gbc vc/%.patch.template
 # Ignore the checksums added by tools/stadium at the end of the ROM
@@ -162,17 +171,20 @@ $(foreach obj, $(pokecrystal_au_obj), $(eval $(call DEP,$(obj),$(obj:_au.o=.asm)
 $(foreach obj, $(pokecrystal_debug_obj), $(eval $(call DEP,$(obj),$(obj:_debug.o=.asm))))
 $(foreach obj, $(pokecrystal11_debug_obj), $(eval $(call DEP,$(obj),$(obj:11_debug.o=.asm))))
 $(foreach obj, $(pokecrystal11_vc_obj), $(eval $(call DEP,$(obj),$(obj:11_vc.o=.asm))))
+$(foreach obj, $(crystallegends_obj), $(eval $(call DEP,$(obj),$(obj:_crystallegends.o=.asm))))
 
 endif
 
 
-RGBFIXFLAGS += -Cjv -t PM_CRYSTAL -k 01 -l 0x33 -m MBC3+TIMER+RAM+BATTERY -r 3 -p 0
-pokecrystal.gbc:         RGBFIXFLAGS += -i BYTE -n 0
-pokecrystal11.gbc:       RGBFIXFLAGS += -i BYTE -n 1
-pokecrystal_au.gbc:      RGBFIXFLAGS += -i BYTU -n 0
-pokecrystal_debug.gbc:   RGBFIXFLAGS += -i BYTE -n 0
-pokecrystal11_debug.gbc: RGBFIXFLAGS += -i BYTE -n 1
-pokecrystal11_vc.gbc:    RGBFIXFLAGS += -i BYTE -n 1
+RGBFIXFLAGS += -Cjv -k 01 -l 0x33 -m MBC3+TIMER+RAM+BATTERY -r 3 -p 0
+pokecrystal.gbc:         RGBFIXFLAGS += -t PM_CRYSTAL -i BYTE -n 0
+pokecrystal11.gbc:       RGBFIXFLAGS += -t PM_CRYSTAL -i BYTE -n 1
+pokecrystal_au.gbc:      RGBFIXFLAGS += -t PM_CRYSTAL -i BYTU -n 0
+pokecrystal_debug.gbc:   RGBFIXFLAGS += -t PM_CRYSTAL -i BYTE -n 0
+pokecrystal11_debug.gbc: RGBFIXFLAGS += -t PM_CRYSTAL -i BYTE -n 1
+pokecrystal11_vc.gbc:    RGBFIXFLAGS += -t PM_CRYSTAL -i BYTE -n 1
+# A CGB title with a four-character game ID is limited to 11 characters.
+crystallegends.gbc:      RGBFIXFLAGS += -t "CRYSTAL LGD" -i CLGE -n 0
 
 %.gbc: $$(%_obj) layout.link
 	$(RGBLINK) $(RGBLINKFLAGS) -l layout.link -n $*.sym -m $*.map -o $@ $(filter %.o,$^)
