@@ -1971,7 +1971,11 @@ ZapdosEvosAttacks:
 
 MoltresEvosAttacks:
 	db 0 ; no more evolutions
+if DEF(_CRYSTALLEGENDS)
+	db 1, PECK
+else
 	db 1, WING_ATTACK
+endc
 	db 1, EMBER
 	db 13, FIRE_SPIN
 	db 25, AGILITY
