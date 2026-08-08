@@ -237,13 +237,13 @@ Edit `Pokedex_LoadAnyFootprint`:
 
 ## Music IDs $64 and $80 or above have special behavior
 
-If a map's music ID in [data/maps/maps.asm](https://github.com/pret/pokecrystal/blob/master/master/data/maps/maps.asm) is $64 (the value of `MUSIC_MAHOGANY_MART` or `MUSIC_SUICUNE_BATTLE`) it will play either `MUSIC_ROCKET_HIDEOUT` or `MUSIC_CHERRYGROVE_CITY`. Moreover, if a map's music ID is $80 or above (the value of `RADIO_TOWER_MUSIC`) it might play `MUSIC_ROCKET_OVERTURE` or something else. This is caused by `GetMapMusic` in [home/map.asm](https://github.com/pret/pokecrystal/blob/master/master/home/map.asm).
+If a map's music ID in [data/maps/maps.asm](https://github.com/pret/pokecrystal/blob/master/data/maps/maps.asm) is $64 (the value of `MUSIC_MAHOGANY_MART` or `MUSIC_SUICUNE_BATTLE`) it will play either `MUSIC_ROCKET_HIDEOUT` or `MUSIC_CHERRYGROVE_CITY`. Moreover, if a map's music ID is $80 or above (the value of `RADIO_TOWER_MUSIC`) it might play `MUSIC_ROCKET_OVERTURE` or something else. This is caused by `GetMapMusic` in [home/map.asm](https://github.com/pret/pokecrystal/blob/master/home/map.asm).
 
 **Fix:**
 
-Replace `RADIO_TOWER_MUSIC | MUSIC_GOLDENROD_CITY` with `MUSIC_RADIO_TOWER` in [data/maps/maps.asm](https://github.com/pret/pokecrystal/blob/master/master/data/maps/maps.asm).
+Replace `RADIO_TOWER_MUSIC | MUSIC_GOLDENROD_CITY` with `MUSIC_RADIO_TOWER` in [data/maps/maps.asm](https://github.com/pret/pokecrystal/blob/master/data/maps/maps.asm).
 
-Redefine the special music constants in [constants/music_constants.asm](https://github.com/pret/pokecrystal/blob/master/master/constants/music_constants.asm):
+Redefine the special music constants in [constants/music_constants.asm](https://github.com/pret/pokecrystal/blob/master/constants/music_constants.asm):
 
 ```diff
 -; GetMapMusic picks music for this value (see home/map.asm)

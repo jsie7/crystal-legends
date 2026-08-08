@@ -1,6 +1,13 @@
 These pages are for documenting pieces of the [pokecrystal](https://github.com/pret/pokecrystal) disassembly project. For more information, please see its [README.md](https://github.com/pret/pokecrystal/blob/master/README.md) and [wiki](https://github.com/pret/pokecrystal/wiki).
 
 
+## Repository orientation
+
+- [repository-guide.md](repository-guide.md)
+- [workflows.md](workflows.md)
+- [decisions.md](decisions.md)
+
+
 ## Issues with the source code
 
 - [bugs_and_glitches.md](bugs_and_glitches.md)
