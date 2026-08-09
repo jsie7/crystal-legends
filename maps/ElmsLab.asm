@@ -772,6 +772,12 @@ if DEF(_CRYSTALLEGENDS)
 	para "staying here only"
 	line "for a short time."
 
+	para "We hope they hold"
+	line "clues to why some"
+
+	para "#MON evolve and"
+	line "others do not."
+
 	para "I need your help"
 	line "with our research."
 
