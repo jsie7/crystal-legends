@@ -1947,6 +1947,18 @@ SnorlaxEvosAttacks:
 
 ArticunoEvosAttacks:
 	db 0 ; no more evolutions
+if DEF(_CRYSTALLEGENDS)
+	db 1, GUST
+	db 1, POWDER_SNOW
+	db 12, MIST
+	db 20, ICY_WIND
+	db 25, AGILITY
+	db 30, REFLECT
+	db 36, WING_ATTACK
+	db 42, ICE_BEAM
+	db 48, MIND_READER
+	db 56, BLIZZARD
+else
 	db 1, GUST
 	db 1, POWDER_SNOW
 	db 13, MIST
@@ -1955,10 +1967,23 @@ ArticunoEvosAttacks:
 	db 49, ICE_BEAM
 	db 61, REFLECT
 	db 73, BLIZZARD
+endc
 	db 0 ; no more level-up moves
 
 ZapdosEvosAttacks:
 	db 0 ; no more evolutions
+if DEF(_CRYSTALLEGENDS)
+	db 1, PECK
+	db 1, THUNDERSHOCK
+	db 12, THUNDER_WAVE
+	db 20, AGILITY
+	db 25, DETECT
+	db 30, SPARK
+	db 36, DRILL_PECK
+	db 42, THUNDERBOLT
+	db 48, LIGHT_SCREEN
+	db 56, THUNDER
+else
 	db 1, PECK
 	db 1, THUNDERSHOCK
 	db 13, THUNDER_WAVE
@@ -1967,15 +1992,23 @@ ZapdosEvosAttacks:
 	db 49, DRILL_PECK
 	db 61, LIGHT_SCREEN
 	db 73, THUNDER
+endc
 	db 0 ; no more level-up moves
 
 MoltresEvosAttacks:
 	db 0 ; no more evolutions
 if DEF(_CRYSTALLEGENDS)
 	db 1, PECK
+	db 1, EMBER
+	db 12, FIRE_SPIN
+	db 20, AGILITY
+	db 30, FLAME_WHEEL
+	db 36, WING_ATTACK
+	db 42, FLAMETHROWER
+	db 48, SAFEGUARD
+	db 56, SKY_ATTACK
 else
 	db 1, WING_ATTACK
-endc
 	db 1, EMBER
 	db 13, FIRE_SPIN
 	db 25, AGILITY
@@ -1983,6 +2016,7 @@ endc
 	db 49, FLAMETHROWER
 	db 61, SAFEGUARD
 	db 73, SKY_ATTACK
+endc
 	db 0 ; no more level-up moves
 
 DratiniEvosAttacks:
