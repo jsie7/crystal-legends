@@ -15,10 +15,15 @@ GoldenrodPokecenter1FNurseScript:
 	jumpstd PokecenterNurseScript
 
 GoldenrodPokecenter1F_GSBallSceneLeft:
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_BEAT_ELITE_FOUR
+	iffalse .cancel
+else
 	setval BATTLETOWERACTION_GSBALL
 	special BattleTowerAction
 	ifequal GS_BALL_AVAILABLE, .gsball
 	end
+endc
 
 .gsball
 	checkevent EVENT_GOT_GS_BALL_FROM_GOLDENROD_POKEMON_CENTER
@@ -34,11 +39,22 @@ GoldenrodPokecenter1F_GSBallSceneLeft:
 	writetext GoldenrodPokeCenter1FLinkReceptionistPleaseAcceptGSBallText
 	waitbutton
 	verbosegiveitem GS_BALL
+if DEF(_CRYSTALLEGENDS)
+	iffalse .no_room
+endc
 	setevent EVENT_GOT_GS_BALL_FROM_GOLDENROD_POKEMON_CENTER
 	setevent EVENT_CAN_GIVE_GS_BALL_TO_KURT
 	writetext GoldenrodPokeCenter1FLinkReceptionistPleaseDoComeAgainText
 	waitbutton
 	closetext
+if DEF(_CRYSTALLEGENDS)
+	sjump .restore_receptionist
+
+.no_room
+	closetext
+endc
+
+.restore_receptionist
 	applymovement GOLDENRODPOKECENTER1F_PCC_TRADE_CORNER_RECEPTIONIST, GoldenrodPokeCenter1FLinkReceptionistWalkToStairsFromLeftDoorwayTileMovement
 	special RestartMapMusic
 	disappear GOLDENRODPOKECENTER1F_PCC_TRADE_CORNER_RECEPTIONIST
@@ -47,10 +63,15 @@ GoldenrodPokecenter1F_GSBallSceneLeft:
 	end
 
 GoldenrodPokecenter1F_GSBallSceneRight:
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_BEAT_ELITE_FOUR
+	iffalse .cancel
+else
 	setval BATTLETOWERACTION_GSBALL
 	special BattleTowerAction
 	ifequal GS_BALL_AVAILABLE, .gsball
 	end
+endc
 
 .gsball
 	checkevent EVENT_GOT_GS_BALL_FROM_GOLDENROD_POKEMON_CENTER
@@ -66,11 +87,22 @@ GoldenrodPokecenter1F_GSBallSceneRight:
 	writetext GoldenrodPokeCenter1FLinkReceptionistPleaseAcceptGSBallText
 	waitbutton
 	verbosegiveitem GS_BALL
+if DEF(_CRYSTALLEGENDS)
+	iffalse .no_room
+endc
 	setevent EVENT_GOT_GS_BALL_FROM_GOLDENROD_POKEMON_CENTER
 	setevent EVENT_CAN_GIVE_GS_BALL_TO_KURT
 	writetext GoldenrodPokeCenter1FLinkReceptionistPleaseDoComeAgainText
 	waitbutton
 	closetext
+if DEF(_CRYSTALLEGENDS)
+	sjump .restore_receptionist
+
+.no_room
+	closetext
+endc
+
+.restore_receptionist
 	applymovement GOLDENRODPOKECENTER1F_PCC_TRADE_CORNER_RECEPTIONIST, GoldenrodPokeCenter1FLinkReceptionistWalkToStairsFromRightDoorwayTileMovement
 	special RestartMapMusic
 	disappear GOLDENRODPOKECENTER1F_PCC_TRADE_CORNER_RECEPTIONIST
@@ -716,6 +748,17 @@ GoldenrodPokecenter1FLassText:
 	done
 
 GoldenrodPokeCenter1FLinkReceptionistPleaseAcceptGSBallText:
+if DEF(_CRYSTALLEGENDS)
+	text "<PLAYER>, isn't it?"
+
+	para "A special delivery"
+	line "arrived for you"
+	cont "after your LEAGUE"
+	cont "victory!"
+
+	para "Please accept this"
+	line "rare GS BALL!"
+else
 	text "<PLAYER>, isn't it?"
 
 	para "Congratulations!"
@@ -725,6 +768,7 @@ GoldenrodPokeCenter1FLinkReceptionistPleaseAcceptGSBallText:
 	cont "sent just for you!"
 
 	para "Please accept it!"
+endc
 	done
 
 GoldenrodPokeCenter1FLinkReceptionistPleaseDoComeAgainText:

@@ -477,7 +477,16 @@ IlexForestShrineScript:
 	closetext
 	applymovement ILEXFOREST_KURT, IlexForestKurtStepsDownMovement
 	disappear ILEXFOREST_KURT
+if DEF(_CRYSTALLEGENDS)
+	sjump .Done
+endc
 .DidntCatchCelebi:
+if DEF(_CRYSTALLEGENDS)
+	giveitem GS_BALL
+	setevent EVENT_FOREST_IS_RESTLESS
+	setflag ENGINE_FOREST_IS_RESTLESS
+endc
+.Done:
 	end
 
 MovementData_Farfetchd_Pos1_Pos2:
