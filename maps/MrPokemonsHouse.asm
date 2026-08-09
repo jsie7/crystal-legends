@@ -82,6 +82,23 @@ MrPokemonsHouse_MrPokemonScript:
 	end
 
 MrPokemonsHouse_OakScript:
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_GOT_ARTICUNO_FROM_ELM
+	iftrue .PlayerHasArticuno
+	checkevent EVENT_GOT_ZAPDOS_FROM_ELM
+	iftrue .PlayerHasZapdos
+	getmonname STRING_BUFFER_3, MOLTRES
+	sjump .PlayerBirdBuffered
+
+.PlayerHasArticuno:
+	getmonname STRING_BUFFER_3, ARTICUNO
+	sjump .PlayerBirdBuffered
+
+.PlayerHasZapdos:
+	getmonname STRING_BUFFER_3, ZAPDOS
+
+.PlayerBirdBuffered:
+endc
 	playmusic MUSIC_PROF_OAK
 	applymovement MRPOKEMONSHOUSE_OAK, MrPokemonsHouse_OakWalksToPlayer
 	turnobject PLAYER, RIGHT
@@ -128,6 +145,22 @@ MrPokemonsHouse_OakScript:
 	setmapscene ELMS_LAB, SCENE_ELMSLAB_MEET_OFFICER
 	specialphonecall SPECIALCALL_ROBBED
 	clearevent EVENT_COP_IN_ELMS_LAB
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_GOT_ARTICUNO_FROM_ELM
+	iftrue .RivalTakesMoltres
+	checkevent EVENT_GOT_ZAPDOS_FROM_ELM
+	iftrue .RivalTakesArticuno
+	setevent EVENT_ZAPDOS_POKEBALL_IN_ELMS_LAB
+	end
+
+.RivalTakesMoltres:
+	setevent EVENT_MOLTRES_POKEBALL_IN_ELMS_LAB
+	end
+
+.RivalTakesArticuno:
+	setevent EVENT_ARTICUNO_POKEBALL_IN_ELMS_LAB
+	end
+else
 	checkevent EVENT_GOT_TOTODILE_FROM_ELM
 	iftrue .RivalTakesChikorita
 	checkevent EVENT_GOT_CHIKORITA_FROM_ELM
@@ -142,6 +175,7 @@ MrPokemonsHouse_OakScript:
 .RivalTakesCyndaquil:
 	setevent EVENT_CYNDAQUIL_POKEBALL_IN_ELMS_LAB
 	end
+endc
 
 MrPokemonsHouse_ForeignMagazines:
 	jumptext MrPokemonsHouse_ForeignMagazinesText
@@ -240,6 +274,39 @@ MrPokemonText_AlwaysNewDiscoveries:
 	done
 
 MrPokemonsHouse_OakText1:
+if DEF(_CRYSTALLEGENDS)
+	text "OAK: Aha! So"
+	line "you're <PLAY_G>!"
+
+	para "That @"
+	text_ram wStringBuffer3
+	text "!"
+	line "ELM entrusted it"
+	cont "to you, I see."
+
+	para "ELM and I are"
+	line "studying the three"
+	cont "legendary birds."
+
+	para "He must believe"
+	line "you'll treat it"
+	cont "with love and care."
+
+	para "You seem to be"
+	line "dependable."
+
+	para "How would you like"
+	line "to help me too?"
+
+	para "This is the latest"
+	line "version of the"
+	cont "#DEX."
+
+	para "It records data on"
+	line "#MON you've seen"
+	cont "or caught."
+	done
+else
 	text "OAK: Aha! So"
 	line "you're <PLAY_G>!"
 
@@ -302,6 +369,7 @@ MrPokemonsHouse_OakText1:
 	para "It's a hi-tech"
 	line "encyclopedia!"
 	done
+endc
 
 MrPokemonsHouse_GetDexText:
 	text "<PLAYER> received"
