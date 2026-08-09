@@ -4,6 +4,19 @@ Start with [repository-guide.md](repository-guide.md) for the architecture,
 directory map, build boundaries, task-to-file routing, and external resource
 guide.
 
+## Current milestone
+
+Crystal Legends v0.1 is implementation-complete. The dedicated
+`make crystallegends` build, legendary-bird starter branch, Silver mapping,
+Oak handoff, and title branding are in place, and clean build/static/reference
+validation passes.
+
+The three-starter emulator acceptance matrix is intentionally deferred until
+the optional cheat/debug menu lands. Until that matrix runs, v0.1 is a clean
+implementation baseline, not a playtest-certified release. See
+[workflows.md](workflows.md) for the validation boundary and
+[decisions.md](decisions.md) for the sequencing decision.
+
 ## Repository guidance
 
 - [Repository guide](repository-guide.md): what the codebase contains and where

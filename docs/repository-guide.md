@@ -1,21 +1,19 @@
 # Repository Guide
 
 This guide explains what is in the repository, how the pieces fit together, and
-where to look before changing a subsystem. It is based on a review of commit
-`8e8f7e20052a596371a77022f0392c285e51bbf1` on 2026-08-08.
+where to look before changing a subsystem. It reflects the Crystal Legends fork
+state as of 2026-08-09.
 
 ## Current project state
 
-This repository is a fork of the pret Pokémon Crystal disassembly. The source
-still identifies itself as `pokecrystal`, builds the original Pokémon Crystal
-ROM variants, and contains no `Crystal Legends` names or game-specific changes.
-The fork is therefore an upstream-compatible starting point, not yet a distinct
-game implementation.
+This repository is a fork of the pret Pokémon Crystal disassembly. It retains
+the exact upstream ROM variants and adds Crystal Legends as an isolated custom
+build. The v0.1 implementation includes legendary-bird starters, the matching
+Silver branches, Oak's third-bird handoff, and minimal title-screen branding.
 
-The reviewed tree contains 4,612 tracked files. Most are RGBDS assembly sources
-(2,463 files), editable PNG assets (1,374 files), and map block layouts (302
-files). The project is data-heavy, but all data ultimately has to fit the Game
-Boy's fixed and switchable memory banks.
+The v0.1 implementation and clean build/static checks are complete. Its
+three-starter emulator acceptance matrix is deliberately scheduled after the
+optional cheat/debug menu lands; it is not yet a playtest-certified release.
 
 Use sources in this order when they disagree:
 
@@ -125,15 +123,16 @@ pinned version is the safest way to reproduce CI and the reference hashes.
 | `make crystal_debug` | v1.0 ROM with `_DEBUG` menus and behavior |
 | `make crystal11_debug` | v1.1 debug ROM |
 | `make crystal11_vc` | v1.1 ROM plus Nintendo Virtual Console patch artifacts |
+| `make crystallegends` | Crystal Legends ROM, `.sym`, and `.map` using `_CRYSTAL11` plus `_CRYSTALLEGENDS` |
 | `make tools` | Only the local C helper programs |
 | `make compare` | Build all reference outputs and verify them against `roms.sha1` |
 | `make tidy` | Remove ROMs, maps, symbols, patches, objects, and compiled helpers |
 | `make clean` | Run `tidy` and also remove generated graphics intermediates |
 
-`make compare` is the strongest upstream-reproduction check. It should pass on
-the untouched baseline and fail after intentional game changes because the ROM
-hash is then expected to differ. For a customized fork, a successful requested
-build plus focused emulator testing is the normal validation path.
+`make compare` is the strongest upstream-reproduction check. Crystal Legends
+changes are gated behind `_CRYSTALLEGENDS`, so the target must still pass after
+project changes. Validate the custom ROM separately with `make crystallegends`
+and `rgbfix -v crystallegends.gbc`.
 
 The GitHub workflow has an important fork-specific branch: repositories owned
 by `pret` run `make ... compare`, while forks run the default `make` target. Both
@@ -144,9 +143,9 @@ There is no conventional unit-test suite. Validation consists of:
 
 1. Building the relevant ROM variant without warnings or bank overflows.
 2. Inspecting `.map` and `.sym` output when placement or labels matter.
-3. Running `make compare` only when exact upstream reproduction is expected.
-4. Testing the changed path in an emulator, including save compatibility and
-   variant-specific behavior where relevant.
+3. Running `make compare` to prove the reference variants remain exact.
+4. Testing the changed path in an emulator at the milestone's scheduled
+   validation gate, including save compatibility and variant-specific behavior.
 5. Checking `git status` so generated outputs are not mistaken for source.
 
 ## Generated-file and compatibility boundaries

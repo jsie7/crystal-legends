@@ -22,6 +22,7 @@ assembly dependencies.
    ```bash
    make
    make crystal11
+   make crystallegends
    make crystal_au
    make crystal_debug
    make crystal11_debug
@@ -30,14 +31,44 @@ assembly dependencies.
 
 5. If the linker reports a bank overflow, inspect the generated `.map` file and
    `layout.link` before moving sections.
-6. Exercise the changed behavior in an emulator. Include save/load, map reload,
-   battle transitions, or variant-specific paths when the change touches them.
+6. Exercise the changed behavior in an emulator at its scheduled validation
+   gate. Include save/load, map reload, battle transitions, or
+   variant-specific paths when the change touches them.
 7. Run `git status --short` and inspect the diff. Generated ROM, object, symbol,
    map, palette, tile, compression, and patch outputs must stay untracked.
 
+For the current Crystal Legends sequence, the v0.1 three-starter emulator
+matrix is scheduled after the optional cheat/debug menu lands. Continue to run
+the build and source checks below for every intervening change.
+
+## Validate the Crystal Legends build
+
+From a clean graphics state:
+
+```bash
+make clean
+make crystallegends
+test -s crystallegends.gbc
+test -s crystallegends.sym
+test -s crystallegends.map
+rgbfix -v crystallegends.gbc
+make compare
+git status --short
+```
+
+`make crystallegends` builds the project ROM from its own object family using
+`_CRYSTAL11` and `_CRYSTALLEGENDS`. `make compare` checks only the untouched
+reference variants and must continue to pass.
+
+After the cheat/debug menu lands, run the deferred v0.1 emulator matrix with a
+fresh save for Articuno, Zapdos, and Moltres. Each branch must cover starter
+selection and reload, the Mr. Pokémon visit, Silver's mapped bird, Elm's
+third-bird handoff, the lab reload that removes the final ball, and progression
+through Falkner. Run the cheat-menu safety checks in the same pass.
+
 ## Verify the upstream baseline
 
-Use this only when the intended output should still reproduce the original
+Use this to verify that the reference variants still reproduce the original
 ROMs exactly:
 
 ```bash
@@ -45,8 +76,8 @@ make compare
 ```
 
 This builds all reference ROMs and the Virtual Console patch, then checks the
-outputs against `roms.sha1`. Intentional Crystal Legends game changes are
-expected to make this target fail even when the ROM is otherwise valid.
+outputs against `roms.sha1`. Crystal Legends changes are isolated behind their
+own build flag, so they must not make this target fail.
 
 ## Build only the local helper tools
 
