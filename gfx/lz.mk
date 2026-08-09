@@ -68,6 +68,7 @@ gfx/tilesets/tower.2bpp.lz: LZFLAGS += --odd-alternate --align 4
 
 gfx/title/crystal.2bpp.lz: LZFLAGS += --align 4
 gfx/title/logo.2bpp.lz: LZFLAGS += --literal-only --align 1
+gfx/title/logo_crystallegends.2bpp.lz: LZFLAGS += --literal-only --align 1
 gfx/title/suicune.2bpp.lz: LZFLAGS += --align 4
 
 gfx/unown_puzzle/%.lz: LZFLAGS += --align 4
