@@ -6,6 +6,20 @@
 	const VICTORYROAD_POKE_BALL4
 	const VICTORYROAD_POKE_BALL5
 
+if DEF(_CRYSTALLEGENDS)
+DEF VICTORY_ROAD_RIVAL_SECOND_STARTER_EVENT EQU EVENT_GOT_ZAPDOS_FROM_ELM
+DEF VICTORY_ROAD_RIVAL_THIRD_STARTER_EVENT  EQU EVENT_GOT_MOLTRES_FROM_ELM
+DEF VICTORY_ROAD_RIVAL_DEFAULT_PARTY        EQU RIVAL1_5_MOLTRES
+DEF VICTORY_ROAD_RIVAL_SECOND_PARTY         EQU RIVAL1_5_ARTICUNO
+DEF VICTORY_ROAD_RIVAL_THIRD_PARTY          EQU RIVAL1_5_ZAPDOS
+else
+DEF VICTORY_ROAD_RIVAL_SECOND_STARTER_EVENT EQU EVENT_GOT_TOTODILE_FROM_ELM
+DEF VICTORY_ROAD_RIVAL_THIRD_STARTER_EVENT  EQU EVENT_GOT_CHIKORITA_FROM_ELM
+DEF VICTORY_ROAD_RIVAL_DEFAULT_PARTY        EQU RIVAL1_5_TOTODILE
+DEF VICTORY_ROAD_RIVAL_SECOND_PARTY         EQU RIVAL1_5_CHIKORITA
+DEF VICTORY_ROAD_RIVAL_THIRD_PARTY          EQU RIVAL1_5_CYNDAQUIL
+endc
+
 VictoryRoad_MapScripts:
 	def_scene_scripts
 	scene_script VictoryRoadNoop1Scene, SCENE_VICTORYROAD_RIVAL_BATTLE
@@ -56,31 +70,31 @@ VictoryRoadRivalNext:
 	waitbutton
 	closetext
 	setevent EVENT_RIVAL_VICTORY_ROAD
-	checkevent EVENT_GOT_TOTODILE_FROM_ELM
-	iftrue .GotTotodile
-	checkevent EVENT_GOT_CHIKORITA_FROM_ELM
-	iftrue .GotChikorita
+	checkevent VICTORY_ROAD_RIVAL_SECOND_STARTER_EVENT
+	iftrue .GotSecondStarter
+	checkevent VICTORY_ROAD_RIVAL_THIRD_STARTER_EVENT
+	iftrue .GotThirdStarter
 	winlosstext VictoryRoadRivalDefeatText, VictoryRoadRivalVictoryText
 	setlasttalked VICTORYROAD_RIVAL
-	loadtrainer RIVAL1, RIVAL1_5_TOTODILE
+	loadtrainer RIVAL1, VICTORY_ROAD_RIVAL_DEFAULT_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle
 	sjump .AfterBattle
 
-.GotTotodile:
+.GotSecondStarter:
 	winlosstext VictoryRoadRivalDefeatText, VictoryRoadRivalVictoryText
 	setlasttalked VICTORYROAD_RIVAL
-	loadtrainer RIVAL1, RIVAL1_5_CHIKORITA
+	loadtrainer RIVAL1, VICTORY_ROAD_RIVAL_SECOND_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle
 	sjump .AfterBattle
 
-.GotChikorita:
+.GotThirdStarter:
 	winlosstext VictoryRoadRivalDefeatText, VictoryRoadRivalVictoryText
 	setlasttalked VICTORYROAD_RIVAL
-	loadtrainer RIVAL1, RIVAL1_5_CYNDAQUIL
+	loadtrainer RIVAL1, VICTORY_ROAD_RIVAL_THIRD_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle

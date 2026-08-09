@@ -52,6 +52,20 @@ ENDM
 	const GOLDENRODUNDERGROUNDSWITCHROOMENTRANCES_POKE_BALL2
 	const GOLDENRODUNDERGROUNDSWITCHROOMENTRANCES_RIVAL
 
+if DEF(_CRYSTALLEGENDS)
+DEF GOLDENROD_RIVAL_SECOND_STARTER_EVENT EQU EVENT_GOT_ZAPDOS_FROM_ELM
+DEF GOLDENROD_RIVAL_THIRD_STARTER_EVENT  EQU EVENT_GOT_MOLTRES_FROM_ELM
+DEF GOLDENROD_RIVAL_DEFAULT_PARTY        EQU RIVAL1_4_MOLTRES
+DEF GOLDENROD_RIVAL_SECOND_PARTY         EQU RIVAL1_4_ARTICUNO
+DEF GOLDENROD_RIVAL_THIRD_PARTY          EQU RIVAL1_4_ZAPDOS
+else
+DEF GOLDENROD_RIVAL_SECOND_STARTER_EVENT EQU EVENT_GOT_TOTODILE_FROM_ELM
+DEF GOLDENROD_RIVAL_THIRD_STARTER_EVENT  EQU EVENT_GOT_CHIKORITA_FROM_ELM
+DEF GOLDENROD_RIVAL_DEFAULT_PARTY        EQU RIVAL1_4_TOTODILE
+DEF GOLDENROD_RIVAL_SECOND_PARTY         EQU RIVAL1_4_CHIKORITA
+DEF GOLDENROD_RIVAL_THIRD_PARTY          EQU RIVAL1_4_CYNDAQUIL
+endc
+
 GoldenrodUndergroundSwitchRoomEntrances_MapScripts:
 	def_scene_scripts
 	scene_script GoldenrodUndergroundSwitchRoomEntrancesNoop1Scene, SCENE_GOLDENRODUNDERGROUNDSWITCHROOMENTRANCES_RIVAL_BATTLE
@@ -131,31 +145,31 @@ UndergroundRivalBattleScript:
 	waitbutton
 	closetext
 	setevent EVENT_RIVAL_GOLDENROD_UNDERGROUND
-	checkevent EVENT_GOT_TOTODILE_FROM_ELM
-	iftrue .Totodile
-	checkevent EVENT_GOT_CHIKORITA_FROM_ELM
-	iftrue .Chikorita
+	checkevent GOLDENROD_RIVAL_SECOND_STARTER_EVENT
+	iftrue .SecondStarter
+	checkevent GOLDENROD_RIVAL_THIRD_STARTER_EVENT
+	iftrue .ThirdStarter
 	winlosstext UndergroundRivalWinText, UndergroundRivalLossText
 	setlasttalked GOLDENRODUNDERGROUNDSWITCHROOMENTRANCES_RIVAL
-	loadtrainer RIVAL1, RIVAL1_4_TOTODILE
+	loadtrainer RIVAL1, GOLDENROD_RIVAL_DEFAULT_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle
 	sjump .FinishRivalBattle
 
-.Totodile:
+.SecondStarter:
 	winlosstext UndergroundRivalWinText, UndergroundRivalLossText
 	setlasttalked GOLDENRODUNDERGROUNDSWITCHROOMENTRANCES_RIVAL
-	loadtrainer RIVAL1, RIVAL1_4_CHIKORITA
+	loadtrainer RIVAL1, GOLDENROD_RIVAL_SECOND_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle
 	sjump .FinishRivalBattle
 
-.Chikorita:
+.ThirdStarter:
 	winlosstext UndergroundRivalWinText, UndergroundRivalLossText
 	setlasttalked GOLDENRODUNDERGROUNDSWITCHROOMENTRANCES_RIVAL
-	loadtrainer RIVAL1, RIVAL1_4_CYNDAQUIL
+	loadtrainer RIVAL1, GOLDENROD_RIVAL_THIRD_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle

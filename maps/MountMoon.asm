@@ -1,6 +1,20 @@
 	object_const_def
 	const MOUNTMOON_RIVAL
 
+if DEF(_CRYSTALLEGENDS)
+DEF MOUNT_MOON_RIVAL_SECOND_STARTER_EVENT EQU EVENT_GOT_ZAPDOS_FROM_ELM
+DEF MOUNT_MOON_RIVAL_THIRD_STARTER_EVENT  EQU EVENT_GOT_MOLTRES_FROM_ELM
+DEF MOUNT_MOON_RIVAL_DEFAULT_PARTY        EQU RIVAL2_1_MOLTRES
+DEF MOUNT_MOON_RIVAL_SECOND_PARTY         EQU RIVAL2_1_ARTICUNO
+DEF MOUNT_MOON_RIVAL_THIRD_PARTY          EQU RIVAL2_1_ZAPDOS
+else
+DEF MOUNT_MOON_RIVAL_SECOND_STARTER_EVENT EQU EVENT_GOT_TOTODILE_FROM_ELM
+DEF MOUNT_MOON_RIVAL_THIRD_STARTER_EVENT  EQU EVENT_GOT_CHIKORITA_FROM_ELM
+DEF MOUNT_MOON_RIVAL_DEFAULT_PARTY        EQU RIVAL2_1_TOTODILE
+DEF MOUNT_MOON_RIVAL_SECOND_PARTY         EQU RIVAL2_1_CHIKORITA
+DEF MOUNT_MOON_RIVAL_THIRD_PARTY          EQU RIVAL2_1_CYNDAQUIL
+endc
+
 MountMoon_MapScripts:
 	def_scene_scripts
 	scene_script MountMoonRivalEncounterScene, SCENE_MOUNTMOON_RIVAL_BATTLE
@@ -26,31 +40,31 @@ MountMoonRivalBattleScript:
 	writetext MountMoonRivalTextBefore
 	waitbutton
 	closetext
-	checkevent EVENT_GOT_TOTODILE_FROM_ELM
-	iftrue .Totodile
-	checkevent EVENT_GOT_CHIKORITA_FROM_ELM
-	iftrue .Chikorita
+	checkevent MOUNT_MOON_RIVAL_SECOND_STARTER_EVENT
+	iftrue .SecondStarter
+	checkevent MOUNT_MOON_RIVAL_THIRD_STARTER_EVENT
+	iftrue .ThirdStarter
 	winlosstext MountMoonRivalTextWin, MountMoonRivalTextLoss
 	setlasttalked MOUNTMOON_RIVAL
-	loadtrainer RIVAL2, RIVAL2_1_TOTODILE
+	loadtrainer RIVAL2, MOUNT_MOON_RIVAL_DEFAULT_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle
 	sjump .FinishBattle
 
-.Totodile:
+.SecondStarter:
 	winlosstext MountMoonRivalTextWin, MountMoonRivalTextLoss
 	setlasttalked MOUNTMOON_RIVAL
-	loadtrainer RIVAL2, RIVAL2_1_CHIKORITA
+	loadtrainer RIVAL2, MOUNT_MOON_RIVAL_SECOND_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle
 	sjump .FinishBattle
 
-.Chikorita:
+.ThirdStarter:
 	winlosstext MountMoonRivalTextWin, MountMoonRivalTextLoss
 	setlasttalked MOUNTMOON_RIVAL
-	loadtrainer RIVAL2, RIVAL2_1_CYNDAQUIL
+	loadtrainer RIVAL2, MOUNT_MOON_RIVAL_THIRD_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle

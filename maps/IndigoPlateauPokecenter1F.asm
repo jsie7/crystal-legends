@@ -6,6 +6,20 @@
 	const INDIGOPLATEAUPOKECENTER1F_GRAMPS
 	const INDIGOPLATEAUPOKECENTER1F_ABRA
 
+if DEF(_CRYSTALLEGENDS)
+DEF INDIGO_RIVAL_SECOND_STARTER_EVENT EQU EVENT_GOT_ZAPDOS_FROM_ELM
+DEF INDIGO_RIVAL_THIRD_STARTER_EVENT  EQU EVENT_GOT_MOLTRES_FROM_ELM
+DEF INDIGO_RIVAL_DEFAULT_PARTY        EQU RIVAL2_2_MOLTRES
+DEF INDIGO_RIVAL_SECOND_PARTY         EQU RIVAL2_2_ARTICUNO
+DEF INDIGO_RIVAL_THIRD_PARTY          EQU RIVAL2_2_ZAPDOS
+else
+DEF INDIGO_RIVAL_SECOND_STARTER_EVENT EQU EVENT_GOT_TOTODILE_FROM_ELM
+DEF INDIGO_RIVAL_THIRD_STARTER_EVENT  EQU EVENT_GOT_CHIKORITA_FROM_ELM
+DEF INDIGO_RIVAL_DEFAULT_PARTY        EQU RIVAL2_2_TOTODILE
+DEF INDIGO_RIVAL_SECOND_PARTY         EQU RIVAL2_2_CHIKORITA
+DEF INDIGO_RIVAL_THIRD_PARTY          EQU RIVAL2_2_CYNDAQUIL
+endc
+
 IndigoPlateauPokecenter1F_MapScripts:
 	def_scene_scripts
 	scene_script IndigoPlateauPokecenter1FNoopScene, SCENE_INDIGOPLATEAUPOKECENTER1F_RIVAL_BATTLE
@@ -88,32 +102,32 @@ PlateauRivalBattleCommon:
 	waitbutton
 	closetext
 	setevent EVENT_INDIGO_PLATEAU_POKECENTER_RIVAL
-	checkevent EVENT_GOT_TOTODILE_FROM_ELM
-	iftrue .Totodile
-	checkevent EVENT_GOT_CHIKORITA_FROM_ELM
-	iftrue .Chikorita
-	; Cyndaquil
+	checkevent INDIGO_RIVAL_SECOND_STARTER_EVENT
+	iftrue .SecondStarter
+	checkevent INDIGO_RIVAL_THIRD_STARTER_EVENT
+	iftrue .ThirdStarter
+	; default starter
 	winlosstext PlateauRivalWinText, PlateauRivalLoseText
 	setlasttalked INDIGOPLATEAUPOKECENTER1F_RIVAL
-	loadtrainer RIVAL2, RIVAL2_2_TOTODILE
+	loadtrainer RIVAL2, INDIGO_RIVAL_DEFAULT_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle
 	sjump PlateauRivalPostBattle
 
-.Totodile:
+.SecondStarter:
 	winlosstext PlateauRivalWinText, PlateauRivalLoseText
 	setlasttalked INDIGOPLATEAUPOKECENTER1F_RIVAL
-	loadtrainer RIVAL2, RIVAL2_2_CHIKORITA
+	loadtrainer RIVAL2, INDIGO_RIVAL_SECOND_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle
 	sjump PlateauRivalPostBattle
 
-.Chikorita:
+.ThirdStarter:
 	winlosstext PlateauRivalWinText, PlateauRivalLoseText
 	setlasttalked INDIGOPLATEAUPOKECENTER1F_RIVAL
-	loadtrainer RIVAL2, RIVAL2_2_CYNDAQUIL
+	loadtrainer RIVAL2, INDIGO_RIVAL_THIRD_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle

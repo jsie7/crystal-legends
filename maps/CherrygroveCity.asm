@@ -5,6 +5,20 @@
 	const CHERRYGROVECITY_YOUNGSTER
 	const CHERRYGROVECITY_FISHER
 
+if DEF(_CRYSTALLEGENDS)
+DEF CHERRYGROVE_RIVAL_SECOND_STARTER_EVENT EQU EVENT_GOT_ZAPDOS_FROM_ELM
+DEF CHERRYGROVE_RIVAL_THIRD_STARTER_EVENT  EQU EVENT_GOT_MOLTRES_FROM_ELM
+DEF CHERRYGROVE_RIVAL_DEFAULT_PARTY        EQU RIVAL1_1_MOLTRES
+DEF CHERRYGROVE_RIVAL_SECOND_PARTY         EQU RIVAL1_1_ARTICUNO
+DEF CHERRYGROVE_RIVAL_THIRD_PARTY          EQU RIVAL1_1_ZAPDOS
+else
+DEF CHERRYGROVE_RIVAL_SECOND_STARTER_EVENT EQU EVENT_GOT_TOTODILE_FROM_ELM
+DEF CHERRYGROVE_RIVAL_THIRD_STARTER_EVENT  EQU EVENT_GOT_CHIKORITA_FROM_ELM
+DEF CHERRYGROVE_RIVAL_DEFAULT_PARTY        EQU RIVAL1_1_TOTODILE
+DEF CHERRYGROVE_RIVAL_SECOND_PARTY         EQU RIVAL1_1_CHIKORITA
+DEF CHERRYGROVE_RIVAL_THIRD_PARTY          EQU RIVAL1_1_CYNDAQUIL
+endc
+
 CherrygroveCity_MapScripts:
 	def_scene_scripts
 	scene_script CherrygroveCityNoop1Scene, SCENE_CHERRYGROVECITY_NOOP
@@ -113,13 +127,13 @@ CherrygroveRivalSceneNorth:
 	writetext CherrygroveRivalText_Seen
 	waitbutton
 	closetext
-	checkevent EVENT_GOT_TOTODILE_FROM_ELM
-	iftrue .Totodile
-	checkevent EVENT_GOT_CHIKORITA_FROM_ELM
-	iftrue .Chikorita
+	checkevent CHERRYGROVE_RIVAL_SECOND_STARTER_EVENT
+	iftrue .SecondStarter
+	checkevent CHERRYGROVE_RIVAL_THIRD_STARTER_EVENT
+	iftrue .ThirdStarter
 	winlosstext RivalCherrygroveWinText, RivalCherrygroveLossText
 	setlasttalked CHERRYGROVECITY_RIVAL
-	loadtrainer RIVAL1, RIVAL1_1_TOTODILE
+	loadtrainer RIVAL1, CHERRYGROVE_RIVAL_DEFAULT_PARTY
 	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
 	startbattle
 	dontrestartmapmusic
@@ -127,10 +141,10 @@ CherrygroveRivalSceneNorth:
 	iftrue .AfterVictorious
 	sjump .AfterYourDefeat
 
-.Totodile:
+.SecondStarter:
 	winlosstext RivalCherrygroveWinText, RivalCherrygroveLossText
 	setlasttalked CHERRYGROVECITY_RIVAL
-	loadtrainer RIVAL1, RIVAL1_1_CHIKORITA
+	loadtrainer RIVAL1, CHERRYGROVE_RIVAL_SECOND_PARTY
 	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
 	startbattle
 	dontrestartmapmusic
@@ -138,10 +152,10 @@ CherrygroveRivalSceneNorth:
 	iftrue .AfterVictorious
 	sjump .AfterYourDefeat
 
-.Chikorita:
+.ThirdStarter:
 	winlosstext RivalCherrygroveWinText, RivalCherrygroveLossText
 	setlasttalked CHERRYGROVECITY_RIVAL
-	loadtrainer RIVAL1, RIVAL1_1_CYNDAQUIL
+	loadtrainer RIVAL1, CHERRYGROVE_RIVAL_THIRD_PARTY
 	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
 	startbattle
 	dontrestartmapmusic

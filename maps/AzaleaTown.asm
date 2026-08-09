@@ -12,6 +12,20 @@
 	const AZALEATOWN_AZALEA_ROCKET3
 	const AZALEATOWN_KURT_OUTSIDE
 
+if DEF(_CRYSTALLEGENDS)
+DEF AZALEA_RIVAL_SECOND_STARTER_EVENT EQU EVENT_GOT_ZAPDOS_FROM_ELM
+DEF AZALEA_RIVAL_THIRD_STARTER_EVENT  EQU EVENT_GOT_MOLTRES_FROM_ELM
+DEF AZALEA_RIVAL_DEFAULT_PARTY        EQU RIVAL1_2_MOLTRES
+DEF AZALEA_RIVAL_SECOND_PARTY         EQU RIVAL1_2_ARTICUNO
+DEF AZALEA_RIVAL_THIRD_PARTY          EQU RIVAL1_2_ZAPDOS
+else
+DEF AZALEA_RIVAL_SECOND_STARTER_EVENT EQU EVENT_GOT_TOTODILE_FROM_ELM
+DEF AZALEA_RIVAL_THIRD_STARTER_EVENT  EQU EVENT_GOT_CHIKORITA_FROM_ELM
+DEF AZALEA_RIVAL_DEFAULT_PARTY        EQU RIVAL1_2_TOTODILE
+DEF AZALEA_RIVAL_SECOND_PARTY         EQU RIVAL1_2_CHIKORITA
+DEF AZALEA_RIVAL_THIRD_PARTY          EQU RIVAL1_2_CYNDAQUIL
+endc
+
 AzaleaTown_MapScripts:
 	def_scene_scripts
 	scene_script AzaleaTownNoop1Scene, SCENE_AZALEATOWN_NOOP
@@ -60,31 +74,31 @@ AzaleaTownRivalBattleScript:
 	waitbutton
 	closetext
 	setevent EVENT_RIVAL_AZALEA_TOWN
-	checkevent EVENT_GOT_TOTODILE_FROM_ELM
-	iftrue .Totodile
-	checkevent EVENT_GOT_CHIKORITA_FROM_ELM
-	iftrue .Chikorita
+	checkevent AZALEA_RIVAL_SECOND_STARTER_EVENT
+	iftrue .SecondStarter
+	checkevent AZALEA_RIVAL_THIRD_STARTER_EVENT
+	iftrue .ThirdStarter
 	winlosstext AzaleaTownRivalWinText, AzaleaTownRivalLossText
 	setlasttalked AZALEATOWN_RIVAL
-	loadtrainer RIVAL1, RIVAL1_2_TOTODILE
+	loadtrainer RIVAL1, AZALEA_RIVAL_DEFAULT_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle
 	sjump .AfterBattle
 
-.Totodile:
+.SecondStarter:
 	winlosstext AzaleaTownRivalWinText, AzaleaTownRivalLossText
 	setlasttalked AZALEATOWN_RIVAL
-	loadtrainer RIVAL1, RIVAL1_2_CHIKORITA
+	loadtrainer RIVAL1, AZALEA_RIVAL_SECOND_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle
 	sjump .AfterBattle
 
-.Chikorita:
+.ThirdStarter:
 	winlosstext AzaleaTownRivalWinText, AzaleaTownRivalLossText
 	setlasttalked AZALEATOWN_RIVAL
-	loadtrainer RIVAL1, RIVAL1_2_CYNDAQUIL
+	loadtrainer RIVAL1, AZALEA_RIVAL_THIRD_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle

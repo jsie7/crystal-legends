@@ -118,7 +118,11 @@ PlayBattleMusic:
 	jr nz, .othertrainer
 
 	ld a, [wOtherTrainerID]
+if DEF(_CRYSTALLEGENDS)
+	cp RIVAL2_2_ARTICUNO ; Rival in Indigo Plateau
+else
 	cp RIVAL2_2_CHIKORITA ; Rival in Indigo Plateau
+endc
 	jr c, .done
 	ld de, MUSIC_CHAMPION_BATTLE
 	jr .done

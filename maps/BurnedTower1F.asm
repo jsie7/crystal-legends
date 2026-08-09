@@ -5,6 +5,20 @@
 	const BURNEDTOWER1F_MORTY
 	const BURNEDTOWER1F_POKE_BALL
 
+if DEF(_CRYSTALLEGENDS)
+DEF BURNED_TOWER_RIVAL_SECOND_STARTER_EVENT EQU EVENT_GOT_ZAPDOS_FROM_ELM
+DEF BURNED_TOWER_RIVAL_THIRD_STARTER_EVENT  EQU EVENT_GOT_MOLTRES_FROM_ELM
+DEF BURNED_TOWER_RIVAL_DEFAULT_PARTY        EQU RIVAL1_3_MOLTRES
+DEF BURNED_TOWER_RIVAL_SECOND_PARTY         EQU RIVAL1_3_ARTICUNO
+DEF BURNED_TOWER_RIVAL_THIRD_PARTY          EQU RIVAL1_3_ZAPDOS
+else
+DEF BURNED_TOWER_RIVAL_SECOND_STARTER_EVENT EQU EVENT_GOT_TOTODILE_FROM_ELM
+DEF BURNED_TOWER_RIVAL_THIRD_STARTER_EVENT  EQU EVENT_GOT_CHIKORITA_FROM_ELM
+DEF BURNED_TOWER_RIVAL_DEFAULT_PARTY        EQU RIVAL1_3_TOTODILE
+DEF BURNED_TOWER_RIVAL_SECOND_PARTY         EQU RIVAL1_3_CHIKORITA
+DEF BURNED_TOWER_RIVAL_THIRD_PARTY          EQU RIVAL1_3_CYNDAQUIL
+endc
+
 BurnedTower1F_MapScripts:
 	def_scene_scripts
 	scene_script BurnedTower1FMeetEusineScene, SCENE_BURNEDTOWER1F_MEET_EUSINE
@@ -60,31 +74,31 @@ BurnedTowerRivalBattleScript:
 	writetext BurnedTowerRival_BeforeText
 	waitbutton
 	closetext
-	checkevent EVENT_GOT_TOTODILE_FROM_ELM
-	iftrue .totodile
-	checkevent EVENT_GOT_CHIKORITA_FROM_ELM
-	iftrue .chikorita
+	checkevent BURNED_TOWER_RIVAL_SECOND_STARTER_EVENT
+	iftrue .second_starter
+	checkevent BURNED_TOWER_RIVAL_THIRD_STARTER_EVENT
+	iftrue .third_starter
 	winlosstext BurnedTowerRival_WinText, BurnedTowerRival_LossText
 	setlasttalked BURNEDTOWER1F_RIVAL
-	loadtrainer RIVAL1, RIVAL1_3_TOTODILE
+	loadtrainer RIVAL1, BURNED_TOWER_RIVAL_DEFAULT_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle
 	sjump .returnfrombattle
 
-.totodile
+.second_starter
 	winlosstext BurnedTowerRival_WinText, BurnedTowerRival_LossText
 	setlasttalked BURNEDTOWER1F_RIVAL
-	loadtrainer RIVAL1, RIVAL1_3_CHIKORITA
+	loadtrainer RIVAL1, BURNED_TOWER_RIVAL_SECOND_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle
 	sjump .returnfrombattle
 
-.chikorita
+.third_starter
 	winlosstext BurnedTowerRival_WinText, BurnedTowerRival_LossText
 	setlasttalked BURNEDTOWER1F_RIVAL
-	loadtrainer RIVAL1, RIVAL1_3_CYNDAQUIL
+	loadtrainer RIVAL1, BURNED_TOWER_RIVAL_THIRD_PARTY
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle
