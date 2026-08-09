@@ -319,10 +319,22 @@ ElmDescribesMrPokemonScript:
 
 LookAtElmPokeBallScript:
 	opentext
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_OAK_MOVED_THIRD_BIRD
+	iftrue .WaitingForOak
+endc
 	writetext ElmPokeBallText
 	waitbutton
 	closetext
 	end
+
+if DEF(_CRYSTALLEGENDS)
+.WaitingForOak:
+	writetext ElmPokeBallWaitingForOakText
+	waitbutton
+	closetext
+	end
+endc
 
 ElmsLabHealingMachine:
 	opentext
@@ -370,6 +382,9 @@ ElmAfterTheftScript:
 	scall ElmJumpBackScript2
 	writetext ElmAfterTheftText4
 	promptbutton
+if DEF(_CRYSTALLEGENDS)
+	scall ElmArrangeThirdBirdTransferScript
+endc
 	writetext ElmAfterTheftText5
 	promptbutton
 	setevent EVENT_GAVE_MYSTERY_EGG_TO_ELM
@@ -382,6 +397,32 @@ ElmAfterTheftScript:
 	closetext
 	setscene SCENE_ELMSLAB_AIDE_GIVES_POKE_BALLS
 	end
+
+if DEF(_CRYSTALLEGENDS)
+ElmArrangeThirdBirdTransferScript:
+	checkevent EVENT_GOT_ARTICUNO_FROM_ELM
+	iftrue .OakMovesZapdos
+	checkevent EVENT_GOT_ZAPDOS_FROM_ELM
+	iftrue .OakMovesMoltres
+	getmonname STRING_BUFFER_3, ARTICUNO
+	sjump .ThirdBirdBuffered
+
+.OakMovesZapdos:
+	getmonname STRING_BUFFER_3, ZAPDOS
+	sjump .ThirdBirdBuffered
+
+.OakMovesMoltres:
+	getmonname STRING_BUFFER_3, MOLTRES
+
+.ThirdBirdBuffered:
+	writetext ElmThirdBirdTransferText
+	promptbutton
+	setevent ELMSLAB_LEFT_STARTER_POKEBALL_EVENT
+	setevent ELMSLAB_CENTER_STARTER_POKEBALL_EVENT
+	setevent ELMSLAB_RIGHT_STARTER_POKEBALL_EVENT
+	setevent EVENT_OAK_MOVED_THIRD_BIRD
+	end
+endc
 
 ElmStudyingEggScript:
 	writetext ElmStudyingEggText
@@ -1054,6 +1095,14 @@ else
 	done
 endc
 
+if DEF(_CRYSTALLEGENDS)
+ElmPokeBallWaitingForOakText:
+	text "The remaining bird"
+	line "is waiting to be"
+	cont "moved by PROF.OAK."
+	done
+endc
+
 ElmsLabHealingMachineText1:
 	text "I wonder what this"
 	line "does?"
@@ -1090,6 +1139,27 @@ ElmAfterTheftText4:
 	para "If it is, it is a"
 	line "great discovery!"
 	done
+
+if DEF(_CRYSTALLEGENDS)
+ElmThirdBirdTransferText:
+	text "ELM: @"
+	text_ram wStringBuffer3
+	text " is"
+	line "the only bird left"
+	cont "in the LAB."
+
+	para "It isn't safe here"
+	line "after that theft."
+
+	para "I've contacted"
+	line "PROF.OAK. He'll"
+	cont "move it to KANTO"
+
+	para "and keep it safe"
+	line "while we continue"
+	cont "our research."
+	done
+endc
 
 ElmAfterTheftText5:
 	text "ELM: What?!?"
