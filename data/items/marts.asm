@@ -322,10 +322,20 @@ MartCeladon3F:
 	db -1 ; end
 
 MartCeladon4F:
+if DEF(_CRYSTALLEGENDS)
+	db 7 ; # items
+else
 	db 3 ; # items
+endc
 	db POKE_DOLL
 	db LOVELY_MAIL
 	db SURF_MAIL
+if DEF(_CRYSTALLEGENDS)
+	db KINGS_ROCK
+	db METAL_COAT
+	db DRAGON_SCALE
+	db UP_GRADE
+endc
 	db -1 ; end
 
 MartCeladon5F1:

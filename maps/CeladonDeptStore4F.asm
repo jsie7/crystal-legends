@@ -42,10 +42,18 @@ CeladonDeptStore4FYoungsterText:
 	done
 
 CeladonDeptStore4FDirectoryText:
+if DEF(_CRYSTALLEGENDS)
+	text "Some #MON evolve"
+	line "when special items"
+	cont "are used on them."
+
+	para "4F: WISEMAN GIFTS"
+else
 	text "Express Yourself"
 	line "With Gifts!"
 
 	para "4F: WISEMAN GIFTS"
+endc
 	done
 
 CeladonDeptStore4F_MapEvents:

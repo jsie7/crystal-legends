@@ -803,7 +803,11 @@ PoliwagEvosAttacks:
 
 PoliwhirlEvosAttacks:
 	db EVOLVE_ITEM, WATER_STONE, POLIWRATH
+if DEF(_CRYSTALLEGENDS)
+	db EVOLVE_ITEM, KINGS_ROCK, POLITOED
+else
 	db EVOLVE_TRADE, KINGS_ROCK, POLITOED
+endc
 	db 0 ; no more evolutions
 	db 1, BUBBLE
 	db 1, HYPNOSIS
@@ -1068,7 +1072,11 @@ RapidashEvosAttacks:
 
 SlowpokeEvosAttacks:
 	db EVOLVE_LEVEL, 37, SLOWBRO
+if DEF(_CRYSTALLEGENDS)
+	db EVOLVE_ITEM, KINGS_ROCK, SLOWKING
+else
 	db EVOLVE_TRADE, KINGS_ROCK, SLOWKING
+endc
 	db 0 ; no more evolutions
 	db 1, CURSE
 	db 1, TACKLE
@@ -1291,7 +1299,11 @@ GengarEvosAttacks:
 	db 0 ; no more level-up moves
 
 OnixEvosAttacks:
+if DEF(_CRYSTALLEGENDS)
+	db EVOLVE_ITEM, METAL_COAT, STEELIX
+else
 	db EVOLVE_TRADE, METAL_COAT, STEELIX
+endc
 	db 0 ; no more evolutions
 	db 1, TACKLE
 	db 1, SCREECH
@@ -1601,7 +1613,11 @@ HorseaEvosAttacks:
 	db 0 ; no more level-up moves
 
 SeadraEvosAttacks:
+if DEF(_CRYSTALLEGENDS)
+	db EVOLVE_ITEM, DRAGON_SCALE, KINGDRA
+else
 	db EVOLVE_TRADE, DRAGON_SCALE, KINGDRA
+endc
 	db 0 ; no more evolutions
 	db 1, BUBBLE
 	db 1, SMOKESCREEN
@@ -1683,7 +1699,11 @@ MrMimeEvosAttacks:
 	db 0 ; no more level-up moves
 
 ScytherEvosAttacks:
+if DEF(_CRYSTALLEGENDS)
+	db EVOLVE_ITEM, METAL_COAT, SCIZOR
+else
 	db EVOLVE_TRADE, METAL_COAT, SCIZOR
+endc
 	db 0 ; no more evolutions
 	db 1, QUICK_ATTACK
 	db 1, LEER
@@ -1867,7 +1887,11 @@ FlareonEvosAttacks:
 	db 0 ; no more level-up moves
 
 PorygonEvosAttacks:
+if DEF(_CRYSTALLEGENDS)
+	db EVOLVE_ITEM, UP_GRADE, PORYGON2
+else
 	db EVOLVE_TRADE, UP_GRADE, PORYGON2
+endc
 	db 0 ; no more evolutions
 	db 1, CONVERSION2
 	db 1, TACKLE

@@ -95,7 +95,11 @@ ItemEffects:
 	dw StatusHealingEffect ; BURNT_BERRY
 	dw StatusHealingEffect ; ICE_BERRY
 	dw NoEffect            ; POISON_BARB
+if DEF(_CRYSTALLEGENDS)
+	dw EvoStoneEffect      ; KINGS_ROCK
+else
 	dw NoEffect            ; KINGS_ROCK
+endc
 	dw BitterBerryEffect   ; BITTER_BERRY
 	dw StatusHealingEffect ; MINT_BERRY
 	dw NoEffect            ; RED_APRICORN
@@ -156,7 +160,11 @@ ItemEffects:
 	dw NoEffect            ; SCOPE_LENS
 	dw NoEffect            ; ITEM_8D
 	dw NoEffect            ; ITEM_8E
+if DEF(_CRYSTALLEGENDS)
+	dw EvoStoneEffect      ; METAL_COAT
+else
 	dw NoEffect            ; METAL_COAT
+endc
 	dw NoEffect            ; DRAGON_FANG
 	dw NoEffect            ; ITEM_91
 	dw NoEffect            ; LEFTOVERS
@@ -164,7 +172,11 @@ ItemEffects:
 	dw NoEffect            ; ITEM_94
 	dw NoEffect            ; ITEM_95
 	dw RestorePPEffect     ; MYSTERYBERRY
+if DEF(_CRYSTALLEGENDS)
+	dw EvoStoneEffect      ; DRAGON_SCALE
+else
 	dw NoEffect            ; DRAGON_SCALE
+endc
 	dw NoEffect            ; BERSERK_GENE
 	dw NoEffect            ; ITEM_99
 	dw NoEffect            ; ITEM_9A
@@ -185,7 +197,11 @@ ItemEffects:
 	dw EvoStoneEffect      ; SUN_STONE
 	dw NoEffect            ; POLKADOT_BOW
 	dw NoEffect            ; ITEM_AB
+if DEF(_CRYSTALLEGENDS)
+	dw EvoStoneEffect      ; UP_GRADE
+else
 	dw NoEffect            ; UP_GRADE
+endc
 	dw RestoreHPEffect     ; BERRY
 	dw RestoreHPEffect     ; GOLD_BERRY
 	dw SquirtbottleEffect  ; SQUIRTBOTTLE
