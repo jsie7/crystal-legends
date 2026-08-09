@@ -11,9 +11,15 @@ the exact upstream ROM variants and adds Crystal Legends as an isolated custom
 build. The v0.1 implementation includes legendary-bird starters, the matching
 Silver branches, Oak's third-bird handoff, and minimal title-screen branding.
 
-The v0.1 implementation and clean build/static checks are complete. Its
-three-starter emulator acceptance matrix is deliberately scheduled after the
-optional cheat/debug menu lands; it is not yet a playtest-certified release.
+The Phase 2 completion foundation adds the 251-species acquisition ledger,
+single-player replacements for all ten trade evolutions, renewable evolution
+items, and the post-League retryable Celebi event. The ordinary missing
+families are reserved for the Phase 9 Safari Zone, so the ledger assigns all
+251 paths without claiming all 251 are catchable yet.
+
+The v0.1 and Phase 2 implementations and clean build/static checks are complete.
+Their emulator acceptance matrices are deliberately scheduled after the
+optional cheat/debug menu lands; the project is not yet playtest-certified.
 
 Use sources in this order when they disagree:
 

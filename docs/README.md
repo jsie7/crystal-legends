@@ -6,14 +6,17 @@ guide.
 
 ## Current milestone
 
-Crystal Legends v0.1 is implementation-complete. The dedicated
-`make crystallegends` build, legendary-bird starter branch, Silver mapping,
-Oak handoff, and title branding are in place, and clean build/static/reference
-validation passes.
+Crystal Legends v0.1 and the Phase 2 completion foundation are
+implementation-complete. The dedicated build, legendary-bird starter branch,
+single-save acquisition ledger, ten single-player trade-evolution
+replacements, renewable evolution items, and post-League retryable Celebi path
+are in place. The five ordinary Crystal-missing families remain deliberately
+reserved for the Phase 9 Safari Zone rather than being added to Johto.
 
-The three-starter emulator acceptance matrix is intentionally deferred until
-the optional cheat/debug menu lands. Until that matrix runs, v0.1 is a clean
-implementation baseline, not a playtest-certified release. See
+The v0.1 and Phase 2 emulator acceptance matrices are intentionally deferred
+until the optional cheat/debug menu lands. Until those matrices run, the
+current milestone is a clean implementation baseline, not a playtest-certified
+release. See
 [workflows.md](workflows.md) for the validation boundary and
 [decisions.md](decisions.md) for the sequencing decision.
 

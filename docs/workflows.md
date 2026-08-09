@@ -37,9 +37,9 @@ assembly dependencies.
 7. Run `git status --short` and inspect the diff. Generated ROM, object, symbol,
    map, palette, tile, compression, and patch outputs must stay untracked.
 
-For the current Crystal Legends sequence, the v0.1 three-starter emulator
-matrix is scheduled after the optional cheat/debug menu lands. Continue to run
-the build and source checks below for every intervening change.
+For the current Crystal Legends sequence, the v0.1 and Phase 2 emulator
+matrices are scheduled after the optional cheat/debug menu lands. Continue to
+run the build and source checks below for every intervening change.
 
 ## Validate the Crystal Legends build
 
@@ -64,7 +64,32 @@ After the cheat/debug menu lands, run the deferred v0.1 emulator matrix with a
 fresh save for Articuno, Zapdos, and Moltres. Each branch must cover starter
 selection and reload, the Mr. Pokémon visit, Silver's mapped bird, Elm's
 third-bird handoff, the lab reload that removes the final ball, and progression
-through Falkner. Run the cheat-menu safety checks in the same pass.
+through Falkner.
+
+In the same pass, run the deferred Phase 2 matrix:
+
+1. Evolve Kadabra, Machoke, Graveler, and Haunter at level 36; confirm level 35
+   does not evolve them.
+2. Evolve Poliwhirl, Slowpoke, Onix, Scyther, Seadra, and Porygon by directly
+   using their canonical items. Confirm an incompatible target preserves the
+   item and a successful evolution consumes exactly one.
+3. Confirm King's Rock, Metal Coat, Dragon Scale, and Up-Grade can still be
+   given as held items, retain their stock held behavior, and can be purchased
+   repeatedly at Celadon Department Store 4F.
+4. Confirm Water Stone still produces Poliwrath, King's Rock produces Politoed,
+   level 37 still produces Slowbro, and King's Rock produces Slowking.
+5. Enter Goldenrod Pokémon Center before Hall of Fame and receive no GS Ball;
+   enter afterward and receive exactly one.
+6. With a full Key Items pocket, confirm no receipt/Kurt state advances, then
+   free a slot and receive the GS Ball normally.
+7. Complete Kurt's native handoff and waiting step. At the shrine, test a
+   knockout, escape where permitted, and box-full/non-capture result; reload
+   and confirm the GS Ball and shrine prompt return after each failure.
+8. Catch Celebi, save/reload, and confirm the shrine cannot create a duplicate.
+
+Run the cheat-menu safety checks alongside both deferred matrices. The five
+ordinary missing families have no Phase 2 encounter tests; they remain reserved
+for the Phase 9 Safari Zone.
 
 ## Verify the upstream baseline
 

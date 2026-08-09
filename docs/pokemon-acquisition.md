@@ -3,6 +3,9 @@
 This ledger is the canonical single-save acquisition inventory for Crystal
 Legends. It covers National Pokédex numbers 001 through 251 exactly once.
 
+The Phase 2 methods recorded below are implementation-complete but still await
+the deferred emulator matrix scheduled after the Phase 3 cheat/debug menu.
+
 `Existing` means the method is already present in the current Crystal Legends
 build. `Phase 2` identifies a method implemented by the completion-foundation
 milestone. `Reserved Phase N` identifies planned content that is not yet
