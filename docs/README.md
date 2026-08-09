@@ -24,6 +24,8 @@ implementation baseline, not a playtest-certified release. See
 - [Workflows](workflows.md): repeatable build and validation procedures.
 - [Decisions](decisions.md): durable technical and policy decisions for this
   fork.
+- [Pokémon acquisition ledger](pokemon-acquisition.md): canonical single-save
+  method, availability, renewability, and source for all 251 species.
 - [Published documentation index](index.md): the original pokecrystal subsystem
   and command-reference table of contents.
 

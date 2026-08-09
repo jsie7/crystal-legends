@@ -184,6 +184,7 @@ file for repository orientation.
   `design_flaws.md`.
 - Repository operations: `workflows.md`.
 - Durable fork decisions: `decisions.md`.
+- Single-save species availability: `pokemon-acquisition.md`.
 - Build setup and troubleshooting outside `docs/`: `INSTALL.md`, `FAQ.md`, and
   `STYLE.md`.
 
