@@ -834,7 +834,11 @@ AbraEvosAttacks:
 	db 0 ; no more level-up moves
 
 KadabraEvosAttacks:
+if DEF(_CRYSTALLEGENDS)
+	db EVOLVE_LEVEL, 36, ALAKAZAM
+else
 	db EVOLVE_TRADE, -1, ALAKAZAM
+endc
 	db 0 ; no more evolutions
 	db 1, TELEPORT
 	db 1, KINESIS
@@ -878,7 +882,11 @@ MachopEvosAttacks:
 	db 0 ; no more level-up moves
 
 MachokeEvosAttacks:
+if DEF(_CRYSTALLEGENDS)
+	db EVOLVE_LEVEL, 36, MACHAMP
+else
 	db EVOLVE_TRADE, -1, MACHAMP
+endc
 	db 0 ; no more evolutions
 	db 1, LOW_KICK
 	db 1, LEER
@@ -992,7 +1000,11 @@ GeodudeEvosAttacks:
 	db 0 ; no more level-up moves
 
 GravelerEvosAttacks:
+if DEF(_CRYSTALLEGENDS)
+	db EVOLVE_LEVEL, 36, GOLEM
+else
 	db EVOLVE_TRADE, -1, GOLEM
+endc
 	db 0 ; no more evolutions
 	db 1, TACKLE
 	db 1, DEFENSE_CURL
@@ -1246,7 +1258,11 @@ GastlyEvosAttacks:
 	db 0 ; no more level-up moves
 
 HaunterEvosAttacks:
+if DEF(_CRYSTALLEGENDS)
+	db EVOLVE_LEVEL, 36, GENGAR
+else
 	db EVOLVE_TRADE, -1, GENGAR
+endc
 	db 0 ; no more evolutions
 	db 1, HYPNOSIS
 	db 1, LICK
