@@ -1,0 +1,43 @@
+{
+  "branches": [
+    {
+      "id": "articuno",
+      "starter_slot": "LEFT",
+      "starter_script": "CyndaquilPokeBallScript",
+      "player": "ARTICUNO",
+      "choice_event": "EVENT_GOT_ARTICUNO_FROM_ELM",
+      "pokeball_event": "EVENT_ARTICUNO_POKEBALL_IN_ELMS_LAB",
+      "rival_path": "default",
+      "rival": "MOLTRES",
+      "rival_party": "RIVAL1_1_MOLTRES",
+      "oak": "ZAPDOS",
+      "oak_branch": "ElmArrangeThirdBirdTransferScript.OakMovesZapdos"
+    },
+    {
+      "id": "zapdos",
+      "starter_slot": "CENTER",
+      "starter_script": "TotodilePokeBallScript",
+      "player": "ZAPDOS",
+      "choice_event": "EVENT_GOT_ZAPDOS_FROM_ELM",
+      "pokeball_event": "EVENT_ZAPDOS_POKEBALL_IN_ELMS_LAB",
+      "rival_path": "second",
+      "rival": "ARTICUNO",
+      "rival_party": "RIVAL1_1_ARTICUNO",
+      "oak": "MOLTRES",
+      "oak_branch": "ElmArrangeThirdBirdTransferScript.OakMovesMoltres"
+    },
+    {
+      "id": "moltres",
+      "starter_slot": "RIGHT",
+      "starter_script": "ChikoritaPokeBallScript",
+      "player": "MOLTRES",
+      "choice_event": "EVENT_GOT_MOLTRES_FROM_ELM",
+      "pokeball_event": "EVENT_MOLTRES_POKEBALL_IN_ELMS_LAB",
+      "rival_path": "third",
+      "rival": "ZAPDOS",
+      "rival_party": "RIVAL1_1_ZAPDOS",
+      "oak": "ARTICUNO",
+      "oak_branch": "ElmArrangeThirdBirdTransferScript"
+    }
+  ]
+}

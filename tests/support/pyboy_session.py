@@ -98,16 +98,26 @@ class PyBoySession:
             self.pyboy.stop(False)
             self.stopped = True
 
-    def register_hook(self, label: str) -> None:
+    def register_hook(
+        self,
+        label: str,
+        callback: Callable[["PyBoySession"], None] | None = None,
+    ) -> None:
         if label in self._registered_hooks:
             return
         self.symbols[label]
 
-        def record_hook(context: tuple["PyBoySession", str]) -> None:
-            session, hook_label = context
+        def record_hook(
+            context: tuple[
+                "PyBoySession", str, Callable[["PyBoySession"], None] | None
+            ],
+        ) -> None:
+            session, hook_label, hook_callback = context
             session.hook_history.append(hook_label)
+            if hook_callback is not None:
+                hook_callback(session)
 
-        self.pyboy.hook_register(None, label, record_hook, (self, label))
+        self.pyboy.hook_register(None, label, record_hook, (self, label, callback))
         self._registered_hooks.add(label)
 
     def tick(self, count: int = 1, render: bool = False) -> None:
@@ -203,6 +213,19 @@ class PyBoySession:
         return bytes(
             self.pyboy.memory[symbol.address + offset] for offset in range(length)
         )
+
+    def write_symbol(self, label: str, value: int) -> None:
+        self.write_symbol_bytes(label, bytes([value]))
+
+    def write_symbol_bytes(self, label: str, data: bytes) -> None:
+        if not data:
+            raise ValueError("write data must not be empty")
+        symbol = self.symbols[label]
+        for offset, value in enumerate(data):
+            if symbol.domain in {"WRAM", "SRAM"} and symbol.bank:
+                self.pyboy.memory[symbol.bank, symbol.address + offset] = value
+            else:
+                self.pyboy.memory[symbol.address + offset] = value
 
     def read_symbol_u16(self, label: str) -> int:
         return int.from_bytes(self.read_symbol_bytes(label, 2), "little")

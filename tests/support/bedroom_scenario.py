@@ -3,7 +3,7 @@ from __future__ import annotations
 from contextlib import contextmanager
 from hashlib import sha256
 from pathlib import Path
-from typing import Iterator
+from typing import Callable, Iterator
 
 from tests.support.pyboy_session import PyBoySession, prepare_rom
 
@@ -20,7 +20,11 @@ def wait_for_idle(session: PyBoySession, max_frames: int) -> None:
     )
 
 
-def start_saved_game(session: PyBoySession, max_frames: int) -> None:
+def start_saved_game(
+    session: PyBoySession,
+    max_frames: int,
+    before_overworld: Callable[[PyBoySession], None] | None = None,
+) -> None:
     for label in (
         "TitleScreenMain",
         "MainMenu",
@@ -29,7 +33,9 @@ def start_saved_game(session: PyBoySession, max_frames: int) -> None:
         "FinishContinueFunction",
         "OverworldLoop",
     ):
-        session.register_hook(label)
+        session.register_hook(
+            label, before_overworld if label == "OverworldLoop" else None
+        )
     session.wait_for_hook("TitleScreenMain", max_frames)
     session.tap("start", 10, 10)
     session.wait_for_hook("MainMenu", max_frames)
