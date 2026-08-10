@@ -17,5 +17,14 @@ Run the source-only suite:
 make test-static
 ```
 
+Run the aggregate source/build/ROM gate:
+
+```bash
+make test-crystallegends
+```
+
+`make test-all` additionally runs the upstream reference comparison. Headless
+emulator profiles are added by the next harness slice.
+
 Test-created files must use pytest temporary directories or an ignored local
 artifact directory. Never mutate an approved fixture in place.
