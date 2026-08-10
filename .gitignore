@@ -39,5 +39,6 @@ tests/artifacts/
 *.sn*
 *.sa*
 *.sg1
+!tests/fixtures/saves/*.sav
 
 plan/

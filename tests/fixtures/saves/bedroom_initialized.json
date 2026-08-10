@@ -1,0 +1,45 @@
+{
+  "fixture_id": "bedroom_initialized",
+  "purpose": "Initialized pre-starter save positioned below the bedroom TV",
+  "source_commit": "0e5e56929646a583f84e3e7d12b6713adc593ccc",
+  "rom_sha256": "7c47f8352e3f4ca17a48857d8da4a03ffdd0e81ca88be63215e22b72a9acb55b",
+  "save_sha256": "f55e727dea5ace073e31183ad80efab4c953c3990c651935160607dbdc3bf6b7",
+  "player": {
+    "name": "CHRIS",
+    "gender": "BOY",
+    "clock": {
+      "day": 0,
+      "hour": 10,
+      "minute": 0,
+      "second": 0
+    }
+  },
+  "start": {
+    "map": "PLAYERS_HOUSE_2F",
+    "x": 4,
+    "y": 2,
+    "facing": "UP",
+    "progression": "New Game initialized; starter not chosen"
+  },
+  "expected": {
+    "johto_badges": 0,
+    "kanto_badges": 0,
+    "party_count": 0,
+    "current_box": 0,
+    "bag_item_count": 0,
+    "key_item_count": 0,
+    "ball_count": 0,
+    "money": 3000,
+    "pokedex_obtained": false,
+    "temporary_tv_sequence": false
+  },
+  "creation_procedure": [
+    "Boot crystallegends.gbc in PyBoy 2.6.0 with an empty battery save.",
+    "Choose New Game, Boy, the default 10:00 clock, and the preset name CHRIS.",
+    "Complete Professor Oak's introduction without changing gameplay state.",
+    "Walk from the bedroom spawn at (3,3) to (4,2) and face up.",
+    "Use the in-game Start menu Save command and accept the confirmation.",
+    "Persist PyBoy battery RAM only after _SaveGameData and SavedTheGame execute."
+  ],
+  "last_successful_validation": "2026-08-10"
+}

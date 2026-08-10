@@ -33,3 +33,10 @@ the boot smoke and fixture-load scenarios pass.
 
 Test-created files must use pytest temporary directories or an ignored local
 artifact directory. Never mutate an approved fixture in place.
+
+The approved `tests/fixtures/saves/bedroom_initialized.sav` fixture was created
+through New Game and the in-game Save command. Its adjacent JSON records the
+source revision, ROM and save hashes, deterministic player data, expected empty
+progression state, and reproduction procedure. Runtime tests copy it beside a
+temporary ROM before boot and verify that the canonical file's hash is
+unchanged afterward.

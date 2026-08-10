@@ -1,0 +1,29 @@
+{
+  "scenario_id": "phase_03_bedroom_tv_cheat_mode",
+  "phase": 3,
+  "save_fixture": "bedroom_initialized.sav",
+  "rom": "crystallegends.gbc",
+  "symbols": "crystallegends.sym",
+  "start": {
+    "map": "PLAYERS_HOUSE_2F",
+    "x": 4,
+    "y": 2,
+    "facing": "UP"
+  },
+  "sequence_event": "EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2",
+  "expected_scripts": {
+    "first_inspection": "PlayersHouse2FDebugTVScript",
+    "second_inspection": "PlayersHouse2FDebugTVScript.OpenCheatMode",
+    "other_interaction": "PlayersHouseBookshelfScript"
+  },
+  "reference_negative": {
+    "rom": "pokecrystal11.gbc",
+    "symbols": "pokecrystal11.sym",
+    "expected_script": "TVScript",
+    "forbidden_symbols": [
+      "PlayersHouse2FTVScript",
+      "PlayersHouse2FDebugTVScript"
+    ]
+  },
+  "max_frames_per_step": 6000
+}

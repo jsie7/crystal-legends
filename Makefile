@@ -143,7 +143,7 @@ test-rom: crystallegends pokecrystal11.gbc
 test-emulator-smoke: crystallegends
 	$(PYTEST) -m "emulator and smoke"
 
-test-emulator: crystallegends
+test-emulator: crystallegends pokecrystal11.gbc
 	$(PYTEST) -m emulator
 
 test-crystallegends:
