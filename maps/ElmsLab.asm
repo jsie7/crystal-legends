@@ -369,7 +369,17 @@ ElmAfterTheftDoneScript:
 	end
 
 ElmAfterTheftScript:
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_OAK_MOVED_THIRD_BIRD
+	iftrue .AskAboutDiscovery
+	writetext ElmAfterTheftReactionText
+	promptbutton
+	scall ElmArrangeThirdBirdTransferScript
+.AskAboutDiscovery:
+	writetext ElmAfterTheftDiscoveryText
+else
 	writetext ElmAfterTheftText1
+endc
 	checkitem MYSTERY_EGG
 	iffalse ElmAfterTheftDoneScript
 	promptbutton
@@ -382,9 +392,6 @@ ElmAfterTheftScript:
 	scall ElmJumpBackScript2
 	writetext ElmAfterTheftText4
 	promptbutton
-if DEF(_CRYSTALLEGENDS)
-	scall ElmArrangeThirdBirdTransferScript
-endc
 	writetext ElmAfterTheftText5
 	promptbutton
 	setevent EVENT_GAVE_MYSTERY_EGG_TO_ELM
@@ -1112,6 +1119,19 @@ ElmsLabHealingMachineText2:
 	text "Would you like to"
 	line "heal your #MON?"
 	done
+
+if DEF(_CRYSTALLEGENDS)
+ElmAfterTheftReactionText:
+	text "ELM: <PLAY_G>, this"
+	line "is terrible…"
+	done
+
+ElmAfterTheftDiscoveryText:
+	text "Oh, yes, what was"
+	line "MR.#MON's big"
+	cont "discovery?"
+	done
+endc
 
 ElmAfterTheftText1:
 	text "ELM: <PLAY_G>, this"
