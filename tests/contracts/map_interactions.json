@@ -1,0 +1,12 @@
+[
+  {
+    "contract_id": "players-bedroom-tv",
+    "map_name": "PLAYERS_HOUSE_2F",
+    "coordinate": [4, 1],
+    "collision": "COLL_TV",
+    "event_type": "bg_event",
+    "event_direction": "BGEVENT_UP",
+    "script": "PlayersHouse2FTVScript",
+    "variant": "crystallegends"
+  }
+]

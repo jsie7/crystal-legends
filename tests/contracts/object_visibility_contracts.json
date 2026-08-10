@@ -1,0 +1,37 @@
+[
+  {
+    "map_name": "GOLDENROD_CITY",
+    "declared_objects": 15,
+    "reason": "Objects are spread across the 40x36-tile city and civilian, takeover, and move-tutor flags prevent all story groups from being active together."
+  },
+  {
+    "map_name": "NATIONAL_PARK",
+    "declared_objects": 14,
+    "reason": "Objects are distributed across the 40x54-tile park, beyond one active-object viewport."
+  },
+  {
+    "map_name": "ROUTE_32",
+    "declared_objects": 14,
+    "reason": "Objects are distributed across the 40x90-tile route, beyond one active-object viewport."
+  },
+  {
+    "map_name": "ROUTE_34",
+    "declared_objects": 13,
+    "reason": "Objects are distributed across the 40x54-tile route and daycare objects have independent visibility flags."
+  },
+  {
+    "map_name": "ROUTE_45",
+    "declared_objects": 13,
+    "reason": "Objects are distributed across the 20x90-tile route, beyond one active-object viewport."
+  },
+  {
+    "map_name": "TEAM_ROCKET_BASE_B2F",
+    "declared_objects": 14,
+    "reason": "Executive, Lance, Electrode, and population records are controlled by mutually exclusive story-state event flags."
+  },
+  {
+    "map_name": "TEAM_ROCKET_BASE_B3F",
+    "declared_objects": 14,
+    "reason": "Lance, executive, rival, population, and item records are controlled by progression and collected-item flags."
+  }
+]
