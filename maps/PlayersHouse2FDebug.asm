@@ -20,9 +20,51 @@ PlayersHouse2FDebugTVScript:
 	verticalmenu
 	closewindow
 	ifequal 1, .SuppliesMenu
-	ifequal 2, .Exit
-	ifequal 3, .Exit
+	ifequal 2, .Money
+	ifequal 3, .PokemonMenu
 	sjump .Exit
+
+.Money:
+	givemoney YOUR_MONEY, 100000
+	writetext PlayersHouse2FDebugMoneyText
+	waitbutton
+	sjump .MainMenu
+
+.PokemonMenu:
+	loadmenu PlayersHouse2FDebugPokemonMenuHeader
+	verticalmenu
+	closewindow
+	ifequal 1, .GiveEevee
+	ifequal 2, .GiveDratini
+	ifequal 3, .GiveLarvitar
+	ifequal 4, .GivePorygon
+	sjump .MainMenu
+
+.GiveEevee:
+	givepoke EEVEE, 5
+	sjump .CheckPokemonGift
+
+.GiveDratini:
+	givepoke DRATINI, 5
+	sjump .CheckPokemonGift
+
+.GiveLarvitar:
+	givepoke LARVITAR, 5
+	sjump .CheckPokemonGift
+
+.GivePorygon:
+	givepoke PORYGON, 5
+
+.CheckPokemonGift:
+	ifequal 2, .PokemonStorageFull
+	closetext
+	end
+
+.PokemonStorageFull:
+	writetext PlayersHouse2FDebugPokemonStorageFullText
+	waitbutton
+	closetext
+	end
 
 .SuppliesMenu:
 	loadmenu PlayersHouse2FDebugSuppliesMenuHeader
@@ -243,6 +285,21 @@ PlayersHouse2FDebugTradeItemsMenuHeader:
 	db "UP-GRADE x10@"
 	db "BACK@"
 
+PlayersHouse2FDebugPokemonMenuHeader:
+	db MENU_BACKUP_TILES ; flags
+	menu_coords 5, 2, SCREEN_WIDTH - 1, 14
+	dw .MenuData
+	db 1 ; default option
+
+.MenuData:
+	db STATICMENU_CURSOR | STATICMENU_WRAP ; flags
+	db 5 ; items
+	db "EEVEE@"
+	db "DRATINI@"
+	db "LARVITAR@"
+	db "PORYGON@"
+	db "BACK@"
+
 PlayersHouse2FDebugNintendo64Text:
 	text "It's a NINTENDO 64"
 	line "connected to a TV."
@@ -254,4 +311,14 @@ PlayersHouse2FDebugWarningText:
 	cont "#MON."
 
 	para "Continue?"
+	done
+
+PlayersHouse2FDebugMoneyText:
+	text "Added ¥100000."
+	done
+
+PlayersHouse2FDebugPokemonStorageFullText:
+	text "Your party and"
+	line "current BOX are"
+	cont "both full."
 	done
