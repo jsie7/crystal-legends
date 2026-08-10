@@ -94,7 +94,7 @@ for the Phase 9 Safari Zone.
 ## Exercise CHEAT MODE safely
 
 Use a Crystal Legends ROM and a disposable or backed-up save. In the player's
-bedroom, inspect either half of the TV twice consecutively. The first inspection
+bedroom, inspect the TV twice consecutively. The first inspection
 must say that a Nintendo 64 is connected to the TV; the second must show the
 CHEAT MODE warning. Declining, exiting, another bedroom interaction, or a map
 reload must restart the sequence without changing saved state.

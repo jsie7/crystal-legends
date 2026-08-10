@@ -55,7 +55,7 @@ deferred matrices have passed.
 ## 2026-08-10 — Keep CHEAT MODE temporary and story-safe
 
 Crystal Legends exposes its optional CHEAT MODE through two consecutive
-inspections of either half of the player's bedroom TV. The first inspection
+inspections of the player's bedroom TV. The first inspection
 describes a Nintendo 64 connected to the TV; the second clears the sequence,
 shows a warning, and requires explicit confirmation. Any other bedroom
 interaction or map reload clears the partial sequence. The sequence uses only

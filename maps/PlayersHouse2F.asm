@@ -165,8 +165,7 @@ PlayersHouse2F_MapEvents:
 	bg_event  5,  1, BGEVENT_READ, PlayersHouseBookshelfScript
 	bg_event  6,  0, BGEVENT_IFSET, PlayersHousePosterScript
 	if DEF(_CRYSTALLEGENDS)
-		bg_event  8,  3, BGEVENT_UP, PlayersHouse2FTVScript
-		bg_event  9,  3, BGEVENT_UP, PlayersHouse2FTVScript
+		bg_event  4,  1, BGEVENT_UP, PlayersHouse2FTVScript
 	endc
 
 	def_object_events
