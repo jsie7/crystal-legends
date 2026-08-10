@@ -50,3 +50,9 @@ Hall-of-Fame through Celebi state machine. Manual acceptance remains the source
 of truth for evolution and capture animation quality, item-menu wording and
 feel, held-item effects during representative battles, Celebi presentation,
 and long-form progression or balance.
+
+The Phase 3 profile exhaustively drives the current CHEAT MODE action allowlist,
+both Back mechanisms, pocket and storage capacity, money saturation, duplicate
+gifts, story-state isolation, and native save/reload persistence. The retained
+user-run manual pass remains separate evidence for text/layout quality, cursor
+feel, music and graphics cleanup, and bedroom-PC or decoration presentation.

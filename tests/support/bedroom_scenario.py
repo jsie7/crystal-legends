@@ -5,6 +5,7 @@ from hashlib import sha256
 from pathlib import Path
 from typing import Callable, Iterator
 
+from tests.support.game_state import read_inventory
 from tests.support.pyboy_session import PyBoySession, prepare_rom
 
 
@@ -293,3 +294,153 @@ def grant_cheat_pokemon(
         session.tap("b", 10, 10)
     _drain_text_to_idle(session, max_frames, handled_prompts, handled_waits)
     return session.read_symbol("wScriptVar")
+
+
+def _select_vertical_menu_index(
+    session: PyBoySession,
+    index: int,
+    max_frames: int,
+    *,
+    expect_another_menu: bool,
+) -> None:
+    if index < 1:
+        raise ValueError("vertical menu indices are one-based")
+    next_menu = session.hook_history.count("VerticalMenu") + 1
+    session.tick(20)
+    for _ in range(index - 1):
+        session.tap("down", 10, 10)
+    session.tap("a", 10, 10)
+    if expect_another_menu:
+        session.wait_for_hook_count("VerticalMenu", next_menu, max_frames)
+
+
+def _close_nested_cheat_menus(
+    session: PyBoySession, menu_depth: int, max_frames: int
+) -> None:
+    for _ in range(menu_depth):
+        next_menu = session.hook_history.count("VerticalMenu") + 1
+        session.tap("b", 10, 10)
+        session.wait_for_hook_count("VerticalMenu", next_menu, max_frames)
+    session.tap("b", 10, 10)
+    wait_for_idle(session, max_frames)
+
+
+def grant_cheat_item(
+    session: PyBoySession,
+    scenario: dict,
+    event_number: int,
+    item: int,
+    pocket: str,
+    menu_path: list[int],
+) -> tuple[int, int]:
+    if pocket not in {"items", "balls"}:
+        raise ValueError(f"unsupported CHEAT MODE pocket {pocket}")
+    if not menu_path or len(menu_path) > 2:
+        raise ValueError("CHEAT MODE item path must identify one or two menus")
+    max_frames = scenario["max_frames_per_step"]
+    inspect_tv_once(session, scenario, event_number)
+    open_cheat_mode(session, scenario, event_number)
+
+    _select_vertical_menu_index(
+        session, 1, max_frames, expect_another_menu=True
+    )
+    if len(menu_path) == 2:
+        _select_vertical_menu_index(
+            session, menu_path[0], max_frames, expect_another_menu=True
+        )
+        action_index = menu_path[1]
+    else:
+        action_index = menu_path[0]
+
+    inventory = read_inventory(session)
+    entries = inventory.items if pocket == "items" else inventory.balls
+    before = sum(quantity for candidate, quantity in entries if candidate == item)
+    returned_menu = session.hook_history.count("VerticalMenu") + 1
+    _select_vertical_menu_index(
+        session, action_index, max_frames, expect_another_menu=False
+    )
+    _advance_with_a_until_menu(session, returned_menu, max_frames)
+    inventory = read_inventory(session)
+    entries = inventory.items if pocket == "items" else inventory.balls
+    after = sum(quantity for candidate, quantity in entries if candidate == item)
+    _close_nested_cheat_menus(session, len(menu_path), max_frames)
+    return before, after
+
+
+def _advance_with_a_until_menu(
+    session: PyBoySession, expected_menu_count: int, max_frames: int
+) -> None:
+    start = session.frames
+    while (
+        session.hook_history.count("VerticalMenu") < expected_menu_count
+        and session.frames - start < max_frames
+    ):
+        session.tap("a", 10, 10)
+    session.wait_for_hook_count("VerticalMenu", expected_menu_count, 1)
+
+
+def grant_cheat_money(
+    session: PyBoySession,
+    scenario: dict,
+    event_number: int,
+) -> tuple[int, int]:
+    max_frames = scenario["max_frames_per_step"]
+    inspect_tv_once(session, scenario, event_number)
+    open_cheat_mode(session, scenario, event_number)
+    before = int.from_bytes(session.read_symbol_bytes("wMoney", 3), "big")
+    returned_menu = session.hook_history.count("VerticalMenu") + 1
+    _select_vertical_menu_index(session, 2, max_frames, expect_another_menu=False)
+    _advance_with_a_until_menu(session, returned_menu, max_frames)
+    after = int.from_bytes(session.read_symbol_bytes("wMoney", 3), "big")
+    session.tap("b", 10, 10)
+    wait_for_idle(session, max_frames)
+    return before, after
+
+
+def story_snapshot(session: PyBoySession) -> bytes:
+    inventory = read_inventory(session)
+    return b"".join(
+        (
+            session.read_symbol_bytes("wStatusFlags", 2),
+            session.read_symbol_bytes("wMomsMoney", 3),
+            session.read_symbol_bytes("wJohtoBadges", 2),
+            session.read_symbol_range("wEventFlags", "wBoxNames"),
+            bytes(inventory.key_items),
+        )
+    )
+
+
+def save_game_from_overworld(session: PyBoySession, max_frames: int) -> None:
+    session.register_hook("StartMenu")
+    session.register_hook("StartMenu.loop")
+    session.register_hook("SaveMenu")
+    session.register_hook("_SaveGameData")
+    session.write_symbol("wBattleMenuCursorPosition", 1)
+    session.tap("start", 10, 10)
+    session.wait_for_hook("StartMenu.loop", max_frames)
+    for _ in range(3):
+        session.tap("up", 10, 10)
+    session.tap("a", 10, 10)
+    session.wait_for_hook("SaveMenu", max_frames)
+    start = session.frames
+    while (
+        "_SaveGameData" not in session.hook_history
+        and session.frames - start < max_frames
+    ):
+        session.tap("a", 10, 10)
+    session.wait_for_hook("_SaveGameData", 1)
+    start = session.frames
+    while session.read_symbol("wScriptMode") != 0 and session.frames - start < max_frames:
+        session.tap("a", 10, 10)
+    wait_for_idle(session, 1)
+
+
+def dump_battery_ram(session: PyBoySession, destination: Path) -> Path:
+    data = bytes(
+        session.pyboy.memory[bank, address]
+        for bank in range(4)
+        for address in range(0xA000, 0xC000)
+    )
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_bytes(data)
+    return destination

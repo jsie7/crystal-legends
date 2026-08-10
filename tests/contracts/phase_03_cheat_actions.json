@@ -1,0 +1,29 @@
+{
+  "items": [
+    {"item": "RARE_CANDY", "pocket": "items", "menu_path": [1], "script": "RareCandy"},
+    {"item": "MASTER_BALL", "pocket": "balls", "menu_path": [2, 1], "script": "MasterBall"},
+    {"item": "ULTRA_BALL", "pocket": "balls", "menu_path": [2, 2], "script": "UltraBall"},
+    {"item": "FULL_RESTORE", "pocket": "items", "menu_path": [3, 1], "script": "FullRestore"},
+    {"item": "MAX_REVIVE", "pocket": "items", "menu_path": [3, 2], "script": "MaxRevive"},
+    {"item": "MAX_ELIXER", "pocket": "items", "menu_path": [3, 3], "script": "MaxElixer"},
+    {"item": "MAX_REPEL", "pocket": "items", "menu_path": [3, 4], "script": "MaxRepel"},
+    {"item": "ESCAPE_ROPE", "pocket": "items", "menu_path": [3, 5], "script": "EscapeRope"},
+    {"item": "MOON_STONE", "pocket": "items", "menu_path": [4, 1], "script": "MoonStone"},
+    {"item": "FIRE_STONE", "pocket": "items", "menu_path": [4, 2], "script": "FireStone"},
+    {"item": "THUNDERSTONE", "pocket": "items", "menu_path": [4, 3], "script": "Thunderstone"},
+    {"item": "WATER_STONE", "pocket": "items", "menu_path": [4, 4], "script": "WaterStone"},
+    {"item": "LEAF_STONE", "pocket": "items", "menu_path": [4, 5], "script": "LeafStone"},
+    {"item": "SUN_STONE", "pocket": "items", "menu_path": [4, 6], "script": "SunStone"},
+    {"item": "KINGS_ROCK", "pocket": "items", "menu_path": [5, 1], "script": "KingsRock"},
+    {"item": "METAL_COAT", "pocket": "items", "menu_path": [5, 2], "script": "MetalCoat"},
+    {"item": "DRAGON_SCALE", "pocket": "items", "menu_path": [5, 3], "script": "DragonScale"},
+    {"item": "UP_GRADE", "pocket": "items", "menu_path": [5, 4], "script": "UpGrade"}
+  ],
+  "money": {"amount": 100000, "main_menu_index": 2},
+  "pokemon": [
+    {"species": "EEVEE", "level": 5, "menu_index": 1, "script": "GiveEevee"},
+    {"species": "DRATINI", "level": 5, "menu_index": 2, "script": "GiveDratini"},
+    {"species": "LARVITAR", "level": 5, "menu_index": 3, "script": "GiveLarvitar"},
+    {"species": "PORYGON", "level": 5, "menu_index": 4, "script": "GivePorygon"}
+  ]
+}
