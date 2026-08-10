@@ -30,6 +30,7 @@ gfx/pokemon/*/frames.asm
 *.pyc
 *$py.class
 .uv-cache/
+tests/artifacts/
 
 # save game files
 *.sgm

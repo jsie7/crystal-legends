@@ -79,6 +79,8 @@ PYTEST := UV_CACHE_DIR=$(UV_CACHE_DIR) $(UV) run --frozen --group test pytest
 	compare \
 	test-all \
 	test-crystallegends \
+	test-emulator \
+	test-emulator-smoke \
 	test-rom \
 	test-static \
 	tools
@@ -137,6 +139,12 @@ test-static:
 
 test-rom: crystallegends pokecrystal11.gbc
 	$(PYTEST) -m rom
+
+test-emulator-smoke: crystallegends
+	$(PYTEST) -m "emulator and smoke"
+
+test-emulator: crystallegends
+	$(PYTEST) -m emulator
 
 test-crystallegends:
 	UV_CACHE_DIR=$(UV_CACHE_DIR) $(UV) run --frozen --group test python tests/run_local_gate.py crystallegends

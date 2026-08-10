@@ -10,11 +10,13 @@ PROFILES = {
         ["make", "test-static"],
         ["make", "crystallegends"],
         ["make", "test-rom"],
+        ["make", "test-emulator-smoke"],
     ],
     "all": [
         ["make", "test-static"],
         ["make", "crystallegends"],
         ["make", "test-rom"],
+        ["make", "test-emulator"],
         ["make", "compare"],
     ],
 }

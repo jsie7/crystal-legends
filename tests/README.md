@@ -23,8 +23,13 @@ Run the aggregate source/build/ROM gate:
 make test-crystallegends
 ```
 
-`make test-all` additionally runs the upstream reference comparison. Headless
-emulator profiles are added by the next harness slice.
+`make test-crystallegends` includes the short headless emulator smoke profile.
+`make test-all` additionally runs every implemented emulator scenario and the
+upstream reference comparison.
+
+The headless profile uses the test-only PyBoy 2.6.0 dependency under the LGPL;
+it is not linked into or distributed with the ROM. Update its lock only after
+the boot smoke and fixture-load scenarios pass.
 
 Test-created files must use pytest temporary directories or an ignored local
 artifact directory. Never mutate an approved fixture in place.

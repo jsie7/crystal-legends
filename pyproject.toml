@@ -7,6 +7,7 @@ dependencies = []
 
 [dependency-groups]
 test = [
+    "pyboy==2.6.0",
     "pytest==8.4.2",
 ]
 
@@ -17,6 +18,9 @@ package = false
 minversion = "8.4"
 testpaths = ["tests"]
 addopts = ["--strict-markers", "--strict-config"]
+filterwarnings = [
+    "ignore:Using SDL2 binaries from pysdl2-dll.*:UserWarning",
+]
 markers = [
     "static: source and checked-in data validation that requires no ROM",
     "rom: compiled Crystal Legends ROM contract validation",
