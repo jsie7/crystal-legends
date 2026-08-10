@@ -187,7 +187,7 @@ class PyBoySession:
 
     def read_symbol(self, label: str) -> int:
         symbol = self.symbols[label]
-        if symbol.domain == "WRAM" and symbol.bank:
+        if symbol.domain in {"WRAM", "SRAM"} and symbol.bank:
             return self.pyboy.memory[symbol.bank, symbol.address]
         return self.pyboy.memory[symbol.address]
 
@@ -195,7 +195,7 @@ class PyBoySession:
         if length < 1:
             raise ValueError("read length must be positive")
         symbol = self.symbols[label]
-        if symbol.domain == "WRAM" and symbol.bank:
+        if symbol.domain in {"WRAM", "SRAM"} and symbol.bank:
             return bytes(
                 self.pyboy.memory[symbol.bank, symbol.address + offset]
                 for offset in range(length)
