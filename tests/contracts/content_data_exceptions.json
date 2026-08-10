@@ -1,0 +1,9 @@
+{
+  "unsorted_learnsets": [
+    {
+      "exception_id": "inherited-muk-learnset-order",
+      "species": "Muk",
+      "reason": "The upstream Generation II Muk learnset is intentionally stored out of level order and is explicitly annotated in source."
+    }
+  ]
+}

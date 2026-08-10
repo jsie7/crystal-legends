@@ -1,0 +1,12 @@
+[
+  {"source": "Kadabra", "method": "EVOLVE_LEVEL", "condition": "36", "target": "ALAKAZAM"},
+  {"source": "Machoke", "method": "EVOLVE_LEVEL", "condition": "36", "target": "MACHAMP"},
+  {"source": "Graveler", "method": "EVOLVE_LEVEL", "condition": "36", "target": "GOLEM"},
+  {"source": "Haunter", "method": "EVOLVE_LEVEL", "condition": "36", "target": "GENGAR"},
+  {"source": "Poliwhirl", "method": "EVOLVE_ITEM", "condition": "KINGS_ROCK", "target": "POLITOED"},
+  {"source": "Slowpoke", "method": "EVOLVE_ITEM", "condition": "KINGS_ROCK", "target": "SLOWKING"},
+  {"source": "Onix", "method": "EVOLVE_ITEM", "condition": "METAL_COAT", "target": "STEELIX"},
+  {"source": "Scyther", "method": "EVOLVE_ITEM", "condition": "METAL_COAT", "target": "SCIZOR"},
+  {"source": "Seadra", "method": "EVOLVE_ITEM", "condition": "DRAGON_SCALE", "target": "KINGDRA"},
+  {"source": "Porygon", "method": "EVOLVE_ITEM", "condition": "UP_GRADE", "target": "PORYGON2"}
+]
