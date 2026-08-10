@@ -1,0 +1,38 @@
+[project]
+name = "crystal-legends-tests"
+version = "0.0.0"
+description = "Local automated validation tooling for Crystal Legends"
+requires-python = ">=3.9"
+dependencies = []
+
+[dependency-groups]
+test = [
+    "pytest==8.4.2",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+minversion = "8.4"
+testpaths = ["tests"]
+addopts = ["--strict-markers", "--strict-config"]
+markers = [
+    "static: source and checked-in data validation that requires no ROM",
+    "rom: compiled Crystal Legends ROM contract validation",
+    "emulator: headless runtime scenario",
+    "smoke: short critical-path validation",
+    "slow: validation excluded from the focused developer loop",
+    "phase2: Phase 2 completion-foundation regression coverage",
+    "phase3: Phase 3 CHEAT MODE regression coverage",
+    "phase4: Phase 4 Johto starter gift coverage",
+    "phase5: Phase 5 fossil coverage",
+    "phase6: Phase 6 roamer coverage",
+    "phase7: Phase 7 Project Mew coverage",
+    "phase8: Phase 8 Silver bird coverage",
+    "phase9: Phase 9 Safari and acquisition coverage",
+    "phase10: Phase 10 Cerulean Cave and Giovanni coverage",
+    "phase11: Phase 11 completion-gate coverage",
+    "phase12: Phase 12 trainer and balance-data coverage",
+    "phase13: Phase 13 presentation and hardening coverage",
+]

@@ -54,6 +54,9 @@ RGBLINKFLAGS ?= -Weverything -Wtruncation=1
 RGBFIXFLAGS  ?= -Weverything
 RGBGFXFLAGS  ?= -Weverything
 
+UV ?= uv
+PYTEST := $(UV) run --frozen --group test pytest
+
 
 ### Build targets
 
@@ -73,6 +76,7 @@ RGBGFXFLAGS  ?= -Weverything
 	clean \
 	tidy \
 	compare \
+	test-static \
 	tools
 
 all: crystal
@@ -123,6 +127,9 @@ tidy:
 
 compare: $(roms) $(patches)
 	@$(SHA1) -c roms.sha1
+
+test-static:
+	$(PYTEST) -m static
 
 tools:
 	$(MAKE) -C tools/
