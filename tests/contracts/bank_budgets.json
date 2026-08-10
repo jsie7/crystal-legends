@@ -1,0 +1,7 @@
+[
+  {"domain": "ROM0", "bank": 0, "minimum_free": 256, "reason": "Keep a small reviewed ROM0 reserve below the clean baseline of $0121 free."},
+  {"domain": "ROMX", "bank": 30, "minimum_free": 1536, "reason": "Protect Map Scripts 9, including PlayersHouse2F, below the clean baseline of $07f1 free."},
+  {"domain": "ROMX", "bank": 108, "minimum_free": 6144, "reason": "Protect Map Scripts 25 and CHEAT MODE below the clean baseline of $1b74 free."},
+  {"domain": "WRAM0", "bank": 0, "minimum_free": 32, "reason": "Keep a minimum reserve below the clean baseline of $0035 free."},
+  {"domain": "HRAM", "bank": 0, "minimum_free": 0, "reason": "HRAM is exactly full in the approved baseline; any overflow still fails the linker."}
+]

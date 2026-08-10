@@ -1,0 +1,22 @@
+[
+  {"label": "wPlayerData", "bank": 1, "address": 54395, "end_label": "wPlayerDataEnd", "size": 2090},
+  {"label": "wEventFlags", "bank": 1, "address": 55922, "end_label": "wCurBox", "size": 256},
+  {"label": "wTMsHMs", "bank": 1, "address": 55385, "end_label": "wNumItems", "size": 57},
+  {"label": "wNumItems", "bank": 1, "address": 55442, "end_label": "wNumKeyItems", "size": 42},
+  {"label": "wNumKeyItems", "bank": 1, "address": 55484, "end_label": "wNumBalls", "size": 27},
+  {"label": "wNumBalls", "bank": 1, "address": 55511, "end_label": "wNumPCItems", "size": 26},
+  {"label": "wCurMapData", "bank": 1, "address": 56485, "end_label": "wCurMapDataEnd", "size": 50},
+  {"label": "wPokemonData", "bank": 1, "address": 56535, "end_label": "wPokemonDataEnd", "size": 798},
+  {"label": "wPokedexCaught", "bank": 1, "address": 56985, "end_label": "wEndPokedexCaught", "size": 32},
+  {"label": "wPokedexSeen", "bank": 1, "address": 57017, "end_label": "wEndPokedexSeen", "size": 32},
+  {"label": "wRoamMon1", "bank": 1, "address": 57295, "end_label": "wRoamMons_CurMapNumber", "size": 21},
+  {"label": "sOptions", "bank": 1, "address": 40960, "end_label": "sCheckValue1", "size": 8},
+  {"label": "sPlayerData", "bank": 1, "address": 40969, "end_label": "sCurMapData", "size": 2090},
+  {"label": "sCurMapData", "bank": 1, "address": 43059, "end_label": "sPokemonData", "size": 50},
+  {"label": "sPokemonData", "bank": 1, "address": 43109, "end_label": "sGameDataEnd", "size": 798},
+  {"label": "sBox", "bank": 1, "address": 44304, "end_label": "sLinkBattleStats", "size": 1360},
+  {"label": "sBox1", "bank": 2, "address": 40960, "end_label": "sBox2", "size": 1104},
+  {"label": "sBox7", "bank": 2, "address": 47584, "size": 1104, "size_expression": "BOX_LENGTH"},
+  {"label": "sBox8", "bank": 3, "address": 40960, "end_label": "sBox9", "size": 1104},
+  {"label": "sBox14", "bank": 3, "address": 47584, "size": 1104, "size_expression": "BOX_LENGTH"}
+]

@@ -77,6 +77,7 @@ PYTEST := UV_CACHE_DIR=$(UV_CACHE_DIR) $(UV) run --frozen --group test pytest
 	clean \
 	tidy \
 	compare \
+	test-rom \
 	test-static \
 	tools
 
@@ -131,6 +132,9 @@ compare: $(roms) $(patches)
 
 test-static:
 	$(PYTEST) -m static
+
+test-rom: crystallegends pokecrystal11.gbc
+	$(PYTEST) -m rom
 
 tools:
 	$(MAKE) -C tools/
