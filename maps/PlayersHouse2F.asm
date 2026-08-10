@@ -57,9 +57,15 @@ PlayersHouseGameConsoleScript:
 
 PlayersHousePosterScript:
 	if DEF(_CRYSTALLEGENDS)
-		scall PlayersHouse2FClearCheatModeSequence
+		conditional_event EVENT_PLAYERS_ROOM_POSTER, .CrystalLegendsScript
+	else
+		conditional_event EVENT_PLAYERS_ROOM_POSTER, .Script
 	endc
-	conditional_event EVENT_PLAYERS_ROOM_POSTER, .Script
+
+if DEF(_CRYSTALLEGENDS)
+.CrystalLegendsScript:
+	scall PlayersHouse2FClearCheatModeSequence
+endc
 
 .Script:
 	describedecoration DECODESC_POSTER
