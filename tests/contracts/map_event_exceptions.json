@@ -1,0 +1,11 @@
+[
+  {
+    "exception_id": "goldenrod-link-receptionist-staging",
+    "map_name": "GOLDENROD_POKECENTER_1F",
+    "event_type": "object_event",
+    "x": 16,
+    "y": 8,
+    "identity": "ObjectEvent",
+    "reason": "The hidden receptionist is staged outside the map before the GS Ball scene moves her into view."
+  }
+]

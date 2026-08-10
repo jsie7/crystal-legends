@@ -55,7 +55,8 @@ RGBFIXFLAGS  ?= -Weverything
 RGBGFXFLAGS  ?= -Weverything
 
 UV ?= uv
-PYTEST := $(UV) run --frozen --group test pytest
+UV_CACHE_DIR ?= .uv-cache
+PYTEST := UV_CACHE_DIR=$(UV_CACHE_DIR) $(UV) run --frozen --group test pytest
 
 
 ### Build targets
