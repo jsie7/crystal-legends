@@ -51,3 +51,23 @@ the v0.1, Phase 2, and cheat-menu acceptance checks together.
 Build and source-level validation are still required while work continues.
 Do not describe v0.1 or Phase 2 as playtest-certified or release-ready until the
 deferred matrices have passed.
+
+## 2026-08-10 — Keep CHEAT MODE temporary and story-safe
+
+Crystal Legends exposes its optional CHEAT MODE through two consecutive
+inspections of either half of the player's bedroom TV. The first inspection
+describes a Nintendo 64 connected to the TV; the second clears the sequence,
+shows a warning, and requires explicit confirmation. Any other bedroom
+interaction or map reload clears the partial sequence. The sequence uses only
+`EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2` and is never saved.
+
+CHEAT MODE may renewably grant the enumerated ordinary supplies, add `100000`
+to the player's money through the stock capped routine, and give level-5 Eevee,
+Dratini, Larvitar, or Porygon through the normal party/current-box path. It must
+not expose story Pokémon, legendary Pokémon, badges, key items, story flags, or
+generic save editing. Cheat gifts do not count as canonical acquisition paths.
+
+Keep the bedroom hook in `maps/PlayersHouse2F.asm` and the far-jumped menus in
+`maps/PlayersHouse2FDebug.asm`, both isolated behind `_CRYSTALLEGENDS`. Do not
+change the global TV script, stock bedroom PC behavior, save layout, or
+reference builds to extend this testing tool.

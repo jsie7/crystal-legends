@@ -37,9 +37,10 @@ assembly dependencies.
 7. Run `git status --short` and inspect the diff. Generated ROM, object, symbol,
    map, palette, tile, compression, and patch outputs must stay untracked.
 
-For the current Crystal Legends sequence, the v0.1 and Phase 2 emulator
-matrices are scheduled after the optional cheat/debug menu lands. Continue to
-run the build and source checks below for every intervening change.
+For the current Crystal Legends sequence, the optional CHEAT MODE implementation
+is present and the consolidated Phase 3, v0.1, and Phase 2 emulator gate is due.
+Continue to run the build and source checks below for every change, and do not
+claim playtest certification until the consolidated gate passes.
 
 ## Validate the Crystal Legends build
 
@@ -60,11 +61,10 @@ git status --short
 `_CRYSTAL11` and `_CRYSTALLEGENDS`. `make compare` checks only the untouched
 reference variants and must continue to pass.
 
-After the cheat/debug menu lands, run the deferred v0.1 emulator matrix with a
-fresh save for Articuno, Zapdos, and Moltres. Each branch must cover starter
-selection and reload, the Mr. Pokémon visit, Silver's mapped bird, Elm's
-third-bird handoff, the lab reload that removes the final ball, and progression
-through Falkner.
+Run the deferred v0.1 emulator matrix with a fresh save for Articuno, Zapdos,
+and Moltres. Each branch must cover starter selection and reload, the Mr.
+Pokémon visit, Silver's mapped bird, Elm's third-bird handoff, the lab reload
+that removes the final ball, and progression through Falkner.
 
 In the same pass, run the deferred Phase 2 matrix:
 
@@ -90,6 +90,39 @@ In the same pass, run the deferred Phase 2 matrix:
 Run the cheat-menu safety checks alongside both deferred matrices. The five
 ordinary missing families have no Phase 2 encounter tests; they remain reserved
 for the Phase 9 Safari Zone.
+
+## Exercise CHEAT MODE safely
+
+Use a Crystal Legends ROM and a disposable or backed-up save. In the player's
+bedroom, inspect either half of the TV twice consecutively. The first inspection
+must say that a Nintendo 64 is connected to the TV; the second must show the
+CHEAT MODE warning. Declining, exiting, another bedroom interaction, or a map
+reload must restart the sequence without changing saved state.
+
+After accepting the warning, verify these boundaries:
+
+1. Every B press and explicit `BACK`/`EXIT` row returns safely without an
+   unintended grant, stale window, freeze, music loss, or warp.
+2. Every item label includes `x10`; each action grants exactly ten of only that
+   item, reaches the correct pocket, persists after reload, and fails cleanly at
+   pocket or stack capacity.
+3. `MONEY` adds `100000`, saturates at `999999` without wrapping, persists after
+   reload, and never changes Mom's savings.
+4. Eevee, Dratini, Larvitar, and Porygon arrive at level 5 with no held item,
+   normal generated data, Pokédex registration, and nickname handling. A full
+   party sends the gift to the current box; a full party and current box grants
+   nothing and reports the failure.
+5. Starter, badge, Hall of Fame, GS Ball/Celebi, legendary, and key-item state
+   is identical before and after the complete menu pass. No story Pokémon,
+   badge, key item, or generic selector may appear.
+6. Both TV tiles work, all other bedroom interactions reset a partial sequence,
+   the normal bedroom PC and decorations retain stock behavior, every other TV
+   retains stock text, and a reference ROM exposes no CHEAT MODE trigger.
+
+Record the emulator/version, ROM commit, date, save boundary, actions used, and
+pass/fail result. Run this safety pass first, then the v0.1 and Phase 2 matrices
+above. A CHEAT MODE gift must never substitute for a starter, rival, evolution,
+or canonical acquisition test.
 
 ## Verify the upstream baseline
 

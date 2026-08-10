@@ -2,7 +2,7 @@
 
 This guide explains what is in the repository, how the pieces fit together, and
 where to look before changing a subsystem. It reflects the Crystal Legends fork
-state as of 2026-08-09.
+state as of 2026-08-10.
 
 ## Current project state
 
@@ -17,9 +17,10 @@ items, and the post-League retryable Celebi event. The ordinary missing
 families are reserved for the Phase 9 Safari Zone, so the ledger assigns all
 251 paths without claiming all 251 are catchable yet.
 
-The v0.1 and Phase 2 implementations and clean build/static checks are complete.
-Their emulator acceptance matrices are deliberately scheduled after the
-optional cheat/debug menu lands; the project is not yet playtest-certified.
+The Phase 3 bedroom-TV CHEAT MODE is also implemented in source. Its renewable
+supplies, capped money grants, and four ordinary Pokémon gifts deliberately
+exclude story progression. The consolidated Phase 3, v0.1, and Phase 2 emulator
+gate remains pending, so the project is not yet playtest-certified.
 
 Use sources in this order when they disagree:
 
@@ -101,6 +102,7 @@ far calls and data-bank assumptions can introduce runtime bugs.
 | Change trainers or battle AI | `data/trainers/`, `data/battle/`, `engine/battle/ai/`, `engine/battle/` | Existing neighboring tables and the upstream wiki |
 | Change wild encounters | `data/wild/`, `engine/overworld/wildmons.asm` | Upstream wild-slot tutorials |
 | Change menus or UI behavior | `engine/menus/`, subsystem-specific menu code | `menus.md`; search for the visible label or controlling routine |
+| Change Crystal Legends CHEAT MODE | `maps/PlayersHouse2F.asm`, `maps/PlayersHouse2FDebug.asm`, `data/maps/scripts.asm` | `workflows.md`, `decisions.md`, and the neighboring event-script conventions |
 | Change battle animations | `data/moves/animations.asm`, `engine/battle_anims/`, `gfx/battle_anims/` | `battle_anim_commands.md` |
 | Change Pokémon picture animations | `gfx/pokemon/`, `engine/gfx/pic_animation.asm`, generated frame/bitmask tables | `pic_animations.md` and Pokémon animation rules in `Makefile` |
 | Change graphics | Source `.png`/`.pal` files, relevant `gfx/*.asm` aggregator, `Makefile` rule | `FAQ.md` graphics guidance and the RGBGFX documentation |

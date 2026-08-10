@@ -6,17 +6,17 @@ guide.
 
 ## Current milestone
 
-Crystal Legends v0.1 and the Phase 2 completion foundation are
-implementation-complete. The dedicated build, legendary-bird starter branch,
-single-save acquisition ledger, ten single-player trade-evolution
-replacements, renewable evolution items, and post-League retryable Celebi path
-are in place. The five ordinary Crystal-missing families remain deliberately
-reserved for the Phase 9 Safari Zone rather than being added to Johto.
+Crystal Legends v0.1, the Phase 2 completion foundation, and the source
+implementation of Phase 3 CHEAT MODE are in place. The hidden bedroom-TV menu
+provides renewable testing supplies, capped money grants, and four ordinary
+bonus Pokémon without advancing story state. The five ordinary Crystal-missing
+families remain deliberately reserved for the Phase 9 Safari Zone rather than
+being added to Johto.
 
-The v0.1 and Phase 2 emulator acceptance matrices are intentionally deferred
-until the optional cheat/debug menu lands. Until those matrices run, the
-current milestone is a clean implementation baseline, not a playtest-certified
-release. See
+The consolidated Phase 3 emulator gate is still pending. It covers CHEAT MODE
+safety plus the deferred v0.1 and Phase 2 matrices. Until it passes, the current
+milestone is a clean implementation baseline, not a playtest-certified release.
+See
 [workflows.md](workflows.md) for the validation boundary and
 [decisions.md](decisions.md) for the sequencing decision.
 
