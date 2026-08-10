@@ -32,24 +32,42 @@ PlayersHouse2FSetUpTileDecorationsCallback:
 	db 0, 0, 0 ; unused
 
 PlayersHouseDoll1Script::
+	if DEF(_CRYSTALLEGENDS)
+		scall PlayersHouse2FClearCheatModeSequence
+	endc
 	describedecoration DECODESC_LEFT_DOLL
 
 PlayersHouseDoll2Script:
+	if DEF(_CRYSTALLEGENDS)
+		scall PlayersHouse2FClearCheatModeSequence
+	endc
 	describedecoration DECODESC_RIGHT_DOLL
 
 PlayersHouseBigDollScript:
+	if DEF(_CRYSTALLEGENDS)
+		scall PlayersHouse2FClearCheatModeSequence
+	endc
 	describedecoration DECODESC_BIG_DOLL
 
 PlayersHouseGameConsoleScript:
+	if DEF(_CRYSTALLEGENDS)
+		scall PlayersHouse2FClearCheatModeSequence
+	endc
 	describedecoration DECODESC_CONSOLE
 
 PlayersHousePosterScript:
+	if DEF(_CRYSTALLEGENDS)
+		scall PlayersHouse2FClearCheatModeSequence
+	endc
 	conditional_event EVENT_PLAYERS_ROOM_POSTER, .Script
 
 .Script:
 	describedecoration DECODESC_POSTER
 
 PlayersHouseRadioScript:
+	if DEF(_CRYSTALLEGENDS)
+		scall PlayersHouse2FClearCheatModeSequence
+	endc
 	checkevent EVENT_GOT_A_POKEMON_FROM_ELM
 	iftrue .NormalRadio
 	checkevent EVENT_LISTENED_TO_INITIAL_RADIO
@@ -80,9 +98,15 @@ PlayersHouseRadioScript:
 	end
 
 PlayersHouseBookshelfScript:
+	if DEF(_CRYSTALLEGENDS)
+		scall PlayersHouse2FClearCheatModeSequence
+	endc
 	jumpstd PictureBookshelfScript
 
 PlayersHousePCScript:
+	if DEF(_CRYSTALLEGENDS)
+		scall PlayersHouse2FClearCheatModeSequence
+	endc
 	opentext
 	special PlayersHousePC
 	iftrue .Warp
@@ -91,6 +115,15 @@ PlayersHousePCScript:
 .Warp:
 	warp NONE, 0, 0
 	end
+
+if DEF(_CRYSTALLEGENDS)
+PlayersHouse2FClearCheatModeSequence:
+	clearevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2
+	end
+
+PlayersHouse2FTVScript:
+	farsjump PlayersHouse2FDebugTVScript
+endc
 
 PlayersRadioText1:
 	text "PROF.OAK'S #MON"
@@ -125,6 +158,10 @@ PlayersHouse2F_MapEvents:
 	bg_event  3,  1, BGEVENT_READ, PlayersHouseRadioScript
 	bg_event  5,  1, BGEVENT_READ, PlayersHouseBookshelfScript
 	bg_event  6,  0, BGEVENT_IFSET, PlayersHousePosterScript
+	if DEF(_CRYSTALLEGENDS)
+		bg_event  8,  3, BGEVENT_UP, PlayersHouse2FTVScript
+		bg_event  9,  3, BGEVENT_UP, PlayersHouse2FTVScript
+	endc
 
 	def_object_events
 	object_event  4,  2, SPRITE_CONSOLE, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, PlayersHouseGameConsoleScript, EVENT_PLAYERS_HOUSE_2F_CONSOLE

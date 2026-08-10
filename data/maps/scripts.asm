@@ -485,4 +485,8 @@ SECTION "Map Scripts 25", ROMX
 INCLUDE "maps/SilverCaveOutside.asm"
 INCLUDE "maps/Route10North.asm"
 
+if DEF(_CRYSTALLEGENDS)
+INCLUDE "maps/PlayersHouse2FDebug.asm"
+endc
+
 ENDSECTION
