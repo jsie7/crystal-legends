@@ -13,10 +13,13 @@ bonus Pokémon without advancing story state. The five ordinary Crystal-missing
 families remain deliberately reserved for the Phase 9 Safari Zone rather than
 being added to Johto.
 
-The consolidated Phase 3 emulator gate is still pending. It covers CHEAT MODE
-safety plus the deferred v0.1 and Phase 2 matrices. Until it passes, the current
-milestone is a clean implementation baseline, not a playtest-certified release.
-See
+The user-run manual pass on 2026-08-10 confirmed the title screen, all three
+legendary-bird starter branches through Elm's post-break-in handoff, both
+outcomes of the first Silver battle, the player-bird learnsets, and the complete
+CHEAT MODE surface. The remaining v0.1 progression through Falkner, later Silver
+and balance checks, and the Phase 2 evolution/item/Celebi matrix are deliberately
+deferred. The current milestone therefore has partial manual acceptance, but is
+not yet a fully playtest-certified release. See
 [workflows.md](workflows.md) for the validation boundary and
 [decisions.md](decisions.md) for the sequencing decision.
 

@@ -19,8 +19,11 @@ families are reserved for the Phase 9 Safari Zone, so the ledger assigns all
 
 The Phase 3 bedroom-TV CHEAT MODE is also implemented in source. Its renewable
 supplies, capped money grants, and four ordinary Pokémon gifts deliberately
-exclude story progression. The consolidated Phase 3, v0.1, and Phase 2 emulator
-gate remains pending, so the project is not yet playtest-certified.
+exclude story progression. A user-run manual pass confirmed CHEAT MODE and the
+three v0.1 branches through Elm's post-break-in handoff, including title,
+starter, first-Silver, third-bird, and player-learnset behavior. Progression
+through Falkner, later Silver/balance checks, and the Phase 2 matrix remain
+deferred, so the project is not yet fully playtest-certified.
 
 Use sources in this order when they disagree:
 

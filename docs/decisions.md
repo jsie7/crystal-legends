@@ -71,3 +71,19 @@ Keep the bedroom hook in `maps/PlayersHouse2F.asm` and the far-jumped menus in
 `maps/PlayersHouse2FDebug.asm`, both isolated behind `_CRYSTALLEGENDS`. Do not
 change the global TV script, stock bedroom PC behavior, save layout, or
 reference builds to extend this testing tool.
+
+## 2026-08-10 — Record partial manual acceptance and defer progression
+
+A user-run manual pass on the Crystal Legends ROM at commit `5ec915ce1`
+confirmed the title screen, all three legendary-bird starter branches through
+Elm's post-break-in handoff, the correct first Silver bird for every branch,
+both permitted outcomes of that battle, the player-bird learnsets, and CHEAT
+MODE entry, navigation, grants, and safety variants.
+
+This closes the Phase 3 feature matrix and the early v0.1 story slice through
+the one-time Oak handoff. The user has deliberately deferred the remaining
+playthrough-dependent checks: progression through Falkner, later Silver and
+balance sampling, and the Phase 2 evolution/item/Celebi matrix. Do not describe
+v0.1, Phase 2, or the complete project as fully playtest-certified until those
+remaining matrices pass. The exact emulator/version was not supplied with this
+test report and should be appended if it becomes available.

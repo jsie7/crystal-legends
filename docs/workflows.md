@@ -38,9 +38,10 @@ assembly dependencies.
    map, palette, tile, compression, and patch outputs must stay untracked.
 
 For the current Crystal Legends sequence, the optional CHEAT MODE implementation
-is present and the consolidated Phase 3, v0.1, and Phase 2 emulator gate is due.
-Continue to run the build and source checks below for every change, and do not
-claim playtest certification until the consolidated gate passes.
+and its user-run manual safety pass are complete. The three v0.1 branches have
+also passed through Elm's post-break-in handoff. Continue to run the build and
+source checks below for every change. Progression through Falkner and the Phase
+2 matrix remain deferred, so do not claim full playtest certification yet.
 
 ## Validate the Crystal Legends build
 
@@ -61,10 +62,10 @@ git status --short
 `_CRYSTAL11` and `_CRYSTALLEGENDS`. `make compare` checks only the untouched
 reference variants and must continue to pass.
 
-Run the deferred v0.1 emulator matrix with a fresh save for Articuno, Zapdos,
-and Moltres. Each branch must cover starter selection and reload, the Mr.
-Pokémon visit, Silver's mapped bird, Elm's third-bird handoff, the lab reload
-that removes the final ball, and progression through Falkner.
+The user-run 2026-08-10 v0.1 pass covered a fresh branch for Articuno, Zapdos,
+and Moltres through Elm's post-break-in handoff. The remaining v0.1 work is to
+continue each branch through the catching tutorial, Routes 30/31, Sprout Tower,
+and Falkner, then save/reload after the Zephyr Badge.
 
 In the same pass, run the deferred Phase 2 matrix:
 
@@ -87,9 +88,36 @@ In the same pass, run the deferred Phase 2 matrix:
    and confirm the GS Ball and shrine prompt return after each failure.
 8. Catch Celebi, save/reload, and confirm the shrine cannot create a duplicate.
 
-Run the cheat-menu safety checks alongside both deferred matrices. The five
-ordinary missing families have no Phase 2 encounter tests; they remain reserved
-for the Phase 9 Safari Zone.
+The CHEAT MODE safety checks passed in the user-run 2026-08-10 pass. Rerun them
+after any later CHEAT MODE, bedroom-event, grant, or save-boundary change. The
+five ordinary missing families have no Phase 2 encounter tests; they remain
+reserved for the Phase 9 Safari Zone.
+
+## Manual validation record — 2026-08-10
+
+The user manually tested the Crystal Legends ROM at commit `5ec915ce1`
+(SHA-256 `7c47f8352e3f4ca17a48857d8da4a03ffdd0e81ca88be63215e22b72a9acb55b`).
+The exact emulator/version was not supplied. Three independent starter paths
+were exercised through Elm's post-break-in dialogue.
+
+Passed:
+
+- Crystal Legends title presentation;
+- Articuno, Zapdos, and Moltres starter details and player learnsets;
+- the correct Cherrygrove Silver bird in all three branches;
+- both the permitted loss and win outcomes of the first Silver battle;
+- the correct, one-time Elm/Oak third-bird handoff and remaining-ball behavior;
+- CHEAT MODE entry, navigation, grants, reset/cancel behavior, capacity and
+  failure variants, and story-state isolation.
+
+Deferred by the user:
+
+- the rest of the v0.1 path through Falkner and its save/reload smoke test;
+- later player-bird balance and Silver encounters through the Indigo rematch;
+- the complete Phase 2 evolution/item/Celebi matrix;
+- full-game and no-cheat playthrough certification.
+
+This is a partial consolidated-gate pass, not a full-game certification.
 
 ## Exercise CHEAT MODE safely
 
@@ -115,9 +143,10 @@ After accepting the warning, verify these boundaries:
 5. Starter, badge, Hall of Fame, GS Ball/Celebi, legendary, and key-item state
    is identical before and after the complete menu pass. No story Pokémon,
    badge, key item, or generic selector may appear.
-6. Both TV tiles work, all other bedroom interactions reset a partial sequence,
-   the normal bedroom PC and decorations retain stock behavior, every other TV
-   retains stock text, and a reference ROM exposes no CHEAT MODE trigger.
+6. The bedroom TV works, all other bedroom interactions reset a partial
+   sequence, the normal bedroom PC and decorations retain stock behavior, every
+   other TV retains stock text, and a reference ROM exposes no CHEAT MODE
+   trigger.
 
 Record the emulator/version, ROM commit, date, save boundary, actions used, and
 pass/fail result. Run this safety pass first, then the v0.1 and Phase 2 matrices
