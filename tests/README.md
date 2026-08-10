@@ -43,3 +43,10 @@ source revision, ROM and save hashes, deterministic player data, expected empty
 progression state, and reproduction procedure. Runtime tests copy it beside a
 temporary ROM before boot and verify that the canonical file's hash is
 unchanged afterward.
+
+The Phase 2 regression profile automates all ten single-player evolution
+results, item consumption/rejection, the renewable-item tables, and the
+Hall-of-Fame through Celebi state machine. Manual acceptance remains the source
+of truth for evolution and capture animation quality, item-menu wording and
+feel, held-item effects during representative battles, Celebi presentation,
+and long-form progression or balance.

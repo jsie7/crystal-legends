@@ -51,8 +51,25 @@ class BatterySave:
     def write_saved_u8(self, wram_label: str, value: int) -> None:
         if not 0 <= value <= 0xFF:
             raise SaveFixtureError(f"byte value out of range: {value}")
+        self.write_saved_bytes(wram_label, bytes([value]))
+
+    def write_saved_bytes(self, wram_label: str, values: bytes) -> None:
+        if not values:
+            raise SaveFixtureError("saved byte sequence must not be empty")
         for symbol in self._saved_symbols_for_field(self.symbols[wram_label]):
-            self.data[self._offset(symbol)] = value
+            offset = self._offset(symbol)
+            self.data[offset : offset + len(values)] = values
+
+    def set_saved_bit(self, wram_label: str, bit: int, enabled: bool) -> None:
+        if bit not in range(8):
+            raise SaveFixtureError(f"bit index out of range: {bit}")
+        for symbol in self._saved_symbols_for_field(self.symbols[wram_label]):
+            offset = self._offset(symbol)
+            mask = 1 << bit
+            if enabled:
+                self.data[offset] |= mask
+            else:
+                self.data[offset] &= ~mask
 
     def set_event(self, event_number: int, enabled: bool) -> None:
         event_flags = self.symbols["wEventFlags"]

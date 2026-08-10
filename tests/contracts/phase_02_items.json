@@ -1,0 +1,40 @@
+{
+  "items": [
+    {
+      "item": "KINGS_ROCK",
+      "price": 2100,
+      "held_effect": "HELD_FLINCH",
+      "held_parameter": 30
+    },
+    {
+      "item": "METAL_COAT",
+      "price": 2100,
+      "held_effect": "HELD_STEEL_BOOST",
+      "held_parameter": 10
+    },
+    {
+      "item": "DRAGON_SCALE",
+      "price": 2100,
+      "held_effect": "HELD_DRAGON_BOOST",
+      "held_parameter": 10
+    },
+    {
+      "item": "UP_GRADE",
+      "price": 2100,
+      "held_effect": "HELD_NONE",
+      "held_parameter": 0
+    }
+  ],
+  "mart": {
+    "label": "MartCeladon4F",
+    "items": [
+      "POKE_DOLL",
+      "LOVELY_MAIL",
+      "SURF_MAIL",
+      "KINGS_ROCK",
+      "METAL_COAT",
+      "DRAGON_SCALE",
+      "UP_GRADE"
+    ]
+  }
+}
