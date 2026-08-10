@@ -93,6 +93,86 @@ after any later CHEAT MODE, bedroom-event, grant, or save-boundary change. The
 five ordinary missing families have no Phase 2 encounter tests; they remain
 reserved for the Phase 9 Safari Zone.
 
+## Run the local automated test harness
+
+The automated harness is opt-in and local to the development Mac. It does not
+change the default `make` target or `.github/workflows/main.yml`. Install its
+locked Python dependencies once, then use the narrowest useful profile:
+
+```bash
+uv sync --frozen --group test
+make test-static
+make test-rom
+make test-emulator-smoke
+make test-emulator
+make test-crystallegends
+make test-all
+```
+
+The profiles have distinct responsibilities:
+
+| Command | Coverage |
+| --- | --- |
+| `make test-static` | Source/data contracts only; no ROM required. |
+| `make test-rom` | Build Crystal Legends and the v1.1 reference ROM, then decode compiled headers, labels, events, save layout, and bank budgets. |
+| `make test-emulator-smoke` | Build Crystal Legends and run only short boot/fixture smoke scenarios. |
+| `make test-emulator` | Build the required ROMs and run every implemented headless PyBoy scenario. |
+| `make test-crystallegends` | Recommended focused gate: static checks, custom build, compiled-ROM contracts, emulator smoke, and generated-file cleanliness. |
+| `make test-all` | Complete local handoff gate: all of the above, all emulator scenarios, and `make compare` for every upstream reference artifact. |
+
+Use `make test-static` while editing parsers or data contracts,
+`make test-crystallegends` before an ordinary Crystal Legends commit, and
+`make test-all` at a milestone handoff or after changes that could affect
+reference variants. A profile stops at its first failing stage and returns that
+stage's exit status.
+
+The tests are layered deliberately. Static checks provide exhaustive breadth
+over maps and content records. Compiled-ROM checks use `crystallegends.sym` and
+the assembled bytes to catch source/build disagreement. Headless scenarios run
+the production `crystallegends.gbc` through normal inputs and inspect symbolic
+RAM/SRAM state. These layers complement, but do not replace, the manual matrix
+below.
+
+### Battery-save and scenario fixtures
+
+Committed `.sav` files under `tests/fixtures/saves/` are small,
+emulator-independent battery saves, never emulator savestates. Each has an
+adjacent JSON record with purpose, creation revision, ROM/save hashes,
+deterministic player metadata, expected state, and reproduction steps. Runtime
+tests copy the fixture and ROM into a pytest temporary directory; they verify
+the canonical fixture hash after the run and must never mutate it in place.
+
+Scenario contracts under `tests/fixtures/scenarios/` name production symbols
+and constants rather than numeric ROM/RAM addresses. Test-only ROM scripts,
+warps, save fields, and `_TEST` assembly paths are forbidden. State preparation
+may establish a narrowly typed prerequisite, but the behavior being asserted
+must execute production code through ordinary emulator input.
+
+### Failure triage
+
+Start with the first failed profile stage and preserve that boundary:
+
+1. For a static failure, read the named source record and any exact exception
+   contract. Do not add broad path or wildcard suppressions.
+2. For a compiled-ROM failure, rebuild `crystallegends.gbc` and inspect the
+   reported symbol, decoded bytes, header field, save-layout label, or linker
+   budget. Source text alone is not evidence that the assembled contract is
+   correct.
+3. For an emulator timeout, use the reported ROM hash, PyBoy version, frame
+   count, PC, recent symbolic hooks, map, coordinate, and script state to find
+   the last completed boundary. Replace brittle timing with a stronger wait
+   predicate when appropriate.
+4. Re-run the smallest failing test with pytest's node ID, then its containing
+   profile, then the aggregate gate. Keep mutable saves, screenshots, traces,
+   ROMs, `.sym`, and `.map` outputs untracked.
+5. If an approved battery fixture is genuinely stale, document the save-layout
+   or scenario change and regenerate it through the normal game save path;
+   never edit the fixture bytes casually.
+
+PyBoy 2.6.0 is locked as a test-only dependency and is not linked into or
+distributed with the ROM. Any upgrade must pass boot, fixture-load, and runtime
+smoke scenarios before `uv.lock` changes.
+
 ## Manual validation record — 2026-08-10
 
 The user manually tested the Crystal Legends ROM at commit `5ec915ce1`

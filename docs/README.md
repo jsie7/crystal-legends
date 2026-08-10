@@ -28,6 +28,9 @@ not yet a fully playtest-certified release. See
 - [Repository guide](repository-guide.md): what the codebase contains and where
   to make common changes.
 - [Workflows](workflows.md): repeatable build and validation procedures.
+- [Automated testing workflow](workflows.md#run-the-local-automated-test-harness):
+  local source, compiled-ROM, and headless-emulator profiles, fixture policy,
+  and failure triage.
 - [Decisions](decisions.md): durable technical and policy decisions for this
   fork.
 - [Pokémon acquisition ledger](pokemon-acquisition.md): canonical single-save

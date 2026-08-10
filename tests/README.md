@@ -27,6 +27,9 @@ make test-crystallegends
 `make test-all` additionally runs every implemented emulator scenario and the
 upstream reference comparison.
 
+For the profile matrix, battery-fixture policy, and failure-triage procedure,
+see [`docs/workflows.md`](../docs/workflows.md#run-the-local-automated-test-harness).
+
 The headless profile uses the test-only PyBoy 2.6.0 dependency under the LGPL;
 it is not linked into or distributed with the ROM. Update its lock only after
 the boot smoke and fixture-load scenarios pass.

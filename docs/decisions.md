@@ -87,3 +87,39 @@ balance sampling, and the Phase 2 evolution/item/Celebi matrix. Do not describe
 v0.1, Phase 2, or the complete project as fully playtest-certified until those
 remaining matrices pass. The exact emulator/version was not supplied with this
 test report and should be appended if it becomes available.
+
+## 2026-08-10 — Keep the automated harness local and layered
+
+Use locked Python/pytest tooling for source and data validation, symbolic
+compiled-ROM contracts for the assembled artifact, and PyBoy 2.6.0 for short
+headless production-ROM scenarios. PyBoy is test-only under the LGPL and is not
+linked into or distributed with the ROM. Default `make` and GitHub Actions stay
+unchanged; `make test-crystallegends` is the focused local gate and
+`make test-all` is the complete local handoff gate.
+
+Tests must resolve labels through generated `.sym` files and game constants
+through the assembly definitions. Do not duplicate numeric ROM/RAM addresses,
+species IDs, item IDs, map IDs, or event IDs in scenario contracts, and do not
+add `_TEST` code paths to the shipped ROM. Static checks own exhaustive table
+breadth; emulator scenarios own representative stateful behavior.
+
+## 2026-08-10 — Permit reviewed battery fixtures, not savestates
+
+Small, non-personal battery saves may be committed when a late or initialized
+state cannot be reached cheaply in every test. Each fixture requires adjacent
+provenance, source/ROM/save hashes, expected-state metadata, and reproduction
+steps. Tests copy fixtures to temporary storage and verify the canonical file
+remains unchanged. Emulator-specific savestates, mutable fixture outputs, ROMs,
+screenshots, and traces remain untracked.
+
+Save-layout fingerprint changes require an explicit compatibility decision and
+fixture review or regeneration through the normal game save path.
+
+## 2026-08-10 — Keep automated and manual acceptance separate
+
+Automation may prove source structure, assembled bytes, script reachability,
+state transitions, capacity behavior, and replay prevention. It does not
+certify visuals, audio, dialogue quality, pacing, balance, exploration, a full
+no-cheat or 251-species playthrough, another emulator, or physical hardware.
+Record automated results and user-run manual evidence separately; neither may
+be used to claim the other gate passed.

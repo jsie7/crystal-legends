@@ -92,6 +92,7 @@ far calls and data-bank assumptions can introduce runtime bugs.
 | `tools/` | Nine C17 build helpers compiled by `make` | `tools/Makefile` and each tool's `USAGE_OPTS` declaration. |
 | `docs/` | Local command references, subsystem notes, known issues, and project guidance | `docs/README.md` and `docs/index.md`. |
 | `.github/` | CI, generated-file cleanliness check, issue templates, and upstream webhook behavior | `.github/workflows/main.yml` and `.github/checkdiff.sh`. |
+| `tests/` | Static source/data checks, compiled-ROM contracts, immutable fixtures, and headless emulator scenarios | `tests/README.md` and `docs/workflows.md`. |
 
 ## Where to make common changes
 
@@ -139,6 +140,12 @@ pinned version is the safest way to reproduce CI and the reference hashes.
 | `make compare` | Build all reference outputs and verify them against `roms.sha1` |
 | `make tidy` | Remove ROMs, maps, symbols, patches, objects, and compiled helpers |
 | `make clean` | Run `tidy` and also remove generated graphics intermediates |
+| `make test-static` | Run source/data contracts without building a ROM |
+| `make test-rom` | Build and inspect compiled Crystal Legends/reference contracts |
+| `make test-emulator-smoke` | Run the short production-ROM PyBoy smoke profile |
+| `make test-emulator` | Run all implemented production-ROM PyBoy scenarios |
+| `make test-crystallegends` | Run the focused local static/build/ROM/smoke/cleanliness gate |
+| `make test-all` | Run the complete local gate, including all emulator scenarios and reference comparisons |
 
 `make compare` is the strongest upstream-reproduction check. Crystal Legends
 changes are gated behind `_CRYSTALLEGENDS`, so the target must still pass after
@@ -148,16 +155,27 @@ and `rgbfix -v crystallegends.gbc`.
 The GitHub workflow has an important fork-specific branch: repositories owned
 by `pret` run `make ... compare`, while forks run the default `make` target. Both
 paths run `.github/checkdiff.sh` to ensure the build did not modify tracked
-sources. CI exercises Ubuntu and macOS.
+sources. CI exercises Ubuntu and macOS, but the Python/PyBoy harness remains
+local and `.github/workflows/main.yml` does not invoke it.
 
-There is no conventional unit-test suite. Validation consists of:
+The local harness has three test layers beneath its aggregate runners:
 
-1. Building the relevant ROM variant without warnings or bank overflows.
-2. Inspecting `.map` and `.sym` output when placement or labels matter.
-3. Running `make compare` to prove the reference variants remain exact.
-4. Testing the changed path in an emulator at the milestone's scheduled
-   validation gate, including save compatibility and variant-specific behavior.
-5. Checking `git status` so generated outputs are not mistaken for source.
+1. `tests/static/` parses active Crystal Legends source and data for exhaustive
+   geometry, collision, acquisition, evolution, encounter, and trainer
+   contracts.
+2. `tests/rom/` resolves labels from generated symbol files and checks the
+   bytes, headers, save-layout fingerprint, variant isolation, and linker
+   budgets of the assembled artifact.
+3. `tests/emulator/` copies immutable battery fixtures into temporary
+   directories, drives the production ROM with PyBoy, and asserts short
+   stateful behaviors through symbolic RAM/SRAM views.
+
+Shared parsers, ROM/symbol readers, state views, and scenario drivers live in
+`tests/support/`; reviewed expected behavior lives in `tests/contracts/` and
+`tests/fixtures/scenarios/`. Manual emulator validation remains separate and
+authoritative for presentation, audio, pacing, balance, long progression, and
+cross-emulator confidence. See [workflows.md](workflows.md) for commands,
+fixture rules, and triage.
 
 ## Generated-file and compatibility boundaries
 
