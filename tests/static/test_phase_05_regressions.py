@@ -226,63 +226,90 @@ def test_phase_5_preserves_the_stock_hidden_wall_engine(repo_root: Path) -> None
     assert "takeitem" not in source.lower()
 
 
-def test_kabuto_hidden_room_gift_is_retry_safe_and_preserves_stock_objects(
+@pytest.mark.parametrize(
+    ("species", "prefix", "object_constant", "palette", "level", "first_item"),
+    [
+        (
+            "KABUTO",
+            "RuinsOfAlphKabutoItemRoom",
+            "RUINSOFALPHKABUTOITEMROOM_KABUTO",
+            "PAL_NPC_BROWN",
+            10,
+            "Berry",
+        ),
+        (
+            "OMANYTE",
+            "RuinsOfAlphOmanyteItemRoom",
+            "RUINSOFALPHOMANYTEITEMROOM_OMANYTE",
+            "PAL_NPC_BLUE",
+            26,
+            "Mysteryberry",
+        ),
+    ],
+)
+def test_hidden_room_gift_is_retry_safe_and_preserves_stock_objects(
     repo_root: Path,
+    species: str,
+    prefix: str,
+    object_constant: str,
+    palette: str,
+    level: int,
+    first_item: str,
 ) -> None:
-    source = repo_root / "maps/RuinsOfAlphKabutoItemRoom.asm"
+    source = repo_root / "maps" / f"{prefix}.asm"
     crystal = _active_code(source, CRYSTAL_LEGENDS)
     reference = _active_code(source, REFERENCE)
     object_row = (
-        "object_event  3,  3, SPRITE_KABUTO, SPRITEMOVEDATA_POKEMON, 0, 0, "
-        "-1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, "
-        "RuinsOfAlphKabutoItemRoomKabutoScript, -1"
+        f"object_event  3,  3, SPRITE_{species}, SPRITEMOVEDATA_POKEMON, 0, 0, "
+        f"-1, -1, {palette}, OBJECTTYPE_SCRIPT, 0, "
+        f"{prefix}{species.title()}Script, -1"
     )
 
-    assert "const RUINSOFALPHKABUTOITEMROOM_KABUTO" in crystal
-    assert "const RUINSOFALPHKABUTOITEMROOM_KABUTO" not in reference
+    assert f"const {object_constant}" in crystal
+    assert f"const {object_constant}" not in reference
     assert object_row in crystal
     assert object_row not in reference
     _assert_contiguous(
         crystal,
         [
-            "RuinsOfAlphKabutoItemRoomKabutoCallback:",
-            "checkevent EVENT_GOT_KABUTO_FROM_ALPH",
+            f"{prefix}{species.title()}Callback:",
+            f"checkevent EVENT_GOT_{species}_FROM_ALPH",
             "iftrue .Hide",
-            "checkevent EVENT_SOLVED_KABUTO_PUZZLE",
+            f"checkevent EVENT_SOLVED_{species}_PUZZLE",
             "iffalse .Hide",
-            "checkevent EVENT_WALL_OPENED_IN_KABUTO_CHAMBER",
+            f"checkevent EVENT_WALL_OPENED_IN_{species}_CHAMBER",
             "iffalse .Hide",
-            "appear RUINSOFALPHKABUTOITEMROOM_KABUTO",
+            f"appear {object_constant}",
             "endcallback",
             ".Hide:",
-            "disappear RUINSOFALPHKABUTOITEMROOM_KABUTO",
+            f"disappear {object_constant}",
             "endcallback",
         ],
     )
     _assert_contiguous(
         crystal,
         [
-            "RuinsOfAlphKabutoItemRoomKabutoScript:",
+            f"{prefix}{species.title()}Script:",
             "faceplayer",
             "opentext",
-            "cry KABUTO",
-            "writetext RuinsOfAlphKabutoItemRoomKabutoOfferText",
+            f"cry {species}",
+            f"writetext {prefix}{species.title()}OfferText",
             "yesorno",
             "iffalse .Declined",
-            "givepoke KABUTO, 10",
+            f"givepoke {species}, {level}",
             "ifequal 2, .StorageFull",
-            "setevent EVENT_GOT_KABUTO_FROM_ALPH",
-            "writetext RuinsOfAlphKabutoItemRoomKabutoJoinedText",
+            f"setevent EVENT_GOT_{species}_FROM_ALPH",
+            f"writetext {prefix}{species.title()}JoinedText",
             "playsound SFX_CAUGHT_MON",
             "waitsfx",
             "waitbutton",
             "closetext",
-            "disappear RUINSOFALPHKABUTOITEMROOM_KABUTO",
+            f"disappear {object_constant}",
             "end",
         ],
     )
-    script_start = crystal.index("RuinsOfAlphKabutoItemRoomKabutoScript:")
-    script_end = crystal.index("RuinsOfAlphKabutoItemRoomBerry:")
+    script_start = crystal.index(f"{prefix}{species.title()}Script:")
+    script_end = crystal.index(f"{prefix}{first_item}:")
     script = "\n".join(crystal[script_start:script_end])
     for forbidden in ("loadwildmon", "startbattle", "giveitem", "takeitem"):
         assert forbidden not in script
@@ -301,7 +328,11 @@ def test_kabuto_hidden_room_gift_is_retry_safe_and_preserves_stock_objects(
     assert custom_stock == reference_stock
 
 
-def test_kabuto_gift_coordinate_is_floor(repo_root: Path) -> None:
+@pytest.mark.parametrize(
+    "map_name",
+    ["RUINS_OF_ALPH_KABUTO_ITEM_ROOM", "RUINS_OF_ALPH_OMANYTE_ITEM_ROOM"],
+)
+def test_gift_coordinate_is_floor(repo_root: Path, map_name: str) -> None:
     dimensions = parse_map_dimensions(
         (repo_root / "constants/map_constants.asm").read_text()
     )
@@ -312,7 +343,7 @@ def test_kabuto_gift_coordinate_is_floor(repo_root: Path) -> None:
     tilesets = parse_map_tilesets((repo_root / "data/maps/maps.asm").read_text())
     assert collision_at(
         repo_root,
-        "RUINS_OF_ALPH_KABUTO_ITEM_ROOM",
+        map_name,
         (3, 3),
         dimensions,
         block_paths,

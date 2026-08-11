@@ -160,8 +160,8 @@ data, an external distribution, or the optional cheat menu.
 | 135 | Jolteon | Evolution | Use Thunder Stone on Eevee | Mid-Johto | Existing | Yes through breeding Eevee | `data/pokemon/evos_attacks.asm` |
 | 136 | Flareon | Evolution | Use Fire Stone on Eevee | Mid-Johto | Existing | Yes through breeding Eevee | `data/pokemon/evos_attacks.asm` |
 | 137 | Porygon | Prize | Celadon Game Corner | Kanto | Existing | Repeatable prize purchase | `maps/CeladonGameCornerPrizeRoom.asm` |
-| 138 | Omanyte | Fossil revival | Ruins of Alph fossil quest; details TBD | Mid-Johto or later | Reserved Phase 5 | Yes if fossil source is renewable; TBD | Phase 5; planned Ruins of Alph script |
-| 139 | Omastar | Evolution | Omanyte at level 40 | Mid-Johto or later | Reserved Phase 5 | Yes when implemented | `data/pokemon/evos_attacks.asm`; Phase 5 Omanyte source |
+| 138 | Omanyte | World gift | Level 26 in the Omanyte hidden room after solving the Omanyte picture and bringing a Water Stone into the chamber | After Badge 4 | Phase 5 | Yes through breeding after the one-time gift | `maps/RuinsOfAlphOmanyteChamber.asm`; `maps/RuinsOfAlphOmanyteItemRoom.asm` |
+| 139 | Omastar | Evolution | Omanyte at level 40 | After Badge 4 source; later evolution | Phase 5 | Yes through breeding Omanyte | `data/pokemon/evos_attacks.asm`; Phase 5 Omanyte gift |
 | 140 | Kabuto | World gift | Level 10 in the Kabuto hidden room after solving the Kabuto picture and using Escape Rope in the chamber | Before Badge 1 | Phase 5 | Yes through breeding after the one-time gift | `maps/RuinsOfAlphKabutoChamber.asm`; `maps/RuinsOfAlphKabutoItemRoom.asm` |
 | 141 | Kabutops | Evolution | Kabuto at level 40 | Before Badge 1 source; later evolution | Phase 5 | Yes through breeding Kabuto | `data/pokemon/evos_attacks.asm`; Phase 5 Kabuto gift |
 | 142 | Aerodactyl | NPC trade | Trade Chansey for Aerodactyl | Kanto | Existing | Yes after trade through breeding | `data/events/npc_trades.asm` |

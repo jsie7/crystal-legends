@@ -43,6 +43,7 @@ def phase_5_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "OBJECT_EVENT_SIZE",
             "SPRITEMOVEDATA_POKEMON",
             "PAL_NPC_BROWN",
+            "PAL_NPC_BLUE",
             "OBJECTTYPE_SCRIPT",
             "NO_ITEM",
             "FALSE",
@@ -215,21 +216,46 @@ def test_compiled_kabuto_scientist_checks_picture_before_wall(
     assert stock.index(wall) < stock.index(picture)
 
 
-def test_compiled_kabuto_hidden_room_object_and_gift_match_the_contract(
-    repo_root: Path, phase_5_constants: dict[str, int]
+@pytest.mark.parametrize(
+    ("species", "prefix", "palette", "level", "stock_suffixes"),
+    [
+        (
+            "KABUTO",
+            "RuinsOfAlphKabutoItemRoom",
+            "PAL_NPC_BROWN",
+            10,
+            ("Berry", "Psncureberry", "HealPowder", "Energypowder"),
+        ),
+        (
+            "OMANYTE",
+            "RuinsOfAlphOmanyteItemRoom",
+            "PAL_NPC_BLUE",
+            26,
+            ("Mysteryberry", "MysticWater", "Stardust", "StarPiece"),
+        ),
+    ],
+)
+def test_compiled_hidden_room_object_and_gift_match_the_contract(
+    repo_root: Path,
+    phase_5_constants: dict[str, int],
+    species: str,
+    prefix: str,
+    palette: str,
+    level: int,
+    stock_suffixes: tuple[str, ...],
 ) -> None:
     custom_events = _object_events(
         repo_root,
         "crystallegends.gbc",
         "crystallegends.sym",
-        "RuinsOfAlphKabutoItemRoom_MapEvents",
+        f"{prefix}_MapEvents",
         phase_5_constants,
     )
     reference_events = _object_events(
         repo_root,
         "pokecrystal11.gbc",
         "pokecrystal11.sym",
-        "RuinsOfAlphKabutoItemRoom_MapEvents",
+        f"{prefix}_MapEvents",
         phase_5_constants,
     )
     symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
@@ -238,12 +264,7 @@ def test_compiled_kabuto_hidden_room_object_and_gift_match_the_contract(
     )
     assert len(custom_events) == 5
     assert len(reference_events) == 4
-    stock_scripts = (
-        "RuinsOfAlphKabutoItemRoomBerry",
-        "RuinsOfAlphKabutoItemRoomPsncureberry",
-        "RuinsOfAlphKabutoItemRoomHealPowder",
-        "RuinsOfAlphKabutoItemRoomEnergypowder",
-    )
+    stock_scripts = tuple(f"{prefix}{suffix}" for suffix in stock_suffixes)
     for custom_event, reference_event, script_label in zip(
         custom_events[:4], reference_events, stock_scripts, strict=True
     ):
@@ -274,39 +295,38 @@ def test_compiled_kabuto_hidden_room_object_and_gift_match_the_contract(
         )
     event = custom_events[-1]
     assert (event.x, event.y) == (3, 3)
-    assert event.sprite == phase_5_constants["SPRITE_KABUTO"]
+    assert event.sprite == phase_5_constants[f"SPRITE_{species}"]
     assert event.movement == phase_5_constants["SPRITEMOVEDATA_POKEMON"]
     assert event.radius == 0
     assert event.palette_and_type == (
-        phase_5_constants["PAL_NPC_BROWN"] << 4
+        phase_5_constants[palette] << 4
         | phase_5_constants["OBJECTTYPE_SCRIPT"]
     )
-    assert event.script_pointer == symbols[
-        "RuinsOfAlphKabutoItemRoomKabutoScript"
-    ].address
+    script_label = f"{prefix}{species.title()}Script"
+    callback_label = f"{prefix}{species.title()}Callback"
+    assert event.script_pointer == symbols[script_label].address
     assert event.event_flag == 0xFFFF
 
     rom = RomImage.load(repo_root / "crystallegends.gbc")
-    script_start = symbols["RuinsOfAlphKabutoItemRoomKabutoScript"].rom_offset
-    script_end = symbols["RuinsOfAlphKabutoItemRoomBerry"].rom_offset
+    script_start = symbols[script_label].rom_offset
+    script_end = symbols[stock_scripts[0]].rom_offset
     script = rom.slice(script_start, script_end - script_start)
     gift = bytes(
         [
             phase_5_constants["givepoke_command"],
-            phase_5_constants["KABUTO"],
-            10,
+            phase_5_constants[species],
+            level,
             phase_5_constants["NO_ITEM"],
             phase_5_constants["FALSE"],
         ]
     )
     full = (
         bytes([phase_5_constants["ifequal_command"], 2])
-        + symbols[
-            "RuinsOfAlphKabutoItemRoomKabutoScript.StorageFull"
-        ].address.to_bytes(2, "little")
+        + symbols[f"{script_label}.StorageFull"].address.to_bytes(2, "little")
     )
+    complete_event = f"EVENT_GOT_{species}_FROM_ALPH"
     complete = bytes([phase_5_constants["setevent_command"]]) + phase_5_constants[
-        "EVENT_GOT_KABUTO_FROM_ALPH"
+        complete_event
     ].to_bytes(2, "little")
     object_id = len(custom_events) + 1
     disappear = bytes([phase_5_constants["disappear_command"], object_id])
@@ -315,19 +335,17 @@ def test_compiled_kabuto_hidden_room_object_and_gift_match_the_contract(
     ]
     assert positions == sorted(positions)
 
-    callback_start = symbols[
-        "RuinsOfAlphKabutoItemRoomKabutoCallback"
-    ].rom_offset
-    callback_end = symbols["RuinsOfAlphKabutoItemRoomKabutoScript"].rom_offset
+    callback_start = symbols[callback_label].rom_offset
+    callback_end = symbols[script_label].rom_offset
     callback = rom.slice(callback_start, callback_end - callback_start)
     checks = [
         _event_check(
             phase_5_constants["checkevent_command"], phase_5_constants[event_name]
         )
         for event_name in (
-            "EVENT_GOT_KABUTO_FROM_ALPH",
-            "EVENT_SOLVED_KABUTO_PUZZLE",
-            "EVENT_WALL_OPENED_IN_KABUTO_CHAMBER",
+            complete_event,
+            f"EVENT_SOLVED_{species}_PUZZLE",
+            f"EVENT_WALL_OPENED_IN_{species}_CHAMBER",
         )
     ]
     assert [callback.index(check) for check in checks] == sorted(
@@ -336,5 +354,5 @@ def test_compiled_kabuto_hidden_room_object_and_gift_match_the_contract(
     assert bytes([phase_5_constants["appear_command"], object_id]) in callback
     assert disappear in callback
 
-    assert "RuinsOfAlphKabutoItemRoomKabutoCallback" not in reference_symbols
-    assert "RuinsOfAlphKabutoItemRoomKabutoScript" not in reference_symbols
+    assert callback_label not in reference_symbols
+    assert script_label not in reference_symbols

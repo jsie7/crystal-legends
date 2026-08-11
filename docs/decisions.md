@@ -167,3 +167,9 @@ dedicated success event: declining or having both destinations full leaves the
 gift waiting, while successful party or box delivery completes it permanently.
 Its callback controls visibility without mutating saved state, and all four
 stock item balls and the word-room route remain intact.
+
+The Omanyte hidden room uses the same independent transaction for a level-26
+Omanyte. Its Water Stone condition remains non-consuming and recognizes either
+the Bag or a party Pokémon's held item. Once both the picture and remembered
+wall event are set, the callback exposes the retry-safe gift without changing
+either prerequisite or any stock room reward.

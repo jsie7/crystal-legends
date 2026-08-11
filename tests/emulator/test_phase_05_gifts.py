@@ -201,13 +201,15 @@ def test_opened_chamber_scene_survives_native_save_reload(
         _enter_hidden_room(session, phase_5_constants, scenario)
 
 
-def test_kabuto_visibility_and_decline_are_retryable(
+@pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE"])
+def test_gift_visibility_and_decline_are_retryable(
     repo_root: Path,
     tmp_path: Path,
     phase_5_constants: dict[str, int],
     scenarios: list[dict],
+    species_name: str,
 ) -> None:
-    scenario = next(row for row in scenarios if row["species"] == "KABUTO")
+    scenario = next(row for row in scenarios if row["species"] == species_name)
     completion = phase_5_constants[scenario["completion_event"]]
     for label, picture, wall, completed in (
         ("no-picture", False, True, False),
@@ -216,7 +218,7 @@ def test_kabuto_visibility_and_decline_are_retryable(
     ):
         with loaded_phase_5_checkpoint(
             repo_root,
-            tmp_path / label,
+            tmp_path / f"{species_name}-{label}",
             phase_5_constants,
             scenario,
             location="item_room",
@@ -231,7 +233,7 @@ def test_kabuto_visibility_and_decline_are_retryable(
 
     with loaded_phase_5_checkpoint(
         repo_root,
-        tmp_path / "decline",
+        tmp_path / f"{species_name}-decline",
         phase_5_constants,
         scenario,
         location="item_room",
@@ -246,19 +248,21 @@ def test_kabuto_visibility_and_decline_are_retryable(
 
 
 @pytest.mark.parametrize("destination", ["party", "current-box"])
-def test_kabuto_party_and_box_delivery_finalize_once(
+@pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE"])
+def test_gift_party_and_box_delivery_finalize_once(
     repo_root: Path,
     tmp_path: Path,
     phase_5_constants: dict[str, int],
     scenarios: list[dict],
     destination: str,
+    species_name: str,
 ) -> None:
-    scenario = next(row for row in scenarios if row["species"] == "KABUTO")
+    scenario = next(row for row in scenarios if row["species"] == species_name)
     completion = phase_5_constants[scenario["completion_event"]]
     species = phase_5_constants[scenario["species"]]
     with loaded_phase_5_checkpoint(
         repo_root,
-        tmp_path / destination,
+        tmp_path / f"{species_name}-{destination}",
         phase_5_constants,
         scenario,
         location="item_room",
@@ -288,19 +292,21 @@ def test_kabuto_party_and_box_delivery_finalize_once(
         assert session.script_history.count(scenario["script"]) == 1
 
 
-def test_kabuto_full_storage_is_atomic_and_retryable(
+@pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE"])
+def test_gift_full_storage_is_atomic_and_retryable(
     repo_root: Path,
     tmp_path: Path,
     phase_5_constants: dict[str, int],
     scenarios: list[dict],
+    species_name: str,
 ) -> None:
-    scenario = next(row for row in scenarios if row["species"] == "KABUTO")
+    scenario = next(row for row in scenarios if row["species"] == species_name)
     completion = phase_5_constants[scenario["completion_event"]]
     species = phase_5_constants[scenario["species"]]
     filler = phase_5_constants["EEVEE"]
     with loaded_phase_5_checkpoint(
         repo_root,
-        tmp_path,
+        tmp_path / species_name,
         phase_5_constants,
         scenario,
         location="item_room",
@@ -320,16 +326,18 @@ def test_kabuto_full_storage_is_atomic_and_retryable(
         assert read_progress(session).current_box.species == (species,)
 
 
-def test_kabuto_completion_survives_native_save_reload(
+@pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE"])
+def test_gift_completion_survives_native_save_reload(
     repo_root: Path,
     tmp_path: Path,
     phase_5_constants: dict[str, int],
     scenarios: list[dict],
+    species_name: str,
 ) -> None:
-    scenario = next(row for row in scenarios if row["species"] == "KABUTO")
+    scenario = next(row for row in scenarios if row["species"] == species_name)
     completion = phase_5_constants[scenario["completion_event"]]
     species = phase_5_constants[scenario["species"]]
-    persisted = tmp_path / "kabuto-complete.sav"
+    persisted = tmp_path / f"{species_name.lower()}-complete.sav"
     with loaded_phase_5_checkpoint(
         repo_root,
         tmp_path / "initial",
