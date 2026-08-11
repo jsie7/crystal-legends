@@ -25,13 +25,15 @@ Reuse `EVOLVE_LEVEL`, `EVOLVE_ITEM`, and `EvoStoneEffect`; do not add an
 evolution type, parser branch, mart ID, or save field. Keep the stock trade
 records and item behavior in every reference build.
 
-## 2026-08-09 — Reserve ordinary missing families for the Safari Zone
+## 2026-08-09 — Reserve four ordinary missing families for the Safari Zone
 
-Mareep, Vulpix, Mankey, Girafarig, and Remoraid and their dependent evolutions
-belong to the Phase 9 unattended Safari Zone. The canonical acquisition ledger
-must identify the reservation now, but the exact Safari area, level, encounter
-rate, and slot remain TBD until Phase 9. Phase 2 must not add substitute Johto
-encounters for these families.
+Mareep, Vulpix, Mankey, and Remoraid and their dependent evolutions belong to
+the Phase 9 unattended Safari Zone. The canonical acquisition ledger must
+identify the reservation now, but the exact Safari area, level, encounter rate,
+and slot remain TBD until Phase 9. Phase 2 must not add substitute Johto
+encounters for these families. Girafarig was originally included in this
+reservation; Phase 5 instead makes Kim's Route 14 trade its canonical source,
+with any future Safari appearance optional.
 
 ## 2026-08-09 — Activate and harden the native Celebi sequence
 
@@ -173,3 +175,11 @@ Omanyte. Its Water Stone condition remains non-consuming and recognizes either
 the Bag or a party Pokémon's held item. Once both the picture and remembered
 wall event are set, the callback exposes the retry-safe gift without changing
 either prerequisite or any stock room reward.
+
+The Aerodactyl hidden room completes the set with a level-23 Aerodactyl using
+the same independent, retry-safe contract. Kim's existing Route 14 trade keeps
+its Chansey request, table index, dialog set, DVs, Gold Berry, OT identity, and
+gender rule, but Crystal Legends offers a same-level Girafarig named `GIRAFY`.
+Reference builds retain the complete stock Aerodactyl `AEROY` row. Girafarig is
+renewable through breeding after this one-time trade, so Phase 9 may add a wild
+Safari encounter for flavor but no longer needs one for 251-species completion.

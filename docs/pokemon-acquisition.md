@@ -164,7 +164,7 @@ data, an external distribution, or the optional cheat menu.
 | 139 | Omastar | Evolution | Omanyte at level 40 | After Badge 4 source; later evolution | Phase 5 | Yes through breeding Omanyte | `data/pokemon/evos_attacks.asm`; Phase 5 Omanyte gift |
 | 140 | Kabuto | World gift | Level 10 in the Kabuto hidden room after solving the Kabuto picture and using Escape Rope in the chamber | Before Badge 1 | Phase 5 | Yes through breeding after the one-time gift | `maps/RuinsOfAlphKabutoChamber.asm`; `maps/RuinsOfAlphKabutoItemRoom.asm` |
 | 141 | Kabutops | Evolution | Kabuto at level 40 | Before Badge 1 source; later evolution | Phase 5 | Yes through breeding Kabuto | `data/pokemon/evos_attacks.asm`; Phase 5 Kabuto gift |
-| 142 | Aerodactyl | NPC trade | Trade Chansey for Aerodactyl | Kanto | Existing | Yes after trade through breeding | `data/events/npc_trades.asm` |
+| 142 | Aerodactyl | World gift | Level 23 in the Aerodactyl hidden room after solving the Aerodactyl picture and using Flash in the chamber | After Badge 4 | Phase 5 | Yes through breeding after the one-time gift | `maps/RuinsOfAlphAerodactylChamber.asm`; `maps/RuinsOfAlphAerodactylItemRoom.asm` |
 | 143 | Snorlax | Static encounter | Vermilion City after restoring the Pokégear radio | Kanto | Existing | No; stock event ends after battle | `maps/VermilionCity.asm` |
 | 144 | Articuno | Starter or later bird quest | Elm starter if selected; otherwise release/location quest | Start or Kanto | Existing Phase 1 / Reserved Phase 8-9 | No; one per completed branch | `maps/ElmsLab.asm`; planned Phase 8-9 bird scripts |
 | 145 | Zapdos | Starter or later bird quest | Elm starter if selected; otherwise release/location quest | Start or Kanto | Existing Phase 1 / Reserved Phase 8-9 | No; one per completed branch | `maps/ElmsLab.asm`; planned Phase 8-9 bird scripts |
@@ -225,7 +225,7 @@ data, an external distribution, or the optional cheat menu.
 | 200 | Misdreavus | Wild | Silver Cave Room 2 at night | After 16 badges | Existing | Yes | `data/wild/johto_grass.asm` |
 | 201 | Unown | Wild | Ruins of Alph inner chambers | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 202 | Wobbuffet | Wild or prize | Dark Cave Blackthorn entrance; Goldenrod Game Corner | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm`; `maps/GoldenrodGameCorner.asm` |
-| 203 | Girafarig | Wild | Unattended Safari Zone; area, level, rate, and slot TBD | Kanto | Reserved Phase 9 | Yes when implemented | Phase 9; `maps/SafariZoneBeta.asm`; `data/wild/kanto_grass.asm` |
+| 203 | Girafarig | NPC trade | Trade Chansey to Kim on Route 14 for a same-level Girafarig named `GIRAFY`; an optional future Safari encounter is not required for completion | Kanto | Phase 5 | Yes through breeding after the one-time trade | `data/events/npc_trades.asm`; `maps/Route14.asm` |
 | 204 | Pineco | Wild | Headbutt trees | After obtaining Headbutt | Existing | Yes | `data/wild/treemons.asm`; `data/wild/treemon_maps.asm` |
 | 205 | Forretress | Evolution | Pineco at level 31 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 206 | Dunsparce | Wild | Dark Cave Violet entrance, including swarm | Before Badge 1 | Existing | Yes | `data/wild/johto_grass.asm` |

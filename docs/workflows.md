@@ -65,8 +65,9 @@ reference variants and must continue to pass.
 The complete local handoff gate now covers the legendary-bird starter paths,
 Phase 2 evolution/item/Celebi behavior, Phase 3 CHEAT MODE, and Phase 4's three
 production-map gifts. Rerun the narrower owning profile after a focused change
-and `make test-all` at a milestone handoff. The five ordinary Crystal-missing
-families remain reserved for the Phase 9 Safari Zone.
+and `make test-all` at a milestone handoff. Four ordinary Crystal-missing
+families remain reserved for the Phase 9 Safari Zone; Phase 5 makes Kim's Route
+14 trade Girafarig's canonical source.
 
 ## Run the local automated test harness
 

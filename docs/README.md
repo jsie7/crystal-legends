@@ -7,18 +7,24 @@ guide.
 ## Current milestone
 
 Crystal Legends v0.1, the Phase 2 completion foundation, Phase 3 CHEAT MODE,
-and the Phase 4 Johto starter events are source-complete. Chikorita is a
+the Phase 4 Johto starter events, and the Phase 5 Ruins gifts are
+source-complete. Chikorita is a
 level-14 gift at the Ilex Forest shrine after Cut, Cyndaquil is a level-19 gift
 in Burned Tower after the legendary beasts awaken, and Totodile is a level-24
 rescue on Cianwood's east shore after SecretPotion receipt. Their independent,
 retry-safe gift paths pass the static, compiled-ROM, and production-ROM PyBoy
 matrices, including storage failure, save/reload, and duplicate prevention.
+Phase 5 adds level-10 Kabuto, level-26 Omanyte, and level-23 Aerodactyl gifts
+after their picture and hidden-wall conditions, plus Kim's same-level
+Girafarig trade. These paths have the same automated retry and persistence
+ownership; their presentation remains user-owned.
 
 The earlier manual pass confirmed the title screen, all three legendary-bird
 starter branches, the first Silver battle, the Elm/Oak handoff, player-bird
 learnsets, CHEAT MODE, and progression through Falkner. Phase 4 still needs the
 user-owned presentation matrix for sprite appearance, dialogue, discoverability,
-scene choreography, and story feel. Later Silver/balance checks, Phase 2
+scene choreography, and story feel. Phase 5 also needs its user-owned Ruins and
+Route 14 presentation matrix. Later Silver/balance checks, Phase 2
 presentation, and full-game acceptance also remain deferred. The current
 milestone is source-complete but is not yet playtest-certified or release-ready.
 See

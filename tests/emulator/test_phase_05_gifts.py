@@ -22,6 +22,7 @@ from tests.support.gift_scenario import (
 from tests.support.phase_05_scenario import (
     loaded_phase_5_checkpoint,
     loaded_phase_5_saved_game,
+    retarget_phase_5_save,
 )
 from tests.support.symbol_table import SymbolTable
 
@@ -201,7 +202,7 @@ def test_opened_chamber_scene_survives_native_save_reload(
         _enter_hidden_room(session, phase_5_constants, scenario)
 
 
-@pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE"])
+@pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE", "AERODACTYL"])
 def test_gift_visibility_and_decline_are_retryable(
     repo_root: Path,
     tmp_path: Path,
@@ -248,7 +249,7 @@ def test_gift_visibility_and_decline_are_retryable(
 
 
 @pytest.mark.parametrize("destination", ["party", "current-box"])
-@pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE"])
+@pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE", "AERODACTYL"])
 def test_gift_party_and_box_delivery_finalize_once(
     repo_root: Path,
     tmp_path: Path,
@@ -292,7 +293,7 @@ def test_gift_party_and_box_delivery_finalize_once(
         assert session.script_history.count(scenario["script"]) == 1
 
 
-@pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE"])
+@pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE", "AERODACTYL"])
 def test_gift_full_storage_is_atomic_and_retryable(
     repo_root: Path,
     tmp_path: Path,
@@ -326,7 +327,7 @@ def test_gift_full_storage_is_atomic_and_retryable(
         assert read_progress(session).current_box.species == (species,)
 
 
-@pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE"])
+@pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE", "AERODACTYL"])
 def test_gift_completion_survives_native_save_reload(
     repo_root: Path,
     tmp_path: Path,
@@ -363,3 +364,71 @@ def test_gift_completion_survives_native_save_reload(
         session.enable_script_tracing()
         session.tap("a", 2, 30)
         assert scenario["script"] not in session.script_history
+
+
+def test_all_three_gifts_can_be_collected_in_one_persistent_save(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_5_constants: dict[str, int],
+    scenarios: list[dict],
+) -> None:
+    persisted: Path | None = None
+    owned_species: list[int] = []
+    completed_events: list[int] = []
+
+    for index, scenario in enumerate(scenarios):
+        species = phase_5_constants[scenario["species"]]
+        completion = phase_5_constants[scenario["completion_event"]]
+        if persisted is None:
+            context = loaded_phase_5_checkpoint(
+                repo_root,
+                tmp_path / f"gift-{index}",
+                phase_5_constants,
+                scenario,
+                location="item_room",
+                picture=True,
+                wall=True,
+            )
+        else:
+            retargeted = retarget_phase_5_save(
+                persisted,
+                tmp_path / f"gift-{index}.sav",
+                repo_root,
+                phase_5_constants,
+                scenario,
+            )
+            context = loaded_phase_5_saved_game(
+                repo_root,
+                tmp_path / f"gift-{index}",
+                phase_5_constants,
+                scenario,
+                retargeted,
+            )
+
+        with context as session:
+            assert read_progress(session).party.species == tuple(owned_species)
+            assert all(event_is_set(session, event) for event in completed_events)
+            assert interact_with_gift(session, scenario, accept=True) == 0
+            owned_species.append(species)
+            completed_events.append(completion)
+            progress = read_progress(session)
+            assert progress.party.species == tuple(owned_species)
+            assert all(progress.owns(owned) for owned in owned_species)
+            assert all(event_is_set(session, event) for event in completed_events)
+            for event_name in scenario["item_events"]:
+                assert not event_is_set(session, phase_5_constants[event_name])
+            save_game_from_overworld(session, scenario["max_frames_per_step"])
+            persisted = tmp_path / f"gift-{index}-complete.sav"
+            dump_battery_ram(session, persisted)
+
+    assert persisted is not None
+    final_scenario = scenarios[-1]
+    with loaded_phase_5_saved_game(
+        repo_root,
+        tmp_path / "all-gifts-reload",
+        phase_5_constants,
+        final_scenario,
+        persisted,
+    ) as session:
+        assert read_progress(session).party.species == tuple(owned_species)
+        assert all(event_is_set(session, event) for event in completed_events)

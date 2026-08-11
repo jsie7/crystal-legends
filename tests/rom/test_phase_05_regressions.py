@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.support.constant_resolver import resolve_constants
+from tests.support.constant_resolver import assemble_bytes, resolve_constants
 from tests.support.rom_image import RomImage, decode_object_events
 from tests.support.symbol_table import SymbolTable
 
@@ -44,6 +44,7 @@ def phase_5_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "SPRITEMOVEDATA_POKEMON",
             "PAL_NPC_BROWN",
             "PAL_NPC_BLUE",
+            "PAL_NPC_PINK",
             "OBJECTTYPE_SCRIPT",
             "NO_ITEM",
             "FALSE",
@@ -52,6 +53,24 @@ def phase_5_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "setevent_command",
             "appear_command",
             "disappear_command",
+            "NPC_TRADE_KIM",
+            "NUM_NPC_TRADES",
+            "NPCTRADE_STRUCT_LENGTH",
+            "NPCTRADE_DIALOG",
+            "NPCTRADE_GIVEMON",
+            "NPCTRADE_GETMON",
+            "NPCTRADE_NICKNAME",
+            "NPCTRADE_DVS",
+            "NPCTRADE_ITEM",
+            "NPCTRADE_OT_ID",
+            "NPCTRADE_OT_NAME",
+            "NPCTRADE_GENDER",
+            "NAME_LENGTH",
+            "CHANSEY",
+            "GIRAFARIG",
+            "GOLD_BERRY",
+            "TRADE_DIALOGSET_GIRL",
+            "TRADE_GENDER_EITHER",
         ],
     )
 
@@ -233,6 +252,13 @@ def test_compiled_kabuto_scientist_checks_picture_before_wall(
             26,
             ("Mysteryberry", "MysticWater", "Stardust", "StarPiece"),
         ),
+        (
+            "AERODACTYL",
+            "RuinsOfAlphAerodactylItemRoom",
+            "PAL_NPC_PINK",
+            23,
+            ("GoldBerry", "MoonStone", "HealPowder", "EnergyRoot"),
+        ),
     ],
 )
 def test_compiled_hidden_room_object_and_gift_match_the_contract(
@@ -356,3 +382,78 @@ def test_compiled_hidden_room_object_and_gift_match_the_contract(
 
     assert callback_label not in reference_symbols
     assert script_label not in reference_symbols
+
+
+def test_compiled_kim_trade_changes_only_species_and_nickname(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_5_constants: dict[str, int],
+) -> None:
+    width = phase_5_constants["NPCTRADE_STRUCT_LENGTH"]
+    count = phase_5_constants["NUM_NPC_TRADES"]
+    index = phase_5_constants["NPC_TRADE_KIM"]
+    custom_symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    reference_symbols = SymbolTable.parse(
+        (repo_root / "pokecrystal11.sym").read_text()
+    )
+    custom_rom = RomImage.load(repo_root / "crystallegends.gbc")
+    reference_rom = RomImage.load(repo_root / "pokecrystal11.gbc")
+    custom = custom_rom.slice(custom_symbols["NPCTrades"].rom_offset, count * width)
+    reference = reference_rom.slice(
+        reference_symbols["NPCTrades"].rom_offset, count * width
+    )
+    custom_rows = [
+        custom[offset : offset + width]
+        for offset in range(0, len(custom), width)
+    ]
+    reference_rows = [
+        reference[offset : offset + width] for offset in range(0, len(reference), width)
+    ]
+    assert len(custom_rows) == len(reference_rows) == count
+    assert custom_rows[:index] == reference_rows[:index]
+    assert custom_rows[index + 1 :] == reference_rows[index + 1 :]
+
+    kim = custom_rows[index]
+    stock_kim = reference_rows[index]
+    getmon = phase_5_constants["NPCTRADE_GETMON"]
+    nickname = phase_5_constants["NPCTRADE_NICKNAME"]
+    nickname_width = phase_5_constants["NAME_LENGTH"]
+    allowed_differences = {getmon, *range(nickname, nickname + nickname_width)}
+    assert {
+        offset
+        for offset, (custom_byte, reference_byte) in enumerate(zip(kim, stock_kim))
+        if custom_byte != reference_byte
+    }.issubset(allowed_differences)
+
+    assert kim[phase_5_constants["NPCTRADE_DIALOG"]] == phase_5_constants[
+        "TRADE_DIALOGSET_GIRL"
+    ]
+    assert kim[phase_5_constants["NPCTRADE_GIVEMON"]] == phase_5_constants["CHANSEY"]
+    assert kim[getmon] == phase_5_constants["GIRAFARIG"]
+    assert kim[nickname : nickname + nickname_width] == assemble_bytes(
+        repo_root,
+        tmp_path / "girafy_name",
+        ['dname "GIRAFY", NAME_LENGTH'],
+        length=nickname_width,
+    )
+    assert stock_kim[getmon] == phase_5_constants["AERODACTYL"]
+    dvs = phase_5_constants["NPCTRADE_DVS"]
+    assert kim[dvs : dvs + 2] == bytes([0x96, 0x66])
+    assert kim[phase_5_constants["NPCTRADE_ITEM"]] == phase_5_constants["GOLD_BERRY"]
+    assert int.from_bytes(
+        kim[
+            phase_5_constants["NPCTRADE_OT_ID"] : phase_5_constants["NPCTRADE_OT_ID"]
+            + 2
+        ],
+        "little",
+    ) == 26491
+    ot_name = phase_5_constants["NPCTRADE_OT_NAME"]
+    assert kim[ot_name : ot_name + nickname_width] == assemble_bytes(
+        repo_root,
+        tmp_path / "kim_name",
+        ['dname "KIM", NAME_LENGTH'],
+        length=nickname_width,
+    )
+    assert kim[phase_5_constants["NPCTRADE_GENDER"]] == phase_5_constants[
+        "TRADE_GENDER_EITHER"
+    ]

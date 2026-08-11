@@ -245,6 +245,14 @@ def test_phase_5_preserves_the_stock_hidden_wall_engine(repo_root: Path) -> None
             26,
             "Mysteryberry",
         ),
+        (
+            "AERODACTYL",
+            "RuinsOfAlphAerodactylItemRoom",
+            "RUINSOFALPHAERODACTYLITEMROOM_AERODACTYL",
+            "PAL_NPC_PINK",
+            23,
+            "GoldBerry",
+        ),
     ],
 )
 def test_hidden_room_gift_is_retry_safe_and_preserves_stock_objects(
@@ -330,7 +338,11 @@ def test_hidden_room_gift_is_retry_safe_and_preserves_stock_objects(
 
 @pytest.mark.parametrize(
     "map_name",
-    ["RUINS_OF_ALPH_KABUTO_ITEM_ROOM", "RUINS_OF_ALPH_OMANYTE_ITEM_ROOM"],
+    [
+        "RUINS_OF_ALPH_KABUTO_ITEM_ROOM",
+        "RUINS_OF_ALPH_OMANYTE_ITEM_ROOM",
+        "RUINS_OF_ALPH_AERODACTYL_ITEM_ROOM",
+    ],
 )
 def test_gift_coordinate_is_floor(repo_root: Path, map_name: str) -> None:
     dimensions = parse_map_dimensions(
@@ -349,3 +361,38 @@ def test_gift_coordinate_is_floor(repo_root: Path, map_name: str) -> None:
         block_paths,
         tilesets,
     ) == "FLOOR"
+
+
+def test_kim_trade_replaces_only_the_received_species_and_nickname(
+    repo_root: Path,
+) -> None:
+    trade_source = repo_root / "data/events/npc_trades.asm"
+    custom = _active_code(trade_source, CRYSTAL_LEGENDS)
+    reference = _active_code(trade_source, REFERENCE)
+    custom_rows = [line for line in custom if line.startswith("npctrade ")]
+    reference_rows = [line for line in reference if line.startswith("npctrade ")]
+
+    assert len(custom_rows) == len(reference_rows) == 7
+    assert custom_rows[:5] == reference_rows[:5]
+    assert custom_rows[6:] == reference_rows[6:]
+    assert custom_rows[5] == (
+        'npctrade TRADE_DIALOGSET_GIRL,      CHANSEY,    GIRAFARIG,  "GIRAFY", '
+        '$96, $66, GOLD_BERRY,   26491, "KIM",    TRADE_GENDER_EITHER'
+    )
+    assert reference_rows[5] == (
+        'npctrade TRADE_DIALOGSET_GIRL,      CHANSEY,    AERODACTYL, "AEROY",  '
+        '$96, $66, GOLD_BERRY,   26491, "KIM",    TRADE_GENDER_EITHER'
+    )
+
+    route_source = repo_root / "maps/Route14.asm"
+    expected = [
+        "Kim:",
+        "faceplayer",
+        "opentext",
+        "trade NPC_TRADE_KIM",
+        "waitbutton",
+        "closetext",
+        "end",
+    ]
+    _assert_contiguous(_active_code(route_source, CRYSTAL_LEGENDS), expected)
+    _assert_contiguous(_active_code(route_source, REFERENCE), expected)
