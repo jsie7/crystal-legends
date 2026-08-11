@@ -36,4 +36,9 @@ SpriteMons:
 	db GYARADOS
 	db LUGIA
 	db HO_OH
+if DEF(_CRYSTALLEGENDS)
+	db CHIKORITA
+	db CYNDAQUIL
+	db TOTODILE
+endc
 	assert_table_length NUM_POKEMON_SPRITES

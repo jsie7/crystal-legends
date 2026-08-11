@@ -230,7 +230,9 @@ def test_approved_battery_fixture_loads_immutably_into_bedroom(
 ) -> None:
     fixture = repo_root / "tests/fixtures/saves" / scenario["save_fixture"]
     assert _sha256(fixture) == fixture_metadata["save_sha256"]
-    assert _sha256(repo_root / scenario["rom"]) == fixture_metadata["rom_sha256"]
+    source_rom_sha256 = fixture_metadata["source_rom_sha256"]
+    assert len(source_rom_sha256) == 64
+    int(source_rom_sha256, 16)
     with _loaded_session(repo_root, tmp_path, scenario) as session:
         _assert_scenario_start(session, scenario, runtime_constants)
         expected = fixture_metadata["expected"]

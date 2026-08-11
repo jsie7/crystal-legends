@@ -1478,10 +1478,14 @@ endc
 	const EVENT_BATTLE_TOWER_OPEN_CIVILIANS
 if DEF(_CRYSTALLEGENDS)
 	const EVENT_OAK_MOVED_THIRD_BIRD
+	const EVENT_GOT_CHIKORITA_FROM_ILEX_FOREST
+	const EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER
+	const EVENT_GOT_TOTODILE_FROM_CIANWOOD
 else
 	const_skip ; reserved for EVENT_OAK_MOVED_THIRD_BIRD
+	const_skip 3 ; reserved for Crystal Legends Johto starter gifts
 endc
-; Unused: next 47 events
+; Unused: next 44 events
 
 	const_next 2048
 DEF NUM_EVENTS EQU const_value ; 800

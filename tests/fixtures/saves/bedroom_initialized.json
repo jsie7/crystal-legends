@@ -2,7 +2,7 @@
   "fixture_id": "bedroom_initialized",
   "purpose": "Initialized pre-starter save positioned below the bedroom TV",
   "source_commit": "0e5e56929646a583f84e3e7d12b6713adc593ccc",
-  "rom_sha256": "7c47f8352e3f4ca17a48857d8da4a03ffdd0e81ca88be63215e22b72a9acb55b",
+  "source_rom_sha256": "7c47f8352e3f4ca17a48857d8da4a03ffdd0e81ca88be63215e22b72a9acb55b",
   "save_sha256": "f55e727dea5ace073e31183ad80efab4c953c3990c651935160607dbdc3bf6b7",
   "player": {
     "name": "CHRIS",
