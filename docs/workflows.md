@@ -42,6 +42,9 @@ Phase 2 automated matrix, and the Phase 3 CHEAT MODE safety pass are complete.
 Phase 4's Johto starter events are source-complete and pass their automated
 source, ROM, and headless production-map matrices. Their user-owned presentation
 matrix remains pending, so do not call Phase 4 playtest-certified yet.
+Phase 5's Ruins gifts and Route 14 Girafarig trade are likewise source-complete:
+their automated dual-gate, delivery, trade, and persistence matrices pass, while
+their user-owned presentation and natural puzzle-flow review remains pending.
 
 ## Validate the Crystal Legends build
 
@@ -64,10 +67,11 @@ reference variants and must continue to pass.
 
 The complete local handoff gate now covers the legendary-bird starter paths,
 Phase 2 evolution/item/Celebi behavior, Phase 3 CHEAT MODE, and Phase 4's three
-production-map gifts. Rerun the narrower owning profile after a focused change
-and `make test-all` at a milestone handoff. Four ordinary Crystal-missing
-families remain reserved for the Phase 9 Safari Zone; Phase 5 makes Kim's Route
-14 trade Girafarig's canonical source.
+production-map gifts, plus Phase 5's three Ruins gifts and Route 14 Girafarig
+trade. Rerun the narrower owning profile after a focused change and
+`make test-all` at a milestone handoff. Four ordinary Crystal-missing families
+remain reserved for the Phase 9 Safari Zone; Phase 5 makes Kim's Route 14 trade
+Girafarig's canonical source.
 
 ## Run the local automated test harness
 
@@ -151,6 +155,64 @@ Manually confirm:
 
 Any presentation failure must be fixed and retested or explicitly assigned
 before Phase 4 is described as playtest-certified or release-ready.
+
+### Validate the Phase 5 Ruins gifts and Girafarig trade
+
+Run the focused Phase 5 suites while editing, then the aggregate and clean
+handoff gates:
+
+```bash
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/static/test_phase_05_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/rom/test_phase_05_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/emulator/test_phase_05_gifts.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/emulator/test_phase_05_trade.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest -m phase5
+make test-crystallegends
+make clean
+make test-all
+rgbfix -v crystallegends.gbc
+git diff --check
+git status --short
+```
+
+Automation owns the exact picture-plus-hidden-condition gates, early-condition
+state, species, levels, coordinates, visibility, party/current-box/full-storage
+delivery, retry and duplicate prevention, combined-save and save/reload
+persistence, stock item independence, Kim trade metadata, bank floors, and
+reference isolation. It deliberately does not replay every sliding-tile puzzle,
+Bag Escape Rope action, Flash field-move menu, or natural Water Stone pickup.
+
+For playtest certification, use a backed-up or disposable save and record the
+emulator/version, ROM commit and hash, date, preparation boundary, and result.
+Manually confirm:
+
+1. In the Kabuto chamber, use Escape Rope before solving the picture. Confirm
+   the wall and scientist dialogue remain closed/coherent, then solve the
+   picture and verify the remembered Rope condition opens the wall without a
+   second Rope use. Review Kabuto's placement, palette, bounce, cry, dialogue,
+   and level-10 reward.
+2. In the Omanyte chamber, carry a Water Stone before solving the picture.
+   Confirm the Stone is retained and the wall stays closed, then solve the
+   picture and verify the remembered condition opens the wall. Review Omanyte's
+   presentation and level-26 reward, and repeat the prerequisite with a Water
+   Stone held by a party Pokémon.
+3. In the Aerodactyl chamber, use Flash before solving the picture. Confirm the
+   wall stays closed, then solve the picture and verify the remembered Flash
+   condition opens it without a second use. Review Aerodactyl's presentation
+   and level-23 reward.
+4. In every gift room, decline once, claim with normal capacity, and re-enter.
+   Confirm the Pokémon waits after decline, stays absent after success, never
+   blocks the room, uses clean non-fossil dialogue, and leaves all stock items
+   and word-room navigation intact. Judge levels 10/26/23 in a normal run.
+5. Confirm the Ho-Oh chamber and hidden room remain stock. On Route 14, trade a
+   Chansey to Kim and verify a same-level Girafarig named `GIRAFY` holding a
+   Gold Berry arrives. Confirm the trade and Aerodactyl gift do not complete one
+   another; in a reference ROM, confirm Kim still offers `AEROY` the Aerodactyl
+   and none of the three new room gifts or gates appears.
+
+Any visual, pacing, navigation, or narrative failure must be fixed and retested
+or explicitly assigned before Phase 5 is described as playtest-certified or
+release-ready.
 
 ### Battery-save and scenario fixtures
 
