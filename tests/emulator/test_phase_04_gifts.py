@@ -13,15 +13,17 @@ from tests.support.bedroom_scenario import (
 )
 from tests.support.constant_resolver import resolve_constants
 from tests.support.game_state import read_progress
+from tests.support.gift_scenario import (
+    clear_current_box,
+    interact_with_gift,
+    set_current_box_full,
+    set_party_full,
+)
 from tests.support.legendary_scenario import place_player, walk_steps
 from tests.support.phase_04_scenario import (
-    clear_current_box,
-    interact_with_phase_4_gift,
     loaded_phase_4_checkpoint,
     loaded_phase_4_saved_game,
     retarget_phase_4_save,
-    set_current_box_full,
-    set_party_full,
 )
 from tests.support.symbol_table import SymbolTable
 
@@ -119,7 +121,7 @@ def test_chikorita_requires_cut_and_decline_remains_retryable(
     ) as session:
         before = read_progress(session)
         yes_no_count = session.hook_history.count("_YesNoBox")
-        assert interact_with_phase_4_gift(session, chikorita, accept=None) is None
+        assert interact_with_gift(session, chikorita, accept=None) is None
         assert session.hook_history.count("_YesNoBox") == yes_no_count
         assert not event_is_set(session, completion)
         assert read_progress(session) == before
@@ -131,10 +133,10 @@ def test_chikorita_requires_cut_and_decline_remains_retryable(
         chikorita,
         prerequisite=True,
     ) as session:
-        assert interact_with_phase_4_gift(session, chikorita, accept=False) is None
+        assert interact_with_gift(session, chikorita, accept=False) is None
         assert not event_is_set(session, completion)
         assert read_progress(session).party.count == 0
-        assert interact_with_phase_4_gift(session, chikorita, accept=False) is None
+        assert interact_with_gift(session, chikorita, accept=False) is None
         assert session.script_history.count(chikorita["script"]) == 2
 
 
@@ -166,7 +168,7 @@ def test_phase_4_party_and_box_delivery_finalize_once(
             )
         expected_outcome = 0 if destination == "party" else 1
         assert (
-            interact_with_phase_4_gift(session, scenario, accept=True)
+            interact_with_gift(session, scenario, accept=True)
             == expected_outcome
         )
         progress = read_progress(session)
@@ -203,12 +205,12 @@ def test_phase_4_full_storage_is_atomic_and_retryable(
         set_party_full(session, filler, phase_4_constants["PARTY_LENGTH"])
         set_current_box_full(session, filler, phase_4_constants["MONS_PER_BOX"])
         before = read_progress(session)
-        assert interact_with_phase_4_gift(session, scenario, accept=True) == 2
+        assert interact_with_gift(session, scenario, accept=True) == 2
         assert not event_is_set(session, completion)
         assert read_progress(session) == before
 
         clear_current_box(session)
-        assert interact_with_phase_4_gift(session, scenario, accept=True) == 1
+        assert interact_with_gift(session, scenario, accept=True) == 1
         assert event_is_set(session, completion)
         assert read_progress(session).current_box.species == (species,)
 
@@ -232,7 +234,7 @@ def test_phase_4_completion_survives_native_save_reload_without_duplicates(
         scenario,
         prerequisite=True,
     ) as session:
-        assert interact_with_phase_4_gift(session, scenario, accept=True) == 0
+        assert interact_with_gift(session, scenario, accept=True) == 0
         save_game_from_overworld(session, scenario["max_frames_per_step"])
         dump_battery_ram(session, persisted)
 
@@ -310,7 +312,7 @@ def test_cyndaquil_appears_in_release_scene_and_restores_while_pending(
             session, phase_4_constants["EVENT_SAW_SUICUNE_AT_CIANWOOD_CITY"]
         )
         walk_steps(session, "up", "wYCoord", -1, 1, cyndaquil["max_frames_per_step"])
-        assert interact_with_phase_4_gift(session, cyndaquil, accept=False) is None
+        assert interact_with_gift(session, cyndaquil, accept=False) is None
 
     with loaded_phase_4_checkpoint(
         repo_root,
@@ -319,9 +321,9 @@ def test_cyndaquil_appears_in_release_scene_and_restores_while_pending(
         cyndaquil,
         prerequisite=True,
     ) as session:
-        assert interact_with_phase_4_gift(session, cyndaquil, accept=False) is None
+        assert interact_with_gift(session, cyndaquil, accept=False) is None
         assert not event_is_set(session, completion)
-        assert interact_with_phase_4_gift(session, cyndaquil, accept=False) is None
+        assert interact_with_gift(session, cyndaquil, accept=False) is None
 
 
 def test_totodile_clue_and_secretpotion_paths_preserve_story_state(
@@ -341,7 +343,7 @@ def test_totodile_clue_and_secretpotion_paths_preserve_story_state(
     ) as session:
         before = read_progress(session)
         yes_no_count = session.hook_history.count("_YesNoBox")
-        assert interact_with_phase_4_gift(session, totodile, accept=None) is None
+        assert interact_with_gift(session, totodile, accept=None) is None
         assert session.hook_history.count("_YesNoBox") == yes_no_count
         assert not event_is_set(session, completion)
         assert read_progress(session) == before
@@ -358,7 +360,7 @@ def test_totodile_clue_and_secretpotion_paths_preserve_story_state(
         session.write_symbol_bytes("wKeyItems", bytes([secretpotion, 0xFF]))
         before_inventory = read_progress(session).inventory
         jasmine_before = event_is_set(session, jasmine)
-        assert interact_with_phase_4_gift(session, totodile, accept=True) == 0
+        assert interact_with_gift(session, totodile, accept=True) == 0
         assert event_is_set(session, completion)
         assert read_progress(session).inventory == before_inventory
         assert event_is_set(session, jasmine) is jasmine_before
@@ -401,7 +403,7 @@ def test_all_three_johto_starters_are_obtainable_on_one_save(
                 retargeted,
             )
         with context as session:
-            assert interact_with_phase_4_gift(session, scenario, accept=True) == 0
+            assert interact_with_gift(session, scenario, accept=True) == 0
             expected_species.append(phase_4_constants[scenario["species"]])
             assert read_progress(session).party.species == tuple(expected_species)
             for completed in ordered[: index + 1]:
