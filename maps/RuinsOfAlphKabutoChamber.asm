@@ -11,8 +11,15 @@ RuinsOfAlphKabutoChamber_MapScripts:
 	callback MAPCALLBACK_TILES, RuinsOfAlphKabutoChamberHiddenDoorsCallback
 
 RuinsOfAlphKabutoChamberCheckWallScene:
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_SOLVED_KABUTO_PUZZLE
+	iffalse .WallClosed
+endc
 	checkevent EVENT_WALL_OPENED_IN_KABUTO_CHAMBER
 	iftrue .OpenWall
+if DEF(_CRYSTALLEGENDS)
+.WallClosed:
+endc
 	end
 
 .OpenWall:
@@ -23,8 +30,15 @@ RuinsOfAlphKabutoChamberNoopScene:
 	end
 
 RuinsOfAlphKabutoChamberHiddenDoorsCallback:
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_SOLVED_KABUTO_PUZZLE
+	iffalse .WallClosed
+endc
 	checkevent EVENT_WALL_OPENED_IN_KABUTO_CHAMBER
 	iftrue .WallOpen
+if DEF(_CRYSTALLEGENDS)
+.WallClosed:
+endc
 	changeblock 4, 0, $2e ; closed wall
 .WallOpen:
 	checkevent EVENT_SOLVED_KABUTO_PUZZLE
@@ -85,6 +99,10 @@ RuinsOfAlphKabutoChamberScientistScript:
 	opentext
 	readvar VAR_UNOWNCOUNT
 	ifequal NUM_UNOWN, .AllUnownCaught
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_SOLVED_KABUTO_PUZZLE
+	iffalse .PuzzleIncomplete
+endc
 	checkevent EVENT_WALL_OPENED_IN_KABUTO_CHAMBER
 	iftrue .WallOpen
 	checkevent EVENT_SOLVED_KABUTO_PUZZLE
@@ -125,8 +143,15 @@ RuinsOfAlphKabutoChamberWallPatternLeft:
 	end
 
 RuinsOfAlphKabutoChamberWallPatternRight:
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_SOLVED_KABUTO_PUZZLE
+	iffalse .WallClosed
+endc
 	checkevent EVENT_WALL_OPENED_IN_KABUTO_CHAMBER
 	iftrue .WallOpen
+if DEF(_CRYSTALLEGENDS)
+.WallClosed:
+endc
 	opentext
 	writetext RuinsOfAlphKabutoChamberWallPatternRightText
 	setval UNOWNWORDS_ESCAPE

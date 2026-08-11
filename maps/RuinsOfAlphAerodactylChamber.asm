@@ -7,8 +7,15 @@ RuinsOfAlphAerodactylChamber_MapScripts:
 	callback MAPCALLBACK_TILES, RuinsOfAlphAerodactylChamberHiddenDoorsCallback
 
 RuinsOfAlphAerodactylChamberCheckWallScene:
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_SOLVED_AERODACTYL_PUZZLE
+	iffalse .WallClosed
+endc
 	checkevent EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER
 	iftrue .OpenWall
+if DEF(_CRYSTALLEGENDS)
+.WallClosed:
+endc
 	end
 
 .OpenWall:
@@ -19,8 +26,15 @@ RuinsOfAlphAerodactylChamberNoopScene:
 	end
 
 RuinsOfAlphAerodactylChamberHiddenDoorsCallback:
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_SOLVED_AERODACTYL_PUZZLE
+	iffalse .WallClosed
+endc
 	checkevent EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER
 	iftrue .WallOpen
+if DEF(_CRYSTALLEGENDS)
+.WallClosed:
+endc
 	changeblock 4, 0, $2e ; closed wall
 .WallOpen:
 	checkevent EVENT_SOLVED_AERODACTYL_PUZZLE
@@ -87,8 +101,15 @@ RuinsOfAlphAerodactylChamberWallPatternLeft:
 	end
 
 RuinsOfAlphAerodactylChamberWallPatternRight:
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_SOLVED_AERODACTYL_PUZZLE
+	iffalse .WallClosed
+endc
 	checkevent EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER
 	iftrue .WallOpen
+if DEF(_CRYSTALLEGENDS)
+.WallClosed:
+endc
 	opentext
 	writetext RuinsOfAlphAerodactylChamberWallPatternRightText
 	setval UNOWNWORDS_LIGHT

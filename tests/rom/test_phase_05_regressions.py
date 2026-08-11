@@ -29,6 +29,14 @@ def phase_5_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "KABUTO",
             "OMANYTE",
             "AERODACTYL",
+            "EVENT_SOLVED_KABUTO_PUZZLE",
+            "EVENT_SOLVED_OMANYTE_PUZZLE",
+            "EVENT_SOLVED_AERODACTYL_PUZZLE",
+            "EVENT_WALL_OPENED_IN_KABUTO_CHAMBER",
+            "EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER",
+            "EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER",
+            "checkevent_command",
+            "sdefer_command",
         ],
     )
 
@@ -78,3 +86,96 @@ def test_phase_5_identity_does_not_change_the_save_layout(repo_root: Path) -> No
     assert symbols["wEventFlags"].bank == 1
     assert symbols["wEventFlags"].address == 55922
     assert symbols["wCurBox"].address - symbols["wEventFlags"].address == 256
+
+
+def _event_check(command: int, event: int) -> bytes:
+    return bytes([command]) + event.to_bytes(2, "little")
+
+
+@pytest.mark.parametrize(
+    ("species", "prefix"),
+    [
+        ("KABUTO", "RuinsOfAlphKabutoChamber"),
+        ("OMANYTE", "RuinsOfAlphOmanyteChamber"),
+        ("AERODACTYL", "RuinsOfAlphAerodactylChamber"),
+    ],
+)
+def test_compiled_chamber_gates_check_picture_before_wall(
+    repo_root: Path,
+    phase_5_constants: dict[str, int],
+    species: str,
+    prefix: str,
+) -> None:
+    custom_symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    custom = RomImage.load(repo_root / "crystallegends.gbc")
+    reference_symbols = SymbolTable.parse(
+        (repo_root / "pokecrystal11.sym").read_text()
+    )
+    reference = RomImage.load(repo_root / "pokecrystal11.gbc")
+    picture = _event_check(
+        phase_5_constants["checkevent_command"],
+        phase_5_constants[f"EVENT_SOLVED_{species}_PUZZLE"],
+    )
+    wall = _event_check(
+        phase_5_constants["checkevent_command"],
+        phase_5_constants[f"EVENT_WALL_OPENED_IN_{species}_CHAMBER"],
+    )
+
+    ranges = (
+        (f"{prefix}CheckWallScene", f"{prefix}NoopScene"),
+        (f"{prefix}HiddenDoorsCallback", f"{prefix}WallOpenScript"),
+        (f"{prefix}WallPatternRight", f"{prefix}SkyfallTopMovement"),
+    )
+    for start_label, end_label in ranges:
+        start = custom_symbols[start_label].rom_offset
+        end = custom_symbols[end_label].rom_offset
+        compiled = custom.slice(start, end - start)
+        assert compiled.index(picture) < compiled.index(wall)
+
+        reference_start = reference_symbols[start_label].rom_offset
+        reference_end = reference_symbols[end_label].rom_offset
+        stock = reference.slice(reference_start, reference_end - reference_start)
+        assert wall in stock
+        if start_label.endswith("CheckWallScene") or start_label.endswith(
+            "WallPatternRight"
+        ):
+            assert picture not in stock
+        else:
+            assert stock.index(wall) < stock.index(picture)
+
+    scene_start = custom_symbols[f"{prefix}CheckWallScene"].rom_offset
+    scene_end = custom_symbols[f"{prefix}NoopScene"].rom_offset
+    scene = custom.slice(scene_start, scene_end - scene_start)
+    assert bytes([phase_5_constants["sdefer_command"]]) in scene
+
+
+def test_compiled_kabuto_scientist_checks_picture_before_wall(
+    repo_root: Path, phase_5_constants: dict[str, int]
+) -> None:
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    rom = RomImage.load(repo_root / "crystallegends.gbc")
+    start = symbols["RuinsOfAlphKabutoChamberScientistScript"].rom_offset
+    end = symbols["RuinsOfAlphKabutoChamberAncientReplica"].rom_offset
+    script = rom.slice(start, end - start)
+    picture = _event_check(
+        phase_5_constants["checkevent_command"],
+        phase_5_constants["EVENT_SOLVED_KABUTO_PUZZLE"],
+    )
+    wall = _event_check(
+        phase_5_constants["checkevent_command"],
+        phase_5_constants["EVENT_WALL_OPENED_IN_KABUTO_CHAMBER"],
+    )
+    assert script.index(picture) < script.index(wall)
+
+    reference_symbols = SymbolTable.parse(
+        (repo_root / "pokecrystal11.sym").read_text()
+    )
+    reference = RomImage.load(repo_root / "pokecrystal11.gbc")
+    reference_start = reference_symbols[
+        "RuinsOfAlphKabutoChamberScientistScript"
+    ].rom_offset
+    reference_end = reference_symbols[
+        "RuinsOfAlphKabutoChamberAncientReplica"
+    ].rom_offset
+    stock = reference.slice(reference_start, reference_end - reference_start)
+    assert stock.index(wall) < stock.index(picture)

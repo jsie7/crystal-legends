@@ -1,0 +1,80 @@
+[
+  {
+    "scenario_id": "phase_05_ruins_kabuto",
+    "species": "KABUTO",
+    "level": 10,
+    "map": "RUINS_OF_ALPH_KABUTO_ITEM_ROOM",
+    "coordinate": [3, 3],
+    "start": {"x": 3, "y": 4, "facing": "UP"},
+    "chamber": {
+      "map": "RUINS_OF_ALPH_KABUTO_CHAMBER",
+      "start": {"x": 4, "y": 1, "facing": "UP"},
+      "scene_variable": "wRuinsOfAlphKabutoChamberSceneID",
+      "check_scene": "SCENE_RUINSOFALPHKABUTOCHAMBER_CHECK_WALL",
+      "noop_scene": "SCENE_RUINSOFALPHKABUTOCHAMBER_NOOP",
+      "wall_script": "RuinsOfAlphKabutoChamberWallOpenScript"
+    },
+    "picture_event": "EVENT_SOLVED_KABUTO_PUZZLE",
+    "wall_event": "EVENT_WALL_OPENED_IN_KABUTO_CHAMBER",
+    "completion_event": "EVENT_GOT_KABUTO_FROM_ALPH",
+    "object_constant": "RUINSOFALPHKABUTOITEMROOM_KABUTO",
+    "object_sprite": "SPRITE_KABUTO",
+    "object_palette": "PAL_NPC_BROWN",
+    "object_event_flag": "-1",
+    "script": "RuinsOfAlphKabutoItemRoomKabutoScript",
+    "max_frames_per_step": 60000,
+    "delivery_contract": "stock_givepoke_0_party_1_box_2_full"
+  },
+  {
+    "scenario_id": "phase_05_ruins_omanyte",
+    "species": "OMANYTE",
+    "level": 26,
+    "map": "RUINS_OF_ALPH_OMANYTE_ITEM_ROOM",
+    "coordinate": [3, 3],
+    "start": {"x": 3, "y": 4, "facing": "UP"},
+    "chamber": {
+      "map": "RUINS_OF_ALPH_OMANYTE_CHAMBER",
+      "start": {"x": 4, "y": 1, "facing": "UP"},
+      "scene_variable": "wRuinsOfAlphOmanyteChamberSceneID",
+      "check_scene": "SCENE_RUINSOFALPHOMANYTECHAMBER_CHECK_WALL",
+      "noop_scene": "SCENE_RUINSOFALPHOMANYTECHAMBER_NOOP",
+      "wall_script": "RuinsOfAlphOmanyteChamberWallOpenScript"
+    },
+    "picture_event": "EVENT_SOLVED_OMANYTE_PUZZLE",
+    "wall_event": "EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER",
+    "completion_event": "EVENT_GOT_OMANYTE_FROM_ALPH",
+    "object_constant": "RUINSOFALPHOMANYTEITEMROOM_OMANYTE",
+    "object_sprite": "SPRITE_OMANYTE",
+    "object_palette": "PAL_NPC_BLUE",
+    "object_event_flag": "-1",
+    "script": "RuinsOfAlphOmanyteItemRoomOmanyteScript",
+    "max_frames_per_step": 60000,
+    "delivery_contract": "stock_givepoke_0_party_1_box_2_full"
+  },
+  {
+    "scenario_id": "phase_05_ruins_aerodactyl",
+    "species": "AERODACTYL",
+    "level": 23,
+    "map": "RUINS_OF_ALPH_AERODACTYL_ITEM_ROOM",
+    "coordinate": [3, 3],
+    "start": {"x": 3, "y": 4, "facing": "UP"},
+    "chamber": {
+      "map": "RUINS_OF_ALPH_AERODACTYL_CHAMBER",
+      "start": {"x": 4, "y": 1, "facing": "UP"},
+      "scene_variable": "wRuinsOfAlphAerodactylChamberSceneID",
+      "check_scene": "SCENE_RUINSOFALPHAERODACTYLCHAMBER_CHECK_WALL",
+      "noop_scene": "SCENE_RUINSOFALPHAERODACTYLCHAMBER_NOOP",
+      "wall_script": "RuinsOfAlphAerodactylChamberWallOpenScript"
+    },
+    "picture_event": "EVENT_SOLVED_AERODACTYL_PUZZLE",
+    "wall_event": "EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER",
+    "completion_event": "EVENT_GOT_AERODACTYL_FROM_ALPH",
+    "object_constant": "RUINSOFALPHAERODACTYLITEMROOM_AERODACTYL",
+    "object_sprite": "SPRITE_AERODACTYL",
+    "object_palette": "PAL_NPC_PINK",
+    "object_event_flag": "-1",
+    "script": "RuinsOfAlphAerodactylItemRoomAerodactylScript",
+    "max_frames_per_step": 60000,
+    "delivery_contract": "stock_givepoke_0_party_1_box_2_full"
+  }
+]

@@ -8,8 +8,15 @@ RuinsOfAlphOmanyteChamber_MapScripts:
 
 RuinsOfAlphOmanyteChamberCheckWallScene:
 	special OmanyteChamber
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_SOLVED_OMANYTE_PUZZLE
+	iffalse .WallClosed
+endc
 	checkevent EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER
 	iftrue .OpenWall
+if DEF(_CRYSTALLEGENDS)
+.WallClosed:
+endc
 	end
 
 .OpenWall:
@@ -20,8 +27,15 @@ RuinsOfAlphOmanyteChamberNoopScene:
 	end
 
 RuinsOfAlphOmanyteChamberHiddenDoorsCallback:
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_SOLVED_OMANYTE_PUZZLE
+	iffalse .WallClosed
+endc
 	checkevent EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER
 	iftrue .WallOpen
+if DEF(_CRYSTALLEGENDS)
+.WallClosed:
+endc
 	changeblock 4, 0, $2e ; closed wall
 .WallOpen:
 	checkevent EVENT_SOLVED_OMANYTE_PUZZLE
@@ -88,8 +102,15 @@ RuinsOfAlphOmanyteChamberWallPatternLeft:
 	end
 
 RuinsOfAlphOmanyteChamberWallPatternRight:
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_SOLVED_OMANYTE_PUZZLE
+	iffalse .WallClosed
+endc
 	checkevent EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER
 	iftrue .WallOpen
+if DEF(_CRYSTALLEGENDS)
+.WallClosed:
+endc
 	opentext
 	writetext RuinsOfAlphOmanyteChamberWallPatternRightText
 	setval UNOWNWORDS_WATER

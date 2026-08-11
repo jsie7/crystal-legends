@@ -145,3 +145,18 @@ The three overworld identifiers reuse the stock Pokémon-icon loader and add no
 graphics assets. Keep every event flag, sprite entry, map object, script, and
 hint behind `_CRYSTALLEGENDS`; reference builds must contain none of this
 behavior and must continue to reproduce exactly.
+
+## 2026-08-11 — Gate Ruins gifts on both ancient conditions
+
+For the Kabuto, Omanyte, and Aerodactyl chambers, Crystal Legends opens the
+hidden room only after both the matching picture puzzle and the chamber's stock
+hidden-wall condition are complete. The stock Escape Rope, Water Stone, and
+Flash handlers may record their wall event before the picture is solved, but
+the chamber must remain visibly closed and continue to show its clue until the
+picture event is also set. Ho-Oh remains entirely stock.
+
+Apply this dual predicate consistently to the opening scene, tile callback,
+right-wall text, and Kabuto scientist dialogue while preserving the independent
+picture-floor drop. There are no retained player-progression saves predating
+this behavior, so do not add scene normalization, trade migration, save-version
+conversion, or other compatibility scaffolding for hypothetical old progress.
