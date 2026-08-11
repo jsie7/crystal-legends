@@ -37,11 +37,11 @@ assembly dependencies.
 7. Run `git status --short` and inspect the diff. Generated ROM, object, symbol,
    map, palette, tile, compression, and patch outputs must stay untracked.
 
-For the current Crystal Legends sequence, the optional CHEAT MODE implementation
-and its user-run manual safety pass are complete. The three v0.1 branches have
-also passed through Elm's post-break-in handoff. Continue to run the build and
-source checks below for every change. Progression through Falkner and the Phase
-2 matrix remain deferred, so do not claim full playtest certification yet.
+For the current Crystal Legends sequence, the v0.1 path through Falkner, the
+Phase 2 automated matrix, and the Phase 3 CHEAT MODE safety pass are complete.
+Phase 4's Johto starter events are source-complete and pass their automated
+source, ROM, and headless production-map matrices. Their user-owned presentation
+matrix remains pending, so do not call Phase 4 playtest-certified yet.
 
 ## Validate the Crystal Legends build
 
@@ -62,36 +62,11 @@ git status --short
 `_CRYSTAL11` and `_CRYSTALLEGENDS`. `make compare` checks only the untouched
 reference variants and must continue to pass.
 
-The user-run 2026-08-10 v0.1 pass covered a fresh branch for Articuno, Zapdos,
-and Moltres through Elm's post-break-in handoff. The remaining v0.1 work is to
-continue each branch through the catching tutorial, Routes 30/31, Sprout Tower,
-and Falkner, then save/reload after the Zephyr Badge.
-
-In the same pass, run the deferred Phase 2 matrix:
-
-1. Evolve Kadabra, Machoke, Graveler, and Haunter at level 36; confirm level 35
-   does not evolve them.
-2. Evolve Poliwhirl, Slowpoke, Onix, Scyther, Seadra, and Porygon by directly
-   using their canonical items. Confirm an incompatible target preserves the
-   item and a successful evolution consumes exactly one.
-3. Confirm King's Rock, Metal Coat, Dragon Scale, and Up-Grade can still be
-   given as held items, retain their stock held behavior, and can be purchased
-   repeatedly at Celadon Department Store 4F.
-4. Confirm Water Stone still produces Poliwrath, King's Rock produces Politoed,
-   level 37 still produces Slowbro, and King's Rock produces Slowking.
-5. Enter Goldenrod Pokémon Center before Hall of Fame and receive no GS Ball;
-   enter afterward and receive exactly one.
-6. With a full Key Items pocket, confirm no receipt/Kurt state advances, then
-   free a slot and receive the GS Ball normally.
-7. Complete Kurt's native handoff and waiting step. At the shrine, test a
-   knockout, escape where permitted, and box-full/non-capture result; reload
-   and confirm the GS Ball and shrine prompt return after each failure.
-8. Catch Celebi, save/reload, and confirm the shrine cannot create a duplicate.
-
-The CHEAT MODE safety checks passed in the user-run 2026-08-10 pass. Rerun them
-after any later CHEAT MODE, bedroom-event, grant, or save-boundary change. The
-five ordinary missing families have no Phase 2 encounter tests; they remain
-reserved for the Phase 9 Safari Zone.
+The complete local handoff gate now covers the legendary-bird starter paths,
+Phase 2 evolution/item/Celebi behavior, Phase 3 CHEAT MODE, and Phase 4's three
+production-map gifts. Rerun the narrower owning profile after a focused change
+and `make test-all` at a milestone handoff. The five ordinary Crystal-missing
+families remain reserved for the Phase 9 Safari Zone.
 
 ## Run the local automated test harness
 
@@ -132,6 +107,49 @@ the assembled bytes to catch source/build disagreement. Headless scenarios run
 the production `crystallegends.gbc` through normal inputs and inspect symbolic
 RAM/SRAM state. These layers complement, but do not replace, the manual matrix
 below.
+
+### Validate the Phase 4 Johto starter events
+
+Run the focused Phase 4 suites while editing, then the aggregate and clean
+handoff gates:
+
+```bash
+uv run --frozen --group test pytest tests/static/test_phase_04_regressions.py
+uv run --frozen --group test pytest tests/rom/test_phase_04_regressions.py
+uv run --frozen --group test pytest tests/emulator/test_phase_04_gifts.py
+uv run --frozen --group test pytest -m phase4
+make test-crystallegends
+make clean
+make test-all
+rgbfix -v crystallegends.gbc
+git diff --check
+git status --short
+```
+
+Automation owns the exact species, levels, map coordinates, prerequisites,
+completion events, object visibility, party/current-box/full-capacity behavior,
+retry and duplicate prevention, save/reload persistence, SecretPotion
+non-consumption, unrelated story-state preservation, bank floors, and reference
+isolation. Source completion means these gates pass; it does not certify the
+presentation.
+
+For playtest certification, use a backed-up or disposable save and record the
+emulator/version, ROM commit and hash, date, preparation boundary, and result.
+Manually confirm:
+
+1. Chikorita's shrine placement, sprite, dialogue wrapping, discovery after Cut,
+   and Ilex Forest flow feel natural.
+2. Cyndaquil is absent before the beast release, appears cleanly in the same
+   scene afterward, and its placement, sprite, dialogue, and choreography fit
+   Burned Tower.
+3. Totodile's east-shore placement and pharmacist hint are discoverable, its
+   medicine story remains coherent before or after curing Amphy, and its sprite,
+   dialogue, and Cianwood flow feel natural.
+4. All three discoveries and levels feel appropriate in one normal Johto run,
+   and a reference ROM shows none of the new objects, hint, or behavior.
+
+Any presentation failure must be fixed and retested or explicitly assigned
+before Phase 4 is described as playtest-certified or release-ready.
 
 ### Battery-save and scenario fixtures
 

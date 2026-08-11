@@ -6,9 +6,9 @@ Legends. It covers National Pokédex numbers 001 through 251 exactly once.
 The Phase 2 methods recorded below are implementation-complete but still await
 the deferred emulator matrix scheduled after the Phase 3 cheat/debug menu.
 
-`Existing` means the method is already present in the current Crystal Legends
-build. `Phase 2` identifies a method implemented by the completion-foundation
-milestone. `Reserved Phase N` identifies planned content that is not yet
+`Existing` means the method was inherited from the upstream game. `Phase N`
+identifies a method implemented by that Crystal Legends milestone. `Reserved
+Phase N` identifies planned content that is not yet
 obtainable; its source names the owning phase and intended checked-in
 destination. Reserved encounter details may be explicitly `TBD`, but no row may
 have a blank method, location, availability, or source.
@@ -174,15 +174,15 @@ data, an external distribution, or the optional cheat menu.
 | 149 | Dragonite | Evolution | Dragonair at level 55 | Post-League training | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 150 | Mewtwo | Story encounter | Project Mew branch or Cerulean Cave counterpart | Late Johto or Kanto | Reserved Phase 7/10 | No; final retry policy TBD | Phase 7 and 10; planned Project Mew and Cerulean Cave scripts |
 | 151 | Mew | Story encounter | Project Mew branch or Cerulean Cave counterpart | Late Johto or Kanto | Reserved Phase 7/10 | No; final retry policy TBD | Phase 7 and 10; planned Project Mew and Cerulean Cave scripts |
-| 152 | Chikorita | Gift event | Johto world event; exact condition TBD | Johto | Reserved Phase 4 | Yes after gift through breeding | Phase 4; planned Johto map script |
-| 153 | Bayleef | Evolution | Chikorita at level 16 | Johto | Reserved Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; Phase 4 Chikorita source |
-| 154 | Meganium | Evolution | Bayleef at level 32 | Johto | Reserved Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; Phase 4 Chikorita source |
-| 155 | Cyndaquil | Gift event | Johto world event; exact condition TBD | Johto | Reserved Phase 4 | Yes after gift through breeding | Phase 4; planned Johto map script |
-| 156 | Quilava | Evolution | Cyndaquil at level 14 | Johto | Reserved Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; Phase 4 Cyndaquil source |
-| 157 | Typhlosion | Evolution | Quilava at level 36 | Johto | Reserved Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; Phase 4 Cyndaquil source |
-| 158 | Totodile | Gift event | Johto world event; exact condition TBD | Johto | Reserved Phase 4 | Yes after gift through breeding | Phase 4; planned Johto map script |
-| 159 | Croconaw | Evolution | Totodile at level 18 | Johto | Reserved Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; Phase 4 Totodile source |
-| 160 | Feraligatr | Evolution | Croconaw at level 30 | Johto | Reserved Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; Phase 4 Totodile source |
+| 152 | Chikorita | Gift event | Level 14 at the Ilex Forest shrine after receiving Cut | After Badge 2 | Phase 4 | Yes after gift through breeding | `maps/IlexForest.asm` |
+| 153 | Bayleef | Evolution | Chikorita at level 16 | Johto | Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; `maps/IlexForest.asm` |
+| 154 | Meganium | Evolution | Bayleef at level 32 | Johto | Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; `maps/IlexForest.asm` |
+| 155 | Cyndaquil | Gift event | Level 19 in Burned Tower B1F after the legendary beasts awaken | Ecruteak City | Phase 4 | Yes after gift through breeding | `maps/BurnedTowerB1F.asm` |
+| 156 | Quilava | Evolution | Cyndaquil at level 14 | Johto | Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; `maps/BurnedTowerB1F.asm` |
+| 157 | Typhlosion | Evolution | Quilava at level 36 | Johto | Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; `maps/BurnedTowerB1F.asm` |
+| 158 | Totodile | Gift event | Level 24 on Cianwood's east shore after receiving the SecretPotion | Cianwood City | Phase 4 | Yes after gift through breeding | `maps/CianwoodCity.asm`; `maps/CianwoodPharmacy.asm` |
+| 159 | Croconaw | Evolution | Totodile at level 18 | Johto | Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; `maps/CianwoodCity.asm` |
+| 160 | Feraligatr | Evolution | Croconaw at level 30 | Johto | Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; `maps/CianwoodCity.asm` |
 | 161 | Sentret | Wild | Route 29, morning or day | Start | Existing | Yes | `data/wild/johto_grass.asm` |
 | 162 | Furret | Evolution or wild | Sentret at level 15; Route 43 | Early Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
 | 163 | Hoothoot | Wild | National Park and early routes at night | Early Johto | Existing | Yes | `data/wild/johto_grass.asm` |

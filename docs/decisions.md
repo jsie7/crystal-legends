@@ -123,3 +123,25 @@ certify visuals, audio, dialogue quality, pacing, balance, exploration, a full
 no-cheat or 251-species playthrough, another emulator, or physical hardware.
 Record automated results and user-run manual evidence separately; neither may
 be used to claim the other gate passed.
+
+## 2026-08-11 — Place the Johto starters in independent world gifts
+
+Crystal Legends restores the three ordinary Johto starter families without
+reusing Elm's mutually exclusive starter state or adding wild encounters.
+Chikorita is a level-14 Ilex Forest shrine gift after Cut, Cyndaquil is a
+level-19 Burned Tower B1F gift after the legendary beasts awaken, and Totodile
+is a level-24 Cianwood east-shore rescue after SecretPotion receipt. Each uses
+its own persistent completion event and the stock `givepoke` party/current-box
+path, so a decline or full party and current box leaves the gift retryable.
+
+The Chikorita and Totodile objects use their completion events directly.
+Cyndaquil's object-event flag stays `-1`; a map callback owns its visibility so
+the Pokémon can appear in the same scene as the beast release without mutating
+the completion event. The pharmacist adds a discoverability hint after giving
+the SecretPotion, but Phase 4 never consumes that item or changes Amphy,
+lighthouse, gym, roamer, or downstream Suicune state.
+
+The three overworld identifiers reuse the stock Pokémon-icon loader and add no
+graphics assets. Keep every event flag, sprite entry, map object, script, and
+hint behind `_CRYSTALLEGENDS`; reference builds must contain none of this
+behavior and must continue to reproduce exactly.
