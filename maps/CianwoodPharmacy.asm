@@ -26,6 +26,10 @@ CianwoodPharmacist:
 	itemnotify
 	setevent EVENT_GOT_SECRETPOTION_FROM_PHARMACY
 	writetext PharmacistDescribeSecretpotionText
+if DEF(_CRYSTALLEGENDS)
+	promptbutton
+	writetext PharmacistEastShoreHintText
+endc
 	waitbutton
 	closetext
 	end
@@ -69,6 +73,17 @@ PharmacistDescribeSecretpotionText:
 	para "I only offer it in"
 	line "an emergency."
 	done
+
+if DEF(_CRYSTALLEGENDS)
+PharmacistEastShoreHintText:
+	text "A small #MON"
+	line "washed up on the"
+	cont "east shore."
+
+	para "A little medicine"
+	line "may help it too."
+	done
+endc
 
 CianwoodPharmacy_MapEvents:
 	db 0, 0 ; filler

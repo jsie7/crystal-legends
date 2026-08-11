@@ -40,21 +40,50 @@ def build_phase_4_checkpoint(
     ):
         save.set_event(constants[event], event == scenario["completion_event"] and completed)
     save.set_event(constants[scenario["prerequisite_event"]], prerequisite)
+    _configure_map_state(save, constants, scenario, prerequisite)
 
-    if scenario["map"] == "BURNED_TOWER_B1F":
-        save.write_saved_u8(
-            "wBurnedTowerB1FSceneID",
-            constants[
-                "SCENE_BURNEDTOWERB1F_NOOP"
-                if prerequisite
-                else "SCENE_BURNEDTOWERB1F_RELEASE_THE_BEASTS"
-            ],
-        )
-        save.set_event(constants["EVENT_BURNED_TOWER_B1F_BEASTS_1"], True)
-        save.set_event(
-            constants["EVENT_BURNED_TOWER_B1F_BEASTS_2"], prerequisite
-        )
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    save.write(destination)
+    return destination
 
+
+def _configure_map_state(
+    save: BatterySave,
+    constants: dict[str, int],
+    scenario: dict,
+    prerequisite: bool,
+) -> None:
+    if scenario["map"] != "BURNED_TOWER_B1F":
+        return
+    save.write_saved_u8(
+        "wBurnedTowerB1FSceneID",
+        constants[
+            "SCENE_BURNEDTOWERB1F_NOOP"
+            if prerequisite
+            else "SCENE_BURNEDTOWERB1F_RELEASE_THE_BEASTS"
+        ],
+    )
+    save.set_event(constants["EVENT_BURNED_TOWER_B1F_BEASTS_1"], True)
+    save.set_event(constants["EVENT_BURNED_TOWER_B1F_BEASTS_2"], prerequisite)
+
+
+def retarget_phase_4_save(
+    repo_root: Path,
+    source: Path,
+    destination: Path,
+    constants: dict[str, int],
+    scenario: dict,
+) -> Path:
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    save = BatterySave.load(source, symbols)
+    save.write_saved_u8("wWarpNumber", 0)
+    save.write_saved_u8("wMapGroup", constants[f"GROUP_{scenario['map']}"])
+    save.write_saved_u8("wMapNumber", constants[f"MAP_{scenario['map']}"])
+    save.write_saved_u8("wXCoord", scenario["start"]["x"])
+    save.write_saved_u8("wYCoord", scenario["start"]["y"])
+    save.set_event(constants[scenario["prerequisite_event"]], True)
+    save.set_event(constants[scenario["completion_event"]], False)
+    _configure_map_state(save, constants, scenario, True)
     destination.parent.mkdir(parents=True, exist_ok=True)
     save.write(destination)
     return destination
@@ -120,7 +149,15 @@ def loaded_phase_4_saved_game(
         save_fixture=save_fixture,
     )
     with PyBoySession(prepared) as session:
-        start_saved_game(session, scenario["max_frames_per_step"])
+        def force_fresh_map_load(current: PyBoySession) -> None:
+            current.write_symbol("wDefaultSpawnpoint", constants["SPAWN_N_A"] & 0xFF)
+            current.write_symbol("hMapEntryMethod", constants["MAPSETUP_WARP"])
+
+        start_saved_game(
+            session,
+            scenario["max_frames_per_step"],
+            force_fresh_map_load,
+        )
         yield session
 
 

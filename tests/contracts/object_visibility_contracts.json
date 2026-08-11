@@ -1,5 +1,10 @@
 [
   {
+    "map_name": "CIANWOOD_CITY",
+    "declared_objects": 13,
+    "reason": "Totodile is isolated on the southeast shore, outside the active viewport of the northern Suicune and Eusine scene."
+  },
+  {
     "map_name": "GOLDENROD_CITY",
     "declared_objects": 15,
     "reason": "Objects are spread across the 40x36-tile city and civilian, takeover, and move-tutor flags prevent all story groups from being active together."

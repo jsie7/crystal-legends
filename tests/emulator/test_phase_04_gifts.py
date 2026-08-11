@@ -19,6 +19,7 @@ from tests.support.phase_04_scenario import (
     interact_with_phase_4_gift,
     loaded_phase_4_checkpoint,
     loaded_phase_4_saved_game,
+    retarget_phase_4_save,
     set_current_box_full,
     set_party_full,
 )
@@ -53,6 +54,8 @@ def phase_4_constants(
         "EVENT_SAW_SUICUNE_AT_CIANWOOD_CITY",
         "RAIKOU",
         "ENTEI",
+        "SECRETPOTION",
+        "EVENT_JASMINE_RETURNED_TO_GYM",
     }
     for scenario in scenarios:
         names.update(
@@ -89,8 +92,15 @@ def cyndaquil(scenarios: list[dict]) -> dict:
 
 
 @pytest.fixture(scope="module")
-def implemented_gifts(chikorita: dict, cyndaquil: dict) -> dict[str, dict]:
-    return {row["species"]: row for row in (chikorita, cyndaquil)}
+def totodile(scenarios: list[dict]) -> dict:
+    return next(row for row in scenarios if row["species"] == "TOTODILE")
+
+
+@pytest.fixture(scope="module")
+def implemented_gifts(
+    chikorita: dict, cyndaquil: dict, totodile: dict
+) -> dict[str, dict]:
+    return {row["species"]: row for row in (chikorita, cyndaquil, totodile)}
 
 
 def test_chikorita_requires_cut_and_decline_remains_retryable(
@@ -128,7 +138,7 @@ def test_chikorita_requires_cut_and_decline_remains_retryable(
         assert session.script_history.count(chikorita["script"]) == 2
 
 
-@pytest.mark.parametrize("species_name", ["CHIKORITA", "CYNDAQUIL"])
+@pytest.mark.parametrize("species_name", ["CHIKORITA", "CYNDAQUIL", "TOTODILE"])
 @pytest.mark.parametrize("destination", ["party", "current-box"])
 def test_phase_4_party_and_box_delivery_finalize_once(
     repo_root: Path,
@@ -171,7 +181,7 @@ def test_phase_4_party_and_box_delivery_finalize_once(
             assert session.read_symbol("sBoxMon1Level") == scenario["level"]
 
 
-@pytest.mark.parametrize("species_name", ["CHIKORITA", "CYNDAQUIL"])
+@pytest.mark.parametrize("species_name", ["CHIKORITA", "CYNDAQUIL", "TOTODILE"])
 def test_phase_4_full_storage_is_atomic_and_retryable(
     repo_root: Path,
     tmp_path: Path,
@@ -203,7 +213,7 @@ def test_phase_4_full_storage_is_atomic_and_retryable(
         assert read_progress(session).current_box.species == (species,)
 
 
-@pytest.mark.parametrize("species_name", ["CHIKORITA", "CYNDAQUIL"])
+@pytest.mark.parametrize("species_name", ["CHIKORITA", "CYNDAQUIL", "TOTODILE"])
 def test_phase_4_completion_survives_native_save_reload_without_duplicates(
     repo_root: Path,
     tmp_path: Path,
@@ -240,10 +250,6 @@ def test_phase_4_completion_survives_native_save_reload_without_duplicates(
                 assert not event_is_set(
                     session, phase_4_constants[other["completion_event"]]
                 )
-        assert not event_is_set(
-            session,
-            phase_4_constants["EVENT_GOT_TOTODILE_FROM_CIANWOOD"],
-        )
         session.enable_script_tracing()
         session.tap("a", 2, 30)
         assert scenario["script"] not in session.script_history
@@ -316,3 +322,95 @@ def test_cyndaquil_appears_in_release_scene_and_restores_while_pending(
         assert interact_with_phase_4_gift(session, cyndaquil, accept=False) is None
         assert not event_is_set(session, completion)
         assert interact_with_phase_4_gift(session, cyndaquil, accept=False) is None
+
+
+def test_totodile_clue_and_secretpotion_paths_preserve_story_state(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_4_constants: dict[str, int],
+    totodile: dict,
+) -> None:
+    completion = phase_4_constants[totodile["completion_event"]]
+    jasmine = phase_4_constants["EVENT_JASMINE_RETURNED_TO_GYM"]
+    with loaded_phase_4_checkpoint(
+        repo_root,
+        tmp_path / "not-ready",
+        phase_4_constants,
+        totodile,
+        prerequisite=False,
+    ) as session:
+        before = read_progress(session)
+        yes_no_count = session.hook_history.count("_YesNoBox")
+        assert interact_with_phase_4_gift(session, totodile, accept=None) is None
+        assert session.hook_history.count("_YesNoBox") == yes_no_count
+        assert not event_is_set(session, completion)
+        assert read_progress(session) == before
+
+    with loaded_phase_4_checkpoint(
+        repo_root,
+        tmp_path / "with-potion",
+        phase_4_constants,
+        totodile,
+        prerequisite=True,
+    ) as session:
+        secretpotion = phase_4_constants["SECRETPOTION"]
+        session.write_symbol("wNumKeyItems", 1)
+        session.write_symbol_bytes("wKeyItems", bytes([secretpotion, 0xFF]))
+        before_inventory = read_progress(session).inventory
+        jasmine_before = event_is_set(session, jasmine)
+        assert interact_with_phase_4_gift(session, totodile, accept=True) == 0
+        assert event_is_set(session, completion)
+        assert read_progress(session).inventory == before_inventory
+        assert event_is_set(session, jasmine) is jasmine_before
+
+
+def test_all_three_johto_starters_are_obtainable_on_one_save(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_4_constants: dict[str, int],
+    implemented_gifts: dict[str, dict],
+) -> None:
+    ordered = [
+        implemented_gifts[name]
+        for name in ("CHIKORITA", "CYNDAQUIL", "TOTODILE")
+    ]
+    source_save: Path | None = None
+    expected_species: list[int] = []
+    for index, scenario in enumerate(ordered):
+        if source_save is None:
+            context = loaded_phase_4_checkpoint(
+                repo_root,
+                tmp_path / f"step-{index}",
+                phase_4_constants,
+                scenario,
+                prerequisite=True,
+            )
+        else:
+            retargeted = retarget_phase_4_save(
+                repo_root,
+                source_save,
+                tmp_path / f"retargeted-{index}.sav",
+                phase_4_constants,
+                scenario,
+            )
+            context = loaded_phase_4_saved_game(
+                repo_root,
+                tmp_path / f"step-{index}",
+                phase_4_constants,
+                scenario,
+                retargeted,
+            )
+        with context as session:
+            assert interact_with_phase_4_gift(session, scenario, accept=True) == 0
+            expected_species.append(phase_4_constants[scenario["species"]])
+            assert read_progress(session).party.species == tuple(expected_species)
+            for completed in ordered[: index + 1]:
+                assert event_is_set(
+                    session,
+                    phase_4_constants[completed["completion_event"]],
+                )
+            if index < len(ordered) - 1:
+                save_game_from_overworld(session, scenario["max_frames_per_step"])
+                source_save = dump_battery_ram(
+                    session, tmp_path / f"completed-{index}.sav"
+                )

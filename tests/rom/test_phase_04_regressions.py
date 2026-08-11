@@ -23,6 +23,7 @@ def phase_4_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "EVENT_GOT_TOTODILE_FROM_CIANWOOD",
             "EVENT_GOT_HM01_CUT",
             "EVENT_RELEASED_THE_BEASTS",
+            "EVENT_GOT_SECRETPOTION_FROM_PHARMACY",
             "SPRITE_CHIKORITA",
             "SPRITE_CYNDAQUIL",
             "SPRITE_TOTODILE",
@@ -35,8 +36,10 @@ def phase_4_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "BG_EVENT_SIZE",
             "OBJECT_EVENT_SIZE",
             "SPRITEMOVEDATA_POKEMON",
+            "SPRITEMOVEDATA_SWIM_WANDER",
             "PAL_NPC_GREEN",
             "PAL_NPC_RED",
+            "PAL_NPC_BLUE",
             "OBJECTTYPE_SCRIPT",
             "NO_ITEM",
             "FALSE",
@@ -46,6 +49,8 @@ def phase_4_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "setevent_command",
             "disappear_command",
             "appear_command",
+            "takeitem_command",
+            "SECRETPOTION",
         ],
     )
 
@@ -277,3 +282,80 @@ def test_compiled_burned_tower_cyndaquil_uses_callback_visibility(
         phase_4_constants,
     )
     assert len(reference_events) == 9
+
+
+def test_compiled_cianwood_totodile_rescue_preserves_secretpotion(
+    repo_root: Path, phase_4_constants: dict[str, int]
+) -> None:
+    custom_events = _object_events(
+        repo_root,
+        "crystallegends.gbc",
+        "crystallegends.sym",
+        "CianwoodCity_MapEvents",
+        phase_4_constants,
+    )
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    matching = [
+        event
+        for event in custom_events
+        if (event.x, event.y) == (28, 38)
+        and event.sprite == phase_4_constants["SPRITE_TOTODILE"]
+        and event.script_pointer == symbols["CianwoodCityTotodileScript"].address
+    ]
+    assert len(custom_events) == 13
+    assert len(matching) == 1
+    event = matching[0]
+    assert event.movement == phase_4_constants["SPRITEMOVEDATA_SWIM_WANDER"]
+    assert event.radius == 0
+    assert event.palette_and_type == (
+        phase_4_constants["PAL_NPC_BLUE"] << 4
+        | phase_4_constants["OBJECTTYPE_SCRIPT"]
+    )
+    assert event.event_flag == phase_4_constants[
+        "EVENT_GOT_TOTODILE_FROM_CIANWOOD"
+    ]
+
+    rom = RomImage.load(repo_root / "crystallegends.gbc")
+    start = symbols["CianwoodCityTotodileScript"].rom_offset
+    end = symbols["CianwoodCityYoungster"].rom_offset
+    script = rom.slice(start, end - start)
+    check = bytes([phase_4_constants["checkevent_command"]]) + _pointer(
+        phase_4_constants["EVENT_GOT_SECRETPOTION_FROM_PHARMACY"]
+    )
+    gift = bytes(
+        [
+            phase_4_constants["givepoke_command"],
+            phase_4_constants["TOTODILE"],
+            24,
+            phase_4_constants["NO_ITEM"],
+            phase_4_constants["FALSE"],
+        ]
+    )
+    full = (
+        bytes([phase_4_constants["ifequal_command"], 2])
+        + _pointer(symbols["CianwoodCityTotodileScript.StorageFull"].address)
+    )
+    complete = bytes([phase_4_constants["setevent_command"]]) + _pointer(
+        phase_4_constants["EVENT_GOT_TOTODILE_FROM_CIANWOOD"]
+    )
+    disappear = bytes([phase_4_constants["disappear_command"], 14])
+    positions = [script.index(pattern) for pattern in (check, gift, full, complete, disappear)]
+    assert positions == sorted(positions)
+    assert bytes(
+        [phase_4_constants["takeitem_command"], phase_4_constants["SECRETPOTION"]]
+    ) not in script
+    assert "PharmacistEastShoreHintText" in symbols
+
+    reference_symbols = SymbolTable.parse(
+        (repo_root / "pokecrystal11.sym").read_text()
+    )
+    assert "CianwoodCityTotodileScript" not in reference_symbols
+    assert "PharmacistEastShoreHintText" not in reference_symbols
+    reference_events = _object_events(
+        repo_root,
+        "pokecrystal11.gbc",
+        "pokecrystal11.sym",
+        "CianwoodCity_MapEvents",
+        phase_4_constants,
+    )
+    assert len(reference_events) == 12

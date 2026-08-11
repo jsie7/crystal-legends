@@ -11,6 +11,9 @@
 	const CIANWOODCITY_POKEFAN_F
 	const CIANWOODCITY_EUSINE
 	const CIANWOODCITY_SUICUNE
+if DEF(_CRYSTALLEGENDS)
+	const CIANWOODCITY_TOTODILE
+endc
 
 CianwoodCity_MapScripts:
 	def_scene_scripts
@@ -108,6 +111,45 @@ CianwoodCityChucksWife:
 .Done:
 	closetext
 	end
+
+if DEF(_CRYSTALLEGENDS)
+CianwoodCityTotodileScript:
+	faceplayer
+	opentext
+	cry TOTODILE
+	checkevent EVENT_GOT_SECRETPOTION_FROM_PHARMACY
+	iffalse .NotReady
+	writetext CianwoodCityTotodileOfferText
+	yesorno
+	iffalse .Declined
+	givepoke TOTODILE, 24
+	ifequal 2, .StorageFull
+	setevent EVENT_GOT_TOTODILE_FROM_CIANWOOD
+	writetext CianwoodCityTotodileJoinedText
+	playsound SFX_CAUGHT_MON
+	waitsfx
+	waitbutton
+	closetext
+	disappear CIANWOODCITY_TOTODILE
+	end
+
+.NotReady:
+	writetext CianwoodCityTotodileNotReadyText
+	sjump .Wait
+
+.Declined:
+	writetext CianwoodCityTotodileWaitText
+	sjump .Wait
+
+.StorageFull:
+	writetext CianwoodCityTotodileStorageFullText
+	promptbutton
+	writetext CianwoodCityTotodileWaitText
+.Wait:
+	waitbutton
+	closetext
+	end
+endc
 
 CianwoodCityYoungster:
 	jumptextfaceplayer CianwoodCityYoungsterText
@@ -234,6 +276,41 @@ ChucksWifeChubbyText:
 	line "he was getting a"
 	cont "little chubby."
 	done
+
+if DEF(_CRYSTALLEGENDS)
+CianwoodCityTotodileNotReadyText:
+	text "TOTODILE is tired"
+	line "from the rough sea."
+
+	para "Medicine from town"
+	line "may help it."
+	done
+
+CianwoodCityTotodileOfferText:
+	text "TOTODILE notices"
+	line "the PHARMACY's"
+	cont "scent around you."
+
+	para "It trusts you."
+	line "Take it along?"
+	done
+
+CianwoodCityTotodileWaitText:
+	text "TOTODILE will wait"
+	line "by the shore."
+	done
+
+CianwoodCityTotodileStorageFullText:
+	text "Your party and"
+	line "current BOX are"
+	cont "both full."
+	done
+
+CianwoodCityTotodileJoinedText:
+	text "TOTODILE joined"
+	line "<PLAYER>!"
+	done
+endc
 
 CianwoodCityYoungsterText:
 	text "If you use FLY,"
@@ -415,3 +492,6 @@ CianwoodCity_MapEvents:
 	object_event 10, 46, SPRITE_POKEFAN_F, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 1, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, CianwoodCityChucksWife, -1
 	object_event 11, 21, SPRITE_SUPER_NERD, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_CIANWOOD_CITY_EUSINE
 	object_event 10, 14, SPRITE_SUICUNE, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_SAW_SUICUNE_AT_CIANWOOD_CITY
+if DEF(_CRYSTALLEGENDS)
+	object_event 28, 38, SPRITE_TOTODILE, SPRITEMOVEDATA_SWIM_WANDER, 0, 0, -1, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, CianwoodCityTotodileScript, EVENT_GOT_TOTODILE_FROM_CIANWOOD
+endc

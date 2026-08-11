@@ -5,6 +5,13 @@ from pathlib import Path
 import pytest
 
 from tests.support.asm_conditions import active_lines
+from tests.support.map_assets import (
+    block_paths_for_maps,
+    collision_at,
+    parse_block_paths,
+    parse_map_tilesets,
+)
+from tests.support.map_model import parse_map_dimensions
 
 
 pytestmark = [pytest.mark.static, pytest.mark.phase4]
@@ -202,3 +209,94 @@ def test_burned_tower_cyndaquil_visibility_and_gift_contract(
     assert "setmapscene CIANWOOD_CITY, SCENE_CIANWOODCITY_SUICUNE_AND_EUSINE" in release
     assert "BurnedTowerB1FCyndaquilCallback:" not in reference
     assert "BurnedTowerB1FCyndaquilScript:" not in reference
+
+
+def test_cianwood_totodile_rescue_is_event_gated_and_item_neutral(
+    repo_root: Path,
+) -> None:
+    city_source = repo_root / "maps/CianwoodCity.asm"
+    pharmacy_source = repo_root / "maps/CianwoodPharmacy.asm"
+    city = _active_code(city_source, CRYSTAL_LEGENDS)
+    reference_city = _active_code(city_source, REFERENCE)
+    pharmacy = _active_code(pharmacy_source, CRYSTAL_LEGENDS)
+    reference_pharmacy = _active_code(pharmacy_source, REFERENCE)
+    object_row = (
+        "object_event 28, 38, SPRITE_TOTODILE, SPRITEMOVEDATA_SWIM_WANDER, 0, "
+        "0, -1, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, "
+        "CianwoodCityTotodileScript, EVENT_GOT_TOTODILE_FROM_CIANWOOD"
+    )
+
+    assert object_row in city
+    assert object_row not in reference_city
+    assert "const CIANWOODCITY_TOTODILE" in city
+    assert "const CIANWOODCITY_TOTODILE" not in reference_city
+    _assert_contiguous(
+        city,
+        [
+            "CianwoodCityTotodileScript:",
+            "faceplayer",
+            "opentext",
+            "cry TOTODILE",
+            "checkevent EVENT_GOT_SECRETPOTION_FROM_PHARMACY",
+            "iffalse .NotReady",
+            "writetext CianwoodCityTotodileOfferText",
+            "yesorno",
+            "iffalse .Declined",
+            "givepoke TOTODILE, 24",
+            "ifequal 2, .StorageFull",
+            "setevent EVENT_GOT_TOTODILE_FROM_CIANWOOD",
+            "writetext CianwoodCityTotodileJoinedText",
+            "playsound SFX_CAUGHT_MON",
+            "waitsfx",
+            "waitbutton",
+            "closetext",
+            "disappear CIANWOODCITY_TOTODILE",
+            "end",
+        ],
+    )
+    script_start = city.index("CianwoodCityTotodileScript:")
+    script_end = city.index("CianwoodCityYoungster:")
+    script = "\n".join(city[script_start:script_end])
+    assert "takeitem" not in script
+    assert "EVENT_JASMINE_RETURNED_TO_GYM" not in script
+    assert "SECRETPOTION" not in script.replace(
+        "EVENT_GOT_SECRETPOTION_FROM_PHARMACY", ""
+    )
+    assert "PharmacistEastShoreHintText:" in pharmacy
+    assert "PharmacistEastShoreHintText:" not in reference_pharmacy
+    assert pharmacy.index("giveitem SECRETPOTION") < pharmacy.index(
+        "setevent EVENT_GOT_SECRETPOTION_FROM_PHARMACY"
+    ) < pharmacy.index("writetext PharmacistEastShoreHintText")
+    for stock_line in (
+        "giveitem SECRETPOTION",
+        "setevent EVENT_GOT_SECRETPOTION_FROM_PHARMACY",
+        "pokemart MARTTYPE_PHARMACY, MART_CIANWOOD",
+    ):
+        assert stock_line in reference_pharmacy
+
+
+def test_phase_4_object_tiles_match_the_locked_collision_contract(
+    repo_root: Path,
+) -> None:
+    dimensions = parse_map_dimensions(
+        (repo_root / "constants/map_constants.asm").read_text()
+    )
+    block_paths = block_paths_for_maps(
+        dimensions,
+        parse_block_paths((repo_root / "data/maps/blocks.asm").read_text()),
+    )
+    tilesets = parse_map_tilesets((repo_root / "data/maps/maps.asm").read_text())
+    expected = {
+        ("ILEX_FOREST", (9, 23)): "FLOOR",
+        ("BURNED_TOWER_B1F", (10, 4)): "FLOOR",
+        ("CIANWOOD_CITY", (28, 38)): "WATER",
+    }
+    for (map_name, coordinate), collision in expected.items():
+        assert collision_at(
+            repo_root,
+            map_name,
+            coordinate,
+            dimensions,
+            block_paths,
+            tilesets,
+        ) == collision
