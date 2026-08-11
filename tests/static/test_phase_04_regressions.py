@@ -85,3 +85,53 @@ def test_phase_4_sprite_ids_append_to_the_stock_icon_table(repo_root: Path) -> N
     )
     assert not any("SPRITE_CHIKORITA" in line for line in reference_constants)
     assert not any("db CHIKORITA" == line for line in reference_table)
+
+
+def test_ilex_chikorita_source_contract_is_retry_safe_and_isolated(
+    repo_root: Path,
+) -> None:
+    source = repo_root / "maps/IlexForest.asm"
+    crystal = _active_code(source, CRYSTAL_LEGENDS)
+    reference = _active_code(source, REFERENCE)
+    object_row = (
+        "object_event  9, 23, SPRITE_CHIKORITA, SPRITEMOVEDATA_POKEMON, 0, 0, "
+        "-1, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, "
+        "IlexForestChikoritaScript, EVENT_GOT_CHIKORITA_FROM_ILEX_FOREST"
+    )
+
+    assert object_row in crystal
+    assert object_row not in reference
+    assert "const ILEXFOREST_CHIKORITA" in crystal
+    assert "const ILEXFOREST_CHIKORITA" not in reference
+    _assert_contiguous(
+        crystal,
+        [
+            "IlexForestChikoritaScript:",
+            "faceplayer",
+            "opentext",
+            "cry CHIKORITA",
+            "checkevent EVENT_GOT_HM01_CUT",
+            "iffalse .NotReady",
+            "writetext IlexForestChikoritaOfferText",
+            "yesorno",
+            "iffalse .Declined",
+            "givepoke CHIKORITA, 14",
+            "ifequal 2, .StorageFull",
+            "setevent EVENT_GOT_CHIKORITA_FROM_ILEX_FOREST",
+            "writetext IlexForestChikoritaJoinedText",
+            "playsound SFX_CAUGHT_MON",
+            "waitsfx",
+            "waitbutton",
+            "closetext",
+            "disappear ILEXFOREST_CHIKORITA",
+            "end",
+        ],
+    )
+    script_start = crystal.index("IlexForestChikoritaScript:")
+    script_end = crystal.index("MovementData_Farfetchd_Pos1_Pos2:")
+    script = "\n".join(crystal[script_start:script_end])
+    assert "FROM_ELM" not in script
+    assert "EVENT_FOREST_IS_RESTLESS" not in script
+    assert "GS_BALL" not in script
+    assert "IlexForestShrineScript:" in crystal
+    assert "bg_event  8, 22, BGEVENT_UP, IlexForestShrineScript" in crystal

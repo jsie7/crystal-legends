@@ -10,6 +10,9 @@
 	const ILEXFOREST_POKE_BALL2
 	const ILEXFOREST_POKE_BALL3
 	const ILEXFOREST_POKE_BALL4
+if DEF(_CRYSTALLEGENDS)
+	const ILEXFOREST_CHIKORITA
+endc
 
 IlexForest_MapScripts:
 	def_scene_scripts
@@ -489,6 +492,45 @@ endc
 .Done:
 	end
 
+if DEF(_CRYSTALLEGENDS)
+IlexForestChikoritaScript:
+	faceplayer
+	opentext
+	cry CHIKORITA
+	checkevent EVENT_GOT_HM01_CUT
+	iffalse .NotReady
+	writetext IlexForestChikoritaOfferText
+	yesorno
+	iffalse .Declined
+	givepoke CHIKORITA, 14
+	ifequal 2, .StorageFull
+	setevent EVENT_GOT_CHIKORITA_FROM_ILEX_FOREST
+	writetext IlexForestChikoritaJoinedText
+	playsound SFX_CAUGHT_MON
+	waitsfx
+	waitbutton
+	closetext
+	disappear ILEXFOREST_CHIKORITA
+	end
+
+.NotReady:
+	writetext IlexForestChikoritaNotReadyText
+	sjump .Wait
+
+.Declined:
+	writetext IlexForestChikoritaWaitText
+	sjump .Wait
+
+.StorageFull:
+	writetext IlexForestChikoritaStorageFullText
+	promptbutton
+	writetext IlexForestChikoritaWaitText
+.Wait:
+	waitbutton
+	closetext
+	end
+endc
+
 MovementData_Farfetchd_Pos1_Pos2:
 	big_step UP
 	big_step UP
@@ -917,6 +959,42 @@ Text_KurtCaughtCelebi:
 	para "I'm going!"
 	done
 
+if DEF(_CRYSTALLEGENDS)
+IlexForestChikoritaNotReadyText:
+	text "CHIKORITA watches"
+	line "warily by the"
+	cont "SHRINE."
+
+	para "It may trust one"
+	line "who helps the"
+	cont "forest."
+	done
+
+IlexForestChikoritaOfferText:
+	text "CHIKORITA saw you"
+	line "help the forest."
+
+	para "It wants to join"
+	line "you. Take it?"
+	done
+
+IlexForestChikoritaWaitText:
+	text "CHIKORITA will wait"
+	line "by the SHRINE."
+	done
+
+IlexForestChikoritaStorageFullText:
+	text "Your party and"
+	line "current BOX are"
+	cont "both full."
+	done
+
+IlexForestChikoritaJoinedText:
+	text "CHIKORITA joined"
+	line "<PLAYER>!"
+	done
+endc
+
 BugCatcherWayneSeenText:
 	text "Don't sneak up on"
 	line "me like that!"
@@ -972,3 +1050,6 @@ IlexForest_MapEvents:
 	object_event  9, 17, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, IlexForestXAttack, EVENT_ILEX_FOREST_X_ATTACK
 	object_event 17,  7, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, IlexForestAntidote, EVENT_ILEX_FOREST_ANTIDOTE
 	object_event 27,  1, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, IlexForestEther, EVENT_ILEX_FOREST_ETHER
+if DEF(_CRYSTALLEGENDS)
+	object_event  9, 23, SPRITE_CHIKORITA, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, IlexForestChikoritaScript, EVENT_GOT_CHIKORITA_FROM_ILEX_FOREST
+endc

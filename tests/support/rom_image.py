@@ -19,6 +19,21 @@ class BackgroundEvent:
     script_pointer: int
 
 
+@dataclass(frozen=True)
+class ObjectEvent:
+    sprite: int
+    y: int
+    x: int
+    movement: int
+    radius: int
+    hour_1: int
+    hour_2: int
+    palette_and_type: int
+    sight_range: int
+    script_pointer: int
+    event_flag: int
+
+
 class RomImage:
     def __init__(self, data: bytes, path: Path | None = None) -> None:
         self.data = data
@@ -76,6 +91,47 @@ def decode_background_events(
                 x=rom.u8(record + 1),
                 event_type=rom.u8(record + 2),
                 script_pointer=rom.u16le(record + 3),
+            )
+        )
+    return events
+
+
+def decode_object_events(
+    rom: RomImage,
+    symbols: SymbolTable,
+    map_events_label: str,
+    warp_event_size: int,
+    coord_event_size: int,
+    bg_event_size: int,
+    object_event_size: int,
+) -> list[ObjectEvent]:
+    if object_event_size != 13:
+        raise RomImageError(f"unsupported OBJECT_EVENT_SIZE {object_event_size}")
+    offset = symbols[map_events_label].rom_offset + 2
+    warp_count = rom.u8(offset)
+    offset += 1 + warp_count * warp_event_size
+    coord_count = rom.u8(offset)
+    offset += 1 + coord_count * coord_event_size
+    bg_count = rom.u8(offset)
+    offset += 1 + bg_count * bg_event_size
+    object_count = rom.u8(offset)
+    offset += 1
+    events: list[ObjectEvent] = []
+    for index in range(object_count):
+        record = offset + index * object_event_size
+        events.append(
+            ObjectEvent(
+                sprite=rom.u8(record),
+                y=rom.u8(record + 1) - 4,
+                x=rom.u8(record + 2) - 4,
+                movement=rom.u8(record + 3),
+                radius=rom.u8(record + 4),
+                hour_1=rom.u8(record + 5),
+                hour_2=rom.u8(record + 6),
+                palette_and_type=rom.u8(record + 7),
+                sight_range=rom.u8(record + 8),
+                script_pointer=rom.u16le(record + 9),
+                event_flag=rom.u16le(record + 11),
             )
         )
     return events

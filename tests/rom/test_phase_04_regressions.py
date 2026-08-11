@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from tests.support.constant_resolver import resolve_constants
-from tests.support.rom_image import RomImage
+from tests.support.rom_image import RomImage, decode_object_events
 from tests.support.symbol_table import SymbolTable
 
 
@@ -21,6 +21,7 @@ def phase_4_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "EVENT_GOT_CHIKORITA_FROM_ILEX_FOREST",
             "EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER",
             "EVENT_GOT_TOTODILE_FROM_CIANWOOD",
+            "EVENT_GOT_HM01_CUT",
             "SPRITE_CHIKORITA",
             "SPRITE_CYNDAQUIL",
             "SPRITE_TOTODILE",
@@ -28,7 +29,45 @@ def phase_4_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "CHIKORITA",
             "CYNDAQUIL",
             "TOTODILE",
+            "WARP_EVENT_SIZE",
+            "COORD_EVENT_SIZE",
+            "BG_EVENT_SIZE",
+            "OBJECT_EVENT_SIZE",
+            "SPRITEMOVEDATA_POKEMON",
+            "PAL_NPC_GREEN",
+            "OBJECTTYPE_SCRIPT",
+            "NO_ITEM",
+            "FALSE",
+            "givepoke_command",
+            "checkevent_command",
+            "ifequal_command",
+            "setevent_command",
+            "disappear_command",
         ],
+    )
+
+
+def _pointer(value: int) -> bytes:
+    return value.to_bytes(2, "little")
+
+
+def _object_events(
+    repo_root: Path,
+    rom_name: str,
+    symbol_name: str,
+    map_label: str,
+    constants: dict[str, int],
+):
+    rom = RomImage.load(repo_root / rom_name)
+    symbols = SymbolTable.parse((repo_root / symbol_name).read_text())
+    return decode_object_events(
+        rom,
+        symbols,
+        map_label,
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+        constants["OBJECT_EVENT_SIZE"],
     )
 
 
@@ -69,3 +108,77 @@ def test_compiled_phase_4_sprite_table_extends_only_the_custom_rom(
     reference_end = reference_symbols["OutdoorSprites"].rom_offset
     assert reference_end - reference_start == 35
     assert custom_table[:35] == reference.slice(reference_start, 35)
+
+
+def test_compiled_ilex_chikorita_object_and_script_match_the_contract(
+    repo_root: Path, phase_4_constants: dict[str, int]
+) -> None:
+    custom_events = _object_events(
+        repo_root,
+        "crystallegends.gbc",
+        "crystallegends.sym",
+        "IlexForest_MapEvents",
+        phase_4_constants,
+    )
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    matching = [
+        event
+        for event in custom_events
+        if (event.x, event.y) == (9, 23)
+        and event.sprite == phase_4_constants["SPRITE_CHIKORITA"]
+        and event.script_pointer == symbols["IlexForestChikoritaScript"].address
+    ]
+    assert len(custom_events) == 12
+    assert len(matching) == 1
+    event = matching[0]
+    assert event.movement == phase_4_constants["SPRITEMOVEDATA_POKEMON"]
+    assert event.radius == 0
+    assert event.palette_and_type == (
+        phase_4_constants["PAL_NPC_GREEN"] << 4
+        | phase_4_constants["OBJECTTYPE_SCRIPT"]
+    )
+    assert event.event_flag == phase_4_constants[
+        "EVENT_GOT_CHIKORITA_FROM_ILEX_FOREST"
+    ]
+
+    rom = RomImage.load(repo_root / "crystallegends.gbc")
+    start = symbols["IlexForestChikoritaScript"].rom_offset
+    end = symbols["MovementData_Farfetchd_Pos1_Pos2"].rom_offset
+    script = rom.slice(start, end - start)
+    check = bytes([phase_4_constants["checkevent_command"]]) + _pointer(
+        phase_4_constants["EVENT_GOT_HM01_CUT"]
+    )
+    gift = bytes(
+        [
+            phase_4_constants["givepoke_command"],
+            phase_4_constants["CHIKORITA"],
+            14,
+            phase_4_constants["NO_ITEM"],
+            phase_4_constants["FALSE"],
+        ]
+    )
+    full = (
+        bytes([phase_4_constants["ifequal_command"], 2])
+        + _pointer(symbols["IlexForestChikoritaScript.StorageFull"].address)
+    )
+    complete = bytes([phase_4_constants["setevent_command"]]) + _pointer(
+        phase_4_constants["EVENT_GOT_CHIKORITA_FROM_ILEX_FOREST"]
+    )
+    disappear = bytes(
+        [phase_4_constants["disappear_command"], 13]
+    )
+    positions = [script.index(pattern) for pattern in (check, gift, full, complete, disappear)]
+    assert positions == sorted(positions)
+
+    reference_symbols = SymbolTable.parse(
+        (repo_root / "pokecrystal11.sym").read_text()
+    )
+    assert "IlexForestChikoritaScript" not in reference_symbols
+    reference_events = _object_events(
+        repo_root,
+        "pokecrystal11.gbc",
+        "pokecrystal11.sym",
+        "IlexForest_MapEvents",
+        phase_4_constants,
+    )
+    assert len(reference_events) == 11
