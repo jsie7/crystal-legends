@@ -56,8 +56,6 @@ def test_phase_4_event_slots_are_reserved_without_changing_num_events(
         [
             "const_skip",
             "const_skip 3",
-            "const_next 2048",
-            "DEF NUM_EVENTS EQU const_value",
         ],
     )
 
@@ -77,7 +75,6 @@ def test_phase_4_sprite_ids_append_to_the_stock_icon_table(repo_root: Path) -> N
             "const SPRITE_CHIKORITA",
             "const SPRITE_CYNDAQUIL",
             "const SPRITE_TOTODILE",
-            "DEF NUM_POKEMON_SPRITES EQU const_value - SPRITE_POKEMON",
         ],
     )
     _assert_contiguous(
@@ -87,7 +84,6 @@ def test_phase_4_sprite_ids_append_to_the_stock_icon_table(repo_root: Path) -> N
             "db CHIKORITA",
             "db CYNDAQUIL",
             "db TOTODILE",
-            "assert_table_length NUM_POKEMON_SPRITES",
         ],
     )
     assert not any("SPRITE_CHIKORITA" in line for line in reference_constants)

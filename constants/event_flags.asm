@@ -1481,11 +1481,15 @@ if DEF(_CRYSTALLEGENDS)
 	const EVENT_GOT_CHIKORITA_FROM_ILEX_FOREST
 	const EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER
 	const EVENT_GOT_TOTODILE_FROM_CIANWOOD
+	const EVENT_GOT_KABUTO_FROM_ALPH
+	const EVENT_GOT_OMANYTE_FROM_ALPH
+	const EVENT_GOT_AERODACTYL_FROM_ALPH
 else
 	const_skip ; reserved for EVENT_OAK_MOVED_THIRD_BIRD
 	const_skip 3 ; reserved for Crystal Legends Johto starter gifts
+	const_skip 3 ; reserved for Crystal Legends Ruins ancient Pokemon gifts
 endc
-; Unused: next 44 events
+; Unused: next 41 events
 
 	const_next 2048
 DEF NUM_EVENTS EQU const_value ; 800

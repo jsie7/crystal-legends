@@ -1,6 +1,7 @@
 [
   {"domain": "ROM0", "bank": 0, "minimum_free": 256, "reason": "Keep a small reviewed ROM0 reserve below the clean baseline of $0121 free."},
   {"domain": "ROMX", "bank": 5, "minimum_free": 2816, "reason": "Protect bank5 sprite data and the Phase 4 Pokemon-icon mappings below the reviewed baseline of $0b42 free."},
+  {"domain": "ROMX", "bank": 22, "minimum_free": 1024, "reason": "Protect Map Scripts 2 and the Phase 5 Ruins chamber and hidden-room events below the reviewed baseline of $08ee free."},
   {"domain": "ROMX", "bank": 27, "minimum_free": 2048, "reason": "Protect Map Scripts 6 and the Phase 4 Ilex Forest event below the reviewed baseline of $0950 free."},
   {"domain": "ROMX", "bank": 30, "minimum_free": 1536, "reason": "Protect Map Scripts 9, including PlayersHouse2F, below the clean baseline of $07f1 free."},
   {"domain": "ROMX", "bank": 39, "minimum_free": 896, "reason": "Protect Map Scripts 12 and the short Phase 4 Cianwood pharmacist hint below the reviewed baseline of $044e free."},

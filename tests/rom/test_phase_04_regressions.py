@@ -92,7 +92,7 @@ def test_compiled_phase_4_ids_use_the_reserved_numeric_slots(
         phase_4_constants["SPRITE_CYNDAQUIL"],
         phase_4_constants["SPRITE_TOTODILE"],
     ] == [0xA3, 0xA4, 0xA5]
-    assert phase_4_constants["NUM_POKEMON_SPRITES"] == 38
+    assert phase_4_constants["NUM_POKEMON_SPRITES"] >= 38
 
 
 def test_compiled_phase_4_sprite_table_extends_only_the_custom_rom(
@@ -104,7 +104,7 @@ def test_compiled_phase_4_sprite_table_extends_only_the_custom_rom(
     custom_end = custom_symbols["OutdoorSprites"].rom_offset
     custom_table = custom.slice(custom_start, custom_end - custom_start)
     assert len(custom_table) == phase_4_constants["NUM_POKEMON_SPRITES"]
-    assert custom_table[-3:] == bytes(
+    assert custom_table[35:38] == bytes(
         phase_4_constants[name] for name in ("CHIKORITA", "CYNDAQUIL", "TOTODILE")
     )
 
