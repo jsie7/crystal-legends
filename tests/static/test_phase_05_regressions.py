@@ -5,6 +5,13 @@ from pathlib import Path
 import pytest
 
 from tests.support.asm_conditions import active_lines
+from tests.support.map_assets import (
+    block_paths_for_maps,
+    collision_at,
+    parse_block_paths,
+    parse_map_tilesets,
+)
+from tests.support.map_model import parse_map_dimensions
 
 
 pytestmark = [pytest.mark.static, pytest.mark.phase5]
@@ -217,3 +224,97 @@ def test_phase_5_preserves_the_stock_hidden_wall_engine(repo_root: Path) -> None
     assert "MON_ITEM" in source
     assert "WATER_STONE" in source
     assert "takeitem" not in source.lower()
+
+
+def test_kabuto_hidden_room_gift_is_retry_safe_and_preserves_stock_objects(
+    repo_root: Path,
+) -> None:
+    source = repo_root / "maps/RuinsOfAlphKabutoItemRoom.asm"
+    crystal = _active_code(source, CRYSTAL_LEGENDS)
+    reference = _active_code(source, REFERENCE)
+    object_row = (
+        "object_event  3,  3, SPRITE_KABUTO, SPRITEMOVEDATA_POKEMON, 0, 0, "
+        "-1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, "
+        "RuinsOfAlphKabutoItemRoomKabutoScript, -1"
+    )
+
+    assert "const RUINSOFALPHKABUTOITEMROOM_KABUTO" in crystal
+    assert "const RUINSOFALPHKABUTOITEMROOM_KABUTO" not in reference
+    assert object_row in crystal
+    assert object_row not in reference
+    _assert_contiguous(
+        crystal,
+        [
+            "RuinsOfAlphKabutoItemRoomKabutoCallback:",
+            "checkevent EVENT_GOT_KABUTO_FROM_ALPH",
+            "iftrue .Hide",
+            "checkevent EVENT_SOLVED_KABUTO_PUZZLE",
+            "iffalse .Hide",
+            "checkevent EVENT_WALL_OPENED_IN_KABUTO_CHAMBER",
+            "iffalse .Hide",
+            "appear RUINSOFALPHKABUTOITEMROOM_KABUTO",
+            "endcallback",
+            ".Hide:",
+            "disappear RUINSOFALPHKABUTOITEMROOM_KABUTO",
+            "endcallback",
+        ],
+    )
+    _assert_contiguous(
+        crystal,
+        [
+            "RuinsOfAlphKabutoItemRoomKabutoScript:",
+            "faceplayer",
+            "opentext",
+            "cry KABUTO",
+            "writetext RuinsOfAlphKabutoItemRoomKabutoOfferText",
+            "yesorno",
+            "iffalse .Declined",
+            "givepoke KABUTO, 10",
+            "ifequal 2, .StorageFull",
+            "setevent EVENT_GOT_KABUTO_FROM_ALPH",
+            "writetext RuinsOfAlphKabutoItemRoomKabutoJoinedText",
+            "playsound SFX_CAUGHT_MON",
+            "waitsfx",
+            "waitbutton",
+            "closetext",
+            "disappear RUINSOFALPHKABUTOITEMROOM_KABUTO",
+            "end",
+        ],
+    )
+    script_start = crystal.index("RuinsOfAlphKabutoItemRoomKabutoScript:")
+    script_end = crystal.index("RuinsOfAlphKabutoItemRoomBerry:")
+    script = "\n".join(crystal[script_start:script_end])
+    for forbidden in ("loadwildmon", "startbattle", "giveitem", "takeitem"):
+        assert forbidden not in script
+
+    custom_stock = [
+        line
+        for line in crystal
+        if line.startswith("object_event") and "SPRITE_POKE_BALL" in line
+    ]
+    reference_stock = [
+        line
+        for line in reference
+        if line.startswith("object_event") and "SPRITE_POKE_BALL" in line
+    ]
+    assert len(custom_stock) == len(reference_stock) == 4
+    assert custom_stock == reference_stock
+
+
+def test_kabuto_gift_coordinate_is_floor(repo_root: Path) -> None:
+    dimensions = parse_map_dimensions(
+        (repo_root / "constants/map_constants.asm").read_text()
+    )
+    block_paths = block_paths_for_maps(
+        dimensions,
+        parse_block_paths((repo_root / "data/maps/blocks.asm").read_text()),
+    )
+    tilesets = parse_map_tilesets((repo_root / "data/maps/maps.asm").read_text())
+    assert collision_at(
+        repo_root,
+        "RUINS_OF_ALPH_KABUTO_ITEM_ROOM",
+        (3, 3),
+        dimensions,
+        block_paths,
+        tilesets,
+    ) == "FLOOR"

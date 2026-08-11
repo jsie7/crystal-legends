@@ -12,6 +12,13 @@ from tests.support.bedroom_scenario import (
     wait_for_idle,
 )
 from tests.support.constant_resolver import resolve_constants
+from tests.support.game_state import read_progress
+from tests.support.gift_scenario import (
+    clear_current_box,
+    interact_with_gift,
+    set_current_box_full,
+    set_party_full,
+)
 from tests.support.phase_05_scenario import (
     loaded_phase_5_checkpoint,
     loaded_phase_5_saved_game,
@@ -39,18 +46,23 @@ def phase_5_constants(
         "EVENT_GOT_KABUTO_FROM_ALPH",
         "EVENT_GOT_OMANYTE_FROM_ALPH",
         "EVENT_GOT_AERODACTYL_FROM_ALPH",
+        "PARTY_LENGTH",
+        "MONS_PER_BOX",
+        "EEVEE",
     }
     for scenario in scenarios:
         names.update(
             {
                 scenario["picture_event"],
                 scenario["wall_event"],
+                scenario["species"],
                 f"GROUP_{scenario['map']}",
                 f"MAP_{scenario['map']}",
                 f"GROUP_{scenario['chamber']['map']}",
                 f"MAP_{scenario['chamber']['map']}",
             }
         )
+        names.update(scenario["item_events"])
     constants = resolve_constants(
         repo_root,
         tmp_path_factory.mktemp("phase_5_runtime_constants"),
@@ -187,3 +199,159 @@ def test_opened_chamber_scene_survives_native_save_reload(
             chamber["noop_scene"]
         ]
         _enter_hidden_room(session, phase_5_constants, scenario)
+
+
+def test_kabuto_visibility_and_decline_are_retryable(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_5_constants: dict[str, int],
+    scenarios: list[dict],
+) -> None:
+    scenario = next(row for row in scenarios if row["species"] == "KABUTO")
+    completion = phase_5_constants[scenario["completion_event"]]
+    for label, picture, wall, completed in (
+        ("no-picture", False, True, False),
+        ("no-wall", True, False, False),
+        ("completed", True, True, True),
+    ):
+        with loaded_phase_5_checkpoint(
+            repo_root,
+            tmp_path / label,
+            phase_5_constants,
+            scenario,
+            location="item_room",
+            picture=picture,
+            wall=wall,
+            completed=completed,
+        ) as session:
+            session.enable_script_tracing()
+            session.tap("a", 2, 30)
+            assert scenario["script"] not in session.script_history
+            assert event_is_set(session, completion) is completed
+
+    with loaded_phase_5_checkpoint(
+        repo_root,
+        tmp_path / "decline",
+        phase_5_constants,
+        scenario,
+        location="item_room",
+        picture=True,
+        wall=True,
+    ) as session:
+        assert interact_with_gift(session, scenario, accept=False) is None
+        assert not event_is_set(session, completion)
+        assert read_progress(session).party.count == 0
+        assert interact_with_gift(session, scenario, accept=False) is None
+        assert session.script_history.count(scenario["script"]) == 2
+
+
+@pytest.mark.parametrize("destination", ["party", "current-box"])
+def test_kabuto_party_and_box_delivery_finalize_once(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_5_constants: dict[str, int],
+    scenarios: list[dict],
+    destination: str,
+) -> None:
+    scenario = next(row for row in scenarios if row["species"] == "KABUTO")
+    completion = phase_5_constants[scenario["completion_event"]]
+    species = phase_5_constants[scenario["species"]]
+    with loaded_phase_5_checkpoint(
+        repo_root,
+        tmp_path / destination,
+        phase_5_constants,
+        scenario,
+        location="item_room",
+        picture=True,
+        wall=True,
+    ) as session:
+        if destination == "current-box":
+            set_party_full(
+                session,
+                phase_5_constants["EEVEE"],
+                phase_5_constants["PARTY_LENGTH"],
+            )
+        expected = 0 if destination == "party" else 1
+        assert interact_with_gift(session, scenario, accept=True) == expected
+        progress = read_progress(session)
+        assert event_is_set(session, completion)
+        assert progress.owns(species)
+        if destination == "party":
+            assert progress.party.species == (species,)
+            assert session.read_symbol("wPartyMon1Level") == scenario["level"]
+        else:
+            assert progress.current_box.species == (species,)
+            assert session.read_symbol("sBoxMon1Level") == scenario["level"]
+        for event_name in scenario["item_events"]:
+            assert not event_is_set(session, phase_5_constants[event_name])
+        session.tap("a", 2, 30)
+        assert session.script_history.count(scenario["script"]) == 1
+
+
+def test_kabuto_full_storage_is_atomic_and_retryable(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_5_constants: dict[str, int],
+    scenarios: list[dict],
+) -> None:
+    scenario = next(row for row in scenarios if row["species"] == "KABUTO")
+    completion = phase_5_constants[scenario["completion_event"]]
+    species = phase_5_constants[scenario["species"]]
+    filler = phase_5_constants["EEVEE"]
+    with loaded_phase_5_checkpoint(
+        repo_root,
+        tmp_path,
+        phase_5_constants,
+        scenario,
+        location="item_room",
+        picture=True,
+        wall=True,
+    ) as session:
+        set_party_full(session, filler, phase_5_constants["PARTY_LENGTH"])
+        set_current_box_full(session, filler, phase_5_constants["MONS_PER_BOX"])
+        before = read_progress(session)
+        assert interact_with_gift(session, scenario, accept=True) == 2
+        assert not event_is_set(session, completion)
+        assert read_progress(session) == before
+
+        clear_current_box(session)
+        assert interact_with_gift(session, scenario, accept=True) == 1
+        assert event_is_set(session, completion)
+        assert read_progress(session).current_box.species == (species,)
+
+
+def test_kabuto_completion_survives_native_save_reload(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_5_constants: dict[str, int],
+    scenarios: list[dict],
+) -> None:
+    scenario = next(row for row in scenarios if row["species"] == "KABUTO")
+    completion = phase_5_constants[scenario["completion_event"]]
+    species = phase_5_constants[scenario["species"]]
+    persisted = tmp_path / "kabuto-complete.sav"
+    with loaded_phase_5_checkpoint(
+        repo_root,
+        tmp_path / "initial",
+        phase_5_constants,
+        scenario,
+        location="item_room",
+        picture=True,
+        wall=True,
+    ) as session:
+        assert interact_with_gift(session, scenario, accept=True) == 0
+        save_game_from_overworld(session, scenario["max_frames_per_step"])
+        dump_battery_ram(session, persisted)
+
+    with loaded_phase_5_saved_game(
+        repo_root,
+        tmp_path / "reload",
+        phase_5_constants,
+        scenario,
+        persisted,
+    ) as session:
+        assert event_is_set(session, completion)
+        assert read_progress(session).party.species == (species,)
+        session.enable_script_tracing()
+        session.tap("a", 2, 30)
+        assert scenario["script"] not in session.script_history

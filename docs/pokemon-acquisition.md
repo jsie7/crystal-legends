@@ -162,8 +162,8 @@ data, an external distribution, or the optional cheat menu.
 | 137 | Porygon | Prize | Celadon Game Corner | Kanto | Existing | Repeatable prize purchase | `maps/CeladonGameCornerPrizeRoom.asm` |
 | 138 | Omanyte | Fossil revival | Ruins of Alph fossil quest; details TBD | Mid-Johto or later | Reserved Phase 5 | Yes if fossil source is renewable; TBD | Phase 5; planned Ruins of Alph script |
 | 139 | Omastar | Evolution | Omanyte at level 40 | Mid-Johto or later | Reserved Phase 5 | Yes when implemented | `data/pokemon/evos_attacks.asm`; Phase 5 Omanyte source |
-| 140 | Kabuto | Fossil revival | Ruins of Alph fossil quest; details TBD | Mid-Johto or later | Reserved Phase 5 | Yes if fossil source is renewable; TBD | Phase 5; planned Ruins of Alph script |
-| 141 | Kabutops | Evolution | Kabuto at level 40 | Mid-Johto or later | Reserved Phase 5 | Yes when implemented | `data/pokemon/evos_attacks.asm`; Phase 5 Kabuto source |
+| 140 | Kabuto | World gift | Level 10 in the Kabuto hidden room after solving the Kabuto picture and using Escape Rope in the chamber | Before Badge 1 | Phase 5 | Yes through breeding after the one-time gift | `maps/RuinsOfAlphKabutoChamber.asm`; `maps/RuinsOfAlphKabutoItemRoom.asm` |
+| 141 | Kabutops | Evolution | Kabuto at level 40 | Before Badge 1 source; later evolution | Phase 5 | Yes through breeding Kabuto | `data/pokemon/evos_attacks.asm`; Phase 5 Kabuto gift |
 | 142 | Aerodactyl | NPC trade | Trade Chansey for Aerodactyl | Kanto | Existing | Yes after trade through breeding | `data/events/npc_trades.asm` |
 | 143 | Snorlax | Static encounter | Vermilion City after restoring the Pokégear radio | Kanto | Existing | No; stock event ends after battle | `maps/VermilionCity.asm` |
 | 144 | Articuno | Starter or later bird quest | Elm starter if selected; otherwise release/location quest | Start or Kanto | Existing Phase 1 / Reserved Phase 8-9 | No; one per completed branch | `maps/ElmsLab.asm`; planned Phase 8-9 bird scripts |

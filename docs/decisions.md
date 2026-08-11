@@ -160,3 +160,10 @@ right-wall text, and Kabuto scientist dialogue while preserving the independent
 picture-floor drop. There are no retained player-progression saves predating
 this behavior, so do not add scene normalization, trade migration, save-version
 conversion, or other compatibility scaffolding for hypothetical old progress.
+
+The Kabuto hidden room contains a visible level-10 Kabuto once both conditions
+are complete. It uses the stock `givepoke` party/current-box transaction and a
+dedicated success event: declining or having both destinations full leaves the
+gift waiting, while successful party or box delivery completes it permanently.
+Its callback controls visibility without mutating saved state, and all four
+stock item balls and the word-room route remain intact.

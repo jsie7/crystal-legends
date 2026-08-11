@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from tests.support.constant_resolver import resolve_constants
-from tests.support.rom_image import RomImage
+from tests.support.rom_image import RomImage, decode_object_events
 from tests.support.symbol_table import SymbolTable
 
 
@@ -37,6 +37,20 @@ def phase_5_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER",
             "checkevent_command",
             "sdefer_command",
+            "WARP_EVENT_SIZE",
+            "COORD_EVENT_SIZE",
+            "BG_EVENT_SIZE",
+            "OBJECT_EVENT_SIZE",
+            "SPRITEMOVEDATA_POKEMON",
+            "PAL_NPC_BROWN",
+            "OBJECTTYPE_SCRIPT",
+            "NO_ITEM",
+            "FALSE",
+            "givepoke_command",
+            "ifequal_command",
+            "setevent_command",
+            "appear_command",
+            "disappear_command",
         ],
     )
 
@@ -90,6 +104,26 @@ def test_phase_5_identity_does_not_change_the_save_layout(repo_root: Path) -> No
 
 def _event_check(command: int, event: int) -> bytes:
     return bytes([command]) + event.to_bytes(2, "little")
+
+
+def _object_events(
+    repo_root: Path,
+    rom_name: str,
+    symbol_name: str,
+    map_label: str,
+    constants: dict[str, int],
+):
+    rom = RomImage.load(repo_root / rom_name)
+    symbols = SymbolTable.parse((repo_root / symbol_name).read_text())
+    return decode_object_events(
+        rom,
+        symbols,
+        map_label,
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+        constants["OBJECT_EVENT_SIZE"],
+    )
 
 
 @pytest.mark.parametrize(
@@ -179,3 +213,128 @@ def test_compiled_kabuto_scientist_checks_picture_before_wall(
     ].rom_offset
     stock = reference.slice(reference_start, reference_end - reference_start)
     assert stock.index(wall) < stock.index(picture)
+
+
+def test_compiled_kabuto_hidden_room_object_and_gift_match_the_contract(
+    repo_root: Path, phase_5_constants: dict[str, int]
+) -> None:
+    custom_events = _object_events(
+        repo_root,
+        "crystallegends.gbc",
+        "crystallegends.sym",
+        "RuinsOfAlphKabutoItemRoom_MapEvents",
+        phase_5_constants,
+    )
+    reference_events = _object_events(
+        repo_root,
+        "pokecrystal11.gbc",
+        "pokecrystal11.sym",
+        "RuinsOfAlphKabutoItemRoom_MapEvents",
+        phase_5_constants,
+    )
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    reference_symbols = SymbolTable.parse(
+        (repo_root / "pokecrystal11.sym").read_text()
+    )
+    assert len(custom_events) == 5
+    assert len(reference_events) == 4
+    stock_scripts = (
+        "RuinsOfAlphKabutoItemRoomBerry",
+        "RuinsOfAlphKabutoItemRoomPsncureberry",
+        "RuinsOfAlphKabutoItemRoomHealPowder",
+        "RuinsOfAlphKabutoItemRoomEnergypowder",
+    )
+    for custom_event, reference_event, script_label in zip(
+        custom_events[:4], reference_events, stock_scripts, strict=True
+    ):
+        assert custom_event.script_pointer == symbols[script_label].address
+        assert reference_event.script_pointer == reference_symbols[script_label].address
+        assert (
+            custom_event.sprite,
+            custom_event.y,
+            custom_event.x,
+            custom_event.movement,
+            custom_event.radius,
+            custom_event.hour_1,
+            custom_event.hour_2,
+            custom_event.palette_and_type,
+            custom_event.sight_range,
+            custom_event.event_flag,
+        ) == (
+            reference_event.sprite,
+            reference_event.y,
+            reference_event.x,
+            reference_event.movement,
+            reference_event.radius,
+            reference_event.hour_1,
+            reference_event.hour_2,
+            reference_event.palette_and_type,
+            reference_event.sight_range,
+            reference_event.event_flag,
+        )
+    event = custom_events[-1]
+    assert (event.x, event.y) == (3, 3)
+    assert event.sprite == phase_5_constants["SPRITE_KABUTO"]
+    assert event.movement == phase_5_constants["SPRITEMOVEDATA_POKEMON"]
+    assert event.radius == 0
+    assert event.palette_and_type == (
+        phase_5_constants["PAL_NPC_BROWN"] << 4
+        | phase_5_constants["OBJECTTYPE_SCRIPT"]
+    )
+    assert event.script_pointer == symbols[
+        "RuinsOfAlphKabutoItemRoomKabutoScript"
+    ].address
+    assert event.event_flag == 0xFFFF
+
+    rom = RomImage.load(repo_root / "crystallegends.gbc")
+    script_start = symbols["RuinsOfAlphKabutoItemRoomKabutoScript"].rom_offset
+    script_end = symbols["RuinsOfAlphKabutoItemRoomBerry"].rom_offset
+    script = rom.slice(script_start, script_end - script_start)
+    gift = bytes(
+        [
+            phase_5_constants["givepoke_command"],
+            phase_5_constants["KABUTO"],
+            10,
+            phase_5_constants["NO_ITEM"],
+            phase_5_constants["FALSE"],
+        ]
+    )
+    full = (
+        bytes([phase_5_constants["ifequal_command"], 2])
+        + symbols[
+            "RuinsOfAlphKabutoItemRoomKabutoScript.StorageFull"
+        ].address.to_bytes(2, "little")
+    )
+    complete = bytes([phase_5_constants["setevent_command"]]) + phase_5_constants[
+        "EVENT_GOT_KABUTO_FROM_ALPH"
+    ].to_bytes(2, "little")
+    object_id = len(custom_events) + 1
+    disappear = bytes([phase_5_constants["disappear_command"], object_id])
+    positions = [
+        script.index(pattern) for pattern in (gift, full, complete, disappear)
+    ]
+    assert positions == sorted(positions)
+
+    callback_start = symbols[
+        "RuinsOfAlphKabutoItemRoomKabutoCallback"
+    ].rom_offset
+    callback_end = symbols["RuinsOfAlphKabutoItemRoomKabutoScript"].rom_offset
+    callback = rom.slice(callback_start, callback_end - callback_start)
+    checks = [
+        _event_check(
+            phase_5_constants["checkevent_command"], phase_5_constants[event_name]
+        )
+        for event_name in (
+            "EVENT_GOT_KABUTO_FROM_ALPH",
+            "EVENT_SOLVED_KABUTO_PUZZLE",
+            "EVENT_WALL_OPENED_IN_KABUTO_CHAMBER",
+        )
+    ]
+    assert [callback.index(check) for check in checks] == sorted(
+        callback.index(check) for check in checks
+    )
+    assert bytes([phase_5_constants["appear_command"], object_id]) in callback
+    assert disappear in callback
+
+    assert "RuinsOfAlphKabutoItemRoomKabutoCallback" not in reference_symbols
+    assert "RuinsOfAlphKabutoItemRoomKabutoScript" not in reference_symbols
