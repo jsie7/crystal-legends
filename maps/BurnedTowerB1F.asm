@@ -8,6 +8,9 @@
 	const BURNEDTOWERB1F_SUICUNE2
 	const BURNEDTOWERB1F_POKE_BALL
 	const BURNEDTOWERB1F_EUSINE
+if DEF(_CRYSTALLEGENDS)
+	const BURNEDTOWERB1F_CYNDAQUIL
+endc
 
 BurnedTowerB1F_MapScripts:
 	def_scene_scripts
@@ -16,6 +19,9 @@ BurnedTowerB1F_MapScripts:
 
 	def_callbacks
 	callback MAPCALLBACK_TILES, BurnedTowerB1FLadderCallback
+if DEF(_CRYSTALLEGENDS)
+	callback MAPCALLBACK_OBJECTS, BurnedTowerB1FCyndaquilCallback
+endc
 
 BurnedTowerB1FNoop1Scene:
 	end
@@ -29,6 +35,20 @@ BurnedTowerB1FLadderCallback:
 	changeblock 6, 14, $02 ; floor
 .HideLadder:
 	endcallback
+
+if DEF(_CRYSTALLEGENDS)
+BurnedTowerB1FCyndaquilCallback:
+	checkevent EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER
+	iftrue .Hide
+	checkevent EVENT_RELEASED_THE_BEASTS
+	iffalse .Hide
+	appear BURNEDTOWERB1F_CYNDAQUIL
+	endcallback
+
+.Hide:
+	disappear BURNEDTOWERB1F_CYNDAQUIL
+	endcallback
+endc
 
 ReleaseTheBeasts:
 	playmusic MUSIC_NONE
@@ -93,9 +113,51 @@ ReleaseTheBeasts:
 	reanchormap
 	changeblock 6, 14, $1b ; ladder
 	refreshmap
+if DEF(_CRYSTALLEGENDS)
+	appear BURNEDTOWERB1F_CYNDAQUIL
+endc
 	closetext
 	setscene SCENE_BURNEDTOWERB1F_NOOP
 	end
+
+if DEF(_CRYSTALLEGENDS)
+BurnedTowerB1FCyndaquilScript:
+	faceplayer
+	opentext
+	checkevent EVENT_RELEASED_THE_BEASTS
+	iffalse .NotReady
+	cry CYNDAQUIL
+	writetext BurnedTowerB1FCyndaquilOfferText
+	yesorno
+	iffalse .Declined
+	givepoke CYNDAQUIL, 19
+	ifequal 2, .StorageFull
+	setevent EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER
+	writetext BurnedTowerB1FCyndaquilJoinedText
+	playsound SFX_CAUGHT_MON
+	waitsfx
+	waitbutton
+	closetext
+	disappear BURNEDTOWERB1F_CYNDAQUIL
+	end
+
+.NotReady:
+	closetext
+	end
+
+.Declined:
+	writetext BurnedTowerB1FCyndaquilWaitText
+	sjump .Wait
+
+.StorageFull:
+	writetext BurnedTowerB1FCyndaquilStorageFullText
+	promptbutton
+	writetext BurnedTowerB1FCyndaquilWaitText
+.Wait:
+	waitbutton
+	closetext
+	end
+endc
 
 BurnedTowerB1FEusine:
 	faceplayer
@@ -233,6 +295,33 @@ BurnedTowerB1FEusineText:
 	para "Farewell!"
 	done
 
+if DEF(_CRYSTALLEGENDS)
+BurnedTowerB1FCyndaquilOfferText:
+	text "CYNDAQUIL emerged"
+	line "after the beasts"
+	cont "fled."
+
+	para "It trusts you."
+	line "Take it along?"
+	done
+
+BurnedTowerB1FCyndaquilWaitText:
+	text "CYNDAQUIL will wait"
+	line "by the warm stones."
+	done
+
+BurnedTowerB1FCyndaquilStorageFullText:
+	text "Your party and"
+	line "current BOX are"
+	cont "both full."
+	done
+
+BurnedTowerB1FCyndaquilJoinedText:
+	text "CYNDAQUIL joined"
+	line "<PLAYER>!"
+	done
+endc
+
 BurnedTowerB1F_MapEvents:
 	db 0, 0 ; filler
 
@@ -259,3 +348,6 @@ BurnedTowerB1F_MapEvents:
 	object_event 10,  4, SPRITE_SUICUNE, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, -1, PAL_NPC_EMOTE, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_BURNED_TOWER_B1F_BEASTS_2
 	object_event 16,  4, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, BurnedTowerB1FTMEndure, EVENT_BURNED_TOWER_B1F_TM_ENDURE
 	object_event 10, 12, SPRITE_SUPER_NERD, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, BurnedTowerB1FEusine, EVENT_EUSINE_IN_BURNED_TOWER
+if DEF(_CRYSTALLEGENDS)
+	object_event 10,  4, SPRITE_CYNDAQUIL, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, BurnedTowerB1FCyndaquilScript, -1
+endc

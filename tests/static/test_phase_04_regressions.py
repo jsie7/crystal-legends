@@ -135,3 +135,70 @@ def test_ilex_chikorita_source_contract_is_retry_safe_and_isolated(
     assert "GS_BALL" not in script
     assert "IlexForestShrineScript:" in crystal
     assert "bg_event  8, 22, BGEVENT_UP, IlexForestShrineScript" in crystal
+
+
+def test_burned_tower_cyndaquil_visibility_and_gift_contract(
+    repo_root: Path,
+) -> None:
+    source = repo_root / "maps/BurnedTowerB1F.asm"
+    crystal = _active_code(source, CRYSTAL_LEGENDS)
+    reference = _active_code(source, REFERENCE)
+    object_row = (
+        "object_event 10,  4, SPRITE_CYNDAQUIL, SPRITEMOVEDATA_POKEMON, 0, 0, "
+        "-1, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, "
+        "BurnedTowerB1FCyndaquilScript, -1"
+    )
+
+    assert object_row in crystal
+    assert object_row not in reference
+    assert "const BURNEDTOWERB1F_CYNDAQUIL" in crystal
+    assert "const BURNEDTOWERB1F_CYNDAQUIL" not in reference
+    _assert_contiguous(
+        crystal,
+        [
+            "BurnedTowerB1FCyndaquilCallback:",
+            "checkevent EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER",
+            "iftrue .Hide",
+            "checkevent EVENT_RELEASED_THE_BEASTS",
+            "iffalse .Hide",
+            "appear BURNEDTOWERB1F_CYNDAQUIL",
+            "endcallback",
+            ".Hide:",
+            "disappear BURNEDTOWERB1F_CYNDAQUIL",
+            "endcallback",
+        ],
+    )
+    _assert_contiguous(
+        crystal,
+        [
+            "BurnedTowerB1FCyndaquilScript:",
+            "faceplayer",
+            "opentext",
+            "checkevent EVENT_RELEASED_THE_BEASTS",
+            "iffalse .NotReady",
+            "cry CYNDAQUIL",
+            "writetext BurnedTowerB1FCyndaquilOfferText",
+            "yesorno",
+            "iffalse .Declined",
+            "givepoke CYNDAQUIL, 19",
+            "ifequal 2, .StorageFull",
+            "setevent EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER",
+            "writetext BurnedTowerB1FCyndaquilJoinedText",
+            "playsound SFX_CAUGHT_MON",
+            "waitsfx",
+            "waitbutton",
+            "closetext",
+            "disappear BURNEDTOWERB1F_CYNDAQUIL",
+            "end",
+        ],
+    )
+    release_start = crystal.index("ReleaseTheBeasts:")
+    release_end = crystal.index("BurnedTowerB1FCyndaquilScript:")
+    release = crystal[release_start:release_end]
+    assert release.index("disappear BURNEDTOWERB1F_SUICUNE1") < release.index(
+        "setevent EVENT_RELEASED_THE_BEASTS"
+    ) < release.index("appear BURNEDTOWERB1F_CYNDAQUIL")
+    assert "special InitRoamMons" in release
+    assert "setmapscene CIANWOOD_CITY, SCENE_CIANWOODCITY_SUICUNE_AND_EUSINE" in release
+    assert "BurnedTowerB1FCyndaquilCallback:" not in reference
+    assert "BurnedTowerB1FCyndaquilScript:" not in reference

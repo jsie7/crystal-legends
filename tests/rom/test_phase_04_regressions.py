@@ -22,6 +22,7 @@ def phase_4_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER",
             "EVENT_GOT_TOTODILE_FROM_CIANWOOD",
             "EVENT_GOT_HM01_CUT",
+            "EVENT_RELEASED_THE_BEASTS",
             "SPRITE_CHIKORITA",
             "SPRITE_CYNDAQUIL",
             "SPRITE_TOTODILE",
@@ -35,6 +36,7 @@ def phase_4_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "OBJECT_EVENT_SIZE",
             "SPRITEMOVEDATA_POKEMON",
             "PAL_NPC_GREEN",
+            "PAL_NPC_RED",
             "OBJECTTYPE_SCRIPT",
             "NO_ITEM",
             "FALSE",
@@ -43,6 +45,7 @@ def phase_4_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "ifequal_command",
             "setevent_command",
             "disappear_command",
+            "appear_command",
         ],
     )
 
@@ -182,3 +185,95 @@ def test_compiled_ilex_chikorita_object_and_script_match_the_contract(
         phase_4_constants,
     )
     assert len(reference_events) == 11
+
+
+def test_compiled_burned_tower_cyndaquil_uses_callback_visibility(
+    repo_root: Path, phase_4_constants: dict[str, int]
+) -> None:
+    custom_events = _object_events(
+        repo_root,
+        "crystallegends.gbc",
+        "crystallegends.sym",
+        "BurnedTowerB1F_MapEvents",
+        phase_4_constants,
+    )
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    matching = [
+        event
+        for event in custom_events
+        if (event.x, event.y) == (10, 4)
+        and event.sprite == phase_4_constants["SPRITE_CYNDAQUIL"]
+        and event.script_pointer == symbols["BurnedTowerB1FCyndaquilScript"].address
+    ]
+    assert len(custom_events) == 10
+    assert len(matching) == 1
+    event = matching[0]
+    assert event.movement == phase_4_constants["SPRITEMOVEDATA_POKEMON"]
+    assert event.palette_and_type == (
+        phase_4_constants["PAL_NPC_RED"] << 4
+        | phase_4_constants["OBJECTTYPE_SCRIPT"]
+    )
+    assert event.event_flag == 0xFFFF
+
+    rom = RomImage.load(repo_root / "crystallegends.gbc")
+    start = symbols["BurnedTowerB1FCyndaquilScript"].rom_offset
+    end = symbols["BurnedTowerB1FEusine"].rom_offset
+    script = rom.slice(start, end - start)
+    check = bytes([phase_4_constants["checkevent_command"]]) + _pointer(
+        phase_4_constants["EVENT_RELEASED_THE_BEASTS"]
+    )
+    gift = bytes(
+        [
+            phase_4_constants["givepoke_command"],
+            phase_4_constants["CYNDAQUIL"],
+            19,
+            phase_4_constants["NO_ITEM"],
+            phase_4_constants["FALSE"],
+        ]
+    )
+    full = (
+        bytes([phase_4_constants["ifequal_command"], 2])
+        + _pointer(symbols["BurnedTowerB1FCyndaquilScript.StorageFull"].address)
+    )
+    complete = bytes([phase_4_constants["setevent_command"]]) + _pointer(
+        phase_4_constants["EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER"]
+    )
+    disappear = bytes([phase_4_constants["disappear_command"], 11])
+    positions = [script.index(pattern) for pattern in (check, gift, full, complete, disappear)]
+    assert positions == sorted(positions)
+
+    callback_start = symbols["BurnedTowerB1FCyndaquilCallback"].rom_offset
+    callback_end = symbols["ReleaseTheBeasts"].rom_offset
+    callback = rom.slice(callback_start, callback_end - callback_start)
+    assert callback.index(
+        bytes([phase_4_constants["checkevent_command"]])
+        + _pointer(phase_4_constants["EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER"])
+    ) < callback.index(
+        bytes([phase_4_constants["checkevent_command"]])
+        + _pointer(phase_4_constants["EVENT_RELEASED_THE_BEASTS"])
+    )
+    assert bytes([phase_4_constants["appear_command"], 11]) in callback
+    assert bytes([phase_4_constants["disappear_command"], 11]) in callback
+
+    release_start = symbols["ReleaseTheBeasts"].rom_offset
+    release_end = symbols["BurnedTowerB1FCyndaquilScript"].rom_offset
+    release = rom.slice(release_start, release_end - release_start)
+    release_event = bytes([phase_4_constants["setevent_command"]]) + _pointer(
+        phase_4_constants["EVENT_RELEASED_THE_BEASTS"]
+    )
+    appear = bytes([phase_4_constants["appear_command"], 11])
+    assert release.index(release_event) < release.index(appear)
+
+    reference_symbols = SymbolTable.parse(
+        (repo_root / "pokecrystal11.sym").read_text()
+    )
+    assert "BurnedTowerB1FCyndaquilScript" not in reference_symbols
+    assert "BurnedTowerB1FCyndaquilCallback" not in reference_symbols
+    reference_events = _object_events(
+        repo_root,
+        "pokecrystal11.gbc",
+        "pokecrystal11.sym",
+        "BurnedTowerB1F_MapEvents",
+        phase_4_constants,
+    )
+    assert len(reference_events) == 9

@@ -41,6 +41,20 @@ def build_phase_4_checkpoint(
         save.set_event(constants[event], event == scenario["completion_event"] and completed)
     save.set_event(constants[scenario["prerequisite_event"]], prerequisite)
 
+    if scenario["map"] == "BURNED_TOWER_B1F":
+        save.write_saved_u8(
+            "wBurnedTowerB1FSceneID",
+            constants[
+                "SCENE_BURNEDTOWERB1F_NOOP"
+                if prerequisite
+                else "SCENE_BURNEDTOWERB1F_RELEASE_THE_BEASTS"
+            ],
+        )
+        save.set_event(constants["EVENT_BURNED_TOWER_B1F_BEASTS_1"], True)
+        save.set_event(
+            constants["EVENT_BURNED_TOWER_B1F_BEASTS_2"], prerequisite
+        )
+
     destination.parent.mkdir(parents=True, exist_ok=True)
     save.write(destination)
     return destination
