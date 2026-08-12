@@ -896,6 +896,13 @@ RocketBaseB2FTransmitterText:
 
 	para "It's working at"
 	line "full capacity."
+if DEF(_CRYSTALLEGENDS)
+
+	para "Test cycle logged."
+
+	para "SUBJECT TRANSFER:"
+	line "GOLDENROD."
+endc
 	done
 
 RocketBaseB2FDeactivateTransmitterText:
@@ -904,6 +911,12 @@ RocketBaseB2FDeactivateTransmitterText:
 
 	para "stopped its evil"
 	line "broadcast."
+if DEF(_CRYSTALLEGENDS)
+
+	para "PROJECT MEW data"
+	line "was copied to the"
+	cont "GOLDENROD TOWER."
+endc
 	done
 
 TeamRocketBaseB2F_MapEvents:

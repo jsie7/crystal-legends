@@ -294,6 +294,19 @@ LakeOfRageLanceRadioSignalText:
 
 	para "from MAHOGANY is"
 	line "the cause."
+if DEF(_CRYSTALLEGENDS)
+
+	para "The red GYARADOS"
+	line "was proof the"
+
+	para "signal could force"
+	line "a living body to"
+	cont "change."
+
+	para "Whatever they plan"
+	line "in MAHOGANY goes"
+	cont "far beyond this."
+endc
 
 	para "I'll be waiting"
 	line "for you, <PLAY_G>."

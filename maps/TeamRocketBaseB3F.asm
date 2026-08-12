@@ -202,6 +202,14 @@ TeamRocketBaseB3FLockedDoor:
 TeamRocketBaseB3FOathScript:
 	jumpstd TeamRocketOathScript
 
+if DEF(_CRYSTALLEGENDS)
+TeamRocketBaseB3FProjectMewDossierScript:
+	jumptext TeamRocketBaseB3FProjectMewDossierText
+
+TeamRocketBaseB3FProjectMewTestDataScript:
+	jumptext TeamRocketBaseB3FProjectMewTestDataText
+endc
+
 TeamRocketBaseB3FProtein:
 	itemball PROTEIN
 
@@ -424,6 +432,14 @@ ExecutiveM4AfterText:
 
 	para "I have to inform"
 	line "the others…"
+if DEF(_CRYSTALLEGENDS)
+
+	para "The PROJECT MEW"
+	line "subject already"
+
+	para "left for the"
+	line "GOLDENROD TOWER."
+endc
 	done
 
 RocketBaseMurkrowText:
@@ -522,6 +538,15 @@ ScientistRossAfterBattleText:
 
 	para "means absolutely"
 	line "nothing."
+if DEF(_CRYSTALLEGENDS)
+
+	para "The LAKE trial was"
+	line "only proof."
+
+	para "One living subject"
+	line "could change all"
+	cont "our fortunes."
+endc
 	done
 
 ScientistMitchSeenText:
@@ -545,7 +570,49 @@ ScientistMitchAfterBattleText:
 
 	para "The very thought"
 	line "excites me!"
+if DEF(_CRYSTALLEGENDS)
+
+	para "The GOLDENROD rig"
+	line "can hold the wave"
+
+	para "until the change"
+	line "becomes permanent."
+endc
 	done
+
+if DEF(_CRYSTALLEGENDS)
+TeamRocketBaseB3FProjectMewDossierText:
+	text "PROJECT MEW"
+
+	para "SUBJECT: one living"
+	line "MEW, held captive."
+
+	para "Genetic response:"
+	line "unmatched."
+
+	para "Origin of prior"
+	line "work: old KANTO"
+
+	para "labs. Related site"
+	line "near CERULEAN."
+
+	para "Transfer order:"
+	line "GOLDENROD RADIO"
+	cont "TOWER."
+	done
+
+TeamRocketBaseB3FProjectMewTestDataText:
+	text "LAKE TRIAL: PROOF"
+
+	para "Forced evolution"
+	line "confirmed at"
+	cont "level-30 output."
+
+	para "PROJECT MEW final"
+	line "sequence assigned"
+	cont "to GOLDENROD."
+	done
+endc
 
 TeamRocketBaseB3FLockedDoorNeedsPasswordText:
 	text "The door's closed…"
@@ -588,6 +655,10 @@ TeamRocketBaseB3F_MapEvents:
 	bg_event  5, 13, BGEVENT_READ, TeamRocketBaseB3FOathScript
 	bg_event  6, 13, BGEVENT_READ, TeamRocketBaseB3FOathScript
 	bg_event  7, 13, BGEVENT_READ, TeamRocketBaseB3FOathScript
+if DEF(_CRYSTALLEGENDS)
+	bg_event  8,  3, BGEVENT_UP, TeamRocketBaseB3FProjectMewDossierScript
+	bg_event 20,  7, BGEVENT_UP, TeamRocketBaseB3FProjectMewTestDataScript
+endc
 
 	def_object_events
 	object_event 25, 14, SPRITE_LANCE, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, LanceGetPasswordScript, EVENT_TEAM_ROCKET_BASE_B3F_LANCE_PASSWORDS

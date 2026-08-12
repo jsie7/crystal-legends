@@ -220,6 +220,17 @@ GruntM29AfterBattleText:
 
 	para "and we'll do any-"
 	line "thing for money!"
+if DEF(_CRYSTALLEGENDS)
+
+	para "The lab paid extra"
+	line "for notes on how"
+
+	para "the TAILS grew"
+	line "back."
+
+	para "No clue why their"
+	line "lab crew cared."
+endc
 	done
 
 GruntM1SeenText:
@@ -290,6 +301,14 @@ GruntF1AfterBattleText:
 
 	para "What's wrong with"
 	line "selling them?"
+if DEF(_CRYSTALLEGENDS)
+
+	para "The science crew"
+	line "watched every cut."
+
+	para "They called it"
+	line "regrowth data."
+endc
 	done
 
 SlowpokeWellB1FSlowpokeWithMailText:
