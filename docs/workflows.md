@@ -189,21 +189,25 @@ Manually confirm:
 1. In the Kabuto chamber, use Escape Rope before solving the picture. Confirm
    the wall and scientist dialogue remain closed/coherent, then solve the
    picture and verify the remembered Rope condition opens the wall without a
-   second Rope use. Review Kabuto's placement, palette, bounce, cry, dialogue,
-   and level-10 reward.
+   second Rope use. Continue through the stock item room into the word room.
+   Confirm Kabuto follows the final Unown glyph at `(10, 8)` like a period,
+   then review its palette, bounce, cry, dialogue, and level-10 reward.
 2. In the Omanyte chamber, carry a Water Stone before solving the picture.
    Confirm the Stone is retained and the wall stays closed, then solve the
-   picture and verify the remembered condition opens the wall. Review Omanyte's
-   presentation and level-26 reward, and repeat the prerequisite with a Water
-   Stone held by a party Pokémon.
+   picture and verify the remembered condition opens the wall. Continue into
+   the word room and confirm Omanyte follows the final glyph at `(15, 10)`,
+   then review its presentation and level-26 reward. Repeat the prerequisite
+   with a Water Stone held by a party Pokémon.
 3. In the Aerodactyl chamber, use Flash before solving the picture. Confirm the
    wall stays closed, then solve the picture and verify the remembered Flash
-   condition opens it without a second use. Review Aerodactyl's presentation
-   and level-23 reward.
-4. In every gift room, decline once, claim with normal capacity, and re-enter.
+   condition opens it without a second use. Continue into the word room and
+   confirm Aerodactyl follows the final glyph at `(16, 8)`, then review its
+   presentation and level-23 reward.
+4. In every word room, decline once, claim with normal capacity, and re-enter.
    Confirm the Pokémon waits after decline, stays absent after success, never
-   blocks the room, uses clean non-fossil dialogue, and leaves all stock items
-   and word-room navigation intact. Judge levels 10/26/23 in a normal run.
+   blocks the inscription or fall tile, and uses clean non-fossil dialogue.
+   Confirm each preceding item room still contains all four stock rewards.
+   Judge levels 10/26/23 in a normal run.
 5. Confirm the Ho-Oh chamber and hidden room remain stock. On Route 14, trade a
    Chansey to Kim and verify a same-level Girafarig named `GIRAFY` holding a
    Gold Berry arrives. Confirm the trade and Aerodactyl gift do not complete one

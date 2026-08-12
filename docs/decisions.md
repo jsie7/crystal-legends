@@ -163,22 +163,26 @@ picture-floor drop. There are no retained player-progression saves predating
 this behavior, so do not add scene normalization, trade migration, save-version
 conversion, or other compatibility scaffolding for hypothetical old progress.
 
-The Kabuto hidden room contains a visible level-10 Kabuto once both conditions
-are complete. It uses the stock `givepoke` party/current-box transaction and a
+The Kabuto word room beyond the stock item chamber contains a visible level-10
+Kabuto once both conditions are complete. It sits at `(10, 8)`, immediately
+after the inscription's final glyph, so the sprite acts as the sentence's
+period. It uses the stock `givepoke` party/current-box transaction and a
 dedicated success event: declining or having both destinations full leaves the
 gift waiting, while successful party or box delivery completes it permanently.
-Its callback controls visibility without mutating saved state, and all four
-stock item balls and the word-room route remain intact.
+Its callback controls visibility without mutating saved state, and the
+preceding item room retains all four stock item balls.
 
-The Omanyte hidden room uses the same independent transaction for a level-26
-Omanyte. Its Water Stone condition remains non-consuming and recognizes either
-the Bag or a party Pokémon's held item. Once both the picture and remembered
-wall event are set, the callback exposes the retry-safe gift without changing
-either prerequisite or any stock room reward.
+The Omanyte word room uses the same independent transaction for a level-26
+Omanyte at `(15, 10)`, immediately after its final inscription glyph. Its Water
+Stone condition remains non-consuming and recognizes either the Bag or a party
+Pokémon's held item. Once both the picture and remembered wall event are set,
+the callback exposes the retry-safe gift without changing either prerequisite
+or any stock room reward.
 
-The Aerodactyl hidden room completes the set with a level-23 Aerodactyl using
-the same independent, retry-safe contract. Kim's existing Route 14 trade keeps
-its Chansey request, table index, dialog set, DVs, Gold Berry, OT identity, and
+The Aerodactyl word room completes the set with a level-23 Aerodactyl at
+`(16, 8)`, immediately after its final inscription glyph, using the same
+independent, retry-safe contract. Kim's existing Route 14 trade keeps its
+Chansey request, table index, dialog set, DVs, Gold Berry, OT identity, and
 gender rule, but Crystal Legends offers a same-level Girafarig named `GIRAFY`.
 Reference builds retain the complete stock Aerodactyl `AEROY` row. Girafarig is
 renewable through breeding after this one-time trade, so Phase 9 may add a wild
