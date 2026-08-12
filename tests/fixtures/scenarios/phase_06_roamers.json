@@ -1,0 +1,41 @@
+{
+  "max_frames_per_step": 60000,
+  "release": {
+    "map": "BURNED_TOWER_B1F",
+    "start": {"x": 10, "y": 7, "facing": "UP"},
+    "event": "EVENT_RELEASED_THE_BEASTS"
+  },
+  "encounter": {
+    "map": "ROUTE_37",
+    "grass": [[8, 4], [9, 4]],
+    "different_route": "ROUTE_38"
+  },
+  "water_rejection": {
+    "map": "ROUTE_42",
+    "coordinate": [14, 4]
+  },
+  "roamers": [
+    {
+      "species": "RAIKOU",
+      "slot": "wRoamMon1",
+      "level": 40,
+      "starting_route": "ROUTE_42",
+      "flee_group": "AlwaysFleeMons",
+      "flee_group_index": 0,
+      "rng_selection": 1,
+      "permanent_after_defeat": true,
+      "permanent_after_capture": true
+    },
+    {
+      "species": "ENTEI",
+      "slot": "wRoamMon2",
+      "level": 40,
+      "starting_route": "ROUTE_37",
+      "flee_group": "AlwaysFleeMons",
+      "flee_group_index": 1,
+      "rng_selection": 2,
+      "permanent_after_defeat": true,
+      "permanent_after_capture": true
+    }
+  ]
+}

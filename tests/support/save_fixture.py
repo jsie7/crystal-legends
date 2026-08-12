@@ -71,6 +71,25 @@ class BatterySave:
             else:
                 self.data[offset] &= ~mask
 
+    def set_saved_bit_offset(
+        self, wram_label: str, bit_offset: int, enabled: bool
+    ) -> None:
+        if bit_offset < 0:
+            raise SaveFixtureError(f"bit offset out of range: {bit_offset}")
+        base = self.symbols[wram_label]
+        field = Symbol(
+            base.bank,
+            base.address + bit_offset // 8,
+            f"{wram_label}[{bit_offset // 8}]",
+        )
+        for symbol in self._saved_symbols_for_field(field):
+            offset = self._offset(symbol)
+            mask = 1 << (bit_offset % 8)
+            if enabled:
+                self.data[offset] |= mask
+            else:
+                self.data[offset] &= ~mask
+
     def set_event(self, event_number: int, enabled: bool) -> None:
         event_flags = self.symbols["wEventFlags"]
         field = Symbol(
