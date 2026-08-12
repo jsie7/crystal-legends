@@ -487,6 +487,7 @@ INCLUDE "maps/Route10North.asm"
 
 if DEF(_CRYSTALLEGENDS)
 INCLUDE "maps/PlayersHouse2FDebug.asm"
+INCLUDE "maps/RadioTowerTransmitterAnnex.asm"
 endc
 
 ENDSECTION

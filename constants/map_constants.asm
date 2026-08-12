@@ -154,6 +154,9 @@ ENDM
 	map_const SAFARI_ZONE_FUCHSIA_GATE_BETA,                5,  4 ; 89
 	map_const SAFARI_ZONE_BETA,                            10, 18 ; 90
 	map_const VICTORY_ROAD,                                10, 36 ; 91
+if DEF(_CRYSTALLEGENDS)
+	map_const RADIO_TOWER_TRANSMITTER_ANNEX,                 5,  4 ; 92
+endc
 	endgroup
 
 	newgroup ECRUTEAK                                             ;  4

@@ -5,6 +5,13 @@ from pathlib import Path
 import pytest
 
 from tests.support.asm_conditions import active_lines
+from tests.support.map_assets import (
+    block_paths_for_maps,
+    collision_at,
+    parse_block_paths,
+    parse_map_tilesets,
+)
+from tests.support.map_model import parse_map_dimensions
 
 
 pytestmark = [pytest.mark.static, pytest.mark.phase7]
@@ -25,6 +32,11 @@ def _active_code(path: Path, definitions: set[str]) -> list[str]:
 def _section(lines: list[str], start: str, end: str) -> list[str]:
     first = lines.index(start)
     return lines[first : lines.index(end, first + 1)]
+
+
+def _assert_contiguous(lines: list[str], expected: list[str]) -> None:
+    width = len(expected)
+    assert any(lines[index : index + width] == expected for index in range(len(lines)))
 
 
 def test_slowpoke_well_foreshadows_research_without_naming_subject(
@@ -88,7 +100,8 @@ def test_mahogany_reveal_uses_existing_people_office_lab_and_transmitter(
         "TeamRocketBaseB3FProjectMewDossierScript:",
         "TeamRocketBaseB3FProjectMewTestDataScript:",
         'text "PROJECT MEW"',
-        'line "MEW, held captive."',
+        'para "SUBJECT: one MEW."',
+        'cont "captive."',
         'line "near CERULEAN."',
         'text "LAKE TRIAL: PROOF"',
         "bg_event  8,  3, BGEVENT_UP, TeamRocketBaseB3FProjectMewDossierScript",
@@ -144,3 +157,221 @@ def test_stock_rocket_story_progression_operations_remain_present(
         "setevent EVENT_TEAM_ROCKET_DISBANDED",
     ):
         assert row in radio
+
+
+def test_project_mew_event_slots_are_explicit_and_reference_reserved(
+    repo_root: Path,
+) -> None:
+    source = repo_root / "constants/event_flags.asm"
+    crystal = _active_code(source, CRYSTAL_LEGENDS)
+    reference = _active_code(source, REFERENCE)
+    events = [
+        "EVENT_PROJECT_MEW_DATA_SENT",
+        "EVENT_PROJECT_MEW_RESOLVED",
+        "EVENT_PROJECT_MEW_TRANSFORMED",
+        "EVENT_CAUGHT_PROJECT_MEW_SUBJECT",
+    ]
+
+    _assert_contiguous(
+        crystal,
+        [
+            "const EVENT_GOT_AERODACTYL_FROM_ALPH",
+            *(f"const {event}" for event in events),
+            "const_next 2048",
+            "DEF NUM_EVENTS EQU const_value",
+        ],
+    )
+    assert all(not any(event in line for line in reference) for event in events)
+    _assert_contiguous(
+        reference,
+        [
+            "const_skip",
+            "const_skip 3",
+            "const_skip 3",
+            "const_skip 4",
+            "const_next 2048",
+            "DEF NUM_EVENTS EQU const_value",
+        ],
+    )
+
+
+def test_annex_map_and_subject_sprites_append_only_to_custom_tables(
+    repo_root: Path,
+) -> None:
+    map_constants = repo_root / "constants/map_constants.asm"
+    map_table = repo_root / "data/maps/maps.asm"
+    sprite_constants = repo_root / "constants/sprite_constants.asm"
+    sprite_table = repo_root / "data/sprites/sprite_mons.asm"
+    crystal_maps = _active_code(map_constants, CRYSTAL_LEGENDS)
+    reference_maps = _active_code(map_constants, REFERENCE)
+    crystal_table = _active_code(map_table, CRYSTAL_LEGENDS)
+    reference_table = _active_code(map_table, REFERENCE)
+    crystal_sprites = _active_code(sprite_constants, CRYSTAL_LEGENDS)
+    reference_sprites = _active_code(sprite_constants, REFERENCE)
+    crystal_mons = _active_code(sprite_table, CRYSTAL_LEGENDS)
+    reference_mons = _active_code(sprite_table, REFERENCE)
+
+    _assert_contiguous(
+        crystal_maps,
+        [
+            "map_const VICTORY_ROAD,                                10, 36",
+            "map_const RADIO_TOWER_TRANSMITTER_ANNEX,                 5,  4",
+            "endgroup",
+        ],
+    )
+    assert not any("RADIO_TOWER_TRANSMITTER_ANNEX" in row for row in reference_maps)
+    assert any(row.startswith("map RadioTowerTransmitterAnnex,") for row in crystal_table)
+    assert not any(row.startswith("map RadioTowerTransmitterAnnex,") for row in reference_table)
+    _assert_contiguous(
+        crystal_sprites,
+        [
+            "const SPRITE_AERODACTYL",
+            "const SPRITE_MEW",
+            "const SPRITE_MEWTWO",
+            "DEF NUM_POKEMON_SPRITES EQU const_value - SPRITE_POKEMON",
+        ],
+    )
+    _assert_contiguous(
+        crystal_mons,
+        [
+            "db AERODACTYL",
+            "db MEW",
+            "db MEWTWO",
+            "assert_table_length NUM_POKEMON_SPRITES",
+        ],
+    )
+    assert not any("SPRITE_MEW" in row for row in reference_sprites)
+    assert "db MEW" not in reference_mons
+    assert "db MEWTWO" not in reference_mons
+
+
+def test_annex_asset_is_compact_and_has_sealed_then_open_exit_collision(
+    repo_root: Path,
+) -> None:
+    dimensions = parse_map_dimensions(
+        (repo_root / "constants/map_constants.asm").read_text()
+    )
+    block_paths = block_paths_for_maps(
+        dimensions,
+        parse_block_paths((repo_root / "data/maps/blocks.asm").read_text()),
+    )
+    tilesets = parse_map_tilesets((repo_root / "data/maps/maps.asm").read_text())
+    name = "RADIO_TOWER_TRANSMITTER_ANNEX"
+    blocks = (repo_root / block_paths[name]).read_bytes()
+
+    assert (dimensions[name].width_blocks, dimensions[name].height_blocks) == (5, 4)
+    assert blocks == bytes.fromhex(
+        "02 12 02 12 02 01 15 01 15 01 01 01 01 01 01 23 23 23 23 23"
+    )
+    assert collision_at(
+        repo_root, name, (2, 1), dimensions, block_paths, tilesets
+    ) == "PC"
+    assert collision_at(
+        repo_root, name, (6, 1), dimensions, block_paths, tilesets
+    ) == "PC"
+    assert collision_at(
+        repo_root, name, (4, 4), dimensions, block_paths, tilesets
+    ) == "FLOOR"
+    assert collision_at(
+        repo_root, name, (4, 7), dimensions, block_paths, tilesets
+    ) == "WALL"
+    collision_rows = (repo_root / "data/tilesets/radio_tower_collision.asm").read_text()
+    assert "tilecoll FLOOR, FLOOR, WARP_CARPET_DOWN, WARP_CARPET_DOWN ; 07" in collision_rows
+
+
+def test_final_executive_sends_data_before_battle_and_opens_existing_flag_gate(
+    repo_root: Path,
+) -> None:
+    source = repo_root / "maps/RadioTower5F.asm"
+    crystal = _active_code(source, CRYSTAL_LEGENDS)
+    reference = _active_code(source, REFERENCE)
+    boss = _section(crystal, "RadioTower5FRocketBossScript:", "RadioTower5FDirectorCleanupScript:")
+
+    assert boss.index("setevent EVENT_PROJECT_MEW_DATA_SENT") < boss.index("startbattle")
+    _assert_contiguous(
+        boss,
+        [
+            "setevent EVENT_BEAT_ROCKET_EXECUTIVEM_1",
+            "playsound SFX_ENTER_DOOR",
+            "changeblock 14, 0, $1d",
+            "refreshmap",
+        ],
+    )
+    assert "setscene SCENE_RADIOTOWER5F_PROJECT_MEW" in boss
+    assert "warp RADIO_TOWER_TRANSMITTER_ANNEX, 4, 6" in boss
+    callback = _section(
+        crystal,
+        "RadioTower5FProjectMewEntranceCallback:",
+        "RadioTower5FResumeProjectMewScript:",
+    )
+    assert "checkevent EVENT_BEAT_ROCKET_EXECUTIVEM_1" in callback
+    assert "changeblock 14, 0, $1d" in callback
+    assert "changeblock 14, 0, $02" in callback
+    assert "EVENT_PROJECT_MEW_ACCESS" not in "\n".join(crystal)
+    assert not any("PROJECT_MEW" in row for row in reference)
+
+
+def test_annex_terminal_is_cancelable_confirmed_permanent_and_capture_optional(
+    repo_root: Path,
+) -> None:
+    annex = _active_code(
+        repo_root / "maps/RadioTowerTransmitterAnnex.asm", CRYSTAL_LEGENDS
+    )
+    terminal = _section(
+        annex,
+        "RadioTowerTransmitterAnnexTerminalScript:",
+        "RadioTowerTransmitterAnnexMewScript:",
+    )
+    director = _section(
+        _active_code(repo_root / "maps/RadioTower5F.asm", CRYSTAL_LEGENDS),
+        "RadioTower5FDirectorCleanupScript:",
+        "Ben:",
+    )
+
+    for row in (
+        'db "REVERSE SEQ.@"',
+        'db "STABILIZE@"',
+        'db "CANCEL@"',
+        'text "Run REVERSE"',
+        'text "Run STABILIZE"',
+        "yesorno",
+        "setevent EVENT_PROJECT_MEW_RESOLVED",
+        "clearevent EVENT_PROJECT_MEW_TRANSFORMED",
+        "setevent EVENT_PROJECT_MEW_TRANSFORMED",
+        "changeblock 4, 6, $07",
+    ):
+        assert row in annex
+    cancel = terminal[terminal.index(".Cancel:") : terminal.index(".Resolved:")]
+    assert not any("setevent EVENT_PROJECT_MEW" in row for row in cancel)
+    assert "EVENT_CAUGHT_PROJECT_MEW_SUBJECT" not in director
+    for row in (
+        "setevent EVENT_CLEARED_RADIO_TOWER",
+        "verbosegiveitem CLEAR_BELL",
+        "setevent EVENT_GOT_CLEAR_BELL",
+        "setevent EVENT_TEAM_ROCKET_DISBANDED",
+    ):
+        assert row in director
+
+
+def test_annex_visibility_uses_outcome_facts_not_party_or_pokedex(
+    repo_root: Path,
+) -> None:
+    annex = _active_code(
+        repo_root / "maps/RadioTowerTransmitterAnnex.asm", CRYSTAL_LEGENDS
+    )
+    callback = _section(
+        annex,
+        "RadioTowerTransmitterAnnexSubjectCallback:",
+        "RadioTowerTransmitterAnnexUploadMonitorScript:",
+    )
+    for event in (
+        "EVENT_CAUGHT_PROJECT_MEW_SUBJECT",
+        "EVENT_PROJECT_MEW_RESOLVED",
+        "EVENT_PROJECT_MEW_TRANSFORMED",
+    ):
+        assert f"checkevent {event}" in callback
+    assert "checkcode VAR_PARTYCOUNT" not in callback
+    assert not any("POKEDEX" in row or "PARTY" in row for row in callback)
+    assert "bg_event 2, 1, BGEVENT_UP, RadioTowerTransmitterAnnexUploadMonitorScript" in annex
+    assert "bg_event 6, 1, BGEVENT_UP, RadioTowerTransmitterAnnexTerminalScript" in annex
+    assert sum(row.startswith("object_event 4, 4, SPRITE_MEW") for row in annex) == 2

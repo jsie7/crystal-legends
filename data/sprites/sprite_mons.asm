@@ -43,5 +43,7 @@ if DEF(_CRYSTALLEGENDS)
 	db KABUTO
 	db OMANYTE
 	db AERODACTYL
+	db MEW
+	db MEWTWO
 endc
 	assert_table_length NUM_POKEMON_SPRITES

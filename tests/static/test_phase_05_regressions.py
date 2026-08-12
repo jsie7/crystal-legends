@@ -51,8 +51,6 @@ def test_phase_5_event_slots_are_reserved_without_changing_num_events(
         [
             "const EVENT_GOT_TOTODILE_FROM_CIANWOOD",
             *(f"const {name}" for name in names),
-            "const_next 2048",
-            "DEF NUM_EVENTS EQU const_value",
         ],
     )
     assert all(not any(name in line for line in reference) for name in names)
@@ -62,6 +60,7 @@ def test_phase_5_event_slots_are_reserved_without_changing_num_events(
             "const_skip",
             "const_skip 3",
             "const_skip 3",
+            "const_skip 4",
             "const_next 2048",
             "DEF NUM_EVENTS EQU const_value",
         ],
@@ -83,7 +82,6 @@ def test_phase_5_sprite_ids_append_to_the_custom_icon_table(repo_root: Path) -> 
             "const SPRITE_KABUTO",
             "const SPRITE_OMANYTE",
             "const SPRITE_AERODACTYL",
-            "DEF NUM_POKEMON_SPRITES EQU const_value - SPRITE_POKEMON",
         ],
     )
     _assert_contiguous(
@@ -93,7 +91,6 @@ def test_phase_5_sprite_ids_append_to_the_custom_icon_table(repo_root: Path) -> 
             "db KABUTO",
             "db OMANYTE",
             "db AERODACTYL",
-            "assert_table_length NUM_POKEMON_SPRITES",
         ],
     )
     for name in ("KABUTO", "OMANYTE", "AERODACTYL"):

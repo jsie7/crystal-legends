@@ -1046,4 +1046,9 @@ BetaBlank_Blocks: ; unreferenced
 GoldenrodDeptStoreRoof_Blocks:
 	INCBIN "maps/GoldenrodDeptStoreRoof.blk"
 
+if DEF(_CRYSTALLEGENDS)
+RadioTowerTransmitterAnnex_Blocks:
+	INCBIN "maps/RadioTowerTransmitterAnnex.blk"
+endc
+
 ENDSECTION

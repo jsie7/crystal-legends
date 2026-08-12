@@ -1484,12 +1484,17 @@ if DEF(_CRYSTALLEGENDS)
 	const EVENT_GOT_KABUTO_FROM_ALPH
 	const EVENT_GOT_OMANYTE_FROM_ALPH
 	const EVENT_GOT_AERODACTYL_FROM_ALPH
+	const EVENT_PROJECT_MEW_DATA_SENT
+	const EVENT_PROJECT_MEW_RESOLVED
+	const EVENT_PROJECT_MEW_TRANSFORMED
+	const EVENT_CAUGHT_PROJECT_MEW_SUBJECT
 else
 	const_skip ; reserved for EVENT_OAK_MOVED_THIRD_BIRD
 	const_skip 3 ; reserved for Crystal Legends Johto starter gifts
 	const_skip 3 ; reserved for Crystal Legends Ruins ancient Pokemon gifts
+	const_skip 4 ; reserved for Crystal Legends Project Mew story facts
 endc
-; Unused: next 41 events
+; Unused: next 37 events
 
 	const_next 2048
 DEF NUM_EVENTS EQU const_value ; 800

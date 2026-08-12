@@ -584,8 +584,9 @@ if DEF(_CRYSTALLEGENDS)
 TeamRocketBaseB3FProjectMewDossierText:
 	text "PROJECT MEW"
 
-	para "SUBJECT: one living"
-	line "MEW, held captive."
+	para "SUBJECT: one MEW."
+	line "Living and held"
+	cont "captive."
 
 	para "Genetic response:"
 	line "unmatched."

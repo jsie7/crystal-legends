@@ -9,15 +9,47 @@ RadioTower5F_MapScripts:
 	def_scene_scripts
 	scene_script RadioTower5FNoop1Scene, SCENE_RADIOTOWER5F_FAKE_DIRECTOR
 	scene_script RadioTower5FNoop2Scene, SCENE_RADIOTOWER5F_ROCKET_BOSS
+if DEF(_CRYSTALLEGENDS)
+	scene_script RadioTower5FProjectMewScene, SCENE_RADIOTOWER5F_PROJECT_MEW
+endc
 	scene_script RadioTower5FNoop3Scene, SCENE_RADIOTOWER5F_NOOP
 
 	def_callbacks
+if DEF(_CRYSTALLEGENDS)
+	callback MAPCALLBACK_TILES, RadioTower5FProjectMewEntranceCallback
+endc
 
 RadioTower5FNoop1Scene:
 	end
 
 RadioTower5FNoop2Scene:
 	end
+
+if DEF(_CRYSTALLEGENDS)
+RadioTower5FProjectMewScene:
+	sdefer RadioTower5FResumeProjectMewScript
+	end
+
+RadioTower5FProjectMewEntranceCallback:
+	checkevent EVENT_BEAT_ROCKET_EXECUTIVEM_1
+	iffalse .Closed
+	changeblock 14, 0, $1d ; stairs to transmitter annex
+	endcallback
+
+.Closed:
+	changeblock 14, 0, $02 ; closed wall
+	endcallback
+
+RadioTower5FResumeProjectMewScript:
+	checkevent EVENT_PROJECT_MEW_RESOLVED
+	iffalse .ReturnToAnnex
+	applymovement PLAYER, RadioTower5FPlayerReturnsFromAnnexMovement
+	sjump RadioTower5FDirectorCleanupScript
+
+.ReturnToAnnex:
+	warp RADIO_TOWER_TRANSMITTER_ANNEX, 4, 6
+	end
+endc
 
 RadioTower5FNoop3Scene:
 	end
@@ -87,6 +119,9 @@ RadioTower5FRocketBossScript:
 	winlosstext RadioTower5FRocketBossWinText, 0
 	setlasttalked RADIOTOWER5F_ROCKET
 	loadtrainer EXECUTIVEM, EXECUTIVEM_1
+if DEF(_CRYSTALLEGENDS)
+	setevent EVENT_PROJECT_MEW_DATA_SENT
+endc
 	startbattle
 	reloadmapafterbattle
 	opentext
@@ -100,6 +135,22 @@ RadioTower5FRocketBossScript:
 	pause 15
 	special FadeInFromBlack
 	setevent EVENT_BEAT_ROCKET_EXECUTIVEM_1
+if DEF(_CRYSTALLEGENDS)
+	playsound SFX_ENTER_DOOR
+	changeblock 14, 0, $1d ; stairs to transmitter annex
+	refreshmap
+	waitsfx
+	pause 30
+	opentext
+	writetext RadioTower5FProjectMewEntranceOpenedText
+	waitbutton
+	closetext
+	setscene SCENE_RADIOTOWER5F_PROJECT_MEW
+	warp RADIO_TOWER_TRANSMITTER_ANNEX, 4, 6
+	end
+endc
+
+RadioTower5FDirectorCleanupScript:
 	setevent EVENT_CLEARED_RADIO_TOWER
 	clearflag ENGINE_ROCKETS_IN_RADIO_TOWER
 	setevent EVENT_GOLDENROD_CITY_ROCKET_SCOUT
@@ -189,6 +240,15 @@ RadioTower5FPlayerTwoStepsLeftMovement:
 	step LEFT
 	step LEFT
 	step_end
+
+if DEF(_CRYSTALLEGENDS)
+RadioTower5FPlayerReturnsFromAnnexMovement:
+	step DOWN
+	step DOWN
+	step DOWN
+	step DOWN
+	step_end
+endc
 
 FakeDirectorTextBefore1:
 	text "Y-you! You came to"
@@ -291,6 +351,18 @@ RadioTower5FRocketBossBeforeText:
 	para "We are going to"
 	line "regain our former"
 	cont "glory."
+if DEF(_CRYSTALLEGENDS)
+
+	para "Too late! PROJECT"
+	line "MEW's research"
+
+	para "already reached"
+	line "GIOVANNI."
+
+	para "This tower will"
+	line "finish the captive"
+	cont "subject's change!"
+endc
 
 	para "I won't allow you"
 	line "to interfere with"
@@ -319,6 +391,17 @@ RadioTower5FRocketBossAfterText:
 
 	para "Farewell."
 	done
+
+if DEF(_CRYSTALLEGENDS)
+RadioTower5FProjectMewEntranceOpenedText:
+	text "A hidden stairway"
+	line "opened beside the"
+	cont "old stairs!"
+
+	para "The PROJECT MEW"
+	line "signal is below."
+	done
+endc
 
 RadioTower5FDirectorThankYouText:
 	text "DIRECTOR: <PLAY_G>,"
@@ -424,6 +507,9 @@ RadioTower5F_MapEvents:
 	def_warp_events
 	warp_event  0,  0, RADIO_TOWER_4F, 1
 	warp_event 12,  0, RADIO_TOWER_4F, 3
+if DEF(_CRYSTALLEGENDS)
+	warp_event 14,  0, RADIO_TOWER_TRANSMITTER_ANNEX, 1
+endc
 
 	def_coord_events
 	coord_event  0,  3, SCENE_RADIOTOWER5F_FAKE_DIRECTOR, FakeDirectorScript
