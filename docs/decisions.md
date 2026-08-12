@@ -187,3 +187,18 @@ gender rule, but Crystal Legends offers a same-level Girafarig named `GIRAFY`.
 Reference builds retain the complete stock Aerodactyl `AEROY` row. Girafarig is
 renewable through breeding after this one-time trade, so Phase 9 may add a wild
 Safari encounter for flavor but no longer needs one for 251-species completion.
+
+## 2026-08-12 — Preserve stock roamers and fix only the custom Fast Ball scan
+
+Raikou and Entei remain the stock level-40 roamers, and the normal Pokédex Area
+screen remains their only route tracker. A flee preserves the roaming slot's HP
+and DVs, but not battle status conditions. Defeat and capture both permanently
+clear the slot; Crystal Legends does not restore or replace either beast.
+
+Fast Balls retain the stock 4x-with-saturation calculation but, in
+`_CRYSTALLEGENDS` builds, scan every species in all three terminated fleeing
+groups. This covers the complete stock set of 23 species, including Entei as
+the second entry in the always-flee group. Reference builds retain the upstream
+branch bug so their ROMs remain exact. Do not expand this change into other
+Apricorn Ball fixes, a new tracker, roaming changes, save data, or Suicune and
+its unused third roaming slot.

@@ -297,3 +297,38 @@ def start_roaming_battle(
     assert session.read_symbol("wBattleType") == constants["BATTLETYPE_ROAMING"]
     assert session.read_symbol("wEnemyMonSpecies") == constants[roamer["species"]]
     assert session.read_symbol("wEnemyMonLevel") == roamer["level"]
+
+
+def start_wild_battle(
+    session: PyBoySession,
+    constants: dict[str, int],
+    scenario: dict,
+) -> None:
+    session.register_hook("BattleMenu")
+    unavailable = bytes(
+        [constants["GROUP_N_A"] & 0xFF, constants["MAP_N_A"] & 0xFF]
+    )
+    for slot in (1, 2):
+        session.write_symbol_bytes(f"wRoamMon{slot}MapGroup", unavailable)
+    session.write_symbol_bytes("wMornEncounterRate", b"\xff\xff\xff")
+
+    max_frames = scenario["max_frames_per_step"]
+    start = session.frames
+    direction_index = 0
+    directions = ("right", "left")
+    while (
+        session.read_symbol("wBattleMode") == 0
+        and session.frames - start < max_frames
+    ):
+        session.tap(directions[direction_index % 2], 2, 12)
+        direction_index += 1
+    while (
+        "BattleMenu" not in session.hook_history
+        and session.frames - start < max_frames
+    ):
+        session.tap("a", 2, 8)
+    if "BattleMenu" not in session.hook_history:
+        raise AssertionError(
+            f"ordinary wild battle did not start\n{session.diagnostics()}"
+        )
+    assert session.read_symbol("wBattleType") != constants["BATTLETYPE_ROAMING"]

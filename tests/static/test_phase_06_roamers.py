@@ -9,6 +9,36 @@ import pytest
 pytestmark = [pytest.mark.static, pytest.mark.phase6]
 
 
+FLEE_GROUPS = (
+    (
+        "MAGNEMITE",
+        "GRIMER",
+        "TANGELA",
+        "MR__MIME",
+        "EEVEE",
+        "PORYGON",
+        "DRATINI",
+        "DRAGONAIR",
+        "TOGETIC",
+        "UMBREON",
+        "UNOWN",
+        "SNUBBULL",
+        "HERACROSS",
+    ),
+    (
+        "CUBONE",
+        "ARTICUNO",
+        "ZAPDOS",
+        "MOLTRES",
+        "QUAGSIRE",
+        "DELIBIRD",
+        "PHANPY",
+        "TEDDIURSA",
+    ),
+    ("RAIKOU", "ENTEI"),
+)
+
+
 def _code(path: Path) -> list[str]:
     return [
         line.split(";", 1)[0].strip()
@@ -207,3 +237,54 @@ def test_phase_6_adds_no_roamer_or_save_state(repo_root: Path) -> None:
     ):
         source = path.read_text()
         assert all(token not in source for token in forbidden)
+
+
+def test_fast_ball_custom_branch_scans_each_complete_stock_group(
+    repo_root: Path,
+) -> None:
+    item_effects = _code(repo_root / "engine/items/item_effects.asm")
+    fast_ball = _section(
+        item_effects, "FastBallMultiplier:", "LevelBallMultiplier:"
+    )
+    mismatch = fast_ball.index("cp c")
+    assert fast_ball[mismatch : mismatch + 6] == [
+        "cp c",
+        "if DEF(_CRYSTALLEGENDS)",
+        "jr nz, .loop",
+        "else",
+        "jr nz, .next",
+        "endc",
+    ]
+    assert "ld d, 3" in fast_ball
+    assert fast_ball.count("sla b") == 2
+    assert "ld b, $ff" in fast_ball
+
+    flee_mons = _code(repo_root / "data/wild/flee_mons.asm")
+    labels = ("SometimesFleeMons:", "OftenFleeMons:", "AlwaysFleeMons:")
+    actual_groups: list[tuple[str, ...]] = []
+    for index, label in enumerate(labels):
+        start = flee_mons.index(label) + 1
+        end = (
+            flee_mons.index(labels[index + 1])
+            if index + 1 < len(labels)
+            else len(flee_mons)
+        )
+        rows = flee_mons[start:end]
+        assert rows[-1] == "db -1"
+        actual_groups.append(tuple(row.removeprefix("db ") for row in rows[:-1]))
+    assert tuple(actual_groups) == FLEE_GROUPS
+    assert sum(map(len, actual_groups)) == 23
+
+
+def test_fast_ball_multiplier_model_covers_all_23_species_and_a_control() -> None:
+    def multiplier(species: str, catch_rate: int) -> int:
+        for group in FLEE_GROUPS:
+            for candidate in group:
+                if candidate == species:
+                    return min(catch_rate * 4, 0xFF)
+        return catch_rate
+
+    for species in (candidate for group in FLEE_GROUPS for candidate in group):
+        assert multiplier(species, 50) == 200
+        assert multiplier(species, 100) == 0xFF
+    assert multiplier("PIDGEY", 50) == 50

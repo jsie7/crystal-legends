@@ -1029,7 +1029,12 @@ FastBallMultiplier:
 	cp -1
 	jr z, .next
 	cp c
+	if DEF(_CRYSTALLEGENDS)
+; Crystal Legends checks every species in each fleeing group.
+	jr nz, .loop
+	else
 	jr nz, .next
+	endc
 	sla b
 	jr c, .max
 

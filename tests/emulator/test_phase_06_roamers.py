@@ -25,7 +25,9 @@ from tests.support.phase_06_scenario import (
     loaded_phase_6_checkpoint,
     loaded_phase_6_saved_game,
     start_roaming_battle,
+    start_wild_battle,
 )
+from tests.support.pyboy_session import PyBoySession
 from tests.support.symbol_table import SymbolTable
 
 
@@ -73,7 +75,18 @@ def phase_6_constants(
         "QUICK_ATTACK",
         "SWIFT",
         "MASTER_BALL",
+        "FAST_BALL",
         "BALL_POCKET",
+        "LEDYBA",
+        "GROWLITHE",
+        "PIDGEY",
+        "PIDGEOTTO",
+        "LEDIAN",
+        "SPINARAK",
+        "STANTLER",
+        "HOOTHOOT",
+        "NOCTOWL",
+        "ARIADOS",
     }
     for key in ("release", "encounter", "water_rejection"):
         record = scenario[key]
@@ -119,7 +132,13 @@ def _roamer(scenario: dict, species: str) -> dict:
     return next(row for row in scenario["roamers"] if row["species"] == species)
 
 
-def _prepare_party(constants: dict[str, int], *, strong: bool, ball: bool = False):
+def _prepare_party(
+    constants: dict[str, int],
+    *,
+    strong: bool,
+    ball: bool = False,
+    ball_item: int | None = None,
+):
     def prepare(session) -> None:
         prepare_battle_party(session, constants, constants["RAIKOU"], strong)
         if not strong:
@@ -132,10 +151,12 @@ def _prepare_party(constants: dict[str, int], *, strong: bool, ball: bool = Fals
             session.write_symbol_bytes("wPartyMon1Speed", (999).to_bytes(2, "big"))
             session.write_symbol("wPartyMon1Moves", constants["SWIFT"])
             session.write_symbol("wPartyMon1PP", 20)
-        if ball:
+        if ball or ball_item is not None:
+            item = constants["MASTER_BALL"] if ball_item is None else ball_item
             session.write_symbol("wNumBalls", 1)
             session.write_symbol_bytes(
-                "wBalls", bytes([constants["MASTER_BALL"], 1, 0xFF])
+                "wBalls",
+                bytes([item, 1, 0xFF]),
             )
             session.write_symbol("wLastPocket", constants["BALL_POCKET"])
 
@@ -432,6 +453,110 @@ def test_flee_persists_hp_and_dvs_through_native_save_reload(
         saved,
     ) as session:
         assert session.read_symbol_bytes(roamer["slot"], ROAM_STRUCT_LENGTH) == stored
+
+
+def _use_fast_ball_and_record_multiplier(
+    session: PyBoySession,
+    max_frames: int,
+) -> tuple[int, int]:
+    observed: dict[str, int] = {}
+
+    def record_before(current: PyBoySession) -> None:
+        observed.setdefault("before", current.pyboy.register_file.B)
+
+    def record_after(current: PyBoySession) -> None:
+        observed.setdefault("after", current.pyboy.register_file.B)
+
+    session.register_hook(
+        "FastBallMultiplier",
+        record_before,
+    )
+    session.register_hook(
+        "PokeBallEffect.skip_or_return_from_ball_fn",
+        record_after,
+    )
+    session.write_symbol("wBattleMenuCursorPosition", 3)
+    session.tap("a", 2, 2)
+    advance_with_a_until(
+        session,
+        lambda current: "after" in observed,
+        max_frames,
+        "Fast Ball multiplier return",
+    )
+    assert "FastBallMultiplier" in session.hook_history
+    return observed["before"], observed["after"]
+
+
+def test_fast_ball_boosts_entei_as_second_always_flee_species(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_6_constants: dict[str, int],
+    scenario: dict,
+) -> None:
+    roamer = _roamer(scenario, "ENTEI")
+    with loaded_phase_6_checkpoint(
+        repo_root,
+        tmp_path,
+        phase_6_constants,
+        scenario,
+        checkpoint="land",
+        selected_species="ENTEI",
+        before_overworld=_prepare_party(
+            phase_6_constants,
+            strong=True,
+            ball_item=phase_6_constants["FAST_BALL"],
+        ),
+    ) as session:
+        start_roaming_battle(session, phase_6_constants, scenario, roamer)
+        before, after = _use_fast_ball_and_record_multiplier(
+            session, scenario["max_frames_per_step"]
+        )
+        assert session.read_symbol("wTempEnemyMonSpecies") == phase_6_constants[
+            "ENTEI"
+        ]
+        assert after == min(before * 4, 0xFF)
+
+
+def test_fast_ball_leaves_route_37_non_fleeing_species_unchanged(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_6_constants: dict[str, int],
+    scenario: dict,
+) -> None:
+    route_37_species = {
+        phase_6_constants[name]
+        for name in (
+            "LEDYBA",
+            "GROWLITHE",
+            "PIDGEY",
+            "PIDGEOTTO",
+            "LEDIAN",
+            "SPINARAK",
+            "STANTLER",
+            "HOOTHOOT",
+            "NOCTOWL",
+            "ARIADOS",
+        )
+    }
+    with loaded_phase_6_checkpoint(
+        repo_root,
+        tmp_path,
+        phase_6_constants,
+        scenario,
+        checkpoint="land",
+        selected_species="ENTEI",
+        before_overworld=_prepare_party(
+            phase_6_constants,
+            strong=True,
+            ball_item=phase_6_constants["FAST_BALL"],
+        ),
+    ) as session:
+        start_wild_battle(session, phase_6_constants, scenario)
+        assert session.read_symbol("wTempEnemyMonSpecies") in route_37_species
+        before, after = _use_fast_ball_and_record_multiplier(
+            session, scenario["max_frames_per_step"]
+        )
+        assert after == before
 
 
 @pytest.mark.parametrize("species", ["RAIKOU", "ENTEI"])
