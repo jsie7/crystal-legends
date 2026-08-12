@@ -7,9 +7,8 @@ guide.
 ## Current milestone
 
 Crystal Legends v0.1, the Phase 2 completion foundation, Phase 3 CHEAT MODE,
-the Phase 4 Johto starter events, the Phase 5 Ruins gifts, and Phase 6 roamer
-quality-of-life are
-source-complete. Chikorita is a
+the Phase 4 Johto starter events, the Phase 5 Ruins gifts, Phase 6 roamer
+quality-of-life, and Phase 7 Project Mew story are source-complete. Chikorita is a
 level-14 gift at the Ilex Forest shrine after Cut, Cyndaquil is a level-19 gift
 in Burned Tower after the legendary beasts awaken, and Totodile is a level-24
 rescue on Cianwood's east shore after SecretPotion receipt. Their independent,
@@ -24,6 +23,12 @@ defeat or capture, and Pokédex Area route tracking. Its custom-only Fast Ball
 correction now applies the intended multiplier to all 23 stock fleeing-list
 species. The static, compiled-ROM, and production-ROM matrices pass without a
 save-layout change or any Suicune behavior change.
+Phase 7 builds Project Mew from subtle Slowpoke Well research hints through the
+Lake of Rage proof and Mahogany reveal, then resolves it in a compact Radio
+Tower transmitter annex. The permanent terminal decision leaves the single
+level-30 subject as Mew or stabilizes it as Mewtwo. Capture is optional for
+Johto progression, and any knockout, escape, or player defeat leaves a fresh
+retry available.
 
 The earlier manual pass confirmed the title screen, all three legendary-bird
 starter branches, the first Silver battle, the Elm/Oak handoff, player-bird
@@ -31,9 +36,11 @@ learnsets, CHEAT MODE, and progression through Falkner. Phase 4 still needs the
 user-owned presentation matrix for sprite appearance, dialogue, discoverability,
 scene choreography, and story feel. Phase 5 also needs its user-owned Ruins and
 Route 14 presentation matrix. Phase 6 still needs its user-owned tracker,
-hunt-feel, and Fast Ball presentation review. Later Silver/balance checks,
-Phase 2 presentation, and full-game acceptance also remain deferred. The current
-milestone is source-complete but is not yet playtest-certified or release-ready.
+hunt-feel, and Fast Ball presentation review. Phase 7 still needs its user-owned
+story clarity, annex presentation, pacing, and both-branch review. Later
+Silver/balance checks, Phase 2 presentation, and full-game acceptance also
+remain deferred. The current milestone is source-complete but is not yet
+playtest-certified or release-ready.
 See
 [workflows.md](workflows.md) for the validation boundary and
 [decisions.md](decisions.md) for the sequencing decision.

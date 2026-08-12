@@ -49,6 +49,10 @@ Phase 6 is source-complete: preservation tests cover stock Raikou/Entei roaming
 and Pokédex route tracking, and the custom Fast Ball scan covers all 23 stock
 fleeing-list species. Its user-owned hunt and presentation review remains
 pending.
+Phase 7 is source-complete: its story buildup, four-fact state model, permanent
+Mew/Mewtwo terminal decision, optional level-30 capture, retry paths, and stock
+Radio Tower resume pass all automated layers. Its user-owned story, map, pacing,
+and branch-feel review remains pending.
 
 ## Validate the Crystal Legends build
 
@@ -72,8 +76,8 @@ reference variants and must continue to pass.
 The complete local handoff gate now covers the legendary-bird starter paths,
 Phase 2 evolution/item/Celebi behavior, Phase 3 CHEAT MODE, Phase 4's three
 production-map gifts, Phase 5's three Ruins gifts and Route 14 Girafarig trade,
-and Phase 6's roamer/Fast Ball contracts. Rerun the narrower owning profile
-after a focused change and
+Phase 6's roamer/Fast Ball contracts, and Phase 7's Project Mew story and
+branching encounter. Rerun the narrower owning profile after a focused change and
 `make test-all` at a milestone handoff. Four ordinary Crystal-missing families
 remain reserved for the Phase 9 Safari Zone; Phase 5 makes Kim's Route 14 trade
 Girafarig's canonical source.
@@ -275,6 +279,57 @@ test deterministic.
 
 The automated pass makes Phase 6 source-complete, not playtest-certified or
 release-ready. Any tracker clarity, presentation, or hunt-feel issue must be
+fixed and retested or explicitly deferred.
+
+### Validate Phase 7 Project Mew
+
+Run the focused Phase 7 layers while editing, then the clean handoff gate:
+
+```bash
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/static/test_phase_07_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/rom/test_phase_07_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/emulator/test_phase_07_project_mew.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest -m phase7
+make test-crystallegends
+make clean
+make test-all
+rgbfix -v crystallegends.gbc
+git diff --check
+git status --short
+```
+
+Automation owns the Slowpoke Well, Lake of Rage, Mahogany, and Radio Tower
+story ordering; reference-build isolation; the annex layout and collision; the
+data-sent, resolved, transformed, and caught facts; both permanent terminal
+outcomes; save/reload; level-30 encounter identity; successful capture; fresh
+retries after knockout or escape; player defeat; and resuming the stock
+Director/Clear Bell cleanup without requiring capture.
+
+For manual acceptance, use a backed-up or disposable save and record the
+emulator/version, ROM commit and hash, date, preparation boundary, selected
+branch, and result. Confirm:
+
+1. Slowpoke Well hints at biological research without prematurely naming Mew,
+   and the Lake of Rage extension strengthens rather than replaces its story.
+2. Mahogany's scientists, dossier, test record, and transmitter make the single
+   captive subject and Goldenrod transfer understandable without feeling
+   repetitive.
+3. The new north-wall entrance and compact annex read clearly, both console
+   interactions are discoverable, and cancellation cannot trap the player.
+4. REVERSE SEQUENCE and STABILIZE SEQUENCE clearly communicate a permanent
+   Mew/Mewtwo decision before confirmation, and each branch's reveal feels
+   coherent.
+5. Capture, knockout, escape, player defeat, save/reload, and leaving without
+   capture all feel natural; the resumed Director/Clear Bell sequence occurs
+   once and remains recognizably stock.
+
+For a Phase 7 failure, first isolate source ordering and custom guards, then the
+compiled scene/map/event tables and bank floors, then the last emulator hook and
+current map/script state. Do not add save migration, a second subject, a
+capture requirement, or test-only gameplay code to repair a scenario.
+
+The automated pass makes Phase 7 source-complete, not playtest-certified or
+release-ready. Dialogue, presentation, pacing, and branch-feel issues must be
 fixed and retested or explicitly deferred.
 
 ### Battery-save and scenario fixtures

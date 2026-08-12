@@ -202,3 +202,26 @@ the second entry in the always-flee group. Reference builds retain the upstream
 branch bug so their ROMs remain exact. Do not expand this change into other
 Apricorn Ball fixes, a new tracker, roaming changes, save data, or Suicune and
 its unused third roaming slot.
+
+## 2026-08-12 — Resolve Project Mew before Radio Tower cleanup
+
+Project Mew concerns one captive living Mew. Slowpoke Well only hints at
+biological research, the Lake of Rage establishes forced evolution as proof of
+concept, and Mahogany's existing scientists, office computers, and transmitter
+reveal the subject and its transfer. The final Radio Tower Executive records
+that Giovanni received the research before the battle begins, so losing cannot
+rewind that fact.
+
+After the Executive is defeated, a new 5-by-4-block transmitter annex pauses
+the stock Director and Clear Bell cleanup. Its terminal requires confirmation
+of one permanent outcome: reverse the sequence and retain Mew, or stabilize the
+altered Mewtwo form. Store data sent, decision resolved, transformed outcome,
+and capture as four independent event facts; do not derive the branch from the
+party or Pokédex. The existing Executive victory event owns annex access.
+
+The selected subject is a normal level-30 wild battle that remains available
+after knockout, escape, or player defeat and starts each retry at full HP with
+no status. Capture alone removes it, but capture is not required to resume the
+stock Radio Tower resolution. The generic caught-result query is custom-only;
+reference builds retain their exact Celebi behavior and bytes. Do not add
+pre-Phase-7 save migration or broaden this phase into Rocket-team balancing.

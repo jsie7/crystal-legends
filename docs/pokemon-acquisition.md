@@ -172,8 +172,8 @@ data, an external distribution, or the optional cheat menu.
 | 147 | Dratini | Gift, wild, or fishing | Dragon's Den gift and encounters | After Badge 8 | Existing | Yes | `maps/DragonShrine.asm`; `data/wild/johto_water.asm`; `data/wild/fish.asm` |
 | 148 | Dragonair | Evolution or NPC-trade input | Dratini at level 30; Dragon's Den fishing | After Badge 8 | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/fish.asm` |
 | 149 | Dragonite | Evolution | Dragonair at level 55 | Post-League training | Existing | Yes | `data/pokemon/evos_attacks.asm` |
-| 150 | Mewtwo | Story encounter | Project Mew branch or Cerulean Cave counterpart | Late Johto or Kanto | Reserved Phase 7/10 | No; final retry policy TBD | Phase 7 and 10; planned Project Mew and Cerulean Cave scripts |
-| 151 | Mew | Story encounter | Project Mew branch or Cerulean Cave counterpart | Late Johto or Kanto | Reserved Phase 7/10 | No; final retry policy TBD | Phase 7 and 10; planned Project Mew and Cerulean Cave scripts |
+| 150 | Mewtwo | Story encounter | Level 30 in the Radio Tower transmitter annex after STABILIZE SEQUENCE; Cerulean Cave counterpart if REVERSE SEQUENCE was chosen | Late Johto or Kanto | Existing Phase 7 / Reserved Phase 10 | No; the Johto encounter retries until captured | `maps/RadioTowerTransmitterAnnex.asm`; planned Phase 10 Cerulean Cave script |
+| 151 | Mew | Story encounter | Level 30 in the Radio Tower transmitter annex after REVERSE SEQUENCE; Cerulean Cave counterpart if STABILIZE SEQUENCE was chosen | Late Johto or Kanto | Existing Phase 7 / Reserved Phase 10 | No; the Johto encounter retries until captured | `maps/RadioTowerTransmitterAnnex.asm`; planned Phase 10 Cerulean Cave script |
 | 152 | Chikorita | Gift event | Level 14 at the Ilex Forest shrine after receiving Cut | After Badge 2 | Phase 4 | Yes after gift through breeding | `maps/IlexForest.asm` |
 | 153 | Bayleef | Evolution | Chikorita at level 16 | Johto | Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; `maps/IlexForest.asm` |
 | 154 | Meganium | Evolution | Bayleef at level 32 | Johto | Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; `maps/IlexForest.asm` |
