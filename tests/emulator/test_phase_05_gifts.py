@@ -57,13 +57,15 @@ def phase_5_constants(
                 scenario["picture_event"],
                 scenario["wall_event"],
                 scenario["species"],
-                f"GROUP_{scenario['map']}",
-                f"MAP_{scenario['map']}",
+                f"GROUP_{scenario['gift']['map']}",
+                f"MAP_{scenario['gift']['map']}",
+                f"GROUP_{scenario['item_room']['map']}",
+                f"MAP_{scenario['item_room']['map']}",
                 f"GROUP_{scenario['chamber']['map']}",
                 f"MAP_{scenario['chamber']['map']}",
             }
         )
-        names.update(scenario["item_events"])
+        names.update(scenario["item_room"]["item_events"])
     constants = resolve_constants(
         repo_root,
         tmp_path_factory.mktemp("phase_5_runtime_constants"),
@@ -87,7 +89,7 @@ def _assert_current_map(
 def _enter_hidden_room(session, constants: dict[str, int], scenario: dict) -> None:
     max_frames = scenario["max_frames_per_step"]
     chamber = scenario["chamber"]["map"]
-    item_room = scenario["map"]
+    item_room = scenario["item_room"]["map"]
     session.tap("up", 2, 2)
     session.tick(20)
     if (
@@ -222,14 +224,14 @@ def test_gift_visibility_and_decline_are_retryable(
             tmp_path / f"{species_name}-{label}",
             phase_5_constants,
             scenario,
-            location="item_room",
+            location="gift_room",
             picture=picture,
             wall=wall,
             completed=completed,
         ) as session:
             session.enable_script_tracing()
             session.tap("a", 2, 30)
-            assert scenario["script"] not in session.script_history
+            assert scenario["gift"]["script"] not in session.script_history
             assert event_is_set(session, completion) is completed
 
     with loaded_phase_5_checkpoint(
@@ -237,7 +239,7 @@ def test_gift_visibility_and_decline_are_retryable(
         tmp_path / f"{species_name}-decline",
         phase_5_constants,
         scenario,
-        location="item_room",
+        location="gift_room",
         picture=True,
         wall=True,
     ) as session:
@@ -245,7 +247,7 @@ def test_gift_visibility_and_decline_are_retryable(
         assert not event_is_set(session, completion)
         assert read_progress(session).party.count == 0
         assert interact_with_gift(session, scenario, accept=False) is None
-        assert session.script_history.count(scenario["script"]) == 2
+        assert session.script_history.count(scenario["gift"]["script"]) == 2
 
 
 @pytest.mark.parametrize("destination", ["party", "current-box"])
@@ -266,7 +268,7 @@ def test_gift_party_and_box_delivery_finalize_once(
         tmp_path / f"{species_name}-{destination}",
         phase_5_constants,
         scenario,
-        location="item_room",
+        location="gift_room",
         picture=True,
         wall=True,
     ) as session:
@@ -287,10 +289,10 @@ def test_gift_party_and_box_delivery_finalize_once(
         else:
             assert progress.current_box.species == (species,)
             assert session.read_symbol("sBoxMon1Level") == scenario["level"]
-        for event_name in scenario["item_events"]:
+        for event_name in scenario["item_room"]["item_events"]:
             assert not event_is_set(session, phase_5_constants[event_name])
         session.tap("a", 2, 30)
-        assert session.script_history.count(scenario["script"]) == 1
+        assert session.script_history.count(scenario["gift"]["script"]) == 1
 
 
 @pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE", "AERODACTYL"])
@@ -310,7 +312,7 @@ def test_gift_full_storage_is_atomic_and_retryable(
         tmp_path / species_name,
         phase_5_constants,
         scenario,
-        location="item_room",
+        location="gift_room",
         picture=True,
         wall=True,
     ) as session:
@@ -344,7 +346,7 @@ def test_gift_completion_survives_native_save_reload(
         tmp_path / "initial",
         phase_5_constants,
         scenario,
-        location="item_room",
+        location="gift_room",
         picture=True,
         wall=True,
     ) as session:
@@ -363,7 +365,7 @@ def test_gift_completion_survives_native_save_reload(
         assert read_progress(session).party.species == (species,)
         session.enable_script_tracing()
         session.tap("a", 2, 30)
-        assert scenario["script"] not in session.script_history
+        assert scenario["gift"]["script"] not in session.script_history
 
 
 def test_all_three_gifts_can_be_collected_in_one_persistent_save(
@@ -385,7 +387,7 @@ def test_all_three_gifts_can_be_collected_in_one_persistent_save(
                 tmp_path / f"gift-{index}",
                 phase_5_constants,
                 scenario,
-                location="item_room",
+                location="gift_room",
                 picture=True,
                 wall=True,
             )
@@ -415,7 +417,7 @@ def test_all_three_gifts_can_be_collected_in_one_persistent_save(
             assert progress.party.species == tuple(owned_species)
             assert all(progress.owns(owned) for owned in owned_species)
             assert all(event_is_set(session, event) for event in completed_events)
-            for event_name in scenario["item_events"]:
+            for event_name in scenario["item_room"]["item_events"]:
                 assert not event_is_set(session, phase_5_constants[event_name])
             save_game_from_overworld(session, scenario["max_frames_per_step"])
             persisted = tmp_path / f"gift-{index}-complete.sav"

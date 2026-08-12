@@ -41,8 +41,8 @@ def build_phase_5_checkpoint(
         save.write_saved_u8(
             target["scene_variable"], constants[target["check_scene"]]
         )
-    elif location == "item_room":
-        target = {"map": scenario["map"], "start": scenario["start"]}
+    elif location == "gift_room":
+        target = scenario["gift"]
     else:
         raise ValueError(f"unknown Phase 5 location {location}")
 
@@ -72,10 +72,11 @@ def retarget_phase_5_save(
     symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
     save = BatterySave.load(source, symbols)
     save.write_saved_u8("wWarpNumber", 0)
-    save.write_saved_u8("wMapGroup", constants[f"GROUP_{scenario['map']}"])
-    save.write_saved_u8("wMapNumber", constants[f"MAP_{scenario['map']}"])
-    save.write_saved_u8("wXCoord", scenario["start"]["x"])
-    save.write_saved_u8("wYCoord", scenario["start"]["y"])
+    gift = scenario["gift"]
+    save.write_saved_u8("wMapGroup", constants[f"GROUP_{gift['map']}"])
+    save.write_saved_u8("wMapNumber", constants[f"MAP_{gift['map']}"])
+    save.write_saved_u8("wXCoord", gift["start"]["x"])
+    save.write_saved_u8("wYCoord", gift["start"]["y"])
     save.set_event(constants[scenario["picture_event"]], True)
     save.set_event(constants[scenario["wall_event"]], True)
     destination.parent.mkdir(parents=True, exist_ok=True)

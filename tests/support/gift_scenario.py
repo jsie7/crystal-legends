@@ -19,13 +19,14 @@ def interact_with_gift(
     accept: bool | None,
 ) -> int | None:
     max_frames = scenario["max_frames_per_step"]
+    gift = scenario.get("gift", scenario)
     party_count = session.read_symbol("wPartyCount")
     box_count = session.read_symbol("sBoxCount")
     yes_no_count = session.hook_history.count("_YesNoBox") + 1
     menu_count = session.hook_history.count("VerticalMenu") + 1
     nickname_count = session.hook_history.count("GiveANickname_YesNo") + 1
     nickname_menu_count = menu_count + 1
-    storage_label = f"{scenario['script']}.StorageFull"
+    storage_label = f"{gift['script']}.StorageFull"
     storage_count = session.script_history.count(storage_label) + 1
     for label in (
         "_YesNoBox",
@@ -36,9 +37,9 @@ def interact_with_gift(
     ):
         session.register_hook(label)
     session.enable_script_tracing()
-    session.tap(scenario["start"]["facing"].lower(), 2, 10)
+    session.tap(gift["start"]["facing"].lower(), 2, 10)
     session.tap("a", 2, 10)
-    session.wait_for_script(scenario["script"], max_frames)
+    session.wait_for_script(gift["script"], max_frames)
 
     if accept is None:
         _finish_text(session, max_frames)
