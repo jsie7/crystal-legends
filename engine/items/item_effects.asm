@@ -555,11 +555,16 @@ PokeBallEffect:
 	ld a, [wBattleType]
 	cp BATTLETYPE_CONTEST
 	jp z, .catch_bug_contest_mon
+if DEF(_CRYSTALLEGENDS)
+	ld hl, wBattleResult
+	set BATTLERESULT_CAUGHT_POKEMON, [hl]
+else
 	cp BATTLETYPE_CELEBI
 	jr nz, .not_celebi
 	ld hl, wBattleResult
 	set BATTLERESULT_CAUGHT_CELEBI, [hl]
 .not_celebi
+endc
 
 	ld a, [wPartyCount]
 	cp PARTY_LENGTH

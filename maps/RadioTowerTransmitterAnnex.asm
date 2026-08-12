@@ -126,18 +126,34 @@ RadioTowerTransmitterAnnexMewScript:
 	end
 
 .Resolved:
-	writetext RadioTowerTransmitterAnnexMewReadyText
+	writetext RadioTowerTransmitterAnnexMewBattleText
 	waitbutton
 	closetext
+	loadwildmon MEW, 30
+	startbattle
+	reloadmapafterbattle
+	special CheckCaughtPokemon
+	iffalse .NotCaught
+	setevent EVENT_CAUGHT_PROJECT_MEW_SUBJECT
+	disappear RADIOTOWERTRANSMITTERANNEX_MEW
+.NotCaught:
 	end
 
 RadioTowerTransmitterAnnexMewtwoScript:
 	faceplayer
 	opentext
 	cry MEWTWO
-	writetext RadioTowerTransmitterAnnexMewtwoReadyText
+	writetext RadioTowerTransmitterAnnexMewtwoBattleText
 	waitbutton
 	closetext
+	loadwildmon MEWTWO, 30
+	startbattle
+	reloadmapafterbattle
+	special CheckCaughtPokemon
+	iffalse .NotCaught
+	setevent EVENT_CAUGHT_PROJECT_MEW_SUBJECT
+	disappear RADIOTOWERTRANSMITTERANNEX_MEWTWO
+.NotCaught:
 	end
 
 RadioTowerTransmitterAnnexTerminalMenuHeader:
@@ -246,14 +262,20 @@ RadioTowerTransmitterAnnexUnstableMewText:
 	line "forced to change."
 	done
 
-RadioTowerTransmitterAnnexMewReadyText:
-	text "MEW waits there"
+RadioTowerTransmitterAnnexMewBattleText:
+	text "MEW watches you"
 	line "beyond the field."
+
+	para "It wants to be"
+	line "free!"
 	done
 
-RadioTowerTransmitterAnnexMewtwoReadyText:
-	text "MEWTWO waits there"
+RadioTowerTransmitterAnnexMewtwoBattleText:
+	text "MEWTWO watches you"
 	line "beyond the field."
+
+	para "It wants to be"
+	line "free!"
 	done
 
 RadioTowerTransmitterAnnex_MapEvents:

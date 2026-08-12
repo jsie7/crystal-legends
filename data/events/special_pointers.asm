@@ -183,3 +183,6 @@ SpecialsPointers::
 	add_special InitialSetDSTFlag
 	add_special InitialClearDSTFlag
 	add_special UnusedDummySpecial ; unused
+if DEF(_CRYSTALLEGENDS)
+	add_special CheckCaughtPokemon
+endc

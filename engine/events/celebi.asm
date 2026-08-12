@@ -298,9 +298,12 @@ CelebiEvent_SetBattleType:
 	ld [wBattleType], a
 	ret
 
+if DEF(_CRYSTALLEGENDS)
+CheckCaughtPokemon:
+endc
 CheckCaughtCelebi:
 	ld a, [wBattleResult]
-	bit BATTLERESULT_CAUGHT_CELEBI, a
+	bit BATTLERESULT_CAUGHT_POKEMON, a
 	jr z, .false
 	ld a, TRUE
 	ld [wScriptVar], a

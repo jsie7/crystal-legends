@@ -1,0 +1,28 @@
+{
+  "scenario_id": "phase-07-project-mew",
+  "rom": "crystallegends.gbc",
+  "symbols": "crystallegends.sym",
+  "save_fixture": "bedroom_initialized.sav",
+  "max_frames_per_step": 60000,
+  "annex": {
+    "map": "RADIO_TOWER_TRANSMITTER_ANNEX",
+    "terminal_start": {"x": 6, "y": 2, "facing": "UP"},
+    "subject_start": {"x": 4, "y": 5, "facing": "UP"},
+    "exit_start": {"x": 4, "y": 6, "facing": "DOWN"}
+  },
+  "radio_tower_5f": {
+    "map": "RADIO_TOWER_5F",
+    "boss_start": {"x": 16, "y": 6, "facing": "UP"}
+  },
+  "events": {
+    "boss": "EVENT_BEAT_ROCKET_EXECUTIVEM_1",
+    "data_sent": "EVENT_PROJECT_MEW_DATA_SENT",
+    "resolved": "EVENT_PROJECT_MEW_RESOLVED",
+    "transformed": "EVENT_PROJECT_MEW_TRANSFORMED",
+    "caught": "EVENT_CAUGHT_PROJECT_MEW_SUBJECT"
+  },
+  "outcomes": [
+    {"id": "reverse", "species": "MEW", "transformed": false},
+    {"id": "stabilize", "species": "MEWTWO", "transformed": true}
+  ]
+}

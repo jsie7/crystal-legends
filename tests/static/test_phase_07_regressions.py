@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -19,6 +20,39 @@ pytestmark = [pytest.mark.static, pytest.mark.phase7]
 
 CRYSTAL_LEGENDS = {"_CRYSTAL11", "_CRYSTALLEGENDS"}
 REFERENCE = {"_CRYSTAL11"}
+
+
+def test_project_mew_runtime_scenario_contract(repo_root: Path) -> None:
+    scenario = json.loads(
+        (repo_root / "tests/fixtures/scenarios/phase_07_project_mew.json").read_text()
+    )
+
+    assert scenario["scenario_id"] == "phase-07-project-mew"
+    assert scenario["rom"] == "crystallegends.gbc"
+    assert scenario["symbols"] == "crystallegends.sym"
+    assert scenario["save_fixture"] == "bedroom_initialized.sav"
+    assert scenario["max_frames_per_step"] == 60000
+    assert scenario["annex"] == {
+        "map": "RADIO_TOWER_TRANSMITTER_ANNEX",
+        "terminal_start": {"x": 6, "y": 2, "facing": "UP"},
+        "subject_start": {"x": 4, "y": 5, "facing": "UP"},
+        "exit_start": {"x": 4, "y": 6, "facing": "DOWN"},
+    }
+    assert scenario["radio_tower_5f"] == {
+        "map": "RADIO_TOWER_5F",
+        "boss_start": {"x": 16, "y": 6, "facing": "UP"},
+    }
+    assert scenario["events"] == {
+        "boss": "EVENT_BEAT_ROCKET_EXECUTIVEM_1",
+        "data_sent": "EVENT_PROJECT_MEW_DATA_SENT",
+        "resolved": "EVENT_PROJECT_MEW_RESOLVED",
+        "transformed": "EVENT_PROJECT_MEW_TRANSFORMED",
+        "caught": "EVENT_CAUGHT_PROJECT_MEW_SUBJECT",
+    }
+    assert scenario["outcomes"] == [
+        {"id": "reverse", "species": "MEW", "transformed": False},
+        {"id": "stabilize", "species": "MEWTWO", "transformed": True},
+    ]
 
 
 def _active_code(path: Path, definitions: set[str]) -> list[str]:
@@ -375,3 +409,100 @@ def test_annex_visibility_uses_outcome_facts_not_party_or_pokedex(
     assert "bg_event 2, 1, BGEVENT_UP, RadioTowerTransmitterAnnexUploadMonitorScript" in annex
     assert "bg_event 6, 1, BGEVENT_UP, RadioTowerTransmitterAnnexTerminalScript" in annex
     assert sum(row.startswith("object_event 4, 4, SPRITE_MEW") for row in annex) == 2
+
+
+def test_generic_caught_result_is_custom_only_and_keeps_celebi_compatible(
+    repo_root: Path,
+) -> None:
+    constants = _active_code(
+        repo_root / "constants/battle_constants.asm", CRYSTAL_LEGENDS
+    )
+    custom_items = _active_code(
+        repo_root / "engine/items/item_effects.asm", CRYSTAL_LEGENDS
+    )
+    reference_items = _active_code(
+        repo_root / "engine/items/item_effects.asm", REFERENCE
+    )
+    custom_specials = _active_code(
+        repo_root / "data/events/special_pointers.asm", CRYSTAL_LEGENDS
+    )
+    reference_specials = _active_code(
+        repo_root / "data/events/special_pointers.asm", REFERENCE
+    )
+    custom_celebi = _active_code(repo_root / "engine/events/celebi.asm", CRYSTAL_LEGENDS)
+    reference_celebi = _active_code(repo_root / "engine/events/celebi.asm", REFERENCE)
+
+    _assert_contiguous(
+        constants,
+        [
+            "DEF BATTLERESULT_CAUGHT_POKEMON EQU 6",
+            "DEF BATTLERESULT_CAUGHT_CELEBI EQU BATTLERESULT_CAUGHT_POKEMON",
+            "DEF BATTLERESULT_BOX_FULL EQU 7",
+        ],
+    )
+    custom_catch = _section(custom_items, ".skip_pokedex", ".SendToPC:")
+    reference_catch = _section(reference_items, ".skip_pokedex", ".SendToPC:")
+    assert "set BATTLERESULT_CAUGHT_POKEMON, [hl]" in custom_catch
+    assert "cp BATTLETYPE_CELEBI" not in custom_catch
+    assert "cp BATTLETYPE_CELEBI" in reference_catch
+    assert "set BATTLERESULT_CAUGHT_CELEBI, [hl]" in reference_catch
+    assert custom_specials[-1] == "add_special CheckCaughtPokemon"
+    assert "add_special CheckCaughtPokemon" not in reference_specials
+    _assert_contiguous(
+        custom_celebi,
+        [
+            "CheckCaughtPokemon:",
+            "CheckCaughtCelebi:",
+            "ld a, [wBattleResult]",
+            "bit BATTLERESULT_CAUGHT_POKEMON, a",
+        ],
+    )
+    assert "CheckCaughtPokemon:" not in reference_celebi
+    assert "CheckCaughtCelebi:" in reference_celebi
+
+
+@pytest.mark.parametrize(
+    ("species", "script", "object_name"),
+    [
+        ("MEW", "RadioTowerTransmitterAnnexMewScript", "RADIOTOWERTRANSMITTERANNEX_MEW"),
+        (
+            "MEWTWO",
+            "RadioTowerTransmitterAnnexMewtwoScript",
+            "RADIOTOWERTRANSMITTERANNEX_MEWTWO",
+        ),
+    ],
+)
+def test_selected_subject_is_level_30_normal_retry_until_captured_encounter(
+    repo_root: Path, species: str, script: str, object_name: str
+) -> None:
+    annex = _active_code(
+        repo_root / "maps/RadioTowerTransmitterAnnex.asm", CRYSTAL_LEGENDS
+    )
+    start = annex.index(f"{script}:")
+    end = (
+        annex.index("RadioTowerTransmitterAnnexMewtwoScript:")
+        if species == "MEW"
+        else annex.index("RadioTowerTransmitterAnnexTerminalMenuHeader:")
+    )
+    encounter = annex[start:end]
+
+    _assert_contiguous(
+        encounter,
+        [
+            f"loadwildmon {species}, 30",
+            "startbattle",
+            "reloadmapafterbattle",
+            "special CheckCaughtPokemon",
+            "iffalse .NotCaught",
+            "setevent EVENT_CAUGHT_PROJECT_MEW_SUBJECT",
+            f"disappear {object_name}",
+            ".NotCaught:",
+            "end",
+        ],
+    )
+    assert not any("BATTLETYPE" in row or row.startswith("loadvar") for row in encounter)
+    assert not any(
+        token in row
+        for token in ("HP", "STATUS", "ATTEMPT", "POKEDEX", "PARTY")
+        for row in encounter
+    )

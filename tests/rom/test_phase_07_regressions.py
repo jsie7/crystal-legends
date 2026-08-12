@@ -27,6 +27,7 @@ def phase_7_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "EVENT_PROJECT_MEW_TRANSFORMED",
             "EVENT_CAUGHT_PROJECT_MEW_SUBJECT",
             "NUM_EVENTS",
+            "BATTLERESULT_CAUGHT_POKEMON",
             "SPRITE_MEW",
             "SPRITE_MEWTWO",
             "NUM_POKEMON_SPRITES",
@@ -44,6 +45,12 @@ def phase_7_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "OBJECT_EVENT_SIZE",
             "BGEVENT_UP",
             "SPRITEMOVEDATA_POKEMON",
+            "loadwildmon_command",
+            "startbattle_command",
+            "reloadmapafterbattle_command",
+            "special_command",
+            "setevent_command",
+            "disappear_command",
         ],
     )
 
@@ -74,6 +81,7 @@ def test_compiled_phase_7_ids_append_without_expanding_save_layout(
         phase_7_constants["EVENT_CAUGHT_PROJECT_MEW_SUBJECT"],
     ] == [2007, 2008, 2009, 2010]
     assert phase_7_constants["NUM_EVENTS"] == 2048
+    assert phase_7_constants["BATTLERESULT_CAUGHT_POKEMON"] == 6
     assert [
         phase_7_constants["SPRITE_MEW"],
         phase_7_constants["SPRITE_MEWTWO"],
@@ -204,3 +212,69 @@ def test_reference_rom_exports_no_phase_7_map_or_scripts(repo_root: Path) -> Non
         "RadioTower5FProjectMewEntranceCallback",
     ):
         assert label not in symbols
+
+
+def test_compiled_generic_caught_special_is_appended_and_targets_shared_query(
+    repo_root: Path,
+) -> None:
+    custom_symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    reference_symbols = SymbolTable.parse((repo_root / "pokecrystal11.sym").read_text())
+    rom = RomImage.load(repo_root / "crystallegends.gbc")
+    special = custom_symbols["CheckCaughtPokemonSpecial"]
+    query = custom_symbols["CheckCaughtPokemon"]
+
+    assert rom.at(special, 3) == bytes(
+        [query.bank, query.address & 0xFF, query.address >> 8]
+    )
+    assert query.address == custom_symbols["CheckCaughtCelebi"].address
+    assert "CheckCaughtPokemonSpecial" not in reference_symbols
+    assert "CheckCaughtPokemon" not in reference_symbols
+    assert custom_symbols["CheckCaughtCelebiSpecial"].address == reference_symbols[
+        "CheckCaughtCelebiSpecial"
+    ].address
+
+
+@pytest.mark.parametrize(
+    ("species", "script", "end", "object_id"),
+    [
+        ("MEW", "RadioTowerTransmitterAnnexMewScript.Resolved", "RadioTowerTransmitterAnnexMewScript.NotCaught", 2),
+        ("MEWTWO", "RadioTowerTransmitterAnnexMewtwoScript", "RadioTowerTransmitterAnnexMewtwoScript.NotCaught", 3),
+    ],
+)
+def test_compiled_subject_encounters_use_level_30_and_capture_only_removal(
+    repo_root: Path,
+    phase_7_constants: dict[str, int],
+    species: str,
+    script: str,
+    end: str,
+    object_id: int,
+) -> None:
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    rom = RomImage.load(repo_root / "crystallegends.gbc")
+    start_offset = symbols[script].rom_offset
+    end_offset = symbols[end].rom_offset
+    compiled = rom.slice(start_offset, end_offset - start_offset)
+    special_id = (
+        symbols["CheckCaughtPokemonSpecial"].address
+        - symbols["SpecialsPointers"].address
+    ) // 3
+    encounter = bytes(
+        [
+            phase_7_constants["loadwildmon_command"],
+            phase_7_constants[species],
+            30,
+            phase_7_constants["startbattle_command"],
+            phase_7_constants["reloadmapafterbattle_command"],
+            phase_7_constants["special_command"],
+        ]
+    ) + special_id.to_bytes(2, "little")
+    caught = (
+        bytes([phase_7_constants["setevent_command"]])
+        + phase_7_constants["EVENT_CAUGHT_PROJECT_MEW_SUBJECT"].to_bytes(
+            2, "little"
+        )
+        + bytes([phase_7_constants["disappear_command"], object_id])
+    )
+
+    assert encounter in compiled
+    assert caught in compiled
