@@ -236,27 +236,41 @@ def test_compiled_kabuto_scientist_checks_picture_before_wall(
 
 
 @pytest.mark.parametrize(
-    ("species", "prefix", "palette", "level", "stock_suffixes"),
+    (
+        "species",
+        "gift_prefix",
+        "item_prefix",
+        "palette",
+        "level",
+        "coordinate",
+        "stock_suffixes",
+    ),
     [
         (
             "KABUTO",
+            "RuinsOfAlphKabutoWordRoom",
             "RuinsOfAlphKabutoItemRoom",
             "PAL_NPC_BROWN",
             10,
+            (10, 8),
             ("Berry", "Psncureberry", "HealPowder", "Energypowder"),
         ),
         (
             "OMANYTE",
+            "RuinsOfAlphOmanyteWordRoom",
             "RuinsOfAlphOmanyteItemRoom",
             "PAL_NPC_BLUE",
             26,
+            (15, 10),
             ("Mysteryberry", "MysticWater", "Stardust", "StarPiece"),
         ),
         (
             "AERODACTYL",
+            "RuinsOfAlphAerodactylWordRoom",
             "RuinsOfAlphAerodactylItemRoom",
             "PAL_NPC_PINK",
             23,
+            (16, 8),
             ("GoldBerry", "MoonStone", "HealPowder", "EnergyRoot"),
         ),
     ],
@@ -265,34 +279,51 @@ def test_compiled_hidden_room_object_and_gift_match_the_contract(
     repo_root: Path,
     phase_5_constants: dict[str, int],
     species: str,
-    prefix: str,
+    gift_prefix: str,
+    item_prefix: str,
     palette: str,
     level: int,
+    coordinate: tuple[int, int],
     stock_suffixes: tuple[str, ...],
 ) -> None:
-    custom_events = _object_events(
+    custom_gift_events = _object_events(
         repo_root,
         "crystallegends.gbc",
         "crystallegends.sym",
-        f"{prefix}_MapEvents",
+        f"{gift_prefix}_MapEvents",
         phase_5_constants,
     )
-    reference_events = _object_events(
+    reference_gift_events = _object_events(
         repo_root,
         "pokecrystal11.gbc",
         "pokecrystal11.sym",
-        f"{prefix}_MapEvents",
+        f"{gift_prefix}_MapEvents",
+        phase_5_constants,
+    )
+    custom_item_events = _object_events(
+        repo_root,
+        "crystallegends.gbc",
+        "crystallegends.sym",
+        f"{item_prefix}_MapEvents",
+        phase_5_constants,
+    )
+    reference_item_events = _object_events(
+        repo_root,
+        "pokecrystal11.gbc",
+        "pokecrystal11.sym",
+        f"{item_prefix}_MapEvents",
         phase_5_constants,
     )
     symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
     reference_symbols = SymbolTable.parse(
         (repo_root / "pokecrystal11.sym").read_text()
     )
-    assert len(custom_events) == 5
-    assert len(reference_events) == 4
-    stock_scripts = tuple(f"{prefix}{suffix}" for suffix in stock_suffixes)
+    assert len(custom_gift_events) == 1
+    assert len(reference_gift_events) == 0
+    assert len(custom_item_events) == len(reference_item_events) == 4
+    stock_scripts = tuple(f"{item_prefix}{suffix}" for suffix in stock_suffixes)
     for custom_event, reference_event, script_label in zip(
-        custom_events[:4], reference_events, stock_scripts, strict=True
+        custom_item_events, reference_item_events, stock_scripts, strict=True
     ):
         assert custom_event.script_pointer == symbols[script_label].address
         assert reference_event.script_pointer == reference_symbols[script_label].address
@@ -319,8 +350,8 @@ def test_compiled_hidden_room_object_and_gift_match_the_contract(
             reference_event.sight_range,
             reference_event.event_flag,
         )
-    event = custom_events[-1]
-    assert (event.x, event.y) == (3, 3)
+    event = custom_gift_events[0]
+    assert (event.x, event.y) == coordinate
     assert event.sprite == phase_5_constants[f"SPRITE_{species}"]
     assert event.movement == phase_5_constants["SPRITEMOVEDATA_POKEMON"]
     assert event.radius == 0
@@ -328,14 +359,14 @@ def test_compiled_hidden_room_object_and_gift_match_the_contract(
         phase_5_constants[palette] << 4
         | phase_5_constants["OBJECTTYPE_SCRIPT"]
     )
-    script_label = f"{prefix}{species.title()}Script"
-    callback_label = f"{prefix}{species.title()}Callback"
+    script_label = f"{gift_prefix}{species.title()}Script"
+    callback_label = f"{gift_prefix}{species.title()}Callback"
     assert event.script_pointer == symbols[script_label].address
     assert event.event_flag == 0xFFFF
 
     rom = RomImage.load(repo_root / "crystallegends.gbc")
     script_start = symbols[script_label].rom_offset
-    script_end = symbols[stock_scripts[0]].rom_offset
+    script_end = symbols[f"{gift_prefix}{species.title()}OfferText"].rom_offset
     script = rom.slice(script_start, script_end - script_start)
     gift = bytes(
         [
@@ -354,7 +385,7 @@ def test_compiled_hidden_room_object_and_gift_match_the_contract(
     complete = bytes([phase_5_constants["setevent_command"]]) + phase_5_constants[
         complete_event
     ].to_bytes(2, "little")
-    object_id = len(custom_events) + 1
+    object_id = len(custom_gift_events) + 1
     disappear = bytes([phase_5_constants["disappear_command"], object_id])
     positions = [
         script.index(pattern) for pattern in (gift, full, complete, disappear)

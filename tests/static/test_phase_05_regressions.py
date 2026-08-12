@@ -227,60 +227,73 @@ def test_phase_5_preserves_the_stock_hidden_wall_engine(repo_root: Path) -> None
 
 
 @pytest.mark.parametrize(
-    ("species", "prefix", "object_constant", "palette", "level", "first_item"),
+    (
+        "species",
+        "gift_prefix",
+        "item_prefix",
+        "object_constant",
+        "palette",
+        "level",
+        "coordinate",
+    ),
     [
         (
             "KABUTO",
+            "RuinsOfAlphKabutoWordRoom",
             "RuinsOfAlphKabutoItemRoom",
-            "RUINSOFALPHKABUTOITEMROOM_KABUTO",
+            "RUINSOFALPHKABUTOWORDROOM_KABUTO",
             "PAL_NPC_BROWN",
             10,
-            "Berry",
+            (10, 8),
         ),
         (
             "OMANYTE",
+            "RuinsOfAlphOmanyteWordRoom",
             "RuinsOfAlphOmanyteItemRoom",
-            "RUINSOFALPHOMANYTEITEMROOM_OMANYTE",
+            "RUINSOFALPHOMANYTEWORDROOM_OMANYTE",
             "PAL_NPC_BLUE",
             26,
-            "Mysteryberry",
+            (15, 10),
         ),
         (
             "AERODACTYL",
+            "RuinsOfAlphAerodactylWordRoom",
             "RuinsOfAlphAerodactylItemRoom",
-            "RUINSOFALPHAERODACTYLITEMROOM_AERODACTYL",
+            "RUINSOFALPHAERODACTYLWORDROOM_AERODACTYL",
             "PAL_NPC_PINK",
             23,
-            "GoldBerry",
+            (16, 8),
         ),
     ],
 )
-def test_hidden_room_gift_is_retry_safe_and_preserves_stock_objects(
+def test_word_room_gift_is_retry_safe_and_item_room_stays_stock(
     repo_root: Path,
     species: str,
-    prefix: str,
+    gift_prefix: str,
+    item_prefix: str,
     object_constant: str,
     palette: str,
     level: int,
-    first_item: str,
+    coordinate: tuple[int, int],
 ) -> None:
-    source = repo_root / "maps" / f"{prefix}.asm"
-    crystal = _active_code(source, CRYSTAL_LEGENDS)
-    reference = _active_code(source, REFERENCE)
+    gift_source = repo_root / "maps" / f"{gift_prefix}.asm"
+    gift_crystal = _active_code(gift_source, CRYSTAL_LEGENDS)
+    gift_reference = _active_code(gift_source, REFERENCE)
+    x, y = coordinate
     object_row = (
-        f"object_event  3,  3, SPRITE_{species}, SPRITEMOVEDATA_POKEMON, 0, 0, "
+        f"object_event {x:2}, {y:2}, SPRITE_{species}, SPRITEMOVEDATA_POKEMON, 0, 0, "
         f"-1, -1, {palette}, OBJECTTYPE_SCRIPT, 0, "
-        f"{prefix}{species.title()}Script, -1"
+        f"{gift_prefix}{species.title()}Script, -1"
     )
 
-    assert f"const {object_constant}" in crystal
-    assert f"const {object_constant}" not in reference
-    assert object_row in crystal
-    assert object_row not in reference
+    assert f"const {object_constant}" in gift_crystal
+    assert f"const {object_constant}" not in gift_reference
+    assert object_row in gift_crystal
+    assert object_row not in gift_reference
     _assert_contiguous(
-        crystal,
+        gift_crystal,
         [
-            f"{prefix}{species.title()}Callback:",
+            f"{gift_prefix}{species.title()}Callback:",
             f"checkevent EVENT_GOT_{species}_FROM_ALPH",
             "iftrue .Hide",
             f"checkevent EVENT_SOLVED_{species}_PUZZLE",
@@ -295,19 +308,19 @@ def test_hidden_room_gift_is_retry_safe_and_preserves_stock_objects(
         ],
     )
     _assert_contiguous(
-        crystal,
+        gift_crystal,
         [
-            f"{prefix}{species.title()}Script:",
+            f"{gift_prefix}{species.title()}Script:",
             "faceplayer",
             "opentext",
             f"cry {species}",
-            f"writetext {prefix}{species.title()}OfferText",
+            f"writetext {gift_prefix}{species.title()}OfferText",
             "yesorno",
             "iffalse .Declined",
             f"givepoke {species}, {level}",
             "ifequal 2, .StorageFull",
             f"setevent EVENT_GOT_{species}_FROM_ALPH",
-            f"writetext {prefix}{species.title()}JoinedText",
+            f"writetext {gift_prefix}{species.title()}JoinedText",
             "playsound SFX_CAUGHT_MON",
             "waitsfx",
             "waitbutton",
@@ -316,35 +329,54 @@ def test_hidden_room_gift_is_retry_safe_and_preserves_stock_objects(
             "end",
         ],
     )
-    script_start = crystal.index(f"{prefix}{species.title()}Script:")
-    script_end = crystal.index(f"{prefix}{first_item}:")
-    script = "\n".join(crystal[script_start:script_end])
+    script_start = gift_crystal.index(f"{gift_prefix}{species.title()}Script:")
+    script_end = gift_crystal.index(f"{gift_prefix}{species.title()}OfferText:")
+    script = "\n".join(gift_crystal[script_start:script_end])
     for forbidden in ("loadwildmon", "startbattle", "giveitem", "takeitem"):
         assert forbidden not in script
 
+    custom_gift_objects = [
+        line for line in gift_crystal if line.startswith("object_event")
+    ]
+    reference_gift_objects = [
+        line for line in gift_reference if line.startswith("object_event")
+    ]
+    assert custom_gift_objects == [object_row]
+    assert reference_gift_objects == []
+
+    item_source = repo_root / "maps" / f"{item_prefix}.asm"
+    item_crystal = _active_code(item_source, CRYSTAL_LEGENDS)
+    item_reference = _active_code(item_source, REFERENCE)
     custom_stock = [
         line
-        for line in crystal
+        for line in item_crystal
         if line.startswith("object_event") and "SPRITE_POKE_BALL" in line
     ]
     reference_stock = [
         line
-        for line in reference
+        for line in item_reference
         if line.startswith("object_event") and "SPRITE_POKE_BALL" in line
     ]
     assert len(custom_stock) == len(reference_stock) == 4
     assert custom_stock == reference_stock
+    assert all(f"SPRITE_{species}" not in line for line in item_crystal)
 
 
 @pytest.mark.parametrize(
-    "map_name",
+    ("map_name", "coordinate", "final_glyph", "fall_tile"),
     [
-        "RUINS_OF_ALPH_KABUTO_ITEM_ROOM",
-        "RUINS_OF_ALPH_OMANYTE_ITEM_ROOM",
-        "RUINS_OF_ALPH_AERODACTYL_ITEM_ROOM",
+        ("RUINS_OF_ALPH_KABUTO_WORD_ROOM", (10, 8), (9, 8), (17, 11)),
+        ("RUINS_OF_ALPH_OMANYTE_WORD_ROOM", (15, 10), (14, 10), (17, 13)),
+        ("RUINS_OF_ALPH_AERODACTYL_WORD_ROOM", (16, 8), (15, 8), (17, 11)),
     ],
 )
-def test_gift_coordinate_is_floor(repo_root: Path, map_name: str) -> None:
+def test_word_room_gift_follows_final_glyph_on_safe_floor(
+    repo_root: Path,
+    map_name: str,
+    coordinate: tuple[int, int],
+    final_glyph: tuple[int, int],
+    fall_tile: tuple[int, int],
+) -> None:
     dimensions = parse_map_dimensions(
         (repo_root / "constants/map_constants.asm").read_text()
     )
@@ -356,11 +388,13 @@ def test_gift_coordinate_is_floor(repo_root: Path, map_name: str) -> None:
     assert collision_at(
         repo_root,
         map_name,
-        (3, 3),
+        coordinate,
         dimensions,
         block_paths,
         tilesets,
     ) == "FLOOR"
+    assert coordinate == (final_glyph[0] + 1, final_glyph[1])
+    assert coordinate != fall_tile
 
 
 def test_kim_trade_replaces_only_the_received_species_and_nickname(

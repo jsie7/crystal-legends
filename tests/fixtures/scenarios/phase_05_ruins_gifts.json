@@ -4,14 +4,14 @@
     "species": "KABUTO",
     "level": 10,
     "gift": {
-      "map": "RUINS_OF_ALPH_KABUTO_ITEM_ROOM",
-      "coordinate": [3, 3],
-      "start": {"x": 3, "y": 4, "facing": "UP"},
-      "object_constant": "RUINSOFALPHKABUTOITEMROOM_KABUTO",
+      "map": "RUINS_OF_ALPH_KABUTO_WORD_ROOM",
+      "coordinate": [10, 8],
+      "start": {"x": 10, "y": 9, "facing": "UP"},
+      "object_constant": "RUINSOFALPHKABUTOWORDROOM_KABUTO",
       "object_sprite": "SPRITE_KABUTO",
       "object_palette": "PAL_NPC_BROWN",
       "object_event_flag": "-1",
-      "script": "RuinsOfAlphKabutoItemRoomKabutoScript"
+      "script": "RuinsOfAlphKabutoWordRoomKabutoScript"
     },
     "item_room": {
       "map": "RUINS_OF_ALPH_KABUTO_ITEM_ROOM",
@@ -41,14 +41,14 @@
     "species": "OMANYTE",
     "level": 26,
     "gift": {
-      "map": "RUINS_OF_ALPH_OMANYTE_ITEM_ROOM",
-      "coordinate": [3, 3],
-      "start": {"x": 3, "y": 4, "facing": "UP"},
-      "object_constant": "RUINSOFALPHOMANYTEITEMROOM_OMANYTE",
+      "map": "RUINS_OF_ALPH_OMANYTE_WORD_ROOM",
+      "coordinate": [15, 10],
+      "start": {"x": 15, "y": 11, "facing": "UP"},
+      "object_constant": "RUINSOFALPHOMANYTEWORDROOM_OMANYTE",
       "object_sprite": "SPRITE_OMANYTE",
       "object_palette": "PAL_NPC_BLUE",
       "object_event_flag": "-1",
-      "script": "RuinsOfAlphOmanyteItemRoomOmanyteScript"
+      "script": "RuinsOfAlphOmanyteWordRoomOmanyteScript"
     },
     "item_room": {
       "map": "RUINS_OF_ALPH_OMANYTE_ITEM_ROOM",
@@ -78,14 +78,14 @@
     "species": "AERODACTYL",
     "level": 23,
     "gift": {
-      "map": "RUINS_OF_ALPH_AERODACTYL_ITEM_ROOM",
-      "coordinate": [3, 3],
-      "start": {"x": 3, "y": 4, "facing": "UP"},
-      "object_constant": "RUINSOFALPHAERODACTYLITEMROOM_AERODACTYL",
+      "map": "RUINS_OF_ALPH_AERODACTYL_WORD_ROOM",
+      "coordinate": [16, 8],
+      "start": {"x": 16, "y": 9, "facing": "UP"},
+      "object_constant": "RUINSOFALPHAERODACTYLWORDROOM_AERODACTYL",
       "object_sprite": "SPRITE_AERODACTYL",
       "object_palette": "PAL_NPC_PINK",
       "object_event_flag": "-1",
-      "script": "RuinsOfAlphAerodactylItemRoomAerodactylScript"
+      "script": "RuinsOfAlphAerodactylWordRoomAerodactylScript"
     },
     "item_room": {
       "map": "RUINS_OF_ALPH_AERODACTYL_ITEM_ROOM",

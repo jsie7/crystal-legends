@@ -1,7 +1,87 @@
+	object_const_def
+if DEF(_CRYSTALLEGENDS)
+	const RUINSOFALPHKABUTOWORDROOM_KABUTO
+endc
+
 RuinsOfAlphKabutoWordRoom_MapScripts:
 	def_scene_scripts
 
 	def_callbacks
+if DEF(_CRYSTALLEGENDS)
+	callback MAPCALLBACK_OBJECTS, RuinsOfAlphKabutoWordRoomKabutoCallback
+endc
+
+if DEF(_CRYSTALLEGENDS)
+RuinsOfAlphKabutoWordRoomKabutoCallback:
+	checkevent EVENT_GOT_KABUTO_FROM_ALPH
+	iftrue .Hide
+	checkevent EVENT_SOLVED_KABUTO_PUZZLE
+	iffalse .Hide
+	checkevent EVENT_WALL_OPENED_IN_KABUTO_CHAMBER
+	iffalse .Hide
+	appear RUINSOFALPHKABUTOWORDROOM_KABUTO
+	endcallback
+
+.Hide:
+	disappear RUINSOFALPHKABUTOWORDROOM_KABUTO
+	endcallback
+
+RuinsOfAlphKabutoWordRoomKabutoScript:
+	faceplayer
+	opentext
+	cry KABUTO
+	writetext RuinsOfAlphKabutoWordRoomKabutoOfferText
+	yesorno
+	iffalse .Declined
+	givepoke KABUTO, 10
+	ifequal 2, .StorageFull
+	setevent EVENT_GOT_KABUTO_FROM_ALPH
+	writetext RuinsOfAlphKabutoWordRoomKabutoJoinedText
+	playsound SFX_CAUGHT_MON
+	waitsfx
+	waitbutton
+	closetext
+	disappear RUINSOFALPHKABUTOWORDROOM_KABUTO
+	end
+
+.Declined:
+	writetext RuinsOfAlphKabutoWordRoomKabutoWaitText
+	sjump .Wait
+
+.StorageFull:
+	writetext RuinsOfAlphKabutoWordRoomKabutoStorageFullText
+	promptbutton
+	writetext RuinsOfAlphKabutoWordRoomKabutoWaitText
+.Wait:
+	waitbutton
+	closetext
+	end
+
+RuinsOfAlphKabutoWordRoomKabutoOfferText:
+	text "The completed"
+	line "picture awakened"
+	cont "KABUTO!"
+
+	para "KABUTO wants to"
+	line "join you."
+	done
+
+RuinsOfAlphKabutoWordRoomKabutoJoinedText:
+	text "KABUTO joined"
+	line "you!"
+	done
+
+RuinsOfAlphKabutoWordRoomKabutoWaitText:
+	text "KABUTO will wait"
+	line "in this hidden"
+	cont "room."
+	done
+
+RuinsOfAlphKabutoWordRoomKabutoStorageFullText:
+	text "Your party and"
+	line "Box are both full!"
+	done
+endc
 
 RuinsOfAlphKabutoWordRoom_MapEvents:
 	db 0, 0 ; filler
@@ -16,3 +96,6 @@ RuinsOfAlphKabutoWordRoom_MapEvents:
 	def_bg_events
 
 	def_object_events
+if DEF(_CRYSTALLEGENDS)
+	object_event 10,  8, SPRITE_KABUTO, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, RuinsOfAlphKabutoWordRoomKabutoScript, -1
+endc
