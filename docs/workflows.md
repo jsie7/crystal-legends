@@ -45,6 +45,10 @@ matrix remains pending, so do not call Phase 4 playtest-certified yet.
 Phase 5's Ruins gifts and Route 14 Girafarig trade are likewise source-complete:
 their automated dual-gate, delivery, trade, and persistence matrices pass, while
 their user-owned presentation and natural puzzle-flow review remains pending.
+Phase 6 is source-complete: preservation tests cover stock Raikou/Entei roaming
+and Pokédex route tracking, and the custom Fast Ball scan covers all 23 stock
+fleeing-list species. Its user-owned hunt and presentation review remains
+pending.
 
 ## Validate the Crystal Legends build
 
@@ -66,9 +70,10 @@ git status --short
 reference variants and must continue to pass.
 
 The complete local handoff gate now covers the legendary-bird starter paths,
-Phase 2 evolution/item/Celebi behavior, Phase 3 CHEAT MODE, and Phase 4's three
-production-map gifts, plus Phase 5's three Ruins gifts and Route 14 Girafarig
-trade. Rerun the narrower owning profile after a focused change and
+Phase 2 evolution/item/Celebi behavior, Phase 3 CHEAT MODE, Phase 4's three
+production-map gifts, Phase 5's three Ruins gifts and Route 14 Girafarig trade,
+and Phase 6's roamer/Fast Ball contracts. Rerun the narrower owning profile
+after a focused change and
 `make test-all` at a milestone handoff. Four ordinary Crystal-missing families
 remain reserved for the Phase 9 Safari Zone; Phase 5 makes Kim's Route 14 trade
 Girafarig's canonical source.
@@ -217,6 +222,60 @@ Manually confirm:
 Any visual, pacing, navigation, or narrative failure must be fixed and retested
 or explicitly assigned before Phase 5 is described as playtest-certified or
 release-ready.
+
+### Validate Phase 6 roaming and Fast Balls
+
+Run the focused Phase 6 layers while editing, then the clean handoff gate:
+
+```bash
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/static/test_phase_06_roamers.py
+make crystallegends
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/rom/test_phase_06_roamers.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/emulator/test_phase_06_roamers.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest -m phase6
+make compare
+make clean
+make test-all
+rgbfix -v crystallegends.gbc
+git diff --check
+git status --short
+```
+
+Automation owns the stock release slots, seven-byte save state, 16-route graph,
+land/water encounter boundary, Pokédex Area route updates, HP/DV persistence on
+flee, permanent slot removal after defeat or capture, and native save/reload.
+It also proves that the custom Fast Ball branch reaches every one of the 23
+stock fleeing-list species with 4x saturation, leaves a Route 37 control
+unchanged, remains size-neutral, and does not alter reference ROMs. No battle
+status condition is persisted, and no defeat-recovery path exists.
+
+For manual acceptance, use a backed-up or disposable save and record the
+emulator/version, ROM commit and hash, date, save boundary, routes used, and
+result. Confirm:
+
+1. After seeing each beast, its normal Pokédex Area screen communicates the
+   current Johto route clearly enough to support a hunt without another tracker.
+2. Same-route grass encounters, fleeing, later re-encounters, and changing route
+   indicators feel coherent; water and a different route never imply a false
+   encounter.
+3. Fast Ball selection, animation, messages, and perceived usefulness feel
+   correct against Entei, while an ordinary Route 37 encounter feels unchanged.
+4. Defeating or catching either beast removes it permanently with no recovery
+   prompt or replacement, including after save/reload and ordinary travel.
+5. Suicune's Burned Tower, Cianwood, Eusine, and Tin Tower sequence still feels
+   entirely stock.
+
+For a Phase 6 failure, first isolate its owning layer. Static failures usually
+mean the guarded branch, exact fleeing table, route graph, or stock preservation
+contract changed. ROM failures require checking the decoded `jr nz` target,
+the single expected custom/reference byte difference, bank 3 headroom, and
+save-layout fingerprint. Emulator failures should be triaged from the last
+symbolic hook and current map/battle state; do not add gameplay code to make a
+test deterministic.
+
+The automated pass makes Phase 6 source-complete, not playtest-certified or
+release-ready. Any tracker clarity, presentation, or hunt-feel issue must be
+fixed and retested or explicitly deferred.
 
 ### Battery-save and scenario fixtures
 

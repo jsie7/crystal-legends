@@ -81,3 +81,21 @@ reference isolation. The user-owned manual matrix in
 [`docs/workflows.md`](../docs/workflows.md#validate-the-phase-5-ruins-gifts-and-girafarig-trade)
 owns natural puzzle/item/field-move flow, sprite and palette appearance,
 dialogue wrapping, navigation, pacing, and story feel.
+
+Run the focused Phase 6 profile with:
+
+```bash
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/static/test_phase_06_roamers.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/rom/test_phase_06_roamers.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/emulator/test_phase_06_roamers.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest -m phase6
+```
+
+Phase 6 has 25 focused tests: seven source contracts, five compiled-ROM
+contracts, and 13 production-ROM scenarios. They preserve stock Raikou/Entei
+release, routing, Pokédex tracking, flee HP/DVs, and permanent defeat/capture
+removal while proving the custom-only Fast Ball correction for all 23 stock
+fleeing-list species and an ordinary Route 37 control. They do not add defeat
+recovery or preserve battle status conditions. The user-owned manual matrix in
+[`docs/workflows.md`](../docs/workflows.md#validate-phase-6-roaming-and-fast-balls)
+owns tracker clarity, hunt feel, Fast Ball presentation, and Suicune continuity.
