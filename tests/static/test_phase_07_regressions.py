@@ -34,8 +34,8 @@ def test_project_mew_runtime_scenario_contract(repo_root: Path) -> None:
     assert scenario["max_frames_per_step"] == 60000
     assert scenario["annex"] == {
         "map": "RADIO_TOWER_TRANSMITTER_ANNEX",
-        "terminal_start": {"x": 6, "y": 2, "facing": "UP"},
-        "subject_start": {"x": 4, "y": 5, "facing": "UP"},
+        "terminal_start": {"x": 6, "y": 6, "facing": "UP"},
+        "subject_start": {"x": 4, "y": 3, "facing": "UP"},
         "exit_start": {"x": 4, "y": 6, "facing": "DOWN"},
     }
     assert scenario["radio_tower_5f"] == {
@@ -279,7 +279,7 @@ def test_annex_map_and_subject_sprites_append_only_to_custom_tables(
     assert "db MEWTWO" not in reference_mons
 
 
-def test_annex_asset_is_compact_and_has_sealed_then_open_exit_collision(
+def test_annex_asset_has_southern_controls_continuous_glass_and_sealed_boundary(
     repo_root: Path,
 ) -> None:
     dimensions = parse_map_dimensions(
@@ -295,22 +295,41 @@ def test_annex_asset_is_compact_and_has_sealed_then_open_exit_collision(
 
     assert (dimensions[name].width_blocks, dimensions[name].height_blocks) == (5, 4)
     assert blocks == bytes.fromhex(
-        "02 12 02 12 02 01 15 01 15 01 01 01 01 01 01 23 23 23 23 23"
+        "02 02 02 02 02 15 15 15 15 15 01 12 01 12 01 40 40 07 40 40"
     )
     assert collision_at(
-        repo_root, name, (2, 1), dimensions, block_paths, tilesets
+        repo_root, name, (2, 5), dimensions, block_paths, tilesets
     ) == "PC"
     assert collision_at(
-        repo_root, name, (6, 1), dimensions, block_paths, tilesets
+        repo_root, name, (6, 5), dimensions, block_paths, tilesets
     ) == "PC"
     assert collision_at(
-        repo_root, name, (4, 4), dimensions, block_paths, tilesets
+        repo_root, name, (4, 3), dimensions, block_paths, tilesets
+    ) == "WALL"
+    assert collision_at(
+        repo_root, name, (4, 6), dimensions, block_paths, tilesets
     ) == "FLOOR"
     assert collision_at(
         repo_root, name, (4, 7), dimensions, block_paths, tilesets
-    ) == "WALL"
+    ) == "WARP_CARPET_DOWN"
     collision_rows = (repo_root / "data/tilesets/radio_tower_collision.asm").read_text()
     assert "tilecoll FLOOR, FLOOR, WARP_CARPET_DOWN, WARP_CARPET_DOWN ; 07" in collision_rows
+    assert "tilecoll FLOOR, FLOOR, WALL, WALL ; 40" in collision_rows
+    tilesets_source = (repo_root / "gfx/tilesets.asm").read_text()
+    custom_tilesets = _active_code(repo_root / "gfx/tilesets.asm", CRYSTAL_LEGENDS)
+    reference_tilesets = _active_code(repo_root / "gfx/tilesets.asm", REFERENCE)
+    _assert_contiguous(
+        custom_tilesets,
+        [
+            "TilesetRadioTowerBlock40::",
+            "db $01, $01, $01, $01",
+            "db $01, $01, $01, $01",
+            "db $39, $39, $39, $39",
+            "db $39, $39, $39, $39",
+        ],
+    )
+    assert "TilesetRadioTowerBlock40::" in tilesets_source
+    assert "TilesetRadioTowerBlock40::" not in reference_tilesets
 
 
 def test_final_executive_sends_data_before_battle_and_opens_existing_flag_gate(
@@ -442,7 +461,9 @@ def test_annex_terminal_is_cancelable_confirmed_permanent_and_capture_optional(
         "setevent EVENT_PROJECT_MEW_RESOLVED",
         "clearevent EVENT_PROJECT_MEW_TRANSFORMED",
         "setevent EVENT_PROJECT_MEW_TRANSFORMED",
+        "changeblock 4, 2, $01",
         "changeblock 4, 6, $07",
+        "changeblock 4, 6, $40",
     ):
         assert row in annex
     cancel = terminal[terminal.index(".Cancel:") : terminal.index(".Resolved:")]
@@ -476,9 +497,11 @@ def test_annex_visibility_uses_outcome_facts_not_party_or_pokedex(
         assert f"checkevent {event}" in callback
     assert "checkcode VAR_PARTYCOUNT" not in callback
     assert not any("POKEDEX" in row or "PARTY" in row for row in callback)
-    assert "bg_event 2, 1, BGEVENT_UP, RadioTowerTransmitterAnnexUploadMonitorScript" in annex
-    assert "bg_event 6, 1, BGEVENT_UP, RadioTowerTransmitterAnnexTerminalScript" in annex
-    assert sum(row.startswith("object_event 4, 4, SPRITE_MEW") for row in annex) == 2
+    assert "bg_event 2, 5, BGEVENT_UP, RadioTowerTransmitterAnnexUploadMonitorScript" in annex
+    assert "bg_event 6, 5, BGEVENT_UP, RadioTowerTransmitterAnnexTerminalScript" in annex
+    assert "bg_event 4, 3, BGEVENT_IFNOTSET, RadioTowerTransmitterAnnexGlassObservation" in annex
+    assert "conditional_event EVENT_PROJECT_MEW_RESOLVED, .Script" in annex
+    assert sum(row.startswith("object_event 4, 2, SPRITE_MEW") for row in annex) == 2
 
 
 def test_generic_caught_result_is_custom_only_and_keeps_celebi_compatible(

@@ -275,7 +275,8 @@ def test_stabilized_outcome_survives_native_save_reload(
         assert _event(session, constants, "EVENT_PROJECT_MEW_TRANSFORMED")
         assert not _event(session, constants, "EVENT_CAUGHT_PROJECT_MEW_SUBJECT")
         prepare_battle_party(session, constants, constants["ARTICUNO"], True)
-        place_player(session, 4, 5)
+        subject_start = scenario["annex"]["subject_start"]
+        place_player(session, subject_start["x"], subject_start["y"])
         _start_subject_battle(session, constants, scenario)
         assert session.read_symbol("wEnemyMonSpecies") == constants["MEWTWO"]
         assert session.read_symbol("wEnemyMonLevel") == 30

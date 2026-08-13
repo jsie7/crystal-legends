@@ -172,6 +172,13 @@ INCBIN "gfx/tilesets/radio_tower.2bpp.lz"
 
 TilesetRadioTowerMeta::
 INCBIN "data/tilesets/radio_tower_metatiles.bin"
+if DEF(_CRYSTALLEGENDS)
+TilesetRadioTowerBlock40::
+	db $01, $01, $01, $01
+	db $01, $01, $01, $01
+	db $39, $39, $39, $39
+	db $39, $39, $39, $39
+endc
 
 TilesetRadioTowerColl::
 INCLUDE "data/tilesets/radio_tower_collision.asm"

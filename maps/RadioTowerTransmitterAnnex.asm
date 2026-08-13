@@ -12,11 +12,12 @@ RadioTowerTransmitterAnnex_MapScripts:
 RadioTowerTransmitterAnnexExitCallback:
 	checkevent EVENT_PROJECT_MEW_RESOLVED
 	iffalse .Closed
+	changeblock 4, 2, $01 ; open center glass
 	changeblock 4, 6, $07 ; open return stairs
 	endcallback
 
 .Closed:
-	changeblock 4, 6, $23 ; sealed return wall
+	changeblock 4, 6, $40 ; sealed return wall
 	endcallback
 
 RadioTowerTransmitterAnnexSubjectCallback:
@@ -45,6 +46,17 @@ RadioTowerTransmitterAnnexSubjectCallback:
 RadioTowerTransmitterAnnexUploadMonitorScript:
 	jumptext RadioTowerTransmitterAnnexUploadMonitorText
 
+RadioTowerTransmitterAnnexGlassObservation:
+	conditional_event EVENT_PROJECT_MEW_RESOLVED, .Script
+
+.Script:
+	opentext
+	cry MEW
+	writetext RadioTowerTransmitterAnnexUnstableMewText
+	waitbutton
+	closetext
+	end
+
 RadioTowerTransmitterAnnexTerminalScript:
 	opentext
 	checkevent EVENT_PROJECT_MEW_RESOLVED
@@ -70,6 +82,7 @@ RadioTowerTransmitterAnnexTerminalScript:
 	appear RADIOTOWERTRANSMITTERANNEX_MEW
 	playsound SFX_WARP_TO
 	waitsfx
+	changeblock 4, 2, $01 ; open center glass
 	changeblock 4, 6, $07 ; open return stairs
 	refreshmap
 	writetext RadioTowerTransmitterAnnexReverseCompleteText
@@ -87,6 +100,7 @@ RadioTowerTransmitterAnnexTerminalScript:
 	appear RADIOTOWERTRANSMITTERANNEX_MEWTWO
 	playsound SFX_WARP_TO
 	waitsfx
+	changeblock 4, 2, $01 ; open center glass
 	changeblock 4, 6, $07 ; open return stairs
 	refreshmap
 	writetext RadioTowerTransmitterAnnexStabilizeCompleteText
@@ -287,9 +301,10 @@ RadioTowerTransmitterAnnex_MapEvents:
 	def_coord_events
 
 	def_bg_events
-	bg_event 2, 1, BGEVENT_UP, RadioTowerTransmitterAnnexUploadMonitorScript
-	bg_event 6, 1, BGEVENT_UP, RadioTowerTransmitterAnnexTerminalScript
+	bg_event 2, 5, BGEVENT_UP, RadioTowerTransmitterAnnexUploadMonitorScript
+	bg_event 6, 5, BGEVENT_UP, RadioTowerTransmitterAnnexTerminalScript
+	bg_event 4, 3, BGEVENT_IFNOTSET, RadioTowerTransmitterAnnexGlassObservation
 
 	def_object_events
-	object_event 4, 4, SPRITE_MEW, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_PINK, OBJECTTYPE_SCRIPT, 0, RadioTowerTransmitterAnnexMewScript, -1
-	object_event 4, 4, SPRITE_MEWTWO, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_PINK, OBJECTTYPE_SCRIPT, 0, RadioTowerTransmitterAnnexMewtwoScript, -1
+	object_event 4, 2, SPRITE_MEW, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_PINK, OBJECTTYPE_SCRIPT, 0, RadioTowerTransmitterAnnexMewScript, -1
+	object_event 4, 2, SPRITE_MEWTWO, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_PINK, OBJECTTYPE_SCRIPT, 0, RadioTowerTransmitterAnnexMewtwoScript, -1

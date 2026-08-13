@@ -44,7 +44,10 @@ def phase_7_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "BG_EVENT_SIZE",
             "OBJECT_EVENT_SIZE",
             "BGEVENT_UP",
+            "BGEVENT_IFNOTSET",
             "SPRITEMOVEDATA_POKEMON",
+            "COLL_FLOOR",
+            "COLL_WALL",
             "loadwildmon_command",
             "startbattle_command",
             "reloadmapafterbattle_command",
@@ -107,6 +110,26 @@ def test_compiled_annex_asset_and_sprite_table_match_source(
     rom = RomImage.load(repo_root / "crystallegends.gbc")
     block_source = (repo_root / "maps/RadioTowerTransmitterAnnex.blk").read_bytes()
     assert rom.at(symbols["RadioTowerTransmitterAnnex_Blocks"], 20) == block_source
+    assert block_source == bytes.fromhex(
+        "02 02 02 02 02 15 15 15 15 15 01 12 01 12 01 40 40 07 40 40"
+    )
+    assert symbols["TilesetRadioTowerBlock40"].address == (
+        symbols["TilesetRadioTowerMeta"].address + 0x400
+    )
+    assert rom.at(symbols["TilesetRadioTowerBlock40"], 16) == bytes.fromhex(
+        "01 01 01 01 01 01 01 01 39 39 39 39 39 39 39 39"
+    )
+    assert symbols["TilesetRadioTowerBlock40Coll"].address == (
+        symbols["TilesetRadioTowerColl"].address + 0x100
+    )
+    assert rom.at(symbols["TilesetRadioTowerBlock40Coll"], 4) == bytes(
+        [
+            phase_7_constants["COLL_FLOOR"],
+            phase_7_constants["COLL_FLOOR"],
+            phase_7_constants["COLL_WALL"],
+            phase_7_constants["COLL_WALL"],
+        ]
+    )
 
     start = symbols["SpriteMons"].rom_offset
     end = symbols["OutdoorSprites"].rom_offset
@@ -175,18 +198,24 @@ def test_compiled_annex_terminal_monitor_and_subject_objects(
     ] == [
         (
             2,
-            1,
+            5,
             phase_7_constants["BGEVENT_UP"],
             symbols["RadioTowerTransmitterAnnexUploadMonitorScript"].address,
         ),
         (
             6,
-            1,
+            5,
             phase_7_constants["BGEVENT_UP"],
             symbols["RadioTowerTransmitterAnnexTerminalScript"].address,
         ),
+        (
+            4,
+            3,
+            phase_7_constants["BGEVENT_IFNOTSET"],
+            symbols["RadioTowerTransmitterAnnexGlassObservation"].address,
+        ),
     ]
-    assert [(event.x, event.y) for event in objects] == [(4, 4), (4, 4)]
+    assert [(event.x, event.y) for event in objects] == [(4, 2), (4, 2)]
     assert [event.sprite for event in objects] == [
         phase_7_constants["SPRITE_MEW"],
         phase_7_constants["SPRITE_MEWTWO"],
@@ -210,6 +239,8 @@ def test_reference_rom_exports_no_phase_7_map_or_scripts(repo_root: Path) -> Non
         "RadioTowerTransmitterAnnex_Blocks",
         "RadioTower5FProjectMewScene",
         "RadioTower5FProjectMewEntranceCallback",
+        "TilesetRadioTowerBlock40",
+        "TilesetRadioTowerBlock40Coll",
     ):
         assert label not in symbols
 

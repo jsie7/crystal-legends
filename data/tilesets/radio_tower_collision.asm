@@ -62,3 +62,7 @@
 	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 3d
 	tilecoll FLOOR, WALL, FLOOR, WALL ; 3e
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 3f
+if DEF(_CRYSTALLEGENDS)
+TilesetRadioTowerBlock40Coll::
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 40
+endc
