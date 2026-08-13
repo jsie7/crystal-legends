@@ -475,6 +475,7 @@ def test_final_executive_sends_data_before_battle_and_opens_existing_flag_gate(
         [
             "checkevent EVENT_PROJECT_MEW_RESOLVED",
             "iffalse .ReturnToAnnex",
+            "applymovement PLAYER, RadioTower5FPlayerReturnsFromAnnexMovement",
             "sjump RadioTower5FDirectorCleanupScript",
             ".ReturnToAnnex:",
             "setmapscene RADIO_TOWER_TRANSMITTER_ANNEX, SCENE_RADIOTOWERTRANSMITTERANNEX_LOCK_ENTRY",
@@ -608,14 +609,66 @@ def test_annex_entry_walks_to_the_stairs_seals_once_and_reconstructs_tiles(
             "step UP",
             "step UP",
             "step UP",
-            "step UP",
             "step LEFT",
+            "step UP",
             "step LEFT",
             "step UP",
             "step_end",
+            "RadioTower5FPlayerReturnsFromAnnexMovement:",
+            "step DOWN",
+            "step RIGHT",
+            "step DOWN",
+            "step RIGHT",
+            "step DOWN",
+            "step DOWN",
+            "step DOWN",
+            "step LEFT",
+            "step LEFT",
+            "step_end",
         ],
     )
-    assert "RadioTower5FPlayerReturnsFromAnnexMovement:" not in radio
+    dimensions = parse_map_dimensions(
+        (repo_root / "constants/map_constants.asm").read_text()
+    )
+    block_paths = block_paths_for_maps(
+        dimensions,
+        parse_block_paths((repo_root / "data/maps/blocks.asm").read_text()),
+    )
+    tilesets = parse_map_tilesets((repo_root / "data/maps/maps.asm").read_text())
+    corridor = [
+        (14, 5),
+        (15, 5),
+        (16, 5),
+        (16, 4),
+        (16, 3),
+        (16, 2),
+        (15, 2),
+        (15, 1),
+        (14, 1),
+    ]
+    assert all(
+        collision_at(
+            repo_root,
+            "RADIO_TOWER_5F",
+            coordinate,
+            dimensions,
+            block_paths,
+            tilesets,
+        )
+        == "FLOOR"
+        for coordinate in corridor
+    )
+    assert (
+        collision_at(
+            repo_root,
+            "RADIO_TOWER_5F",
+            (16, 1),
+            dimensions,
+            block_paths,
+            tilesets,
+        )
+        == "BOOKSHELF"
+    )
     _assert_contiguous(
         annex,
         [
@@ -642,7 +695,7 @@ def test_annex_entry_walks_to_the_stairs_seals_once_and_reconstructs_tiles(
     seal = _section(
         annex,
         "RadioTowerTransmitterAnnexSealEntryScript:",
-        "RadioTowerTransmitterAnnexSubjectCallback:",
+        "RadioTowerTransmitterAnnexSubjectSpriteCallback:",
     )
     _assert_contiguous(
         seal,
@@ -677,9 +730,14 @@ def test_annex_uses_one_event_masked_variable_subject_and_readable_controls(
     )
     callback = _section(
         annex,
-        "RadioTowerTransmitterAnnexSubjectCallback:",
+        "RadioTowerTransmitterAnnexSubjectSpriteCallback:",
         "RadioTowerTransmitterAnnexUploadMonitorScript:",
     )
+    assert (
+        "callback MAPCALLBACK_SPRITES, RadioTowerTransmitterAnnexSubjectSpriteCallback"
+        in annex
+    )
+    assert "callback MAPCALLBACK_OBJECTS" not in annex
     for event in ("EVENT_PROJECT_MEW_RESOLVED", "EVENT_PROJECT_MEW_TRANSFORMED"):
         assert f"checkevent {event}" in callback
     assert "checkcode VAR_PARTYCOUNT" not in callback

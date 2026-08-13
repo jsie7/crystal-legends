@@ -9,7 +9,7 @@ RadioTowerTransmitterAnnex_MapScripts:
 
 	def_callbacks
 	callback MAPCALLBACK_TILES, RadioTowerTransmitterAnnexExitCallback
-	callback MAPCALLBACK_OBJECTS, RadioTowerTransmitterAnnexSubjectCallback
+	callback MAPCALLBACK_SPRITES, RadioTowerTransmitterAnnexSubjectSpriteCallback
 
 RadioTowerTransmitterAnnexLockEntryScene:
 	sdefer RadioTowerTransmitterAnnexSealEntryScript
@@ -51,7 +51,7 @@ RadioTowerTransmitterAnnexSealEntryScript:
 	setscene SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP
 	end
 
-RadioTowerTransmitterAnnexSubjectCallback:
+RadioTowerTransmitterAnnexSubjectSpriteCallback:
 	checkevent EVENT_PROJECT_MEW_RESOLVED
 	iffalse .ShowMew
 	checkevent EVENT_PROJECT_MEW_TRANSFORMED
@@ -100,7 +100,6 @@ RadioTowerTransmitterAnnexTerminalScript:
 	iffalse .Menu
 	setevent EVENT_PROJECT_MEW_RESOLVED
 	clearevent EVENT_PROJECT_MEW_TRANSFORMED
-	variablesprite SPRITE_PROJECT_MEW_SUBJECT, SPRITE_MEW
 	special LoadUsedSpritesGFX
 	playsound SFX_WARP_TO
 	waitsfx
@@ -118,7 +117,6 @@ RadioTowerTransmitterAnnexTerminalScript:
 	iffalse .Menu
 	setevent EVENT_PROJECT_MEW_RESOLVED
 	setevent EVENT_PROJECT_MEW_TRANSFORMED
-	variablesprite SPRITE_PROJECT_MEW_SUBJECT, SPRITE_MEWTWO
 	special LoadUsedSpritesGFX
 	playsound SFX_WARP_TO
 	waitsfx
@@ -327,7 +325,7 @@ RadioTowerTransmitterAnnex_MapEvents:
 	db 0, 0 ; filler
 
 	def_warp_events
-	warp_event 4, 7, RADIO_TOWER_5F, 4
+	warp_event 4, 7, RADIO_TOWER_5F, 3
 
 	def_coord_events
 

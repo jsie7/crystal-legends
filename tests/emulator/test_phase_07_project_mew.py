@@ -212,7 +212,11 @@ def test_terminal_cancel_changes_no_outcome_and_can_be_reopened(
         start="terminal",
         resolved=False,
     ) as session:
+        options = session.read_symbol("wOptions")
+        assert session.read_symbol("wDisableTextAcceleration") == 0
         _run_terminal(session, constants, scenario, "cancel")
+        assert session.read_symbol("wOptions") == options
+        assert session.read_symbol("wDisableTextAcceleration") == 0
         assert not _event(session, constants, "EVENT_PROJECT_MEW_RESOLVED")
         assert not _event(session, constants, "EVENT_PROJECT_MEW_TRANSFORMED")
         assert not _event(session, constants, "EVENT_CAUGHT_PROJECT_MEW_SUBJECT")
@@ -458,6 +462,18 @@ def test_annex_entry_seals_once_and_survives_native_save_reload(
     constants = phase_7_runtime_constants
     max_frames = scenario["max_frames_per_step"]
     persisted = tmp_path / "sealed-entry.sav"
+    subject_sprite_values: list[int] = []
+
+    def trace_subject_sprite(session) -> None:
+        variable_index = (
+            constants["SPRITE_PROJECT_MEW_SUBJECT"] - constants["SPRITE_VARS"]
+        )
+        session.register_hook(
+            "GetMonSprite.Variable",
+            lambda current: subject_sprite_values.append(
+                current.read_symbol_bytes("wVariableSprites", 16)[variable_index]
+            ),
+        )
 
     with loaded_phase_7_checkpoint(
         repo_root,
@@ -466,6 +482,7 @@ def test_annex_entry_seals_once_and_survives_native_save_reload(
         scenario,
         start="entry",
         resolved=False,
+        before_overworld=trace_subject_sprite,
     ) as session:
         session.wait_until(
             lambda current: (
@@ -481,6 +498,8 @@ def test_annex_entry_seals_once_and_survives_native_save_reload(
         assert session.read_symbol("wXCoord") == 4
         assert session.read_symbol("wYCoord") == 5
         assert session.read_symbol("wPlayerDirection") == constants["OW_UP"]
+        assert subject_sprite_values
+        assert subject_sprite_values[-1] == constants["SPRITE_MEW"]
         assert (
             session.read_symbol("wRadioTowerTransmitterAnnexSceneID")
             == constants["SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP"]
@@ -832,10 +851,21 @@ def test_return_without_capture_resumes_stock_director_progression_once(
         transformed=False,
     ) as session:
         session.enable_script_tracing()
+        return_walk_origins: list[tuple[int, int]] = []
+        session.register_hook(
+            "Script_applymovement",
+            lambda current: return_walk_origins.append(
+                (
+                    current.read_symbol("wXCoord"),
+                    current.read_symbol("wYCoord"),
+                )
+            ),
+        )
         session.write_symbol("wPlayerDirection", constants["OW_DOWN"])
         session.tap("down", 2, 20)
         session.tap("down", 2, 20)
         session.wait_for_script("RadioTower5FDirectorCleanupScript", max_frames)
+        assert return_walk_origins[0] == (14, 0)
         assert session.read_symbol("wXCoord") == 14
         assert session.read_symbol("wYCoord") == 5
         advance_with_a_until(

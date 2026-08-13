@@ -165,27 +165,18 @@ def test_compiled_5f_and_annex_warps_are_reciprocal(
         rom, symbols, "RadioTowerTransmitterAnnex_MapEvents", size
     )
 
-    assert radio_warps[-2:] == [
-        (
-            0,
-            14,
-            1,
-            phase_7_constants["GROUP_RADIO_TOWER_TRANSMITTER_ANNEX"],
-            phase_7_constants["MAP_RADIO_TOWER_TRANSMITTER_ANNEX"],
-        ),
-        (
-            5,
-            14,
-            1,
-            phase_7_constants["GROUP_RADIO_TOWER_TRANSMITTER_ANNEX"],
-            phase_7_constants["MAP_RADIO_TOWER_TRANSMITTER_ANNEX"],
-        ),
-    ]
+    assert radio_warps[-1] == (
+        0,
+        14,
+        1,
+        phase_7_constants["GROUP_RADIO_TOWER_TRANSMITTER_ANNEX"],
+        phase_7_constants["MAP_RADIO_TOWER_TRANSMITTER_ANNEX"],
+    )
     assert annex_warps == [
         (
             7,
             4,
-            4,
+            3,
             phase_7_constants["GROUP_RADIO_TOWER_5F"],
             phase_7_constants["MAP_RADIO_TOWER_5F"],
         )

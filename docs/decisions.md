@@ -228,8 +228,9 @@ behind them. A custom-only scene byte taken from the existing WRAM reserve
 preserves that closed state without changing save-layout size. Before
 resolution, the center glass can be inspected but not crossed; confirming
 either outcome opens its center block and the southern exit together. Returning
-uses a non-triggering 5F destination at `(14, 5)`, the original post-battle
-position, before stock Director cleanup resumes.
+places the player back on the revealed stair at `(14, 0)`, then automatically
+retraces the walkable corridor to the original post-battle position at
+`(14, 5)` before stock Director cleanup resumes.
 
 The selected subject is a normal level-30 wild battle that remains available
 after knockout, escape, or player defeat and starts each retry at full HP with
