@@ -42,6 +42,8 @@ def phase_7_runtime_constants(repo_root: Path, tmp_path_factory) -> dict[str, in
         "MAPSETUP_WARP",
         "OW_UP",
         "OW_DOWN",
+        "OW_LEFT",
+        "OW_RIGHT",
         "GROUP_RADIO_TOWER_TRANSMITTER_ANNEX",
         "MAP_RADIO_TOWER_TRANSMITTER_ANNEX",
         "GROUP_RADIO_TOWER_5F",
@@ -58,6 +60,10 @@ def phase_7_runtime_constants(repo_root: Path, tmp_path_factory) -> dict[str, in
         "EVENT_RADIO_TOWER_ROCKET_TAKEOVER",
         "MEW",
         "MEWTWO",
+        "SPRITE_MEW",
+        "SPRITE_MEWTWO",
+        "SPRITE_VARS",
+        "SPRITE_PROJECT_MEW_SUBJECT",
         "ARTICUNO",
         "MASTER_BALL",
         "CLEAR_BELL",
@@ -258,6 +264,13 @@ def test_terminal_confirmation_selects_exact_permanent_subject(
         assert _event(session, constants, "EVENT_PROJECT_MEW_TRANSFORMED") is transformed
         assert not _event(session, constants, "EVENT_CAUGHT_PROJECT_MEW_SUBJECT")
         assert constants[species] in (constants["MEW"], constants["MEWTWO"])
+        variable_index = (
+            constants["SPRITE_PROJECT_MEW_SUBJECT"] - constants["SPRITE_VARS"]
+        )
+        assert session.read_symbol_bytes("wVariableSprites", 16)[variable_index] == constants[
+            f"SPRITE_{species}"
+        ]
+        assert session.read_symbol("wMap2ObjectSprite") == 0
 
 
 def test_stabilized_outcome_survives_native_save_reload(
@@ -376,6 +389,17 @@ def test_final_executive_victory_opens_annex_before_director_cleanup(
         before_overworld=_prepare_subject_party(constants, master_ball=False),
     ) as session:
         session.enable_script_tracing()
+        annex_warp_origins: list[tuple[int, int, int]] = []
+        session.register_hook(
+            "Script_warpfacing",
+            lambda current: annex_warp_origins.append(
+                (
+                    current.read_symbol("wXCoord"),
+                    current.read_symbol("wYCoord"),
+                    current.read_symbol("wPlayerDirection"),
+                )
+            ),
+        )
         session.register_hook("BattleMenu")
         session.register_hook(
             "HasEnemyFainted",
@@ -418,6 +442,7 @@ def test_final_executive_victory_opens_annex_before_director_cleanup(
             == constants["SCENE_RADIOTOWER5F_PROJECT_MEW"]
         )
         assert session.read_symbol("wPlayerDirection") == constants["OW_UP"]
+        assert annex_warp_origins == [(14, 0, constants["OW_UP"])]
         assert (
             session.read_symbol("wRadioTowerTransmitterAnnexSceneID")
             == constants["SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP"]
@@ -538,6 +563,8 @@ def test_unresolved_subject_can_be_observed_only_through_center_glass(
         resolved=False,
     ) as session:
         session.enable_script_tracing()
+        session.register_hook("Script_cry")
+        session.register_hook("Script_opentext")
         place_player(session, 4, 4)
         session.write_symbol("wPlayerDirection", constants["OW_UP"])
         session.tap("a", 2, 10)
@@ -553,6 +580,62 @@ def test_unresolved_subject_can_be_observed_only_through_center_glass(
         assert not _event(session, constants, "EVENT_PROJECT_MEW_RESOLVED")
         assert not _event(session, constants, "EVENT_CAUGHT_PROJECT_MEW_SUBJECT")
         assert session.read_symbol("wBattleMode") == 0
+        assert session.hook_history.index("Script_cry") < session.hook_history.index(
+            "Script_opentext"
+        )
+
+
+def test_annex_controls_override_the_stock_pc_from_the_side(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_7_runtime_constants: dict[str, int],
+    scenario: dict,
+) -> None:
+    constants = phase_7_runtime_constants
+    max_frames = scenario["max_frames_per_step"]
+    with loaded_phase_7_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        start="terminal",
+        resolved=False,
+    ) as session:
+        session.enable_script_tracing()
+        session.register_hook("PokemonCenterPC")
+        session.register_hook("VerticalMenu")
+
+        place_player(session, 1, 5)
+        session.write_symbol("wPlayerDirection", constants["OW_RIGHT"])
+        session.tap("a", 2, 10)
+        session.wait_for_script(
+            "RadioTowerTransmitterAnnexUploadMonitorScript", max_frames
+        )
+        advance_with_a_until(
+            session,
+            lambda current: current.read_symbol("wScriptMode") == 0,
+            max_frames,
+            "side-accessed Project Mew upload monitor",
+        )
+
+        place_player(session, 7, 5)
+        session.write_symbol("wPlayerDirection", constants["OW_LEFT"])
+        menu_count = session.hook_history.count("VerticalMenu") + 1
+        session.tap("a", 2, 10)
+        advance_with_a_until(
+            session,
+            lambda current: current.hook_history.count("VerticalMenu") >= menu_count,
+            max_frames,
+            "side-accessed Project Mew terminal",
+        )
+        session.tap("b", 2, 10)
+        advance_with_a_until(
+            session,
+            lambda current: current.read_symbol("wScriptMode") == 0,
+            max_frames,
+            "side-accessed Project Mew terminal cancellation",
+        )
+        assert "PokemonCenterPC" not in session.hook_history
 
 
 @pytest.mark.parametrize("outcome", ["knockout", "escape"])
@@ -661,7 +744,7 @@ def test_player_defeat_leaves_resolved_subject_uncaught(
         )
         assert _event(session, constants, "EVENT_PROJECT_MEW_RESOLVED")
         assert not _event(session, constants, "EVENT_CAUGHT_PROJECT_MEW_SUBJECT")
-        assert session.hook_history.count("CheckCaughtPokemon") == checked
+        assert session.hook_history.count("CheckCaughtPokemon") == checked + 1
 
 
 @pytest.mark.parametrize(
@@ -715,10 +798,20 @@ def test_successful_capture_sets_fact_and_removes_selected_subject(
         )
         assert result & (1 << constants["BATTLERESULT_CAUGHT_POKEMON"])
         assert read_progress(session).owns(constants[species])
+        assert session.read_symbol("wMap1ObjectStructID") == 0xFF
         battle_count = session.hook_history.count("BattleMenu")
-        session.tap("up", 2, 10)
-        session.tap("a", 2, 30)
+        subject_count = session.script_history.count(
+            "RadioTowerTransmitterAnnexSubjectScript"
+        )
+        place_player(session, 4, 3)
+        session.write_symbol("wPlayerDirection", constants["OW_UP"])
+        for _ in range(60):
+            session.tap("a", 2, 10)
         assert session.hook_history.count("BattleMenu") == battle_count
+        assert (
+            session.script_history.count("RadioTowerTransmitterAnnexSubjectScript")
+            == subject_count
+        )
 
 
 def test_return_without_capture_resumes_stock_director_progression_once(
@@ -743,6 +836,8 @@ def test_return_without_capture_resumes_stock_director_progression_once(
         session.tap("down", 2, 20)
         session.tap("down", 2, 20)
         session.wait_for_script("RadioTower5FDirectorCleanupScript", max_frames)
+        assert session.read_symbol("wXCoord") == 14
+        assert session.read_symbol("wYCoord") == 5
         advance_with_a_until(
             session,
             lambda current: (

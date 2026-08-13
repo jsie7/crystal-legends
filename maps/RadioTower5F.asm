@@ -43,7 +43,6 @@ RadioTower5FProjectMewEntranceCallback:
 RadioTower5FResumeProjectMewScript:
 	checkevent EVENT_PROJECT_MEW_RESOLVED
 	iffalse .ReturnToAnnex
-	applymovement PLAYER, RadioTower5FPlayerReturnsFromAnnexMovement
 	sjump RadioTower5FDirectorCleanupScript
 
 .ReturnToAnnex:
@@ -148,6 +147,7 @@ if DEF(_CRYSTALLEGENDS)
 	closetext
 	setscene SCENE_RADIOTOWER5F_PROJECT_MEW
 	setmapscene RADIO_TOWER_TRANSMITTER_ANNEX, SCENE_RADIOTOWERTRANSMITTERANNEX_LOCK_ENTRY
+	applymovement PLAYER, RadioTower5FPlayerEntersAnnexMovement
 	warpfacing UP, RADIO_TOWER_TRANSMITTER_ANNEX, 4, 6
 	end
 endc
@@ -244,11 +244,16 @@ RadioTower5FPlayerTwoStepsLeftMovement:
 	step_end
 
 if DEF(_CRYSTALLEGENDS)
-RadioTower5FPlayerReturnsFromAnnexMovement:
-	step DOWN
-	step DOWN
-	step DOWN
-	step DOWN
+RadioTower5FPlayerEntersAnnexMovement:
+	step RIGHT
+	step RIGHT
+	step UP
+	step UP
+	step UP
+	step UP
+	step LEFT
+	step LEFT
+	step UP
 	step_end
 endc
 
@@ -529,6 +534,7 @@ RadioTower5F_MapEvents:
 	warp_event 12,  0, RADIO_TOWER_4F, 3
 if DEF(_CRYSTALLEGENDS)
 	warp_event 14,  0, RADIO_TOWER_TRANSMITTER_ANNEX, 1
+	warp_event 14,  5, RADIO_TOWER_TRANSMITTER_ANNEX, 1 ; safe return destination
 endc
 
 	def_coord_events

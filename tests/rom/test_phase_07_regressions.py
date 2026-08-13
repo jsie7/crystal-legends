@@ -30,6 +30,7 @@ def phase_7_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "BATTLERESULT_CAUGHT_POKEMON",
             "SPRITE_MEW",
             "SPRITE_MEWTWO",
+            "SPRITE_PROJECT_MEW_SUBJECT",
             "NUM_POKEMON_SPRITES",
             "MEW",
             "MEWTWO",
@@ -43,7 +44,7 @@ def phase_7_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "COORD_EVENT_SIZE",
             "BG_EVENT_SIZE",
             "OBJECT_EVENT_SIZE",
-            "BGEVENT_UP",
+            "BGEVENT_READ",
             "BGEVENT_IFNOTSET",
             "SPRITEMOVEDATA_POKEMON",
             "COLL_FLOOR",
@@ -96,6 +97,7 @@ def test_compiled_phase_7_ids_append_without_expanding_save_layout(
         phase_7_constants["SPRITE_MEW"],
         phase_7_constants["SPRITE_MEWTWO"],
     ] == [0xA9, 0xAA]
+    assert phase_7_constants["SPRITE_PROJECT_MEW_SUBJECT"] == 0xFD
     assert phase_7_constants["NUM_POKEMON_SPRITES"] == 43
     assert [
         phase_7_constants["GROUP_RADIO_TOWER_TRANSMITTER_ANNEX"],
@@ -163,18 +165,27 @@ def test_compiled_5f_and_annex_warps_are_reciprocal(
         rom, symbols, "RadioTowerTransmitterAnnex_MapEvents", size
     )
 
-    assert radio_warps[-1] == (
-        0,
-        14,
-        1,
-        phase_7_constants["GROUP_RADIO_TOWER_TRANSMITTER_ANNEX"],
-        phase_7_constants["MAP_RADIO_TOWER_TRANSMITTER_ANNEX"],
-    )
+    assert radio_warps[-2:] == [
+        (
+            0,
+            14,
+            1,
+            phase_7_constants["GROUP_RADIO_TOWER_TRANSMITTER_ANNEX"],
+            phase_7_constants["MAP_RADIO_TOWER_TRANSMITTER_ANNEX"],
+        ),
+        (
+            5,
+            14,
+            1,
+            phase_7_constants["GROUP_RADIO_TOWER_TRANSMITTER_ANNEX"],
+            phase_7_constants["MAP_RADIO_TOWER_TRANSMITTER_ANNEX"],
+        ),
+    ]
     assert annex_warps == [
         (
             7,
             4,
-            3,
+            4,
             phase_7_constants["GROUP_RADIO_TOWER_5F"],
             phase_7_constants["MAP_RADIO_TOWER_5F"],
         )
@@ -211,13 +222,13 @@ def test_compiled_annex_terminal_monitor_and_subject_objects(
         (
             2,
             5,
-            phase_7_constants["BGEVENT_UP"],
+            phase_7_constants["BGEVENT_READ"],
             symbols["RadioTowerTransmitterAnnexUploadMonitorScript"].address,
         ),
         (
             6,
             5,
-            phase_7_constants["BGEVENT_UP"],
+            phase_7_constants["BGEVENT_READ"],
             symbols["RadioTowerTransmitterAnnexTerminalScript"].address,
         ),
         (
@@ -227,20 +238,19 @@ def test_compiled_annex_terminal_monitor_and_subject_objects(
             symbols["RadioTowerTransmitterAnnexGlassObservation"].address,
         ),
     ]
-    assert [(event.x, event.y) for event in objects] == [(4, 2), (4, 2)]
+    assert [(event.x, event.y) for event in objects] == [(4, 2)]
     assert [event.sprite for event in objects] == [
-        phase_7_constants["SPRITE_MEW"],
-        phase_7_constants["SPRITE_MEWTWO"],
+        phase_7_constants["SPRITE_PROJECT_MEW_SUBJECT"]
     ]
     assert [event.movement for event in objects] == [
-        phase_7_constants["SPRITEMOVEDATA_POKEMON"],
-        phase_7_constants["SPRITEMOVEDATA_POKEMON"],
+        phase_7_constants["SPRITEMOVEDATA_POKEMON"]
     ]
     assert [event.script_pointer for event in objects] == [
-        symbols["RadioTowerTransmitterAnnexMewScript"].address,
-        symbols["RadioTowerTransmitterAnnexMewtwoScript"].address,
+        symbols["RadioTowerTransmitterAnnexSubjectScript"].address
     ]
-    assert all(event.event_flag == 0xFFFF for event in objects)
+    assert [event.event_flag for event in objects] == [
+        phase_7_constants["EVENT_CAUGHT_PROJECT_MEW_SUBJECT"]
+    ]
 
 
 def test_reference_rom_exports_no_phase_7_map_or_scripts(repo_root: Path) -> None:
@@ -280,10 +290,18 @@ def test_compiled_generic_caught_special_is_appended_and_targets_shared_query(
 
 
 @pytest.mark.parametrize(
-    ("species", "script", "end", "object_id"),
+    ("species", "script", "end"),
     [
-        ("MEW", "RadioTowerTransmitterAnnexMewScript.Resolved", "RadioTowerTransmitterAnnexMewScript.NotCaught", 2),
-        ("MEWTWO", "RadioTowerTransmitterAnnexMewtwoScript", "RadioTowerTransmitterAnnexMewtwoScript.NotCaught", 3),
+        (
+            "MEW",
+            "RadioTowerTransmitterAnnexMewScript.Resolved",
+            "RadioTowerTransmitterAnnexMewtwoScript",
+        ),
+        (
+            "MEWTWO",
+            "RadioTowerTransmitterAnnexMewtwoScript",
+            "RadioTowerTransmitterAnnexEntryMovement",
+        ),
     ],
 )
 def test_compiled_subject_encounters_use_level_30_and_capture_only_removal(
@@ -292,7 +310,6 @@ def test_compiled_subject_encounters_use_level_30_and_capture_only_removal(
     species: str,
     script: str,
     end: str,
-    object_id: int,
 ) -> None:
     symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
     rom = RomImage.load(repo_root / "crystallegends.gbc")
@@ -309,7 +326,6 @@ def test_compiled_subject_encounters_use_level_30_and_capture_only_removal(
             phase_7_constants[species],
             30,
             phase_7_constants["startbattle_command"],
-            phase_7_constants["reloadmapafterbattle_command"],
             phase_7_constants["special_command"],
         ]
     ) + special_id.to_bytes(2, "little")
@@ -318,8 +334,12 @@ def test_compiled_subject_encounters_use_level_30_and_capture_only_removal(
         + phase_7_constants["EVENT_CAUGHT_PROJECT_MEW_SUBJECT"].to_bytes(
             2, "little"
         )
-        + bytes([phase_7_constants["disappear_command"], object_id])
+        + bytes([phase_7_constants["disappear_command"], 2])
     )
 
     assert encounter in compiled
     assert caught in compiled
+    assert compiled.index(encounter) < compiled.index(caught)
+    assert compiled.index(caught) < compiled.index(
+        bytes([phase_7_constants["reloadmapafterbattle_command"]])
+    )

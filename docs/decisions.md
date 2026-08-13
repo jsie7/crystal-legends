@@ -221,16 +221,22 @@ party or Pokédex. The existing Executive victory event owns annex access.
 
 The annex presents the subject in a northern containment chamber behind a
 continuous glass wall, with the upload monitor and sequence terminal together
-in the southern control bay. The player enters at `(4, 6)` facing north, takes
-one automatic step to `(4, 5)`, and hears the passage seal behind them. A
-custom-only scene byte taken from the existing WRAM reserve preserves that
-closed state without changing save-layout size. Before resolution, the center
-glass can be inspected but not crossed; confirming either outcome opens its
-center block and the southern exit together.
+in the southern control bay. After the final Executive falls, the player walks
+through the existing 5F corridor to the revealed stairway, enters at `(4, 6)`
+facing north, takes one automatic step to `(4, 5)`, and hears the passage seal
+behind them. A custom-only scene byte taken from the existing WRAM reserve
+preserves that closed state without changing save-layout size. Before
+resolution, the center glass can be inspected but not crossed; confirming
+either outcome opens its center block and the southern exit together. Returning
+uses a non-triggering 5F destination at `(14, 5)`, the original post-battle
+position, before stock Director cleanup resumes.
 
 The selected subject is a normal level-30 wild battle that remains available
 after knockout, escape, or player defeat and starts each retry at full HP with
-no status. Capture alone removes it, but capture is not required to resume the
-stock Radio Tower resolution. The generic caught-result query is custom-only;
-reference builds retain their exact Celebi behavior and bytes. Do not add
-pre-Phase-7 save migration or broaden this phase into Rocket-team balancing.
+no status. A single event-masked object represents the subject; its variable
+sprite and encounter script follow the permanent Mew/Mewtwo outcome so two
+objects never overlap. Capture alone removes it, but capture is not required to
+resume the stock Radio Tower resolution. The generic caught-result query is
+custom-only; reference builds retain their exact Celebi behavior and bytes. Do
+not add pre-Phase-7 save migration or broaden this phase into Rocket-team
+balancing.

@@ -338,6 +338,13 @@ def test_annex_map_and_subject_sprites_append_only_to_custom_tables(
         ],
     )
     _assert_contiguous(
+        crystal_sprites,
+        [
+            "const SPRITE_JANINE_IMPERSONATOR",
+            "const SPRITE_PROJECT_MEW_SUBJECT",
+        ],
+    )
+    _assert_contiguous(
         crystal_mons,
         [
             "db AERODACTYL",
@@ -445,6 +452,7 @@ def test_final_executive_sends_data_before_battle_and_opens_existing_flag_gate(
         boss,
         [
             "setmapscene RADIO_TOWER_TRANSMITTER_ANNEX, SCENE_RADIOTOWERTRANSMITTERANNEX_LOCK_ENTRY",
+            "applymovement PLAYER, RadioTower5FPlayerEntersAnnexMovement",
             "warpfacing UP, RADIO_TOWER_TRANSMITTER_ANNEX, 4, 6",
             "end",
         ],
@@ -465,6 +473,9 @@ def test_final_executive_sends_data_before_battle_and_opens_existing_flag_gate(
     _assert_contiguous(
         resume,
         [
+            "checkevent EVENT_PROJECT_MEW_RESOLVED",
+            "iffalse .ReturnToAnnex",
+            "sjump RadioTower5FDirectorCleanupScript",
             ".ReturnToAnnex:",
             "setmapscene RADIO_TOWER_TRANSMITTER_ANNEX, SCENE_RADIOTOWERTRANSMITTERANNEX_LOCK_ENTRY",
             "warpfacing UP, RADIO_TOWER_TRANSMITTER_ANNEX, 4, 6",
@@ -581,12 +592,30 @@ def test_annex_terminal_is_cancelable_confirmed_permanent_and_capture_optional(
         assert row in director
 
 
-def test_annex_entry_scene_moves_once_and_reconstructs_open_closed_and_resolved_tiles(
+def test_annex_entry_walks_to_the_stairs_seals_once_and_reconstructs_tiles(
     repo_root: Path,
 ) -> None:
+    radio = _active_code(repo_root / "maps/RadioTower5F.asm", CRYSTAL_LEGENDS)
     annex = _active_code(
         repo_root / "maps/RadioTowerTransmitterAnnex.asm", CRYSTAL_LEGENDS
     )
+    _assert_contiguous(
+        radio,
+        [
+            "RadioTower5FPlayerEntersAnnexMovement:",
+            "step RIGHT",
+            "step RIGHT",
+            "step UP",
+            "step UP",
+            "step UP",
+            "step UP",
+            "step LEFT",
+            "step LEFT",
+            "step UP",
+            "step_end",
+        ],
+    )
+    assert "RadioTower5FPlayerReturnsFromAnnexMovement:" not in radio
     _assert_contiguous(
         annex,
         [
@@ -640,7 +669,7 @@ def test_annex_entry_scene_moves_once_and_reconstructs_open_closed_and_resolved_
     )
 
 
-def test_annex_visibility_uses_outcome_facts_not_party_or_pokedex(
+def test_annex_uses_one_event_masked_variable_subject_and_readable_controls(
     repo_root: Path,
 ) -> None:
     annex = _active_code(
@@ -651,19 +680,27 @@ def test_annex_visibility_uses_outcome_facts_not_party_or_pokedex(
         "RadioTowerTransmitterAnnexSubjectCallback:",
         "RadioTowerTransmitterAnnexUploadMonitorScript:",
     )
-    for event in (
-        "EVENT_CAUGHT_PROJECT_MEW_SUBJECT",
-        "EVENT_PROJECT_MEW_RESOLVED",
-        "EVENT_PROJECT_MEW_TRANSFORMED",
-    ):
+    for event in ("EVENT_PROJECT_MEW_RESOLVED", "EVENT_PROJECT_MEW_TRANSFORMED"):
         assert f"checkevent {event}" in callback
     assert "checkcode VAR_PARTYCOUNT" not in callback
     assert not any("POKEDEX" in row or "PARTY" in row for row in callback)
-    assert "bg_event 2, 5, BGEVENT_UP, RadioTowerTransmitterAnnexUploadMonitorScript" in annex
-    assert "bg_event 6, 5, BGEVENT_UP, RadioTowerTransmitterAnnexTerminalScript" in annex
+    assert "variablesprite SPRITE_PROJECT_MEW_SUBJECT, SPRITE_MEW" in callback
+    assert "variablesprite SPRITE_PROJECT_MEW_SUBJECT, SPRITE_MEWTWO" in callback
+    assert not any(row.startswith(("appear ", "disappear ")) for row in callback)
+    assert "bg_event 2, 5, BGEVENT_READ, RadioTowerTransmitterAnnexUploadMonitorScript" in annex
+    assert "bg_event 6, 5, BGEVENT_READ, RadioTowerTransmitterAnnexTerminalScript" in annex
     assert "bg_event 4, 3, BGEVENT_IFNOTSET, RadioTowerTransmitterAnnexGlassObservation" in annex
     assert "conditional_event EVENT_PROJECT_MEW_RESOLVED, .Script" in annex
-    assert sum(row.startswith("object_event 4, 2, SPRITE_MEW") for row in annex) == 2
+    assert sum(row.startswith("object_event 4, 2,") for row in annex) == 1
+    assert any(
+        row.startswith(
+            "object_event 4, 2, SPRITE_PROJECT_MEW_SUBJECT, SPRITEMOVEDATA_POKEMON"
+        )
+        and row.endswith(
+            "RadioTowerTransmitterAnnexSubjectScript, EVENT_CAUGHT_PROJECT_MEW_SUBJECT"
+        )
+        for row in annex
+    )
 
 
 def test_generic_caught_result_is_custom_only_and_keeps_celebi_compatible(
@@ -717,18 +754,14 @@ def test_generic_caught_result_is_custom_only_and_keeps_celebi_compatible(
 
 
 @pytest.mark.parametrize(
-    ("species", "script", "object_name"),
+    ("species", "script"),
     [
-        ("MEW", "RadioTowerTransmitterAnnexMewScript", "RADIOTOWERTRANSMITTERANNEX_MEW"),
-        (
-            "MEWTWO",
-            "RadioTowerTransmitterAnnexMewtwoScript",
-            "RADIOTOWERTRANSMITTERANNEX_MEWTWO",
-        ),
+        ("MEW", "RadioTowerTransmitterAnnexMewScript"),
+        ("MEWTWO", "RadioTowerTransmitterAnnexMewtwoScript"),
     ],
 )
 def test_selected_subject_is_level_30_normal_retry_until_captured_encounter(
-    repo_root: Path, species: str, script: str, object_name: str
+    repo_root: Path, species: str, script: str
 ) -> None:
     annex = _active_code(
         repo_root / "maps/RadioTowerTransmitterAnnex.asm", CRYSTAL_LEGENDS
@@ -746,15 +779,19 @@ def test_selected_subject_is_level_30_normal_retry_until_captured_encounter(
         [
             f"loadwildmon {species}, 30",
             "startbattle",
-            "reloadmapafterbattle",
             "special CheckCaughtPokemon",
             "iffalse .NotCaught",
             "setevent EVENT_CAUGHT_PROJECT_MEW_SUBJECT",
-            f"disappear {object_name}",
+            "disappear RADIOTOWERTRANSMITTERANNEX_SUBJECT",
             ".NotCaught:",
+            "reloadmapafterbattle",
             "end",
         ],
     )
+    assert encounter.index("special CheckCaughtPokemon") < encounter.index(
+        "reloadmapafterbattle"
+    )
+    assert encounter.index(f"cry {species}") < encounter.index("opentext")
     assert not any("BATTLETYPE" in row or row.startswith("loadvar") for row in encounter)
     assert not any(
         token in row
