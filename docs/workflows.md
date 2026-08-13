@@ -299,10 +299,13 @@ git status --short
 ```
 
 Automation owns the Slowpoke Well, Lake of Rage, Mahogany, and Radio Tower
-story ordering; reference-build isolation; the annex layout and collision; the
-data-sent, resolved, transformed, and caught facts; both permanent terminal
-outcomes; save/reload; level-30 encounter identity; successful capture; fresh
-retries after knockout or escape; player defeat; and resuming the stock
+story ordering; reference-build isolation; the annex layout, custom boundary,
+and collision; its one-step north-facing entry, one-time seal, unresolved 5F
+return, and save/reload persistence; both southern controls; the conditional
+glass observation; cancellation keeping the glass and exit closed; both
+permanent terminal outcomes opening them together; the data-sent, resolved,
+transformed, and caught facts; level-30 encounter identity; successful capture;
+fresh retries after knockout or escape; player defeat; and resuming the stock
 Director/Clear Bell cleanup without requiring capture.
 
 For manual acceptance, use a backed-up or disposable save and record the
@@ -314,11 +317,16 @@ branch, and result. Confirm:
 2. Mahogany's scientists, dossier, test record, and transmitter make the single
    captive subject and Goldenrod transfer understandable without feeling
    repetitive.
-3. The new north-wall entrance and compact annex read clearly, both console
-   interactions are discoverable, and cancellation cannot trap the player.
+3. Entry faces north and takes only one automatic step before the passage
+   audibly seals. In the first settled frame, confirm the complete compact room
+   reads clearly: both southern controls, continuous center glass, captive
+   subject, and entry. The subject must be visible but unreachable before a
+   decision, and cancellation must leave both controls usable without trapping
+   the player permanently.
 4. REVERSE SEQUENCE and STABILIZE SEQUENCE clearly communicate a permanent
-   Mew/Mewtwo decision before confirmation, and each branch's reveal feels
-   coherent.
+   Mew/Mewtwo decision before confirmation. Confirm the center glass and exit
+   open together, the route to the selected subject is obvious, and each
+   branch's reveal feels coherent.
 5. Capture, knockout, escape, player defeat, save/reload, and leaving without
    capture all feel natural; the resumed Director/Clear Bell sequence occurs
    once and remains recognizably stock.

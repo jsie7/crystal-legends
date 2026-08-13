@@ -99,3 +99,22 @@ fleeing-list species and an ordinary Route 37 control. They do not add defeat
 recovery or preserve battle status conditions. The user-owned manual matrix in
 [`docs/workflows.md`](../docs/workflows.md#validate-phase-6-roaming-and-fast-balls)
 owns tracker clarity, hunt feel, Fast Ball presentation, and Suicune continuity.
+
+Run the focused Phase 7 profile with:
+
+```bash
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/static/test_phase_07_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/rom/test_phase_07_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/emulator/test_phase_07_project_mew.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest -m phase7
+```
+
+Phase 7 has 39 focused tests: 16 source contracts, eight compiled-ROM
+contracts, and 15 production-ROM scenarios. They own the story ordering,
+four-fact state model, custom-only annex layout and boundary, one-step sealed
+entry, southern controls, gated glass observation and opening, both permanent
+outcomes, retry-until-captured encounter, save/reload behavior, stock Radio
+Tower resume, save-layout size stability, and reference isolation. The
+user-owned manual matrix in
+[`docs/workflows.md`](../docs/workflows.md#validate-phase-7-project-mew) owns the
+room's visual hierarchy, sound, dialogue wrapping, pacing, and branch feel.

@@ -25,10 +25,12 @@ species. The static, compiled-ROM, and production-ROM matrices pass without a
 save-layout change or any Suicune behavior change.
 Phase 7 builds Project Mew from subtle Slowpoke Well research hints through the
 Lake of Rage proof and Mahogany reveal, then resolves it in a compact Radio
-Tower transmitter annex. The permanent terminal decision leaves the single
-level-30 subject as Mew or stabilizes it as Mewtwo. Capture is optional for
-Johto progression, and any knockout, escape, or player defeat leaves a fresh
-retry available.
+Tower transmitter annex. Its one-step north-facing entry seals behind the
+player and reveals a southern two-console control bay facing a continuous glass
+wall and northern containment chamber. The permanent terminal decision opens
+the center glass and exit together, leaving the single level-30 subject as Mew
+or stabilizing it as Mewtwo. Capture is optional for Johto progression, and any
+knockout, escape, or player defeat leaves a fresh retry available.
 
 The earlier manual pass confirmed the title screen, all three legendary-bird
 starter branches, the first Silver battle, the Elm/Oak handoff, player-bird

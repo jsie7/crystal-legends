@@ -219,6 +219,15 @@ altered Mewtwo form. Store data sent, decision resolved, transformed outcome,
 and capture as four independent event facts; do not derive the branch from the
 party or Pokédex. The existing Executive victory event owns annex access.
 
+The annex presents the subject in a northern containment chamber behind a
+continuous glass wall, with the upload monitor and sequence terminal together
+in the southern control bay. The player enters at `(4, 6)` facing north, takes
+one automatic step to `(4, 5)`, and hears the passage seal behind them. A
+custom-only scene byte taken from the existing WRAM reserve preserves that
+closed state without changing save-layout size. Before resolution, the center
+glass can be inspected but not crossed; confirming either outcome opens its
+center block and the southern exit together.
+
 The selected subject is a normal level-30 wild battle that remains available
 after knockout, escape, or player defeat and starts each retry at full HP with
 no status. Capture alone removes it, but capture is not required to resume the
