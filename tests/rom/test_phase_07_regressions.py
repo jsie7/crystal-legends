@@ -18,7 +18,7 @@ pytestmark = [pytest.mark.rom, pytest.mark.phase7]
 
 @pytest.fixture(scope="module")
 def phase_7_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
-    return resolve_constants(
+    constants = resolve_constants(
         repo_root,
         tmp_path_factory.mktemp("phase_7_rom_constants"),
         [
@@ -56,6 +56,13 @@ def phase_7_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "disappear_command",
         ],
     )
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    for scene in (
+        "SCENE_RADIOTOWERTRANSMITTERANNEX_LOCK_ENTRY",
+        "SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP",
+    ):
+        constants[scene] = symbols.constant(scene)
+    return constants
 
 
 def _warp_events(
@@ -101,6 +108,11 @@ def test_compiled_phase_7_ids_append_without_expanding_save_layout(
 
     symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
     assert symbols["wCurBox"].address - symbols["wEventFlags"].address == 256
+    assert symbols["wRadioTowerTransmitterAnnexSceneID"].address + 49 == symbols[
+        "wJackFightCount"
+    ].address
+    assert phase_7_constants["SCENE_RADIOTOWERTRANSMITTERANNEX_LOCK_ENTRY"] == 0
+    assert phase_7_constants["SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP"] == 1
 
 
 def test_compiled_annex_asset_and_sprite_table_match_source(
@@ -241,6 +253,8 @@ def test_reference_rom_exports_no_phase_7_map_or_scripts(repo_root: Path) -> Non
         "RadioTower5FProjectMewEntranceCallback",
         "TilesetRadioTowerBlock40",
         "TilesetRadioTowerBlock40Coll",
+        "wRadioTowerTransmitterAnnexSceneID",
+        "RadioTowerTransmitterAnnexLockEntryScene",
     ):
         assert label not in symbols
 

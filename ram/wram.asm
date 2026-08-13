@@ -3226,7 +3226,12 @@ wMountMoonSquareSceneID::                         db
 wMobileTradeRoomSceneID::                         db
 wMobileBattleRoomSceneID::                        db
 
+if DEF(_CRYSTALLEGENDS)
+wRadioTowerTransmitterAnnexSceneID::               db
+	ds 48
+else
 	ds 49
+endc
 
 ; fight counts
 wJackFightCount::    db

@@ -6,13 +6,15 @@
   "max_frames_per_step": 60000,
   "annex": {
     "map": "RADIO_TOWER_TRANSMITTER_ANNEX",
+    "entry_start": {"x": 4, "y": 6, "facing": "UP"},
     "terminal_start": {"x": 6, "y": 6, "facing": "UP"},
     "subject_start": {"x": 4, "y": 3, "facing": "UP"},
     "exit_start": {"x": 4, "y": 6, "facing": "DOWN"}
   },
   "radio_tower_5f": {
     "map": "RADIO_TOWER_5F",
-    "boss_start": {"x": 16, "y": 6, "facing": "UP"}
+    "boss_start": {"x": 16, "y": 6, "facing": "UP"},
+    "resume_start": {"x": 16, "y": 6, "facing": "UP"}
   },
   "events": {
     "boss": "EVENT_BEAT_ROCKET_EXECUTIVEM_1",

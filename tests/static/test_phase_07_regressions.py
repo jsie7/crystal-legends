@@ -34,6 +34,7 @@ def test_project_mew_runtime_scenario_contract(repo_root: Path) -> None:
     assert scenario["max_frames_per_step"] == 60000
     assert scenario["annex"] == {
         "map": "RADIO_TOWER_TRANSMITTER_ANNEX",
+        "entry_start": {"x": 4, "y": 6, "facing": "UP"},
         "terminal_start": {"x": 6, "y": 6, "facing": "UP"},
         "subject_start": {"x": 4, "y": 3, "facing": "UP"},
         "exit_start": {"x": 4, "y": 6, "facing": "DOWN"},
@@ -41,6 +42,7 @@ def test_project_mew_runtime_scenario_contract(repo_root: Path) -> None:
     assert scenario["radio_tower_5f"] == {
         "map": "RADIO_TOWER_5F",
         "boss_start": {"x": 16, "y": 6, "facing": "UP"},
+        "resume_start": {"x": 16, "y": 6, "facing": "UP"},
     }
     assert scenario["events"] == {
         "boss": "EVENT_BEAT_ROCKET_EXECUTIVEM_1",
@@ -229,6 +231,37 @@ def test_project_mew_event_slots_are_explicit_and_reference_reserved(
     )
 
 
+def test_annex_scene_state_uses_custom_reserved_byte_and_map_scene_entry(
+    repo_root: Path,
+) -> None:
+    custom_wram = _active_code(repo_root / "ram/wram.asm", CRYSTAL_LEGENDS)
+    reference_wram = _active_code(repo_root / "ram/wram.asm", REFERENCE)
+    custom_scenes = _active_code(repo_root / "data/maps/scenes.asm", CRYSTAL_LEGENDS)
+    reference_scenes = _active_code(repo_root / "data/maps/scenes.asm", REFERENCE)
+
+    _assert_contiguous(
+        custom_wram,
+        [
+            "wMobileBattleRoomSceneID::                        db",
+            "wRadioTowerTransmitterAnnexSceneID::               db",
+            "ds 48",
+        ],
+    )
+    _assert_contiguous(
+        reference_wram,
+        [
+            "wMobileBattleRoomSceneID::                        db",
+            "ds 49",
+        ],
+    )
+    entry = (
+        "scene_var RADIO_TOWER_TRANSMITTER_ANNEX,                "
+        "wRadioTowerTransmitterAnnexSceneID"
+    )
+    assert entry in custom_scenes
+    assert entry not in reference_scenes
+
+
 def test_annex_map_and_subject_sprites_append_only_to_custom_tables(
     repo_root: Path,
 ) -> None:
@@ -250,6 +283,10 @@ def test_annex_map_and_subject_sprites_append_only_to_custom_tables(
         [
             "map_const VICTORY_ROAD,                                10, 36",
             "map_const RADIO_TOWER_TRANSMITTER_ANNEX,                 5,  4",
+            "DEF SCENE_RADIOTOWERTRANSMITTERANNEX_LOCK_ENTRY EQU 0",
+            "DEF SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP       EQU 1",
+            "EXPORT SCENE_RADIOTOWERTRANSMITTERANNEX_LOCK_ENTRY",
+            "EXPORT SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP",
             "endgroup",
         ],
     )
@@ -369,7 +406,14 @@ def test_final_executive_sends_data_before_battle_and_opens_existing_flag_gate(
         ],
     )
     assert "setscene SCENE_RADIOTOWER5F_PROJECT_MEW" in boss
-    assert "warp RADIO_TOWER_TRANSMITTER_ANNEX, 4, 6" in boss
+    _assert_contiguous(
+        boss,
+        [
+            "setmapscene RADIO_TOWER_TRANSMITTER_ANNEX, SCENE_RADIOTOWERTRANSMITTERANNEX_LOCK_ENTRY",
+            "warpfacing UP, RADIO_TOWER_TRANSMITTER_ANNEX, 4, 6",
+            "end",
+        ],
+    )
     callback = _section(
         crystal,
         "RadioTower5FProjectMewEntranceCallback:",
@@ -378,6 +422,21 @@ def test_final_executive_sends_data_before_battle_and_opens_existing_flag_gate(
     assert "checkevent EVENT_BEAT_ROCKET_EXECUTIVEM_1" in callback
     assert "changeblock 14, 0, $1d" in callback
     assert "changeblock 14, 0, $02" in callback
+    resume = _section(
+        crystal,
+        "RadioTower5FResumeProjectMewScript:",
+        "RadioTower5FNoop3Scene:",
+    )
+    _assert_contiguous(
+        resume,
+        [
+            ".ReturnToAnnex:",
+            "setmapscene RADIO_TOWER_TRANSMITTER_ANNEX, SCENE_RADIOTOWERTRANSMITTERANNEX_LOCK_ENTRY",
+            "warpfacing UP, RADIO_TOWER_TRANSMITTER_ANNEX, 4, 6",
+            "end",
+        ],
+    )
+    assert "warp RADIO_TOWER_TRANSMITTER_ANNEX, 4, 6" not in crystal
     assert "EVENT_PROJECT_MEW_ACCESS" not in "\n".join(crystal)
     _assert_contiguous(
         dialogue,
@@ -476,6 +535,65 @@ def test_annex_terminal_is_cancelable_confirmed_permanent_and_capture_optional(
         "setevent EVENT_TEAM_ROCKET_DISBANDED",
     ):
         assert row in director
+
+
+def test_annex_entry_scene_moves_once_and_reconstructs_open_closed_and_resolved_tiles(
+    repo_root: Path,
+) -> None:
+    annex = _active_code(
+        repo_root / "maps/RadioTowerTransmitterAnnex.asm", CRYSTAL_LEGENDS
+    )
+    _assert_contiguous(
+        annex,
+        [
+            "def_scene_scripts",
+            "scene_script RadioTowerTransmitterAnnexLockEntryScene",
+            "scene_script RadioTowerTransmitterAnnexNoopScene",
+            "assert _NUM_SCENE_SCRIPTS == SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP + 1",
+        ],
+    )
+    callback = _section(
+        annex,
+        "RadioTowerTransmitterAnnexExitCallback:",
+        "RadioTowerTransmitterAnnexSealEntryScript:",
+    )
+    for row in (
+        "checkevent EVENT_PROJECT_MEW_RESOLVED",
+        "checkscene",
+        "ifequal SCENE_RADIOTOWERTRANSMITTERANNEX_LOCK_ENTRY, .Entering",
+        "changeblock 4, 6, $40",
+        "changeblock 4, 6, $07",
+        "changeblock 4, 2, $01",
+    ):
+        assert row in callback
+    seal = _section(
+        annex,
+        "RadioTowerTransmitterAnnexSealEntryScript:",
+        "RadioTowerTransmitterAnnexSubjectCallback:",
+    )
+    _assert_contiguous(
+        seal,
+        [
+            "checkevent EVENT_PROJECT_MEW_RESOLVED",
+            "iftrue .Resolved",
+            "applymovement PLAYER, RadioTowerTransmitterAnnexEntryMovement",
+            "reanchormap",
+            "playsound SFX_ENTER_DOOR",
+            "changeblock 4, 6, $40",
+            "refreshmap",
+            "setscene SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP",
+            "waitsfx",
+            "end",
+        ],
+    )
+    _assert_contiguous(
+        annex,
+        [
+            "RadioTowerTransmitterAnnexEntryMovement:",
+            "step UP",
+            "step_end",
+        ],
+    )
 
 
 def test_annex_visibility_uses_outcome_facts_not_party_or_pokedex(

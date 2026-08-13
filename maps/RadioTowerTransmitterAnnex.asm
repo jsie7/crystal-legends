@@ -4,21 +4,53 @@
 
 RadioTowerTransmitterAnnex_MapScripts:
 	def_scene_scripts
+	scene_script RadioTowerTransmitterAnnexLockEntryScene
+	scene_script RadioTowerTransmitterAnnexNoopScene
+	assert _NUM_SCENE_SCRIPTS == SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP + 1
 
 	def_callbacks
 	callback MAPCALLBACK_TILES, RadioTowerTransmitterAnnexExitCallback
 	callback MAPCALLBACK_OBJECTS, RadioTowerTransmitterAnnexSubjectCallback
 
+RadioTowerTransmitterAnnexLockEntryScene:
+	sdefer RadioTowerTransmitterAnnexSealEntryScript
+	end
+
+RadioTowerTransmitterAnnexNoopScene:
+	end
+
 RadioTowerTransmitterAnnexExitCallback:
 	checkevent EVENT_PROJECT_MEW_RESOLVED
-	iffalse .Closed
+	iftrue .Open
+	checkscene
+	ifequal SCENE_RADIOTOWERTRANSMITTERANNEX_LOCK_ENTRY, .Entering
+	changeblock 4, 6, $40 ; sealed return wall
+	endcallback
+
+.Entering:
+	changeblock 4, 6, $07 ; open while entering
+	endcallback
+
+.Open:
 	changeblock 4, 2, $01 ; open center glass
 	changeblock 4, 6, $07 ; open return stairs
 	endcallback
 
-.Closed:
+RadioTowerTransmitterAnnexSealEntryScript:
+	checkevent EVENT_PROJECT_MEW_RESOLVED
+	iftrue .Resolved
+	applymovement PLAYER, RadioTowerTransmitterAnnexEntryMovement
+	reanchormap
+	playsound SFX_ENTER_DOOR
 	changeblock 4, 6, $40 ; sealed return wall
-	endcallback
+	refreshmap
+	setscene SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP
+	waitsfx
+	end
+
+.Resolved:
+	setscene SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP
+	end
 
 RadioTowerTransmitterAnnexSubjectCallback:
 	checkevent EVENT_CAUGHT_PROJECT_MEW_SUBJECT
@@ -169,6 +201,10 @@ RadioTowerTransmitterAnnexMewtwoScript:
 	disappear RADIOTOWERTRANSMITTERANNEX_MEWTWO
 .NotCaught:
 	end
+
+RadioTowerTransmitterAnnexEntryMovement:
+	step UP
+	step_end
 
 RadioTowerTransmitterAnnexTerminalMenuHeader:
 	db MENU_BACKUP_TILES ; flags

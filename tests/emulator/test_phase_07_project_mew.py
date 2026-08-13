@@ -87,6 +87,8 @@ def phase_7_runtime_constants(repo_root: Path, tmp_path_factory) -> dict[str, in
         "SCENE_RADIOTOWER5F_PROJECT_MEW",
         "SCENE_RADIOTOWER5F_ROCKET_BOSS",
         "SCENE_RADIOTOWER5F_NOOP",
+        "SCENE_RADIOTOWERTRANSMITTERANNEX_LOCK_ENTRY",
+        "SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP",
     ):
         constants[scene] = symbols.constant(scene)
     return constants
@@ -208,6 +210,21 @@ def test_terminal_cancel_changes_no_outcome_and_can_be_reopened(
         assert not _event(session, constants, "EVENT_PROJECT_MEW_RESOLVED")
         assert not _event(session, constants, "EVENT_PROJECT_MEW_TRANSFORMED")
         assert not _event(session, constants, "EVENT_CAUGHT_PROJECT_MEW_SUBJECT")
+
+        place_player(session, 4, 4)
+        session.write_symbol("wPlayerDirection", constants["OW_UP"])
+        session.tap("up", 2, 20)
+        assert session.read_symbol("wXCoord") == 4
+        assert session.read_symbol("wYCoord") == 4
+
+        place_player(session, 4, 6)
+        session.write_symbol("wPlayerDirection", constants["OW_DOWN"])
+        session.tap("down", 2, 20)
+        assert session.read_symbol("wXCoord") == 4
+        assert session.read_symbol("wYCoord") == 6
+
+        terminal_start = scenario["annex"]["terminal_start"]
+        place_player(session, terminal_start["x"], terminal_start["y"])
 
         _run_terminal(session, constants, scenario, "reverse")
         assert _event(session, constants, "EVENT_PROJECT_MEW_RESOLVED")
@@ -385,6 +402,9 @@ def test_final_executive_victory_opens_annex_before_director_cleanup(
                 == constants["GROUP_RADIO_TOWER_TRANSMITTER_ANNEX"]
                 and current.read_symbol("wMapNumber")
                 == constants["MAP_RADIO_TOWER_TRANSMITTER_ANNEX"]
+                and current.read_symbol("wXCoord") == 4
+                and current.read_symbol("wYCoord") == 5
+                and current.read_symbol("wScriptMode") == 0
             ),
             max_frames,
             "Project Mew annex handoff",
@@ -397,6 +417,142 @@ def test_final_executive_victory_opens_annex_before_director_cleanup(
             session.read_symbol("wRadioTower5FSceneID")
             == constants["SCENE_RADIOTOWER5F_PROJECT_MEW"]
         )
+        assert session.read_symbol("wPlayerDirection") == constants["OW_UP"]
+        assert (
+            session.read_symbol("wRadioTowerTransmitterAnnexSceneID")
+            == constants["SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP"]
+        )
+
+
+def test_annex_entry_seals_once_and_survives_native_save_reload(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_7_runtime_constants: dict[str, int],
+    scenario: dict,
+) -> None:
+    constants = phase_7_runtime_constants
+    max_frames = scenario["max_frames_per_step"]
+    persisted = tmp_path / "sealed-entry.sav"
+
+    with loaded_phase_7_checkpoint(
+        repo_root,
+        tmp_path / "initial",
+        constants,
+        scenario,
+        start="entry",
+        resolved=False,
+    ) as session:
+        session.wait_until(
+            lambda current: (
+                current.read_symbol("wXCoord") == 4
+                and current.read_symbol("wYCoord") == 5
+                and current.read_symbol("wScriptMode") == 0
+                and current.read_symbol("wRadioTowerTransmitterAnnexSceneID")
+                == constants["SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP"]
+            ),
+            max_frames,
+            "settled Project Mew annex entry",
+        )
+        assert session.read_symbol("wXCoord") == 4
+        assert session.read_symbol("wYCoord") == 5
+        assert session.read_symbol("wPlayerDirection") == constants["OW_UP"]
+        assert (
+            session.read_symbol("wRadioTowerTransmitterAnnexSceneID")
+            == constants["SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP"]
+        )
+        save_game_from_overworld(session, max_frames)
+        dump_battery_ram(session, persisted)
+
+    with loaded_phase_7_saved_game(
+        repo_root,
+        tmp_path / "reload",
+        constants,
+        scenario,
+        persisted,
+    ) as session:
+        assert session.read_symbol("wXCoord") == 4
+        assert session.read_symbol("wYCoord") == 5
+        assert (
+            session.read_symbol("wRadioTowerTransmitterAnnexSceneID")
+            == constants["SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP"]
+        )
+        session.tick(120)
+        assert session.read_symbol("wXCoord") == 4
+        assert session.read_symbol("wYCoord") == 5
+        session.tap("down", 2, 20)
+        assert session.read_symbol("wYCoord") == 6
+        session.tap("down", 2, 20)
+        assert session.read_symbol("wYCoord") == 6
+
+
+def test_unresolved_5f_resume_returns_through_the_same_sealed_entry(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_7_runtime_constants: dict[str, int],
+    scenario: dict,
+) -> None:
+    constants = phase_7_runtime_constants
+    max_frames = scenario["max_frames_per_step"]
+    with loaded_phase_7_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        start="resume",
+        resolved=False,
+    ) as session:
+        session.wait_until(
+            lambda current: (
+                current.read_symbol("wMapGroup")
+                == constants["GROUP_RADIO_TOWER_TRANSMITTER_ANNEX"]
+                and current.read_symbol("wMapNumber")
+                == constants["MAP_RADIO_TOWER_TRANSMITTER_ANNEX"]
+                and current.read_symbol("wXCoord") == 4
+                and current.read_symbol("wYCoord") == 5
+                and current.read_symbol("wScriptMode") == 0
+                and current.read_symbol("wRadioTowerTransmitterAnnexSceneID")
+                == constants["SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP"]
+            ),
+            max_frames,
+            "unresolved Radio Tower 5F return to the sealed annex",
+        )
+        assert session.read_symbol("wPlayerDirection") == constants["OW_UP"]
+        assert not _event(session, constants, "EVENT_PROJECT_MEW_RESOLVED")
+        assert not _event(session, constants, "EVENT_CLEARED_RADIO_TOWER")
+
+
+def test_unresolved_subject_can_be_observed_only_through_center_glass(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_7_runtime_constants: dict[str, int],
+    scenario: dict,
+) -> None:
+    constants = phase_7_runtime_constants
+    max_frames = scenario["max_frames_per_step"]
+    with loaded_phase_7_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        start="terminal",
+        resolved=False,
+    ) as session:
+        session.enable_script_tracing()
+        place_player(session, 4, 4)
+        session.write_symbol("wPlayerDirection", constants["OW_UP"])
+        session.tap("a", 2, 10)
+        session.wait_for_script(
+            "RadioTowerTransmitterAnnexGlassObservation.Script", max_frames
+        )
+        advance_with_a_until(
+            session,
+            lambda current: current.read_symbol("wScriptMode") == 0,
+            max_frames,
+            "unresolved Project Mew glass observation",
+        )
+        assert not _event(session, constants, "EVENT_PROJECT_MEW_RESOLVED")
+        assert not _event(session, constants, "EVENT_CAUGHT_PROJECT_MEW_SUBJECT")
+        assert session.read_symbol("wBattleMode") == 0
 
 
 @pytest.mark.parametrize("outcome", ["knockout", "escape"])

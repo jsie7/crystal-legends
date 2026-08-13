@@ -30,8 +30,9 @@ def build_phase_7_checkpoint(
     symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
     save = BatterySave.load(fixture, symbols)
     boss_checkpoint = start == "boss"
-    target = scenario["radio_tower_5f"] if boss_checkpoint else scenario["annex"]
-    coordinate = target["boss_start" if boss_checkpoint else f"{start}_start"]
+    radio_checkpoint = start in {"boss", "resume"}
+    target = scenario["radio_tower_5f"] if radio_checkpoint else scenario["annex"]
+    coordinate = target[f"{start}_start"]
     events = scenario["events"]
 
     save.write_saved_u8("wWarpNumber", 0)
@@ -50,6 +51,15 @@ def build_phase_7_checkpoint(
             else "SCENE_RADIOTOWER5F_PROJECT_MEW"
         ],
     )
+    if not radio_checkpoint:
+        save.write_saved_u8(
+            "wRadioTowerTransmitterAnnexSceneID",
+            constants[
+                "SCENE_RADIOTOWERTRANSMITTERANNEX_LOCK_ENTRY"
+                if start == "entry"
+                else "SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP"
+            ],
+        )
     save.set_event(constants[events["boss"]], not boss_checkpoint)
     save.set_event(constants[events["data_sent"]], not boss_checkpoint)
     save.set_event(constants[events["resolved"]], resolved)
