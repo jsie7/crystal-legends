@@ -390,6 +390,12 @@ RadioTower5FRocketBossAfterText:
 
 	para "disband TEAM"
 	line "ROCKET here today."
+if DEF(_CRYSTALLEGENDS)
+
+	para "But PROJECT MEW"
+	line "is out of my hands"
+	cont "now."
+endc
 
 	para "Farewell."
 	done
@@ -401,7 +407,8 @@ RadioTower5FProjectMewEntranceOpenedText:
 	cont "old stairs!"
 
 	para "The PROJECT MEW"
-	line "signal is below."
+	line "transmitter lies"
+	cont "beyond it."
 	done
 endc
 

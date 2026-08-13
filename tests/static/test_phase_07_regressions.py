@@ -323,6 +323,21 @@ def test_final_executive_sends_data_before_battle_and_opens_existing_flag_gate(
     dialogue = _section(
         crystal, "RadioTower5FRocketBossBeforeText:", "RadioTower5FRocketBossWinText:"
     )
+    after_dialogue = _section(
+        crystal,
+        "RadioTower5FRocketBossAfterText:",
+        "RadioTower5FProjectMewEntranceOpenedText:",
+    )
+    entrance_dialogue = _section(
+        crystal,
+        "RadioTower5FProjectMewEntranceOpenedText:",
+        "RadioTower5FDirectorThankYouText:",
+    )
+    reference_after_dialogue = _section(
+        reference,
+        "RadioTower5FRocketBossAfterText:",
+        "RadioTower5FDirectorThankYouText:",
+    )
 
     assert boss.index("setevent EVENT_PROJECT_MEW_DATA_SENT") < boss.index("startbattle")
     _assert_contiguous(
@@ -363,7 +378,40 @@ def test_final_executive_sends_data_before_battle_and_opens_existing_flag_gate(
         ],
     )
     assert not any('para "already reached"' in row for row in dialogue)
+    _assert_contiguous(
+        after_dialogue,
+        [
+            'para "disband TEAM"',
+            'line "ROCKET here today."',
+            'para "But PROJECT MEW"',
+            'line "is out of my hands"',
+            'cont "now."',
+            'para "Farewell."',
+        ],
+    )
+    _assert_contiguous(
+        entrance_dialogue,
+        [
+            'text "A hidden stairway"',
+            'line "opened beside the"',
+            'cont "old stairs!"',
+            'para "The PROJECT MEW"',
+            'line "transmitter lies"',
+            'cont "beyond it."',
+            "done",
+        ],
+    )
+    assert 'line "signal is below."' not in entrance_dialogue
+    _assert_contiguous(
+        reference_after_dialogue,
+        [
+            'para "disband TEAM"',
+            'line "ROCKET here today."',
+            'para "Farewell."',
+        ],
+    )
     assert not any("PROJECT_MEW" in row for row in reference)
+    assert not any('para "But PROJECT MEW"' in row for row in reference)
     assert not any('para "…"' in row for row in reference)
 
 
