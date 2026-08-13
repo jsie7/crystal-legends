@@ -320,6 +320,9 @@ def test_final_executive_sends_data_before_battle_and_opens_existing_flag_gate(
     crystal = _active_code(source, CRYSTAL_LEGENDS)
     reference = _active_code(source, REFERENCE)
     boss = _section(crystal, "RadioTower5FRocketBossScript:", "RadioTower5FDirectorCleanupScript:")
+    dialogue = _section(
+        crystal, "RadioTower5FRocketBossBeforeText:", "RadioTower5FRocketBossWinText:"
+    )
 
     assert boss.index("setevent EVENT_PROJECT_MEW_DATA_SENT") < boss.index("startbattle")
     _assert_contiguous(
@@ -342,7 +345,26 @@ def test_final_executive_sends_data_before_battle_and_opens_existing_flag_gate(
     assert "changeblock 14, 0, $1d" in callback
     assert "changeblock 14, 0, $02" in callback
     assert "EVENT_PROJECT_MEW_ACCESS" not in "\n".join(crystal)
+    _assert_contiguous(
+        dialogue,
+        [
+            'para "We are going to"',
+            'line "regain our former"',
+            'cont "glory."',
+            'para "…"',
+            'para "Too late! PROJECT"',
+            'line "MEW\'s research"',
+            'para "just reached"',
+            'line "GIOVANNI."',
+            'para "This tower will"',
+            'line "finish the captive"',
+            'cont "subject\'s change!"',
+            'para "I won\'t allow you"',
+        ],
+    )
+    assert not any('para "already reached"' in row for row in dialogue)
     assert not any("PROJECT_MEW" in row for row in reference)
+    assert not any('para "…"' in row for row in reference)
 
 
 def test_annex_terminal_is_cancelable_confirmed_permanent_and_capture_optional(

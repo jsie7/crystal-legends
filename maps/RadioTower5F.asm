@@ -353,10 +353,12 @@ RadioTower5FRocketBossBeforeText:
 	cont "glory."
 if DEF(_CRYSTALLEGENDS)
 
+	para "…"
+
 	para "Too late! PROJECT"
 	line "MEW's research"
 
-	para "already reached"
+	para "just reached"
 	line "GIOVANNI."
 
 	para "This tower will"
