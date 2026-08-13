@@ -301,10 +301,17 @@ ScientistMarcBeatenText:
 
 ScientistMarcAfterBattleText:
 	text "Bwahahaha…"
+if DEF(_CRYSTALLEGENDS)
+
+	para "I can transmit the"
+	line "signal PROJECT MEW"
+	cont "needs from here."
+else
 
 	para "I can transmit as"
 	line "strong a signal as"
 	cont "I need from here."
+endc
 	done
 
 RadioTower3FCardKeySlotText:

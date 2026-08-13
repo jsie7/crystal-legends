@@ -336,6 +336,20 @@ RadioTower5FRocketBossBeforeText:
 
 	para "You must be quite"
 	line "the trainer."
+if DEF(_CRYSTALLEGENDS)
+
+	para "We seized this"
+	line "RADIO TOWER for"
+	cont "PROJECT MEW."
+
+	para "Its signal will"
+	line "finish the captive"
+	cont "subject's change!"
+
+	para "Then we'll declare"
+	line "TEAM ROCKET's"
+	cont "comeback."
+else
 
 	para "We intend to take"
 	line "over this RADIO"
@@ -343,6 +357,7 @@ RadioTower5FRocketBossBeforeText:
 	para "STATION and an-"
 	line "nounce our come-"
 	cont "back."
+endc
 
 	para "That should bring"
 	line "our boss GIOVANNI"
@@ -357,15 +372,9 @@ if DEF(_CRYSTALLEGENDS)
 
 	para "…"
 
-	para "Too late! PROJECT"
-	line "MEW's research"
-
-	para "just reached"
-	line "GIOVANNI."
-
-	para "This tower will"
-	line "finish the captive"
-	cont "subject's change!"
+	para "Too late! The data"
+	line "just reached"
+	cont "GIOVANNI."
 endc
 
 	para "I won't allow you"

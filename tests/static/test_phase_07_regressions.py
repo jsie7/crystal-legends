@@ -165,6 +165,41 @@ def test_mahogany_reveal_uses_existing_people_office_lab_and_transmitter(
         assert token not in b2f_reference
 
 
+def test_radio_tower_scientist_names_project_mew_signal_in_custom_build(
+    repo_root: Path,
+) -> None:
+    source = repo_root / "maps/RadioTower3F.asm"
+    crystal = _active_code(source, CRYSTAL_LEGENDS)
+    reference = _active_code(source, REFERENCE)
+    crystal_dialogue = _section(
+        crystal, "ScientistMarcAfterBattleText:", "RadioTower3FCardKeySlotText:"
+    )
+    reference_dialogue = _section(
+        reference, "ScientistMarcAfterBattleText:", "RadioTower3FCardKeySlotText:"
+    )
+
+    _assert_contiguous(
+        crystal_dialogue,
+        [
+            'text "Bwahahaha…"',
+            'para "I can transmit the"',
+            'line "signal PROJECT MEW"',
+            'cont "needs from here."',
+            "done",
+        ],
+    )
+    _assert_contiguous(
+        reference_dialogue,
+        [
+            'text "Bwahahaha…"',
+            'para "I can transmit as"',
+            'line "strong a signal as"',
+            'cont "I need from here."',
+            "done",
+        ],
+    )
+
+
 def test_stock_rocket_story_progression_operations_remain_present(
     repo_root: Path,
 ) -> None:
@@ -441,17 +476,26 @@ def test_final_executive_sends_data_before_battle_and_opens_existing_flag_gate(
     _assert_contiguous(
         dialogue,
         [
+            'para "We seized this"',
+            'line "RADIO TOWER for"',
+            'cont "PROJECT MEW."',
+            'para "Its signal will"',
+            'line "finish the captive"',
+            'cont "subject\'s change!"',
+            'para "Then we\'ll declare"',
+            'line "TEAM ROCKET\'s"',
+            'cont "comeback."',
+            'para "That should bring"',
+            'line "our boss GIOVANNI"',
+            'para "back from his solo"',
+            'line "training."',
             'para "We are going to"',
             'line "regain our former"',
             'cont "glory."',
             'para "…"',
-            'para "Too late! PROJECT"',
-            'line "MEW\'s research"',
-            'para "just reached"',
-            'line "GIOVANNI."',
-            'para "This tower will"',
-            'line "finish the captive"',
-            'cont "subject\'s change!"',
+            'para "Too late! The data"',
+            'line "just reached"',
+            'cont "GIOVANNI."',
             'para "I won\'t allow you"',
         ],
     )
