@@ -110,7 +110,7 @@ def _event(session, constants: dict[str, int], name: str) -> bool:
     return event_is_set(session, constants[name])
 
 
-def test_mahogany_office_and_all_four_lab_computers_are_readable(
+def test_mahogany_office_and_all_four_lab_computers_are_readable_from_below_and_side(
     repo_root: Path,
     tmp_path: Path,
     phase_7_runtime_constants: dict[str, int],
@@ -119,12 +119,18 @@ def test_mahogany_office_and_all_four_lab_computers_are_readable(
     constants = phase_7_runtime_constants
     max_frames = scenario["max_frames_per_step"]
     access_points = (
-        (8, 4, "TeamRocketBaseB3FProjectMewDossierScript"),
-        (9, 4, "TeamRocketBaseB3FProjectMewDossierScript"),
-        (20, 8, "TeamRocketBaseB3FProjectMewTestDataScript"),
-        (24, 8, "TeamRocketBaseB3FProjectMewTestDataScript"),
-        (20, 12, "TeamRocketBaseB3FProjectMewTestDataScript"),
-        (22, 12, "TeamRocketBaseB3FProjectMewTestDataScript"),
+        (8, 4, "OW_UP", "TeamRocketBaseB3FProjectMewDossierScript"),
+        (9, 4, "OW_UP", "TeamRocketBaseB3FProjectMewDossierScript"),
+        (20, 8, "OW_UP", "TeamRocketBaseB3FProjectMewTestDataScript"),
+        (24, 8, "OW_UP", "TeamRocketBaseB3FProjectMewTestDataScript"),
+        (20, 12, "OW_UP", "TeamRocketBaseB3FProjectMewTestDataScript"),
+        (22, 12, "OW_UP", "TeamRocketBaseB3FProjectMewTestDataScript"),
+        (7, 3, "OW_RIGHT", "TeamRocketBaseB3FProjectMewDossierScript"),
+        (10, 3, "OW_LEFT", "TeamRocketBaseB3FProjectMewDossierScript"),
+        (19, 7, "OW_RIGHT", "TeamRocketBaseB3FProjectMewTestDataScript"),
+        (25, 7, "OW_LEFT", "TeamRocketBaseB3FProjectMewTestDataScript"),
+        (19, 11, "OW_RIGHT", "TeamRocketBaseB3FProjectMewTestDataScript"),
+        (21, 11, "OW_RIGHT", "TeamRocketBaseB3FProjectMewTestDataScript"),
     )
 
     with loaded_phase_7_mahogany_computer_checkpoint(
@@ -134,9 +140,9 @@ def test_mahogany_office_and_all_four_lab_computers_are_readable(
         scenario,
     ) as session:
         session.enable_script_tracing()
-        for x, y, expected_script in access_points:
+        for x, y, direction, expected_script in access_points:
             place_player(session, x, y)
-            session.write_symbol("wPlayerDirection", constants["OW_UP"])
+            session.write_symbol("wPlayerDirection", constants[direction])
             session.script_history.clear()
             session.tap("a", 2, 10)
             session.wait_for_script(expected_script, max_frames)

@@ -267,12 +267,12 @@ def test_compiled_mahogany_computers_cover_every_visible_workstation(
     ]
 
     assert project_mew_computers == [
-        (8, 3, phase_7_constants["BGEVENT_UP"], dossier),
-        (9, 3, phase_7_constants["BGEVENT_UP"], dossier),
-        (20, 7, phase_7_constants["BGEVENT_UP"], test_data),
-        (24, 7, phase_7_constants["BGEVENT_UP"], test_data),
-        (20, 11, phase_7_constants["BGEVENT_UP"], test_data),
-        (22, 11, phase_7_constants["BGEVENT_UP"], test_data),
+        (8, 3, phase_7_constants["BGEVENT_READ"], dossier),
+        (9, 3, phase_7_constants["BGEVENT_READ"], dossier),
+        (20, 7, phase_7_constants["BGEVENT_READ"], test_data),
+        (24, 7, phase_7_constants["BGEVENT_READ"], test_data),
+        (20, 11, phase_7_constants["BGEVENT_READ"], test_data),
+        (22, 11, phase_7_constants["BGEVENT_READ"], test_data),
     ]
 
 

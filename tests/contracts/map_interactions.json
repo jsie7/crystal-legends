@@ -15,7 +15,7 @@
     "coordinate": [8, 3],
     "collision": "COLL_FLOOR",
     "event_type": "bg_event",
-    "event_direction": "BGEVENT_UP",
+    "event_direction": "BGEVENT_READ",
     "script": "TeamRocketBaseB3FProjectMewDossierScript",
     "variant": "crystallegends"
   },
@@ -25,7 +25,7 @@
     "coordinate": [9, 3],
     "collision": "COLL_FLOOR",
     "event_type": "bg_event",
-    "event_direction": "BGEVENT_UP",
+    "event_direction": "BGEVENT_READ",
     "script": "TeamRocketBaseB3FProjectMewDossierScript",
     "variant": "crystallegends"
   },
@@ -35,7 +35,7 @@
     "coordinate": [20, 7],
     "collision": "COLL_FLOOR",
     "event_type": "bg_event",
-    "event_direction": "BGEVENT_UP",
+    "event_direction": "BGEVENT_READ",
     "script": "TeamRocketBaseB3FProjectMewTestDataScript",
     "variant": "crystallegends"
   },
@@ -45,7 +45,7 @@
     "coordinate": [24, 7],
     "collision": "COLL_FLOOR",
     "event_type": "bg_event",
-    "event_direction": "BGEVENT_UP",
+    "event_direction": "BGEVENT_READ",
     "script": "TeamRocketBaseB3FProjectMewTestDataScript",
     "variant": "crystallegends"
   },
@@ -55,7 +55,7 @@
     "coordinate": [20, 11],
     "collision": "COLL_FLOOR",
     "event_type": "bg_event",
-    "event_direction": "BGEVENT_UP",
+    "event_direction": "BGEVENT_READ",
     "script": "TeamRocketBaseB3FProjectMewTestDataScript",
     "variant": "crystallegends"
   },
@@ -65,7 +65,7 @@
     "coordinate": [22, 11],
     "collision": "COLL_FLOOR",
     "event_type": "bg_event",
-    "event_direction": "BGEVENT_UP",
+    "event_direction": "BGEVENT_READ",
     "script": "TeamRocketBaseB3FProjectMewTestDataScript",
     "variant": "crystallegends"
   }
