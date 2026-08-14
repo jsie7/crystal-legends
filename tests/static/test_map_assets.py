@@ -69,7 +69,7 @@ def test_all_event_counts_fit_engine_capacities(repo_root: Path, map_data) -> No
     validate_event_capacities(events, contracts)
 
 
-def test_bedroom_tv_interaction_contract(repo_root: Path, map_data) -> None:
+def test_declared_map_interaction_contracts(repo_root: Path, map_data) -> None:
     dimensions, events, block_paths, tilesets = map_data
     contracts = load_interaction_contracts(
         repo_root / "tests/contracts/map_interactions.json"

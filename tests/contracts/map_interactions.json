@@ -8,5 +8,65 @@
     "event_direction": "BGEVENT_UP",
     "script": "PlayersHouse2FTVScript",
     "variant": "crystallegends"
+  },
+  {
+    "contract_id": "project-mew-office-dossier-left",
+    "map_name": "TEAM_ROCKET_BASE_B3F",
+    "coordinate": [8, 3],
+    "collision": "COLL_FLOOR",
+    "event_type": "bg_event",
+    "event_direction": "BGEVENT_UP",
+    "script": "TeamRocketBaseB3FProjectMewDossierScript",
+    "variant": "crystallegends"
+  },
+  {
+    "contract_id": "project-mew-office-dossier-right",
+    "map_name": "TEAM_ROCKET_BASE_B3F",
+    "coordinate": [9, 3],
+    "collision": "COLL_FLOOR",
+    "event_type": "bg_event",
+    "event_direction": "BGEVENT_UP",
+    "script": "TeamRocketBaseB3FProjectMewDossierScript",
+    "variant": "crystallegends"
+  },
+  {
+    "contract_id": "project-mew-lab-computer-northwest",
+    "map_name": "TEAM_ROCKET_BASE_B3F",
+    "coordinate": [20, 7],
+    "collision": "COLL_FLOOR",
+    "event_type": "bg_event",
+    "event_direction": "BGEVENT_UP",
+    "script": "TeamRocketBaseB3FProjectMewTestDataScript",
+    "variant": "crystallegends"
+  },
+  {
+    "contract_id": "project-mew-lab-computer-northeast",
+    "map_name": "TEAM_ROCKET_BASE_B3F",
+    "coordinate": [24, 7],
+    "collision": "COLL_FLOOR",
+    "event_type": "bg_event",
+    "event_direction": "BGEVENT_UP",
+    "script": "TeamRocketBaseB3FProjectMewTestDataScript",
+    "variant": "crystallegends"
+  },
+  {
+    "contract_id": "project-mew-lab-computer-southwest",
+    "map_name": "TEAM_ROCKET_BASE_B3F",
+    "coordinate": [20, 11],
+    "collision": "COLL_FLOOR",
+    "event_type": "bg_event",
+    "event_direction": "BGEVENT_UP",
+    "script": "TeamRocketBaseB3FProjectMewTestDataScript",
+    "variant": "crystallegends"
+  },
+  {
+    "contract_id": "project-mew-lab-computer-southeast",
+    "map_name": "TEAM_ROCKET_BASE_B3F",
+    "coordinate": [22, 11],
+    "collision": "COLL_FLOOR",
+    "event_type": "bg_event",
+    "event_direction": "BGEVENT_UP",
+    "script": "TeamRocketBaseB3FProjectMewTestDataScript",
+    "variant": "crystallegends"
   }
 ]

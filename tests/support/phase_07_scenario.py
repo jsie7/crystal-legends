@@ -78,6 +78,70 @@ def build_phase_7_checkpoint(
     return destination
 
 
+def build_phase_7_mahogany_computer_checkpoint(
+    repo_root: Path,
+    destination: Path,
+    constants: dict[str, int],
+) -> Path:
+    fixture = repo_root / "tests/fixtures/saves/bedroom_initialized.sav"
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    save = BatterySave.load(fixture, symbols)
+    save.write_saved_u8("wWarpNumber", 0)
+    save.write_saved_u8("wMapGroup", constants["GROUP_TEAM_ROCKET_BASE_B3F"])
+    save.write_saved_u8("wMapNumber", constants["MAP_TEAM_ROCKET_BASE_B3F"])
+    save.write_saved_u8("wXCoord", 8)
+    save.write_saved_u8("wYCoord", 4)
+    save.write_saved_u8("wPlayerDirection", constants["OW_UP"])
+    save.write_saved_u8(
+        "wTeamRocketBaseB3FSceneID",
+        constants["SCENE_TEAMROCKETBASEB3F_NOOP"],
+    )
+    save.set_event(constants["EVENT_TEAM_ROCKET_BASE_B3F_EXECUTIVE"], True)
+    save.set_event(constants["EVENT_BEAT_ROCKET_EXECUTIVEM_4"], True)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    save.write(destination)
+    return destination
+
+
+@contextmanager
+def loaded_phase_7_mahogany_computer_checkpoint(
+    repo_root: Path,
+    work_dir: Path,
+    constants: dict[str, int],
+    scenario: dict,
+) -> Iterator[PyBoySession]:
+    canonical = repo_root / "tests/fixtures/saves/bedroom_initialized.sav"
+    canonical_hash = _sha256(canonical)
+    fixture = build_phase_7_mahogany_computer_checkpoint(
+        repo_root,
+        work_dir / "phase-07-mahogany-computers.sav",
+        constants,
+    )
+    prepared = prepare_rom(
+        work_dir / "rom",
+        repo_root / scenario["rom"],
+        repo_root / scenario["symbols"],
+        save_fixture=fixture,
+    )
+    try:
+        with PyBoySession(prepared) as session:
+
+            def force_fresh_map(current: PyBoySession) -> None:
+                current.write_symbol(
+                    "wDefaultSpawnpoint", constants["SPAWN_N_A"] & 0xFF
+                )
+                current.write_symbol("hMapEntryMethod", constants["MAPSETUP_WARP"])
+
+            start_saved_game(
+                session,
+                scenario["max_frames_per_step"],
+                force_fresh_map,
+            )
+            yield session
+    finally:
+        assert _sha256(canonical) == canonical_hash
+
+
 @contextmanager
 def loaded_phase_7_checkpoint(
     repo_root: Path,

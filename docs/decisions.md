@@ -207,10 +207,10 @@ its unused third roaming slot.
 
 Project Mew concerns one captive living Mew. Slowpoke Well only hints at
 biological research, the Lake of Rage establishes forced evolution as proof of
-concept, and Mahogany's existing scientists, office computers, and transmitter
-reveal the subject and its transfer. The final Radio Tower Executive records
-that Giovanni received the research before the battle begins, so losing cannot
-rewind that fact.
+concept, and Mahogany's existing scientists, two-tile office workstation, four
+lab computers, and transmitter reveal the subject and its transfer. The final
+Radio Tower Executive records that Giovanni received the research before the
+battle begins, so losing cannot rewind that fact.
 
 After the Executive is defeated, a new 5-by-4-block transmitter annex pauses
 the stock Director and Clear Bell cleanup. Its terminal requires confirmation

@@ -141,7 +141,11 @@ def test_mahogany_reveal_uses_existing_people_office_lab_and_transmitter(
         'line "near CERULEAN."',
         'text "LAKE TRIAL: PROOF"',
         "bg_event  8,  3, BGEVENT_UP, TeamRocketBaseB3FProjectMewDossierScript",
+        "bg_event  9,  3, BGEVENT_UP, TeamRocketBaseB3FProjectMewDossierScript",
         "bg_event 20,  7, BGEVENT_UP, TeamRocketBaseB3FProjectMewTestDataScript",
+        "bg_event 24,  7, BGEVENT_UP, TeamRocketBaseB3FProjectMewTestDataScript",
+        "bg_event 20, 11, BGEVENT_UP, TeamRocketBaseB3FProjectMewTestDataScript",
+        "bg_event 22, 11, BGEVENT_UP, TeamRocketBaseB3FProjectMewTestDataScript",
     ):
         assert row in b3f
     assert 'para "The PROJECT MEW"' in b3f

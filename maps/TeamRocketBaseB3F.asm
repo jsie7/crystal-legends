@@ -658,7 +658,11 @@ TeamRocketBaseB3F_MapEvents:
 	bg_event  7, 13, BGEVENT_READ, TeamRocketBaseB3FOathScript
 if DEF(_CRYSTALLEGENDS)
 	bg_event  8,  3, BGEVENT_UP, TeamRocketBaseB3FProjectMewDossierScript
+	bg_event  9,  3, BGEVENT_UP, TeamRocketBaseB3FProjectMewDossierScript
 	bg_event 20,  7, BGEVENT_UP, TeamRocketBaseB3FProjectMewTestDataScript
+	bg_event 24,  7, BGEVENT_UP, TeamRocketBaseB3FProjectMewTestDataScript
+	bg_event 20, 11, BGEVENT_UP, TeamRocketBaseB3FProjectMewTestDataScript
+	bg_event 22, 11, BGEVENT_UP, TeamRocketBaseB3FProjectMewTestDataScript
 endc
 
 	def_object_events

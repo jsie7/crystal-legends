@@ -45,6 +45,7 @@ def phase_7_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "BG_EVENT_SIZE",
             "OBJECT_EVENT_SIZE",
             "BGEVENT_READ",
+            "BGEVENT_UP",
             "BGEVENT_IFNOTSET",
             "SPRITEMOVEDATA_POKEMON",
             "COLL_FLOOR",
@@ -241,6 +242,37 @@ def test_compiled_annex_terminal_monitor_and_subject_objects(
     ]
     assert [event.event_flag for event in objects] == [
         phase_7_constants["EVENT_CAUGHT_PROJECT_MEW_SUBJECT"]
+    ]
+
+
+def test_compiled_mahogany_computers_cover_every_visible_workstation(
+    repo_root: Path, phase_7_constants: dict[str, int]
+) -> None:
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    rom = RomImage.load(repo_root / "crystallegends.gbc")
+    backgrounds = decode_background_events(
+        rom,
+        symbols,
+        "TeamRocketBaseB3F_MapEvents",
+        phase_7_constants["WARP_EVENT_SIZE"],
+        phase_7_constants["COORD_EVENT_SIZE"],
+        phase_7_constants["BG_EVENT_SIZE"],
+    )
+    dossier = symbols["TeamRocketBaseB3FProjectMewDossierScript"].address
+    test_data = symbols["TeamRocketBaseB3FProjectMewTestDataScript"].address
+    project_mew_computers = [
+        (event.x, event.y, event.event_type, event.script_pointer)
+        for event in backgrounds
+        if event.script_pointer in {dossier, test_data}
+    ]
+
+    assert project_mew_computers == [
+        (8, 3, phase_7_constants["BGEVENT_UP"], dossier),
+        (9, 3, phase_7_constants["BGEVENT_UP"], dossier),
+        (20, 7, phase_7_constants["BGEVENT_UP"], test_data),
+        (24, 7, phase_7_constants["BGEVENT_UP"], test_data),
+        (20, 11, phase_7_constants["BGEVENT_UP"], test_data),
+        (22, 11, phase_7_constants["BGEVENT_UP"], test_data),
     ]
 
 

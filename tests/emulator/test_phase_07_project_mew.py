@@ -20,6 +20,7 @@ from tests.support.legendary_scenario import (
 )
 from tests.support.phase_07_scenario import (
     loaded_phase_7_checkpoint,
+    loaded_phase_7_mahogany_computer_checkpoint,
     loaded_phase_7_saved_game,
 )
 from tests.support.symbol_table import SymbolTable
@@ -48,6 +49,10 @@ def phase_7_runtime_constants(repo_root: Path, tmp_path_factory) -> dict[str, in
         "MAP_RADIO_TOWER_TRANSMITTER_ANNEX",
         "GROUP_RADIO_TOWER_5F",
         "MAP_RADIO_TOWER_5F",
+        "GROUP_TEAM_ROCKET_BASE_B3F",
+        "MAP_TEAM_ROCKET_BASE_B3F",
+        "EVENT_TEAM_ROCKET_BASE_B3F_EXECUTIVE",
+        "EVENT_BEAT_ROCKET_EXECUTIVEM_4",
         "EVENT_BEAT_ROCKET_EXECUTIVEM_1",
         "EVENT_PROJECT_MEW_DATA_SENT",
         "EVENT_PROJECT_MEW_RESOLVED",
@@ -95,6 +100,7 @@ def phase_7_runtime_constants(repo_root: Path, tmp_path_factory) -> dict[str, in
         "SCENE_RADIOTOWER5F_NOOP",
         "SCENE_RADIOTOWERTRANSMITTERANNEX_LOCK_ENTRY",
         "SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP",
+        "SCENE_TEAMROCKETBASEB3F_NOOP",
     ):
         constants[scene] = symbols.constant(scene)
     return constants
@@ -102,6 +108,44 @@ def phase_7_runtime_constants(repo_root: Path, tmp_path_factory) -> dict[str, in
 
 def _event(session, constants: dict[str, int], name: str) -> bool:
     return event_is_set(session, constants[name])
+
+
+def test_mahogany_office_and_all_four_lab_computers_are_readable(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_7_runtime_constants: dict[str, int],
+    scenario: dict,
+) -> None:
+    constants = phase_7_runtime_constants
+    max_frames = scenario["max_frames_per_step"]
+    access_points = (
+        (8, 4, "TeamRocketBaseB3FProjectMewDossierScript"),
+        (9, 4, "TeamRocketBaseB3FProjectMewDossierScript"),
+        (20, 8, "TeamRocketBaseB3FProjectMewTestDataScript"),
+        (24, 8, "TeamRocketBaseB3FProjectMewTestDataScript"),
+        (20, 12, "TeamRocketBaseB3FProjectMewTestDataScript"),
+        (22, 12, "TeamRocketBaseB3FProjectMewTestDataScript"),
+    )
+
+    with loaded_phase_7_mahogany_computer_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+    ) as session:
+        session.enable_script_tracing()
+        for x, y, expected_script in access_points:
+            place_player(session, x, y)
+            session.write_symbol("wPlayerDirection", constants["OW_UP"])
+            session.script_history.clear()
+            session.tap("a", 2, 10)
+            session.wait_for_script(expected_script, max_frames)
+            advance_with_a_until(
+                session,
+                lambda current: current.read_symbol("wScriptMode") == 0,
+                max_frames,
+                f"Mahogany computer at {(x, y)} to close",
+            )
 
 
 def _run_terminal(

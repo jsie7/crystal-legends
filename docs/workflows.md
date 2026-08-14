@@ -314,9 +314,9 @@ branch, and result. Confirm:
 
 1. Slowpoke Well hints at biological research without prematurely naming Mew,
    and the Lake of Rage extension strengthens rather than replaces its story.
-2. Mahogany's scientists, dossier, test record, and transmitter make the single
-   captive subject and Goldenrod transfer understandable without feeling
-   repetitive.
+2. Mahogany's scientists, both sides of the office workstation, all four lab
+   computers, and the transmitter make the single captive subject and Goldenrod
+   transfer understandable without feeling repetitive.
 3. Entry faces north and takes only one automatic step before the passage
    audibly seals. In the first settled frame, confirm the complete compact room
    reads clearly: both southern controls, continuous center glass, captive
