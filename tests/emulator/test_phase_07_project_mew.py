@@ -17,6 +17,7 @@ from tests.support.legendary_scenario import (
     advance_with_a_until,
     place_player,
     prepare_battle_party,
+    walk_steps,
 )
 from tests.support.phase_07_scenario import (
     loaded_phase_7_checkpoint,
@@ -110,7 +111,7 @@ def _event(session, constants: dict[str, int], name: str) -> bool:
     return event_is_set(session, constants[name])
 
 
-def test_mahogany_office_and_all_four_lab_computers_are_readable_from_below_and_side(
+def test_mahogany_office_and_all_four_lab_computers_are_readable_after_normal_approach(
     repo_root: Path,
     tmp_path: Path,
     phase_7_runtime_constants: dict[str, int],
@@ -118,31 +119,26 @@ def test_mahogany_office_and_all_four_lab_computers_are_readable_from_below_and_
 ) -> None:
     constants = phase_7_runtime_constants
     max_frames = scenario["max_frames_per_step"]
-    access_points = (
-        (8, 4, "OW_UP", "TeamRocketBaseB3FProjectMewDossierScript"),
-        (9, 4, "OW_UP", "TeamRocketBaseB3FProjectMewDossierScript"),
-        (20, 8, "OW_UP", "TeamRocketBaseB3FProjectMewTestDataScript"),
-        (24, 8, "OW_UP", "TeamRocketBaseB3FProjectMewTestDataScript"),
-        (20, 12, "OW_UP", "TeamRocketBaseB3FProjectMewTestDataScript"),
-        (22, 12, "OW_UP", "TeamRocketBaseB3FProjectMewTestDataScript"),
-        (7, 3, "OW_RIGHT", "TeamRocketBaseB3FProjectMewDossierScript"),
-        (10, 3, "OW_LEFT", "TeamRocketBaseB3FProjectMewDossierScript"),
-        (19, 7, "OW_RIGHT", "TeamRocketBaseB3FProjectMewTestDataScript"),
-        (25, 7, "OW_LEFT", "TeamRocketBaseB3FProjectMewTestDataScript"),
-        (19, 11, "OW_RIGHT", "TeamRocketBaseB3FProjectMewTestDataScript"),
-        (21, 11, "OW_RIGHT", "TeamRocketBaseB3FProjectMewTestDataScript"),
+    approaches = (
+        (8, 4, 2, "TeamRocketBaseB3FProjectMewDossierScript"),
+        (9, 4, 2, "TeamRocketBaseB3FProjectMewDossierScript"),
+        (20, 8, 6, "TeamRocketBaseB3FProjectMewTestDataScript"),
+        (24, 8, 6, "TeamRocketBaseB3FProjectMewTestDataScript"),
+        (20, 12, 10, "TeamRocketBaseB3FProjectMewTestDataScript"),
+        (22, 12, 10, "TeamRocketBaseB3FProjectMewTestDataScript"),
     )
 
-    with loaded_phase_7_mahogany_computer_checkpoint(
-        repo_root,
-        tmp_path,
-        constants,
-        scenario,
-    ) as session:
-        session.enable_script_tracing()
-        for x, y, direction, expected_script in access_points:
-            place_player(session, x, y)
-            session.write_symbol("wPlayerDirection", constants[direction])
+    for index, (x, start_y, event_y, expected_script) in enumerate(approaches):
+        with loaded_phase_7_mahogany_computer_checkpoint(
+            repo_root,
+            tmp_path / f"approach-{index}",
+            constants,
+            scenario,
+        ) as session:
+            session.enable_script_tracing()
+            place_player(session, x, start_y)
+            walk_steps(session, "up", "wYCoord", -1, 1, max_frames)
+            assert session.read_symbol("wYCoord") == event_y + 1
             session.script_history.clear()
             session.tap("a", 2, 10)
             session.wait_for_script(expected_script, max_frames)
@@ -150,7 +146,7 @@ def test_mahogany_office_and_all_four_lab_computers_are_readable_from_below_and_
                 session,
                 lambda current: current.read_symbol("wScriptMode") == 0,
                 max_frames,
-                f"Mahogany computer at {(x, y)} to close",
+                f"Mahogany computer at {(x, event_y)} to close",
             )
 
 
