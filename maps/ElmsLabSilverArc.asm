@@ -1,10 +1,4 @@
 ElmsLabSilverArcScript:
-	; Continue skips object callbacks, so the actors use the permanent initialized
-	; event as a default mask. Restore it immediately after unmasking both actors.
-	appear ELMSLAB_SILVER
-	appear ELMSLAB_SILVERS_BIRD
-	setevent EVENT_INITIALIZED_EVENTS
-	turnobject ELMSLAB_SILVER, DOWN
 	opentext
 	writetext ElmsLabSilverArrivalText
 	waitbutton

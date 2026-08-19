@@ -334,6 +334,10 @@ def test_elm_release_entry_objects_and_bank_include_are_custom_only(
         crystal,
         [
             "ElmsLabSilverReturnsBirdScript:",
+            "appear ELMSLAB_SILVER",
+            "appear ELMSLAB_SILVERS_BIRD",
+            "setevent EVENT_INITIALIZED_EVENTS",
+            "turnobject ELMSLAB_SILVER, DOWN",
             "applymovement PLAYER, ElmsLabSilverReturnPlayerMovement",
             "farsjump ElmsLabSilverArcScript",
         ],
@@ -370,15 +374,8 @@ def test_release_script_has_approved_choreography_branching_and_event_order(
     core = _section(
         lines, "ElmsLabSilverArcScript:", "ElmsLabSilverBufferReturnedBird:"
     )
-    _assert_contiguous(
-        core,
-        [
-            "appear ELMSLAB_SILVER",
-            "appear ELMSLAB_SILVERS_BIRD",
-            "setevent EVENT_INITIALIZED_EVENTS",
-            "turnobject ELMSLAB_SILVER, DOWN",
-        ],
-    )
+    assert "appear ELMSLAB_SILVER" not in core
+    assert "appear ELMSLAB_SILVERS_BIRD" not in core
     expected_order = [
         "writetext ElmsLabSilverArrivalText",
         "applymovement ELMSLAB_SILVER, ElmsLabSilverHandoffMovement",

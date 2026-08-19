@@ -83,6 +83,12 @@ ElmsLabMoveElmCallback:
 
 if DEF(_CRYSTALLEGENDS)
 ElmsLabSilverReturnsBirdScript:
+	; Continue skips object callbacks, so reveal the actors before the entrance
+	; walk and immediately restore their permanent default mask.
+	appear ELMSLAB_SILVER
+	appear ELMSLAB_SILVERS_BIRD
+	setevent EVENT_INITIALIZED_EVENTS
+	turnobject ELMSLAB_SILVER, DOWN
 	applymovement PLAYER, ElmsLabSilverReturnPlayerMovement
 	farsjump ElmsLabSilverArcScript
 endc
