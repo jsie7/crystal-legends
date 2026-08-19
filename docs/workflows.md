@@ -56,7 +56,8 @@ and branch-feel review remains pending.
 Phase 8 is source-complete: all three Mt. Moon-to-Elm release branches,
 species-specific availability state, bird-free Indigo rematch, and Dragon's
 Den chronology pass every automated layer. Its user-owned presentation,
-discoverability, and provisional balance review remains pending.
+discoverability, and provisional balance review also passed on 2026-08-19, so
+Phase 8 is playtest-certified.
 
 ## Validate the Crystal Legends build
 
@@ -401,9 +402,14 @@ release/availability facts, weekday, and weekly flag. Do not add test-only
 warps, save migration, party-derived state, or a physical bird encounter to
 repair a scenario.
 
-The automated pass makes Phase 8 source-complete, not playtest-certified or
-release-ready. Presentation, discoverability, pacing, and balance remain the
-user-owned gate.
+Manual acceptance passed on 2026-08-19 after the final Elm's Lab presentation
+fixes. The user verified all three Mt. Moon/lab branches, loss/retry and normal
+return travel, the natural Indigo rematch, the Dragon's Den cameo, and the
+Phase 8/Phase 9 boundary in SameBoy. The exact SameBoy version was not supplied.
+Evidence applies to ROM commit `0e73807d2`, SHA-256
+`a5c2b67aaad42b1f3f06290bd40da6204c98279b7a037e0e14549cdd5fcc26f9`.
+Phase 8 is therefore playtest-certified; Silver's full balance pass remains
+separate Phase 12 work.
 
 ### Battery-save and scenario fixtures
 

@@ -47,11 +47,12 @@ scene choreography, and story feel. Phase 5 also needs its user-owned Ruins and
 Route 14 presentation matrix. Phase 6 still needs its user-owned tracker,
 hunt-feel, and Fast Ball presentation review. Phase 7 still needs its user-owned
 story clarity, annex presentation, pacing, and both-branch review. Phase 8
-still needs the user-owned three-branch Mt. Moon/lab presentation pass, one
-natural Indigo rematch, and one natural Dragon's Den cameo. Silver's full
-balance pass remains Phase 12 work. Phase 2 presentation and full-game
-acceptance also remain deferred. The current milestone is source-complete but
-is not yet playtest-certified or release-ready.
+has passed its complete user-owned manual matrix: all three Mt. Moon/lab
+branches, loss/retry and return travel, one natural Indigo rematch, and one
+natural Dragon's Den cameo. Silver's full balance pass remains Phase 12 work.
+Phase 2 presentation and full-game acceptance also remain deferred. Phase 8 is
+playtest-certified, but the overall milestone is not yet release-ready because
+the other listed manual gates remain open.
 See
 [workflows.md](workflows.md) for the validation boundary and
 [decisions.md](decisions.md) for the sequencing decision.

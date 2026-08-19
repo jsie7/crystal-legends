@@ -274,3 +274,17 @@ physical Articuno, Zapdos, and Moltres locations, encounter and retry behavior,
 Oak's third bird, capture, and hints. Phase 12 owns Silver's full balance pass.
 The four event IDs fit the existing 2048-bit event block, so no RAM, SRAM,
 scene-layout, or reference-build compatibility boundary changes.
+
+## 2026-08-19 — Accept the complete Phase 8 manual matrix
+
+The user verified and passed every Phase 8 manual acceptance check in SameBoy
+after the final Elm's Lab presentation fixes. This covers all three Mt. Moon
+and lab branches, loss/retry behavior, normal return travel, the released
+bird's visible look-back, dialogue and exit presentation, one natural Indigo
+rematch, one natural Dragon's Den cameo, and the Phase 8/Phase 9 boundary.
+
+The accepted ROM is commit `0e73807d2`, SHA-256
+`a5c2b67aaad42b1f3f06290bd40da6204c98279b7a037e0e14549cdd5fcc26f9`.
+The exact SameBoy version was not supplied. This evidence makes Phase 8
+playtest-certified; it does not certify earlier phases, the Phase 12 Silver
+balance pass, the complete project, or release readiness.
