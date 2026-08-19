@@ -51,9 +51,8 @@ def phase_8_constants(repo_root: Path, tmp_path_factory, phase_8_contract: dict)
         "BG_EVENT_SIZE",
         "OBJECT_EVENT_SIZE",
         "SPRITE_RIVAL",
-        "SPRITE_MOLTRES",
+        "SPRITE_BIRD",
         "SPRITEMOVEDATA_STANDING_DOWN",
-        "SPRITEMOVEDATA_POKEMON",
         "OBJECTTYPE_SCRIPT",
         "appear_command",
         "farsjump_command",
@@ -255,8 +254,8 @@ def test_compiled_elm_scene_objects_and_cross_bank_entry_are_isolated(
     assert (bird.x, bird.y, bird.sprite, bird.movement) == (
         5,
         3,
-        constants["SPRITE_MOLTRES"],
-        constants["SPRITEMOVEDATA_POKEMON"],
+        constants["SPRITE_BIRD"],
+        constants["SPRITEMOVEDATA_STANDING_DOWN"],
     )
     for event in (silver, bird):
         assert event.palette_and_type & 0xF == constants["OBJECTTYPE_SCRIPT"]

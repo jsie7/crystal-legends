@@ -97,8 +97,7 @@ ElmsLabSilverFacesBirdMovement:
 	step_end
 
 ElmsLabSilverBirdExitMovement:
-	; Pokemon overworld icons only have one facing. Pause for the backward glance
-	; without selecting a nonexistent left-facing frame.
+	turn_head LEFT
 	step_sleep 8
 	step_sleep 8
 	step_sleep 8

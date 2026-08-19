@@ -353,7 +353,7 @@ def test_elm_release_entry_objects_and_bank_include_are_custom_only(
     )
     assert any(
         line.startswith(
-            "object_event  5,  3, SPRITE_MOLTRES, SPRITEMOVEDATA_POKEMON"
+            "object_event  5,  3, SPRITE_BIRD, SPRITEMOVEDATA_STANDING_DOWN"
         )
         and line.endswith("ObjectEvent, EVENT_INITIALIZED_EVENTS")
         for line in crystal_objects
@@ -429,7 +429,7 @@ def test_release_script_has_approved_choreography_branching_and_event_order(
     bird_movement = _section(
         lines, "ElmsLabSilverBirdExitMovement:", "ElmsLabSilverExitMovement:"
     )
-    assert "turn_head LEFT" not in bird_movement
+    assert bird_movement.count("turn_head LEFT") == 1
     assert bird_movement.count("turn_head DOWN") == 1
     assert bird_movement.count("step_sleep 8") == 4
     assert bird_movement.count("step DOWN") == 8
