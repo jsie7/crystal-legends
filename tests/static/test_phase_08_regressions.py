@@ -442,6 +442,17 @@ def test_release_script_has_approved_choreography_branching_and_event_order(
 
 def test_release_dialogue_matches_the_approved_story_beats(repo_root: Path) -> None:
     lines = _active_code(repo_root / "maps/ElmsLabSilverArc.asm", CRYSTAL_LEGENDS)
+    _assert_contiguous(
+        lines,
+        [
+            "ElmsLabSilverFarewellText:",
+            'text "<RIVAL>: …"',
+            'para "@"',
+            "text_ram wStringBuffer3",
+            'text " looked"',
+            'line "back."',
+        ],
+    )
     text = "\n".join(lines[lines.index("ElmsLabSilverArrivalText:") :])
     for expected in (
         'text "<RIVAL>: …You"',

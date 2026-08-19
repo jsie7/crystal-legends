@@ -198,7 +198,7 @@ ElmsLabElmSetsBirdFreeText:
 
 ElmsLabSilverFarewellText:
 	text "<RIVAL>: …"
-	line "@"
+	para "@"
 	text_ram wStringBuffer3
 	text " looked"
 	line "back."
