@@ -1488,13 +1488,18 @@ if DEF(_CRYSTALLEGENDS)
 	const EVENT_PROJECT_MEW_RESOLVED
 	const EVENT_PROJECT_MEW_TRANSFORMED
 	const EVENT_CAUGHT_PROJECT_MEW_SUBJECT
+	const EVENT_SILVER_BIRD_RELEASED
+	const EVENT_ARTICUNO_AVAILABLE
+	const EVENT_ZAPDOS_AVAILABLE
+	const EVENT_MOLTRES_AVAILABLE
 else
 	const_skip ; reserved for EVENT_OAK_MOVED_THIRD_BIRD
 	const_skip 3 ; reserved for Crystal Legends Johto starter gifts
 	const_skip 3 ; reserved for Crystal Legends Ruins ancient Pokemon gifts
 	const_skip 4 ; reserved for Crystal Legends Project Mew story facts
+	const_skip 4 ; reserved for Crystal Legends Silver bird release facts
 endc
-; Unused: next 37 events
+; Unused: next 33 events
 
 	const_next 2048
 DEF NUM_EVENTS EQU const_value ; 800

@@ -10,7 +10,13 @@
       "rival_path": "default",
       "rival": "MOLTRES",
       "rival_party": "RIVAL1_1_MOLTRES",
+      "mt_moon_party": "RIVAL2_1_MOLTRES",
+      "indigo_party": "RIVAL2_2_MOLTRES",
+      "returned_species": "MOLTRES",
+      "availability_event": "EVENT_MOLTRES_AVAILABLE",
+      "player_availability_event": "EVENT_ARTICUNO_AVAILABLE",
       "oak": "ZAPDOS",
+      "oak_availability_event": "EVENT_ZAPDOS_AVAILABLE",
       "oak_branch": "ElmArrangeThirdBirdTransferScript.OakMovesZapdos"
     },
     {
@@ -23,7 +29,13 @@
       "rival_path": "second",
       "rival": "ARTICUNO",
       "rival_party": "RIVAL1_1_ARTICUNO",
+      "mt_moon_party": "RIVAL2_1_ARTICUNO",
+      "indigo_party": "RIVAL2_2_ARTICUNO",
+      "returned_species": "ARTICUNO",
+      "availability_event": "EVENT_ARTICUNO_AVAILABLE",
+      "player_availability_event": "EVENT_ZAPDOS_AVAILABLE",
       "oak": "MOLTRES",
+      "oak_availability_event": "EVENT_MOLTRES_AVAILABLE",
       "oak_branch": "ElmArrangeThirdBirdTransferScript.OakMovesMoltres"
     },
     {
@@ -36,7 +48,13 @@
       "rival_path": "third",
       "rival": "ZAPDOS",
       "rival_party": "RIVAL1_1_ZAPDOS",
+      "mt_moon_party": "RIVAL2_1_ZAPDOS",
+      "indigo_party": "RIVAL2_2_ZAPDOS",
+      "returned_species": "ZAPDOS",
+      "availability_event": "EVENT_ZAPDOS_AVAILABLE",
+      "player_availability_event": "EVENT_MOLTRES_AVAILABLE",
       "oak": "ARTICUNO",
+      "oak_availability_event": "EVENT_ARTICUNO_AVAILABLE",
       "oak_branch": "ElmArrangeThirdBirdTransferScript"
     }
   ]

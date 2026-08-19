@@ -252,6 +252,10 @@ def test_project_mew_event_slots_are_explicit_and_reference_reserved(
         [
             "const EVENT_GOT_AERODACTYL_FROM_ALPH",
             *(f"const {event}" for event in events),
+            "const EVENT_SILVER_BIRD_RELEASED",
+            "const EVENT_ARTICUNO_AVAILABLE",
+            "const EVENT_ZAPDOS_AVAILABLE",
+            "const EVENT_MOLTRES_AVAILABLE",
             "const_next 2048",
             "DEF NUM_EVENTS EQU const_value",
         ],
@@ -263,6 +267,7 @@ def test_project_mew_event_slots_are_explicit_and_reference_reserved(
             "const_skip",
             "const_skip 3",
             "const_skip 3",
+            "const_skip 4",
             "const_skip 4",
             "const_next 2048",
             "DEF NUM_EVENTS EQU const_value",

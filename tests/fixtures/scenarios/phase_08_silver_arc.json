@@ -1,0 +1,39 @@
+{
+  "scenario_id": "phase-08-silver-arc",
+  "rom": "crystallegends.gbc",
+  "symbols": "crystallegends.sym",
+  "reference_rom": "pokecrystal11.gbc",
+  "reference_symbols": "pokecrystal11.sym",
+  "save_fixture": "bedroom_initialized.sav",
+  "max_frames_per_step": 60000,
+  "mount_moon": {
+    "map": "MOUNT_MOON",
+    "start": {"x": 6, "y": 3, "facing": "RIGHT"},
+    "pending_scene": "SCENE_MOUNTMOON_RIVAL_BATTLE",
+    "completed_scene": "SCENE_MOUNTMOON_NOOP"
+  },
+  "elms_lab": {
+    "map": "ELMS_LAB",
+    "entry_start": {"x": 4, "y": 10, "facing": "UP"},
+    "staging": {"player": [4, 4], "elm": [5, 2], "rival": [4, 3], "bird": [5, 3]},
+    "pending_scene": "SCENE_ELMSLAB_SILVER_RETURNS_BIRD",
+    "completed_scene": "SCENE_ELMSLAB_NOOP"
+  },
+  "indigo": {
+    "map": "INDIGO_PLATEAU_POKECENTER_1F",
+    "weekdays": ["MONDAY", "WEDNESDAY"],
+    "weekly_flag": "ENGINE_INDIGO_PLATEAU_RIVAL_FIGHT"
+  },
+  "dragons_den": {
+    "map": "DRAGONS_DEN_B1F",
+    "shrine_map": "DRAGON_SHRINE",
+    "weekdays": ["TUESDAY", "THURSDAY"]
+  },
+  "events": {
+    "mt_moon_victory": "EVENT_BEAT_RIVAL_IN_MT_MOON",
+    "released": "EVENT_SILVER_BIRD_RELEASED",
+    "availability": ["EVENT_ARTICUNO_AVAILABLE", "EVENT_ZAPDOS_AVAILABLE", "EVENT_MOLTRES_AVAILABLE"]
+  },
+  "event_order": ["availability", "released", "completed_scene"],
+  "branches_contract": "tests/contracts/legendary_branches.json"
+}
