@@ -432,6 +432,8 @@ def test_release_script_has_approved_choreography_branching_and_event_order(
     bird_movement = _section(
         lines, "ElmsLabSilverBirdExitMovement:", "ElmsLabSilverExitMovement:"
     )
+    assert "turn_head LEFT" not in bird_movement
+    assert bird_movement.count("turn_head DOWN") == 1
     assert bird_movement.count("step_sleep 8") == 4
     assert bird_movement.count("step DOWN") == 8
     silver_movement = _section(
