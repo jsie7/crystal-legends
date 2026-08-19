@@ -132,14 +132,15 @@ ElmsLabSilverExitMovement:
 	step_end
 
 ElmsLabSilverArrivalText:
-	text "…You came."
+	text "<RIVAL>: …You"
+	line "came."
 
 	para "Good. You should"
 	line "see this too."
 	done
 
 ElmsLabSilverReturnsBirdText:
-	text "PROF.ELM…"
+	text "<RIVAL>: PROF.ELM…"
 
 	para "I brought"
 	line "@"
@@ -165,7 +166,7 @@ ElmsLabSilverReturnsBirdText:
 	done
 
 ElmsLabElmReleaseDecisionText:
-	text "…<RIVAL>."
+	text "ELM: …<RIVAL>."
 
 	para "You chose to bring"
 	line "@"
@@ -193,7 +194,7 @@ ElmsLabElmReleaseDecisionText:
 	done
 
 ElmsLabElmSetsBirdFreeText:
-	text "Go, @"
+	text "ELM: Go, @"
 	text_ram wStringBuffer3
 	text "."
 
@@ -202,7 +203,8 @@ ElmsLabElmSetsBirdFreeText:
 	done
 
 ElmsLabSilverFarewellText:
-	text "…@"
+	text "<RIVAL>: …"
+	line "@"
 	text_ram wStringBuffer3
 	text " looked"
 	line "back."

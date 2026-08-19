@@ -445,13 +445,16 @@ def test_release_dialogue_matches_the_approved_story_beats(repo_root: Path) -> N
     lines = _active_code(repo_root / "maps/ElmsLabSilverArc.asm", CRYSTAL_LEGENDS)
     text = "\n".join(lines[lines.index("ElmsLabSilverArrivalText:") :])
     for expected in (
-        'text "…You came."',
+        'text "<RIVAL>: …You"',
+        'text "<RIVAL>: PROF.ELM…"',
+        'text "ELM: …<RIVAL>."',
         'para "I brought"',
         'para "It fought beside"',
         'para "I was the one who"',
         'para "But I won\'t decide"',
         'para "It should choose"',
-        'text "Go, @"',
+        'text "ELM: Go, @"',
+        'text "<RIVAL>: …"',
         'text " looked"',
         'para "I don\'t regret"',
         'para "But this was the"',
