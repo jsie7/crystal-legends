@@ -5,6 +5,10 @@
 	const ELMSLAB_POKE_BALL2
 	const ELMSLAB_POKE_BALL3
 	const ELMSLAB_OFFICER
+if DEF(_CRYSTALLEGENDS)
+	const ELMSLAB_SILVER
+	const ELMSLAB_SILVERS_BIRD
+endc
 
 if DEF(_CRYSTALLEGENDS)
 DEF ELMSLAB_LEFT_STARTER_SPECIES          EQU ARTICUNO
@@ -35,7 +39,7 @@ ElmsLab_MapScripts:
 	scene_script ElmsLabNoop2Scene,   SCENE_ELMSLAB_NOOP
 	scene_script ElmsLabNoop3Scene,   SCENE_ELMSLAB_MEET_OFFICER
 if DEF(_CRYSTALLEGENDS)
-	scene_script ElmsLabNoop4Scene,   SCENE_ELMSLAB_SILVER_RETURNS_BIRD
+	scene_script ElmsLabSilverReturnsBirdScene, SCENE_ELMSLAB_SILVER_RETURNS_BIRD
 else
 	scene_script ElmsLabNoop4Scene,   SCENE_ELMSLAB_UNUSED
 endc
@@ -58,18 +62,30 @@ ElmsLabNoop2Scene:
 ElmsLabNoop3Scene:
 	end
 
+if DEF(_CRYSTALLEGENDS)
+ElmsLabSilverReturnsBirdScene:
+	sdefer ElmsLabSilverReturnsBirdScript
+	end
+else
 ElmsLabNoop4Scene:
 	end
+endc
 
 ElmsLabNoop5Scene:
 	end
 
 ElmsLabMoveElmCallback:
 	checkscene
-	iftrue .Skip ; not SCENE_ELMSLAB_MEET_ELM
+	iftrue .SkipElmMove ; not SCENE_ELMSLAB_MEET_ELM
 	moveobject ELMSLAB_ELM, 3, 4
-.Skip:
+.SkipElmMove:
 	endcallback
+
+if DEF(_CRYSTALLEGENDS)
+ElmsLabSilverReturnsBirdScript:
+	applymovement PLAYER, ElmsLabSilverReturnPlayerMovement
+	farsjump ElmsLabSilverArcScript
+endc
 
 ElmsLabWalkUpToElmScript:
 	applymovement PLAYER, ElmsLab_WalkUpToElmMovement
@@ -704,6 +720,18 @@ ElmsLab_WalkUpToElmMovement:
 	step UP
 	turn_head LEFT
 	step_end
+
+if DEF(_CRYSTALLEGENDS)
+ElmsLabSilverReturnPlayerMovement:
+	step UP
+	step UP
+	step UP
+	step UP
+	step UP
+	step UP
+	turn_head UP
+	step_end
+endc
 
 ElmsLab_CantLeaveMovement:
 	step UP
@@ -1606,3 +1634,7 @@ ElmsLab_MapEvents:
 	object_event  7,  3, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, TotodilePokeBallScript, ELMSLAB_CENTER_STARTER_POKEBALL_EVENT
 	object_event  8,  3, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, ChikoritaPokeBallScript, ELMSLAB_RIGHT_STARTER_POKEBALL_EVENT
 	object_event  5,  3, SPRITE_OFFICER, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, CopScript, EVENT_COP_IN_ELMS_LAB
+if DEF(_CRYSTALLEGENDS)
+	object_event  4,  3, SPRITE_RIVAL, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_INITIALIZED_EVENTS
+	object_event  5,  3, SPRITE_MOLTRES, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_INITIALIZED_EVENTS
+endc

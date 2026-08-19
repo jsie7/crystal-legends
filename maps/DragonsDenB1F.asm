@@ -30,9 +30,14 @@ DragonsDenB1FCheckRivalCallback:
 	endcallback
 
 .CheckDay:
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_SILVER_BIRD_RELEASED
+	iffalse .HideRival
+endc
 	readvar VAR_WEEKDAY
 	ifequal TUESDAY, .AppearRival
 	ifequal THURSDAY, .AppearRival
+.HideRival:
 	disappear DRAGONSDENB1F_RIVAL
 	endcallback
 

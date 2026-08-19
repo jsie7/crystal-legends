@@ -25,6 +25,7 @@ def build_phase_8_checkpoint(
     start: str,
     mt_moon_won: bool,
     released: bool = False,
+    weekly_fight: bool = False,
 ) -> Path:
     fixture = repo_root / "tests/fixtures/saves/bedroom_initialized.sav"
     symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
@@ -41,6 +42,8 @@ def build_phase_8_checkpoint(
     save.set_event(constants["EVENT_BEAT_RIVAL_IN_MT_MOON"], mt_moon_won)
     save.set_event(constants["EVENT_MT_MOON_RIVAL"], mt_moon_won)
     save.set_event(constants["EVENT_COP_IN_ELMS_LAB"], True)
+    save.set_event(constants["EVENT_INDIGO_PLATEAU_POKECENTER_RIVAL"], True)
+    save.set_event(constants["EVENT_RIVAL_DRAGONS_DEN"], True)
     save.set_event(constants["EVENT_SILVER_BIRD_RELEASED"], released)
     for event in scenario["events"]["availability"]:
         save.set_event(
@@ -53,8 +56,28 @@ def build_phase_8_checkpoint(
     elif start == "elms_lab":
         target = scenario["elms_lab"]
         coordinate = target["entry_start"]
+    elif start == "indigo":
+        target = scenario["indigo"]
+        coordinate = target["entrances"][0]
+    elif start == "dragons_den":
+        target = scenario["dragons_den"]
+        coordinate = target["start"]
+    elif start == "dragon_shrine":
+        target = {
+            "map": scenario["dragons_den"]["shrine_map"],
+        }
+        coordinate = scenario["dragons_den"]["shrine_start"]
+        save.set_event(constants["EVENT_GOT_DRATINI"], True)
+        save.set_event(constants["EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1"], False)
+        save.set_event(constants["EVENT_TEMPORARY_UNTIL_MAP_RELOAD_7"], False)
     else:
         raise ValueError(f"unsupported Phase 8 checkpoint {start}")
+
+    weekly_bit = (
+        constants["ENGINE_INDIGO_PLATEAU_RIVAL_FIGHT"]
+        - constants["ENGINE_MT_MOON_SQUARE_CLEFAIRY"]
+    )
+    save.set_saved_bit("wDailyFlags2", weekly_bit, weekly_fight)
 
     save.write_saved_u8("wWarpNumber", 0)
     save.write_saved_u8("wMapGroup", constants[f"GROUP_{target['map']}"])
@@ -79,6 +102,16 @@ def build_phase_8_checkpoint(
             if mt_moon_won and not released
             else "SCENE_ELMSLAB_NOOP"
         ],
+    )
+    save.write_saved_u8(
+        "wIndigoPlateauPokecenter1FSceneID",
+        constants["SCENE_INDIGOPLATEAUPOKECENTER1F_RIVAL_BATTLE"],
+    )
+    save.write_saved_u8(
+        "wDragonsDenB1FSceneID", constants["SCENE_DRAGONSDENB1F_NOOP"]
+    )
+    save.write_saved_u8(
+        "wDragonShrineSceneID", constants["SCENE_DRAGONSHRINE_NOOP"]
     )
     destination.parent.mkdir(parents=True, exist_ok=True)
     save.write(destination)
@@ -126,6 +159,8 @@ def loaded_phase_8_checkpoint(
     start: str,
     mt_moon_won: bool,
     released: bool = False,
+    weekday: int | None = None,
+    weekly_fight: bool = False,
     before_overworld: Callable[[PyBoySession], None] | None = None,
 ) -> Iterator[PyBoySession]:
     canonical = repo_root / "tests/fixtures/saves/bedroom_initialized.sav"
@@ -139,6 +174,7 @@ def loaded_phase_8_checkpoint(
         start=start,
         mt_moon_won=mt_moon_won,
         released=released,
+        weekly_fight=weekly_fight,
     )
     prepared = prepare_rom(
         work_dir / "rom",
@@ -148,6 +184,11 @@ def loaded_phase_8_checkpoint(
     )
     try:
         with PyBoySession(prepared) as session:
+            if weekday is not None:
+                session.register_hook(
+                    "GetWeekday",
+                    lambda current: current.write_symbol("wCurDay", weekday),
+                )
 
             def prepare(current: PyBoySession) -> None:
                 current.write_symbol(
@@ -157,7 +198,9 @@ def loaded_phase_8_checkpoint(
                 if before_overworld is not None:
                     before_overworld(current)
 
-            if start == "mount_moon" and not mt_moon_won:
+            if (start == "mount_moon" and not mt_moon_won) or (
+                start == "elms_lab" and mt_moon_won and not released
+            ):
                 _start_automatic_scene(
                     session, scenario["max_frames_per_step"], prepare
                 )
@@ -177,6 +220,8 @@ def loaded_phase_8_saved_game(
     constants: dict[str, int],
     scenario: dict,
     save_fixture: Path,
+    *,
+    weekday: int | None = None,
 ) -> Iterator[PyBoySession]:
     prepared = prepare_rom(
         work_dir,
@@ -185,6 +230,11 @@ def loaded_phase_8_saved_game(
         save_fixture=save_fixture,
     )
     with PyBoySession(prepared) as session:
+        if weekday is not None:
+            session.register_hook(
+                "GetWeekday",
+                lambda current: current.write_symbol("wCurDay", weekday),
+            )
 
         def force_fresh_map_load(current: PyBoySession) -> None:
             current.write_symbol("wDefaultSpawnpoint", constants["SPAWN_N_A"] & 0xFF)

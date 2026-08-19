@@ -242,6 +242,9 @@ INCLUDE "maps/BattleTowerOutside.asm"
 SECTION "Map Scripts 13", ROMX
 
 INCLUDE "maps/IndigoPlateauPokecenter1F.asm"
+if DEF(_CRYSTALLEGENDS)
+INCLUDE "maps/ElmsLabSilverArc.asm"
+endc
 INCLUDE "maps/WillsRoom.asm"
 INCLUDE "maps/KogasRoom.asm"
 INCLUDE "maps/BrunosRoom.asm"

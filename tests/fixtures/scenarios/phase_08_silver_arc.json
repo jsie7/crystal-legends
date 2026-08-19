@@ -21,13 +21,21 @@
   },
   "indigo": {
     "map": "INDIGO_PLATEAU_POKECENTER_1F",
+    "entrances": [
+      {"x": 16, "y": 5, "facing": "UP"},
+      {"x": 17, "y": 5, "facing": "UP"}
+    ],
     "weekdays": ["MONDAY", "WEDNESDAY"],
+    "excluded_weekday": "TUESDAY",
     "weekly_flag": "ENGINE_INDIGO_PLATEAU_RIVAL_FIGHT"
   },
   "dragons_den": {
     "map": "DRAGONS_DEN_B1F",
+    "start": {"x": 20, "y": 22, "facing": "DOWN"},
     "shrine_map": "DRAGON_SHRINE",
-    "weekdays": ["TUESDAY", "THURSDAY"]
+    "shrine_start": {"x": 5, "y": 2, "facing": "UP"},
+    "weekdays": ["TUESDAY", "THURSDAY"],
+    "excluded_weekday": "MONDAY"
   },
   "events": {
     "mt_moon_victory": "EVENT_BEAT_RIVAL_IN_MT_MOON",

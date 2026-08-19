@@ -8,6 +8,13 @@ import pytest
 
 from tests.support.asm_conditions import active_lines
 from tests.support.content_data import parse_trainer_parties
+from tests.support.map_assets import (
+    block_paths_for_maps,
+    collision_at,
+    parse_block_paths,
+    parse_map_tilesets,
+)
+from tests.support.map_model import parse_map_dimensions
 
 
 pytestmark = [pytest.mark.static, pytest.mark.phase8]
@@ -63,6 +70,19 @@ def test_phase_8_scenario_and_branch_contracts(repo_root: Path) -> None:
         "EVENT_ZAPDOS_AVAILABLE",
         "EVENT_MOLTRES_AVAILABLE",
     ]
+    assert scenario["indigo"]["entrances"] == [
+        {"x": 16, "y": 5, "facing": "UP"},
+        {"x": 17, "y": 5, "facing": "UP"},
+    ]
+    assert scenario["indigo"]["weekdays"] == ["MONDAY", "WEDNESDAY"]
+    assert scenario["indigo"]["excluded_weekday"] == "TUESDAY"
+    assert scenario["dragons_den"]["start"] == {
+        "x": 20,
+        "y": 22,
+        "facing": "DOWN",
+    }
+    assert scenario["dragons_den"]["weekdays"] == ["TUESDAY", "THURSDAY"]
+    assert scenario["dragons_den"]["excluded_weekday"] == "MONDAY"
 
     assert [
         (
@@ -284,7 +304,283 @@ def test_elm_scene_four_is_custom_named_without_adding_a_scene(repo_root: Path) 
     reference = _active_code(repo_root / "maps/ElmsLab.asm", REFERENCE)
     crystal_scenes = _section(crystal, "ElmsLab_MapScripts:", "ElmsLabMeetElmScene:")
     reference_scenes = _section(reference, "ElmsLab_MapScripts:", "ElmsLabMeetElmScene:")
-    assert "scene_script ElmsLabNoop4Scene,   SCENE_ELMSLAB_SILVER_RETURNS_BIRD" in crystal_scenes
+    assert (
+        "scene_script ElmsLabSilverReturnsBirdScene, SCENE_ELMSLAB_SILVER_RETURNS_BIRD"
+        in crystal_scenes
+    )
     assert "scene_script ElmsLabNoop4Scene,   SCENE_ELMSLAB_UNUSED" in reference_scenes
     assert sum(line.startswith("scene_script ") for line in crystal_scenes) == 6
     assert sum(line.startswith("scene_script ") for line in reference_scenes) == 6
+
+
+def test_elm_release_entry_objects_and_bank_include_are_custom_only(
+    repo_root: Path,
+) -> None:
+    crystal = _active_code(repo_root / "maps/ElmsLab.asm", CRYSTAL_LEGENDS)
+    reference = _active_code(repo_root / "maps/ElmsLab.asm", REFERENCE)
+    object_start = crystal.index("def_object_events")
+    crystal_objects = crystal[object_start:]
+    reference_objects = reference[reference.index("def_object_events") :]
+
+    _assert_contiguous(
+        crystal,
+        [
+            "ElmsLabSilverReturnsBirdScene:",
+            "sdefer ElmsLabSilverReturnsBirdScript",
+            "end",
+        ],
+    )
+    _assert_contiguous(
+        crystal,
+        [
+            "ElmsLabSilverReturnsBirdScript:",
+            "applymovement PLAYER, ElmsLabSilverReturnPlayerMovement",
+            "farsjump ElmsLabSilverArcScript",
+        ],
+    )
+    assert "const ELMSLAB_SILVER" in crystal
+    assert "const ELMSLAB_SILVERS_BIRD" in crystal
+    assert any(
+        line.startswith(
+            "object_event  4,  3, SPRITE_RIVAL, SPRITEMOVEDATA_STANDING_DOWN"
+        )
+        and line.endswith("ObjectEvent, EVENT_INITIALIZED_EVENTS")
+        for line in crystal_objects
+    )
+    assert any(
+        line.startswith(
+            "object_event  5,  3, SPRITE_MOLTRES, SPRITEMOVEDATA_POKEMON"
+        )
+        and line.endswith("ObjectEvent, EVENT_INITIALIZED_EVENTS")
+        for line in crystal_objects
+    )
+    assert not any("ELMSLAB_SILVER" in line for line in reference)
+    assert len(crystal_objects) == len(reference_objects) + 2
+
+    includes = _active_code(repo_root / "data/maps/scripts.asm", CRYSTAL_LEGENDS)
+    reference_includes = _active_code(repo_root / "data/maps/scripts.asm", REFERENCE)
+    assert 'INCLUDE "maps/ElmsLabSilverArc.asm"' in includes
+    assert 'INCLUDE "maps/ElmsLabSilverArc.asm"' not in reference_includes
+
+
+def test_release_script_has_approved_choreography_branching_and_event_order(
+    repo_root: Path,
+) -> None:
+    lines = _active_code(repo_root / "maps/ElmsLabSilverArc.asm", CRYSTAL_LEGENDS)
+    core = _section(
+        lines, "ElmsLabSilverArcScript:", "ElmsLabSilverBufferReturnedBird:"
+    )
+    _assert_contiguous(
+        core,
+        [
+            "appear ELMSLAB_SILVER",
+            "appear ELMSLAB_SILVERS_BIRD",
+            "setevent EVENT_INITIALIZED_EVENTS",
+            "turnobject ELMSLAB_SILVER, DOWN",
+        ],
+    )
+    expected_order = [
+        "writetext ElmsLabSilverArrivalText",
+        "applymovement ELMSLAB_SILVER, ElmsLabSilverHandoffMovement",
+        "writetext ElmsLabSilverReturnsBirdText",
+        "writetext ElmsLabElmReleaseDecisionText",
+        "applymovement ELMSLAB_SILVER, ElmsLabSilverFacesBirdMovement",
+        "writetext ElmsLabElmSetsBirdFreeText",
+        "scall ElmsLabSilverCryReturnedBird",
+        "applymovement ELMSLAB_SILVERS_BIRD, ElmsLabSilverBirdExitMovement",
+        "disappear ELMSLAB_SILVERS_BIRD",
+        "scall ElmsLabSilverSetAvailability",
+        "setevent EVENT_SILVER_BIRD_RELEASED",
+        "writetext ElmsLabSilverFarewellText",
+        "applymovement ELMSLAB_SILVER, ElmsLabSilverExitMovement",
+        "disappear ELMSLAB_SILVER",
+        "setscene SCENE_ELMSLAB_NOOP",
+    ]
+    positions = [core.index(row) for row in expected_order]
+    assert positions == sorted(positions)
+
+    buffer = _section(
+        lines, "ElmsLabSilverBufferReturnedBird:", "ElmsLabSilverCryReturnedBird:"
+    )
+    cry = _section(
+        lines, "ElmsLabSilverCryReturnedBird:", "ElmsLabSilverSetAvailability:"
+    )
+    availability = _section(
+        lines, "ElmsLabSilverSetAvailability:", "ElmsLabSilverHandoffMovement:"
+    )
+    for helper, tails in (
+        (buffer, ("MOLTRES", "ARTICUNO", "ZAPDOS")),
+        (cry, ("MOLTRES", "ARTICUNO", "ZAPDOS")),
+        (
+            availability,
+            (
+                "EVENT_MOLTRES_AVAILABLE",
+                "EVENT_ARTICUNO_AVAILABLE",
+                "EVENT_ZAPDOS_AVAILABLE",
+            ),
+        ),
+    ):
+        assert helper[:4] == [
+            helper[0],
+            "checkevent EVENT_GOT_ZAPDOS_FROM_ELM",
+            "iftrue .Articuno",
+            "checkevent EVENT_GOT_MOLTRES_FROM_ELM",
+        ]
+        assert all(any(tail in row for row in helper) for tail in tails)
+    assert not any("PARTY" in row or "POKEDEX" in row for row in lines)
+
+    bird_movement = _section(
+        lines, "ElmsLabSilverBirdExitMovement:", "ElmsLabSilverExitMovement:"
+    )
+    assert bird_movement.count("step_sleep 8") == 4
+    assert bird_movement.count("step DOWN") == 8
+    silver_movement = _section(
+        lines, "ElmsLabSilverExitMovement:", "ElmsLabSilverArrivalText:"
+    )
+    assert silver_movement.count("step RIGHT") == 1
+    assert silver_movement.count("step DOWN") == 8
+
+
+def test_release_dialogue_matches_the_approved_story_beats(repo_root: Path) -> None:
+    lines = _active_code(repo_root / "maps/ElmsLabSilverArc.asm", CRYSTAL_LEGENDS)
+    text = "\n".join(lines[lines.index("ElmsLabSilverArrivalText:") :])
+    for expected in (
+        'text "…You came."',
+        'para "I brought"',
+        'para "It fought beside"',
+        'para "I was the one who"',
+        'para "But I won\'t decide"',
+        'para "It should choose"',
+        'text "Go, @"',
+        'text " looked"',
+        'para "I don\'t regret"',
+        'para "But this was the"',
+        'para "I\'m moving on with"',
+        'para "…See you, <PLAYER>."',
+    ):
+        assert expected in text
+    assert text.count("text_ram wStringBuffer3") == 6
+    assert "SILVER" not in text
+    assert "where you can" not in text
+    assert "ElmText_CallYou" not in text
+
+
+def test_elm_release_staging_and_exit_paths_are_walkable(repo_root: Path) -> None:
+    dimensions = parse_map_dimensions(
+        (repo_root / "constants/map_constants.asm").read_text()
+    )
+    block_paths = block_paths_for_maps(
+        dimensions,
+        parse_block_paths((repo_root / "data/maps/blocks.asm").read_text()),
+    )
+    tilesets = parse_map_tilesets((repo_root / "data/maps/maps.asm").read_text())
+    traversed = (
+        *((4, y) for y in range(2, 11)),
+        *((5, y) for y in range(3, 12)),
+    )
+    for coordinate in traversed:
+        expected = "WARP_CARPET_DOWN" if coordinate == (5, 11) else "FLOOR"
+        assert (
+            collision_at(
+                repo_root,
+                "ELMS_LAB",
+                coordinate,
+                dimensions,
+                block_paths,
+                tilesets,
+            )
+            == expected
+        )
+
+
+def test_post_release_gates_are_custom_only_and_keep_stock_text(
+    repo_root: Path,
+) -> None:
+    indigo_custom = _active_code(
+        repo_root / "maps/IndigoPlateauPokecenter1F.asm", CRYSTAL_LEGENDS
+    )
+    indigo_reference = _active_code(
+        repo_root / "maps/IndigoPlateauPokecenter1F.asm", REFERENCE
+    )
+    for label, end in (
+        ("PlateauRivalBattle1:", "PlateauRivalBattle2:"),
+        ("PlateauRivalBattle2:", "PlateauRivalBattleCommon:"),
+    ):
+        custom = _section(indigo_custom, label, end)
+        reference = _section(indigo_reference, label, end)
+        _assert_contiguous(
+            custom,
+            [
+                "checkevent EVENT_BEAT_RIVAL_IN_MT_MOON",
+                "iffalse PlateauRivalScriptDone",
+                "checkevent EVENT_SILVER_BIRD_RELEASED",
+                "iffalse PlateauRivalScriptDone",
+            ],
+        )
+        assert not any("EVENT_SILVER_BIRD_RELEASED" in row for row in reference)
+    assert _section(
+        indigo_custom, "PlateauRivalText1:", "TeleportGuyText1:"
+    ) == _section(indigo_reference, "PlateauRivalText1:", "TeleportGuyText1:")
+
+    den_custom = _active_code(repo_root / "maps/DragonsDenB1F.asm", CRYSTAL_LEGENDS)
+    den_reference = _active_code(repo_root / "maps/DragonsDenB1F.asm", REFERENCE)
+    callback = _section(
+        den_custom,
+        "DragonsDenB1FCheckRivalCallback:",
+        "DragonsDenB1F_ClairScene:",
+    )
+    _assert_contiguous(
+        callback,
+        [
+            ".CheckDay:",
+            "checkevent EVENT_SILVER_BIRD_RELEASED",
+            "iffalse .HideRival",
+            "readvar VAR_WEEKDAY",
+        ],
+    )
+    assert not any(
+        "EVENT_SILVER_BIRD_RELEASED" in row
+        for row in _section(
+            den_reference,
+            "DragonsDenB1FCheckRivalCallback:",
+            "DragonsDenB1F_ClairScene:",
+        )
+    )
+    assert _section(
+        den_custom, "RivalText_Training1:", "CooltrainermDarinSeenText:"
+    ) == _section(
+        den_reference, "RivalText_Training1:", "CooltrainermDarinSeenText:"
+    )
+
+    shrine_custom = _active_code(repo_root / "maps/DragonShrine.asm", CRYSTAL_LEGENDS)
+    shrine_reference = _active_code(repo_root / "maps/DragonShrine.asm", REFERENCE)
+    elder = _section(
+        shrine_custom, "DragonShrineElder1Script:", "DragonShrineElder2Script:"
+    )
+    _assert_contiguous(
+        elder,
+        [
+            "checkevent EVENT_BEAT_RIVAL_IN_MT_MOON",
+            "iffalse .ClairsGrandfather",
+            "checkevent EVENT_SILVER_BIRD_RELEASED",
+            "iftrue .BeatRivalInMtMoon",
+            ".ClairsGrandfather:",
+        ],
+    )
+    assert not any(
+        "EVENT_SILVER_BIRD_RELEASED" in row
+        for row in _section(
+            shrine_reference,
+            "DragonShrineElder1Script:",
+            "DragonShrineElder2Script:",
+        )
+    )
+    assert _section(
+        shrine_custom,
+        "DragonShrineClairsGrandfatherText:",
+        "DragonShrineWrongAnswerText1:",
+    ) == _section(
+        shrine_reference,
+        "DragonShrineClairsGrandfatherText:",
+        "DragonShrineWrongAnswerText1:",
+    )

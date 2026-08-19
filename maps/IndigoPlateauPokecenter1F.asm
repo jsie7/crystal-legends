@@ -58,6 +58,10 @@ IndigoPlateauPokecenter1FPrepareElite4Callback:
 PlateauRivalBattle1:
 	checkevent EVENT_BEAT_RIVAL_IN_MT_MOON
 	iffalse PlateauRivalScriptDone
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_SILVER_BIRD_RELEASED
+	iffalse PlateauRivalScriptDone
+endc
 	checkflag ENGINE_INDIGO_PLATEAU_RIVAL_FIGHT
 	iftrue PlateauRivalScriptDone
 	readvar VAR_WEEKDAY
@@ -80,6 +84,10 @@ PlateauRivalBattle1:
 PlateauRivalBattle2:
 	checkevent EVENT_BEAT_RIVAL_IN_MT_MOON
 	iffalse PlateauRivalScriptDone
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_SILVER_BIRD_RELEASED
+	iffalse PlateauRivalScriptDone
+endc
 	checkflag ENGINE_INDIGO_PLATEAU_RIVAL_FIGHT
 	iftrue PlateauRivalScriptDone
 	readvar VAR_WEEKDAY

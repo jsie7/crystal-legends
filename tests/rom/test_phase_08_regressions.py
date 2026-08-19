@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from tests.support.constant_resolver import resolve_constants
-from tests.support.rom_image import RomImage
+from tests.support.rom_image import RomImage, decode_object_events
 from tests.support.symbol_table import SymbolTable
 
 
@@ -45,6 +45,20 @@ def phase_8_constants(repo_root: Path, tmp_path_factory, phase_8_contract: dict)
         "GROUP_ELMS_LAB",
         "MAP_ELMS_LAB",
         "EVENT_BEAT_RIVAL_IN_MT_MOON",
+        "EVENT_INITIALIZED_EVENTS",
+        "WARP_EVENT_SIZE",
+        "COORD_EVENT_SIZE",
+        "BG_EVENT_SIZE",
+        "OBJECT_EVENT_SIZE",
+        "SPRITE_RIVAL",
+        "SPRITE_MOLTRES",
+        "SPRITEMOVEDATA_STANDING_DOWN",
+        "SPRITEMOVEDATA_POKEMON",
+        "OBJECTTYPE_SCRIPT",
+        "appear_command",
+        "farsjump_command",
+        "checkevent_command",
+        "setscene_command",
     }
     for branch in phase_8_contract["branches"]:
         names.update(
@@ -170,3 +184,163 @@ def test_compiled_mt_moon_victory_schedules_custom_scene_only(
             event
         ].to_bytes(2, "little")
         assert mutation not in custom
+
+
+def _object_events(
+    rom: RomImage,
+    symbols: SymbolTable,
+    constants: dict[str, int],
+):
+    return decode_object_events(
+        rom,
+        symbols,
+        "ElmsLab_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+        constants["OBJECT_EVENT_SIZE"],
+    )
+
+
+def _event_check(constants: dict[str, int], event: str) -> bytes:
+    return bytes([constants["checkevent_command"]]) + constants[event].to_bytes(
+        2, "little"
+    )
+
+
+def test_compiled_elm_scene_objects_and_cross_bank_entry_are_isolated(
+    repo_root: Path, phase_8_constants: dict[str, int]
+) -> None:
+    constants = phase_8_constants
+    custom_rom = RomImage.load(repo_root / "crystallegends.gbc")
+    custom_symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    reference_rom = RomImage.load(repo_root / "pokecrystal11.gbc")
+    reference_symbols = SymbolTable.parse(
+        (repo_root / "pokecrystal11.sym").read_text()
+    )
+
+    custom_only = {
+        "ElmsLabSilverReturnsBirdScene",
+        "ElmsLabSilverReturnsBirdScript",
+        "ElmsLabSilverReturnPlayerMovement",
+        "ElmsLabSilverArcScript",
+        "ElmsLabSilverBirdExitMovement",
+        "ElmsLabSilverExitMovement",
+    }
+    assert all(label in custom_symbols for label in custom_only)
+    assert all(label not in reference_symbols for label in custom_only)
+
+    custom_table = custom_symbols["ElmsLab_MapScripts"].rom_offset
+    reference_table = reference_symbols["ElmsLab_MapScripts"].rom_offset
+    assert custom_rom.u8(custom_table) == reference_rom.u8(reference_table) == 6
+    scene_4_offset = 1 + 4 * 4
+    assert custom_rom.u16le(custom_table + scene_4_offset) == custom_symbols[
+        "ElmsLabSilverReturnsBirdScene"
+    ].address
+    assert reference_rom.u16le(reference_table + scene_4_offset) == reference_symbols[
+        "ElmsLabNoop4Scene"
+    ].address
+
+    custom_objects = _object_events(custom_rom, custom_symbols, constants)
+    reference_objects = _object_events(reference_rom, reference_symbols, constants)
+    assert len(custom_objects) == 8
+    assert len(reference_objects) == 6
+    silver, bird = custom_objects[-2:]
+    assert (silver.x, silver.y, silver.sprite, silver.movement) == (
+        4,
+        3,
+        constants["SPRITE_RIVAL"],
+        constants["SPRITEMOVEDATA_STANDING_DOWN"],
+    )
+    assert (bird.x, bird.y, bird.sprite, bird.movement) == (
+        5,
+        3,
+        constants["SPRITE_MOLTRES"],
+        constants["SPRITEMOVEDATA_POKEMON"],
+    )
+    for event in (silver, bird):
+        assert event.palette_and_type & 0xF == constants["OBJECTTYPE_SCRIPT"]
+        assert event.script_pointer == custom_symbols["ObjectEvent"].address
+        assert event.event_flag == constants["EVENT_INITIALIZED_EVENTS"]
+
+    stub = custom_rom.slice(
+        custom_symbols["ElmsLabSilverReturnsBirdScript"].rom_offset,
+        custom_symbols["ElmsLabWalkUpToElmScript"].rom_offset
+        - custom_symbols["ElmsLabSilverReturnsBirdScript"].rom_offset,
+    )
+    target = custom_symbols["ElmsLabSilverArcScript"]
+    far_jump = bytes([constants["farsjump_command"], target.bank]) + target.address.to_bytes(
+        2, "little"
+    )
+    assert stub.count(far_jump) == 1
+    assert target.bank != custom_symbols["ElmsLabSilverReturnsBirdScript"].bank
+
+
+def test_compiled_release_helpers_encode_all_availability_facts_then_completion(
+    repo_root: Path, phase_8_constants: dict[str, int]
+) -> None:
+    constants = phase_8_constants
+    rom = RomImage.load(repo_root / "crystallegends.gbc")
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    helper = rom.slice(
+        symbols["ElmsLabSilverSetAvailability"].rom_offset,
+        symbols["ElmsLabSilverHandoffMovement"].rom_offset
+        - symbols["ElmsLabSilverSetAvailability"].rom_offset,
+    )
+    for event in (
+        "EVENT_ARTICUNO_AVAILABLE",
+        "EVENT_ZAPDOS_AVAILABLE",
+        "EVENT_MOLTRES_AVAILABLE",
+    ):
+        mutation = bytes([constants["setevent_command"]]) + constants[event].to_bytes(
+            2, "little"
+        )
+        assert helper.count(mutation) == 1
+
+    core = rom.slice(
+        symbols["ElmsLabSilverArcScript"].rom_offset,
+        symbols["ElmsLabSilverBufferReturnedBird"].rom_offset
+        - symbols["ElmsLabSilverArcScript"].rom_offset,
+    )
+    release = bytes([constants["setevent_command"]]) + constants[
+        "EVENT_SILVER_BIRD_RELEASED"
+    ].to_bytes(2, "little")
+    complete = bytes(
+        [
+            constants["setscene_command"],
+            symbols.constant("SCENE_ELMSLAB_NOOP"),
+        ]
+    )
+    assert core.count(release) == 1
+    assert core.count(complete) == 1
+    assert core.index(release) < core.index(complete)
+
+
+def test_compiled_post_release_paths_add_only_the_custom_release_checks(
+    repo_root: Path, phase_8_constants: dict[str, int]
+) -> None:
+    constants = phase_8_constants
+    custom_rom = RomImage.load(repo_root / "crystallegends.gbc")
+    custom_symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    reference_rom = RomImage.load(repo_root / "pokecrystal11.gbc")
+    reference_symbols = SymbolTable.parse(
+        (repo_root / "pokecrystal11.sym").read_text()
+    )
+    release_check = _event_check(constants, "EVENT_SILVER_BIRD_RELEASED")
+    ranges = (
+        ("PlateauRivalBattle1", "PlateauRivalBattle2"),
+        ("PlateauRivalBattle2", "PlateauRivalBattleCommon"),
+        ("DragonsDenB1FCheckRivalCallback", "DragonsDenB1F_ClairScene"),
+        ("DragonShrineElder1Script", "DragonShrineElder2Script"),
+    )
+    for start, end in ranges:
+        custom = custom_rom.slice(
+            custom_symbols[start].rom_offset,
+            custom_symbols[end].rom_offset - custom_symbols[start].rom_offset,
+        )
+        reference = reference_rom.slice(
+            reference_symbols[start].rom_offset,
+            reference_symbols[end].rom_offset - reference_symbols[start].rom_offset,
+        )
+        assert custom.count(release_check) == 1
+        assert release_check not in reference
