@@ -241,3 +241,36 @@ resume the stock Radio Tower resolution. The generic caught-result query is
 custom-only; reference builds retain their exact Celebi behavior and bytes. Do
 not add pre-Phase-7 save migration or broaden this phase into Rocket-team
 balancing.
+
+## 2026-08-19 — End Silver's stolen-bird arc with voluntary release
+
+Mt. Moon is Silver's final battle with the legendary bird he stole from Elm.
+After a victory, Silver acknowledges that the bird chose to fight beside him
+but returns it because the bond began through theft. The next ordinary entry to
+Elm's Lab runs an automatic scene in which Elm releases the bird, the bird
+looks back at Silver, and Silver leaves with his other partners.
+
+Store the completed release and the three mutually exclusive species
+availability facts as four custom events. Script order makes the return and
+release atomic: set exactly the branch-correct availability fact, then the
+release fact, then the lab's no-op scene. Never infer this state from party or
+Pokédex ownership, and do not add a redundant handoff event.
+
+The two temporary lab actors reuse the permanent initialization event as their
+default object mask. Native Continue skips map object callbacks, so a
+callback-owned `-1` visibility design would leak the actors after save/reload.
+The automatic scene briefly unmasks both actors only after map setup, restores
+the initialization fact immediately, and removes both object structs before
+completion. This preserves the four-event story model and leaves ordinary Elm
+interaction unchanged afterward.
+
+Require the release fact in Crystal Legends before either Monday/Wednesday
+Indigo rematch entrance, Silver's Tuesday/Thursday Dragon's Den cameo, or the
+Dragon Shrine training hint. Preserve their stock dialogue, party data,
+weekday checks, weekly cadence, and every reference-build byte.
+
+Phase 8 sets only Silver's released-bird availability state. Phase 9 owns all
+physical Articuno, Zapdos, and Moltres locations, encounter and retry behavior,
+Oak's third bird, capture, and hints. Phase 12 owns Silver's full balance pass.
+The four event IDs fit the existing 2048-bit event block, so no RAM, SRAM,
+scene-layout, or reference-build compatibility boundary changes.

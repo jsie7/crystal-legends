@@ -40,12 +40,13 @@ def test_acquisition_ledger_covers_each_dex_number_once(repo_root: Path) -> None
         and row.source
         for row in rows
     )
+    status = (
+        r"(?:Existing(?: Phase \d+)?|Phase \d+|"
+        r"Implemented Phase \d+ release state|"
+        r"Reserved Phase [\d/-]+(?: encounter)?)"
+    )
     assert all(
-        re.fullmatch(
-            r"(?:Existing|Phase \d+|Reserved Phase [\d/-]+|"
-            r"Existing Phase \d+ / Reserved Phase [\d-]+)",
-            row.availability,
-        )
+        re.fullmatch(rf"{status}(?: / {status})*", row.availability)
         for row in rows
     )
     for row in rows:

@@ -53,6 +53,10 @@ Phase 7 is source-complete: its story buildup, four-fact state model, permanent
 Mew/Mewtwo terminal decision, optional level-30 capture, retry paths, and stock
 Radio Tower resume pass all automated layers. Its user-owned story, map, pacing,
 and branch-feel review remains pending.
+Phase 8 is source-complete: all three Mt. Moon-to-Elm release branches,
+species-specific availability state, bird-free Indigo rematch, and Dragon's
+Den chronology pass every automated layer. Its user-owned presentation,
+discoverability, and provisional balance review remains pending.
 
 ## Validate the Crystal Legends build
 
@@ -77,10 +81,11 @@ The complete local handoff gate now covers the legendary-bird starter paths,
 Phase 2 evolution/item/Celebi behavior, Phase 3 CHEAT MODE, Phase 4's three
 production-map gifts, Phase 5's three Ruins gifts and Route 14 Girafarig trade,
 Phase 6's roamer/Fast Ball contracts, and Phase 7's Project Mew story and
-branching encounter. Rerun the narrower owning profile after a focused change and
-`make test-all` at a milestone handoff. Four ordinary Crystal-missing families
-remain reserved for the Phase 9 Safari Zone; Phase 5 makes Kim's Route 14 trade
-Girafarig's canonical source.
+branching encounter, plus Phase 8's Silver release and post-release chronology.
+Rerun the narrower owning profile after a focused change and `make test-all` at
+a milestone handoff. Four ordinary Crystal-missing families remain reserved
+for the Phase 9 Safari Zone; Phase 5 makes Kim's Route 14 trade Girafarig's
+canonical source.
 
 ## Run the local automated test harness
 
@@ -339,6 +344,66 @@ capture requirement, or test-only gameplay code to repair a scenario.
 The automated pass makes Phase 7 source-complete, not playtest-certified or
 release-ready. Dialogue, presentation, pacing, and branch-feel issues must be
 fixed and retested or explicitly deferred.
+
+### Validate Phase 8 Silver's Kanto arc
+
+Run the focused Phase 8 layers while editing, then the clean handoff gate:
+
+```bash
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/static/test_phase_08_regressions.py
+make crystallegends
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/rom/test_phase_08_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/emulator/test_phase_08_silver_arc.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest -m phase8
+make test-crystallegends
+make clean
+make test-all
+rgbfix -v crystallegends.gbc
+git diff --check
+git status --short
+```
+
+The scenario helper copies the approved initialized battery save into pytest
+temporary storage and edits only symbolically resolved state. Automation owns
+all three Mt. Moon selectors, victory and loss, pending native save/reload, the
+three automatic lab scenes, branch-correct name and cry, choreography and
+walkable paths, availability isolation, mutation order, actor removal, replay
+prevention, and ordinary later Elm interaction. It also owns both
+Monday/Wednesday Indigo entrances, the five-member bird-free party, Champion
+music, weekly lockout and persistence, Tuesday/Thursday Dragon's Den visibility
+and repeat dialogue, the Dragon Shrine elder route, save-layout and bank
+floors, and complete reference isolation.
+
+For manual acceptance, use a backed-up or disposable save and record the
+emulator/version, ROM commit and hash, date, branch, preparation boundary, and
+result. Confirm:
+
+1. For each player starter, win and lose at Mt. Moon, verify Silver's matching
+   level-60 bird, and judge the provisional roster balance and post-victory
+   direction back to Elm.
+2. Save while the return is pending, travel naturally to New Bark Town, and
+   review the complete lab scene: object placement and palettes, dialogue
+   wrapping and voice, branch-correct cry, bird look-back, both exit paths,
+   post-scene lab interactions, re-entry, and save/reload.
+3. After release, play one natural Monday or Wednesday Indigo rematch. Confirm
+   Champion music, five non-legendary Pokémon with Crobat as the ace, coherent
+   unchanged dialogue, and the native weekly lockout after victory.
+4. Visit Dragon's Den on Tuesday or Thursday, confirm both unchanged training
+   lines and the elder hint, then verify Silver is absent on an excluded day.
+5. Confirm Phase 8 never places a released bird for capture and does not move
+   Oak's third bird; those are Phase 9 boundaries.
+
+For a Phase 8 failure, first isolate exact source dialogue, branch mapping,
+custom guards, and geometry; then inspect the compiled scene pointer, object
+table, far jump, event bytes, party records, save fingerprint, and bank floors.
+For emulator failures, use the last hook plus map, coordinate, script mode,
+release/availability facts, weekday, and weekly flag. Do not add test-only
+warps, save migration, party-derived state, or a physical bird encounter to
+repair a scenario.
+
+The automated pass makes Phase 8 source-complete, not playtest-certified or
+release-ready. Presentation, discoverability, pacing, and balance remain the
+user-owned gate.
 
 ### Battery-save and scenario fixtures
 

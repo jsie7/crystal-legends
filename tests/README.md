@@ -118,3 +118,24 @@ Tower resume, save-layout size stability, and reference isolation. The
 user-owned manual matrix in
 [`docs/workflows.md`](../docs/workflows.md#validate-phase-7-project-mew) owns the
 room's visual hierarchy, sound, dialogue wrapping, pacing, and branch feel.
+
+Run the focused Phase 8 profile with:
+
+```bash
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/static/test_phase_08_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/rom/test_phase_08_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/emulator/test_phase_08_silver_arc.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest -m phase8
+```
+
+Phase 8 has 41 focused tests: 12 source contracts, six compiled-ROM contracts,
+and 23 production-ROM scenarios. They own all three Mt. Moon and lab branches,
+loss and pending/completed save-reload behavior, exact release-state isolation,
+custom lab objects and cross-bank scene entry, both Indigo entrances and the
+five-member bird-free rematch, Champion music and weekly cadence, and the
+Dragon's Den cameo and shrine hint across their accepted and excluded days.
+Temporary checkpoints are derived from the approved initialized save; no new
+committed save is required. The user-owned manual matrix in
+[`docs/workflows.md`](../docs/workflows.md#validate-phase-8-silvers-kanto-arc)
+owns travel discoverability, visual and audio presentation, dialogue pacing,
+look-back readability, and provisional Silver balance.

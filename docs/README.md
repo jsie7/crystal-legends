@@ -31,6 +31,13 @@ wall and northern containment chamber. The permanent terminal decision opens
 the center glass and exit together, leaving the single level-30 subject as Mew
 or stabilizing it as Mewtwo. Capture is optional for Johto progression, and any
 knockout, escape, or player defeat leaves a fresh retry available.
+Phase 8 closes Silver's stolen-bird arc after the Mt. Moon battle. Silver
+returns the branch-correct legendary bird to Elm, Elm releases it after a final
+look back, and the completed scene records only that species' availability for
+Phase 9. The release also becomes the chronology gate for Silver's bird-free
+Monday/Wednesday Indigo rematch, Tuesday/Thursday Dragon's Den training cameo,
+and the Dragon Shrine elder hint. Phase 8 adds no physical bird encounter or
+Oak handoff; those remain Phase 9 work.
 
 The earlier manual pass confirmed the title screen, all three legendary-bird
 starter branches, the first Silver battle, the Elm/Oak handoff, player-bird
@@ -39,10 +46,12 @@ user-owned presentation matrix for sprite appearance, dialogue, discoverability,
 scene choreography, and story feel. Phase 5 also needs its user-owned Ruins and
 Route 14 presentation matrix. Phase 6 still needs its user-owned tracker,
 hunt-feel, and Fast Ball presentation review. Phase 7 still needs its user-owned
-story clarity, annex presentation, pacing, and both-branch review. Later
-Silver/balance checks, Phase 2 presentation, and full-game acceptance also
-remain deferred. The current milestone is source-complete but is not yet
-playtest-certified or release-ready.
+story clarity, annex presentation, pacing, and both-branch review. Phase 8
+still needs the user-owned three-branch Mt. Moon/lab presentation pass, one
+natural Indigo rematch, and one natural Dragon's Den cameo. Silver's full
+balance pass remains Phase 12 work. Phase 2 presentation and full-game
+acceptance also remain deferred. The current milestone is source-complete but
+is not yet playtest-certified or release-ready.
 See
 [workflows.md](workflows.md) for the validation boundary and
 [decisions.md](decisions.md) for the sequencing decision.
