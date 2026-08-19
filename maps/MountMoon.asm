@@ -71,6 +71,23 @@ MountMoonRivalBattleScript:
 	sjump .FinishBattle
 
 .FinishBattle:
+if DEF(_CRYSTALLEGENDS)
+	checkevent MOUNT_MOON_RIVAL_SECOND_STARTER_EVENT
+	iftrue .BufferSecondBird
+	checkevent MOUNT_MOON_RIVAL_THIRD_STARTER_EVENT
+	iftrue .BufferThirdBird
+	getmonname STRING_BUFFER_3, MOLTRES
+	sjump .BirdBuffered
+
+.BufferSecondBird:
+	getmonname STRING_BUFFER_3, ARTICUNO
+	sjump .BirdBuffered
+
+.BufferThirdBird:
+	getmonname STRING_BUFFER_3, ZAPDOS
+
+.BirdBuffered:
+endc
 	playmusic MUSIC_RIVAL_AFTER
 	opentext
 	writetext MountMoonRivalTextAfter
@@ -80,6 +97,9 @@ MountMoonRivalBattleScript:
 	disappear MOUNTMOON_RIVAL
 	setscene SCENE_MOUNTMOON_NOOP
 	setevent EVENT_BEAT_RIVAL_IN_MT_MOON
+if DEF(_CRYSTALLEGENDS)
+	setmapscene ELMS_LAB, SCENE_ELMSLAB_SILVER_RETURNS_BIRD
+endc
 	playmapmusic
 	end
 
@@ -133,6 +153,43 @@ MountMoonRivalTextWin:
 	done
 
 MountMoonRivalTextAfter:
+if DEF(_CRYSTALLEGENDS)
+	text "<……> <……> <……>"
+
+	para "…You won, fair"
+	line "and square."
+
+	para "My #MON gave"
+	line "it everything."
+
+	para "Even @"
+	text_ram wStringBuffer3
+	text "…"
+	line "It chose to stand"
+	cont "with me."
+
+	para "But that doesn't"
+	line "change how this"
+	cont "started."
+
+	para "I took it from"
+	line "PROF.ELM."
+
+	para "Getting stronger"
+	line "doesn't make that"
+	cont "right."
+
+	para "I'm taking"
+	line "@"
+	text_ram wStringBuffer3
+	text " back to"
+	cont "PROF.ELM in"
+	cont "NEW BARK TOWN."
+
+	para "I have to put"
+	line "this right."
+	done
+else
 	text "<……> <……> <……>"
 
 	para "…You won, fair"
@@ -157,6 +214,7 @@ MountMoonRivalTextAfter:
 	para "how good I am by"
 	line "beating you."
 	done
+endc
 
 MountMoonRivalTextLoss:
 	text "<……> <……> <……>"

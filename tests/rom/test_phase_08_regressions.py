@@ -29,6 +29,8 @@ def phase_8_constants(repo_root: Path, tmp_path_factory, phase_8_contract: dict)
         "EVENT_MOLTRES_AVAILABLE",
         "NUM_EVENTS",
         "TRAINERTYPE_MOVES",
+        "setevent_command",
+        "setmapscene_command",
         "RIVAL2_1_ARTICUNO",
         "RIVAL2_1_ZAPDOS",
         "RIVAL2_1_MOLTRES",
@@ -40,6 +42,9 @@ def phase_8_constants(repo_root: Path, tmp_path_factory, phase_8_contract: dict)
         "MAGNETON",
         "GENGAR",
         "ALAKAZAM",
+        "GROUP_ELMS_LAB",
+        "MAP_ELMS_LAB",
+        "EVENT_BEAT_RIVAL_IN_MT_MOON",
     }
     for branch in phase_8_contract["branches"]:
         names.update(
@@ -119,3 +124,49 @@ def test_compiled_silver_parties_and_numeric_slots_remain_stable(
         assert [member[1] for member in party] == expected_species
         assert [member[0] for member in party] == [45, 48, 45, 46, 46]
         assert all(member[1] not in {phase_8_constants[name] for name in birds} for member in party)
+
+
+def test_compiled_mt_moon_victory_schedules_custom_scene_only(
+    repo_root: Path, phase_8_constants: dict[str, int]
+) -> None:
+    custom_rom = RomImage.load(repo_root / "crystallegends.gbc")
+    custom_symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    reference_rom = RomImage.load(repo_root / "pokecrystal11.gbc")
+    reference_symbols = SymbolTable.parse((repo_root / "pokecrystal11.sym").read_text())
+    scene = custom_symbols.constant("SCENE_ELMSLAB_SILVER_RETURNS_BIRD")
+    assert scene == reference_symbols.constant("SCENE_ELMSLAB_UNUSED") == 4
+
+    custom = custom_rom.slice(
+        custom_symbols["MountMoonRivalBattleScript.FinishBattle"].rom_offset,
+        custom_symbols["MountMoonRivalMovementBefore"].rom_offset
+        - custom_symbols["MountMoonRivalBattleScript.FinishBattle"].rom_offset,
+    )
+    reference = reference_rom.slice(
+        reference_symbols["MountMoonRivalBattleScript.FinishBattle"].rom_offset,
+        reference_symbols["MountMoonRivalMovementBefore"].rom_offset
+        - reference_symbols["MountMoonRivalBattleScript.FinishBattle"].rom_offset,
+    )
+    set_victory = bytes([phase_8_constants["setevent_command"]]) + phase_8_constants[
+        "EVENT_BEAT_RIVAL_IN_MT_MOON"
+    ].to_bytes(2, "little")
+    schedule = bytes(
+        [
+            phase_8_constants["setmapscene_command"],
+            phase_8_constants["GROUP_ELMS_LAB"],
+            phase_8_constants["MAP_ELMS_LAB"],
+            scene,
+        ]
+    )
+    assert custom.count(set_victory) == 1
+    assert custom.count(schedule) == 1
+    assert schedule not in reference
+    for event in (
+        "EVENT_SILVER_BIRD_RELEASED",
+        "EVENT_ARTICUNO_AVAILABLE",
+        "EVENT_ZAPDOS_AVAILABLE",
+        "EVENT_MOLTRES_AVAILABLE",
+    ):
+        mutation = bytes([phase_8_constants["setevent_command"]]) + phase_8_constants[
+            event
+        ].to_bytes(2, "little")
+        assert mutation not in custom

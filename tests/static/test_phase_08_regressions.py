@@ -39,6 +39,11 @@ def _assert_contiguous(lines: list[str], expected: list[str]) -> None:
     assert any(lines[index : index + width] == expected for index in range(len(lines)))
 
 
+def _section(lines: list[str], start: str, end: str) -> list[str]:
+    first = lines.index(start)
+    return lines[first : lines.index(end, first + 1)]
+
+
 def test_phase_8_scenario_and_branch_contracts(repo_root: Path) -> None:
     scenario = json.loads(
         (repo_root / "tests/fixtures/scenarios/phase_08_silver_arc.json").read_text()
@@ -176,3 +181,110 @@ def test_silver_mt_moon_and_indigo_parties_remain_frozen(repo_root: Path) -> Non
             "ld de, MUSIC_CHAMPION_BATTLE",
         ],
     )
+
+
+def test_mt_moon_victory_buffers_the_returned_bird_and_schedules_elm(
+    repo_root: Path,
+) -> None:
+    crystal = _active_code(repo_root / "maps/MountMoon.asm", CRYSTAL_LEGENDS)
+    reference = _active_code(repo_root / "maps/MountMoon.asm", REFERENCE)
+    finish = _section(crystal, ".FinishBattle:", "MountMoonRivalMovementBefore:")
+
+    _assert_contiguous(
+        finish,
+        [
+            "checkevent MOUNT_MOON_RIVAL_SECOND_STARTER_EVENT",
+            "iftrue .BufferSecondBird",
+            "checkevent MOUNT_MOON_RIVAL_THIRD_STARTER_EVENT",
+            "iftrue .BufferThirdBird",
+            "getmonname STRING_BUFFER_3, MOLTRES",
+            "sjump .BirdBuffered",
+        ],
+    )
+    _assert_contiguous(
+        finish,
+        [
+            ".BufferSecondBird:",
+            "getmonname STRING_BUFFER_3, ARTICUNO",
+            "sjump .BirdBuffered",
+            ".BufferThirdBird:",
+            "getmonname STRING_BUFFER_3, ZAPDOS",
+            ".BirdBuffered:",
+        ],
+    )
+    _assert_contiguous(
+        finish,
+        [
+            "setscene SCENE_MOUNTMOON_NOOP",
+            "setevent EVENT_BEAT_RIVAL_IN_MT_MOON",
+            "setmapscene ELMS_LAB, SCENE_ELMSLAB_SILVER_RETURNS_BIRD",
+            "playmapmusic",
+            "end",
+        ],
+    )
+    assert not any("EVENT_SILVER_BIRD_RELEASED" in line for line in finish)
+    assert not any("_AVAILABLE" in line for line in finish)
+    assert not any("SCENE_ELMSLAB_SILVER_RETURNS_BIRD" in line for line in reference)
+
+
+def test_mt_moon_uses_the_approved_custom_post_victory_dialogue_only(
+    repo_root: Path,
+) -> None:
+    crystal = _active_code(repo_root / "maps/MountMoon.asm", CRYSTAL_LEGENDS)
+    reference = _active_code(repo_root / "maps/MountMoon.asm", REFERENCE)
+    custom_text = _section(crystal, "MountMoonRivalTextAfter:", "MountMoonRivalTextLoss:")
+    reference_text = _section(reference, "MountMoonRivalTextAfter:", "MountMoonRivalTextLoss:")
+
+    _assert_contiguous(
+        custom_text,
+        [
+            'para "Even @"',
+            "text_ram wStringBuffer3",
+            'text "…"',
+            'line "It chose to stand"',
+            'cont "with me."',
+        ],
+    )
+    for row in (
+        'para "But that doesn\'t"',
+        'para "I took it from"',
+        'line "PROF.ELM."',
+        'para "Getting stronger"',
+        'cont "right."',
+        'cont "NEW BARK TOWN."',
+        'line "this right."',
+    ):
+        assert row in custom_text
+    assert 'para "I admit it. But"' not in custom_text
+    assert 'para "I admit it. But"' in reference_text
+    for label in ("MountMoonRivalTextBefore:", "MountMoonRivalTextWin:", "MountMoonRivalTextLoss:"):
+        crystal_section = _section(
+            crystal,
+            label,
+            {
+                "MountMoonRivalTextBefore:": "MountMoonRivalTextWin:",
+                "MountMoonRivalTextWin:": "MountMoonRivalTextAfter:",
+                "MountMoonRivalTextLoss:": "MountMoon_MapEvents:",
+            }[label],
+        )
+        reference_section = _section(
+            reference,
+            label,
+            {
+                "MountMoonRivalTextBefore:": "MountMoonRivalTextWin:",
+                "MountMoonRivalTextWin:": "MountMoonRivalTextAfter:",
+                "MountMoonRivalTextLoss:": "MountMoon_MapEvents:",
+            }[label],
+        )
+        assert crystal_section == reference_section
+
+
+def test_elm_scene_four_is_custom_named_without_adding_a_scene(repo_root: Path) -> None:
+    crystal = _active_code(repo_root / "maps/ElmsLab.asm", CRYSTAL_LEGENDS)
+    reference = _active_code(repo_root / "maps/ElmsLab.asm", REFERENCE)
+    crystal_scenes = _section(crystal, "ElmsLab_MapScripts:", "ElmsLabMeetElmScene:")
+    reference_scenes = _section(reference, "ElmsLab_MapScripts:", "ElmsLabMeetElmScene:")
+    assert "scene_script ElmsLabNoop4Scene,   SCENE_ELMSLAB_SILVER_RETURNS_BIRD" in crystal_scenes
+    assert "scene_script ElmsLabNoop4Scene,   SCENE_ELMSLAB_UNUSED" in reference_scenes
+    assert sum(line.startswith("scene_script ") for line in crystal_scenes) == 6
+    assert sum(line.startswith("scene_script ") for line in reference_scenes) == 6

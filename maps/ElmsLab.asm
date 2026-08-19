@@ -34,7 +34,11 @@ ElmsLab_MapScripts:
 	scene_script ElmsLabNoop1Scene,   SCENE_ELMSLAB_CANT_LEAVE
 	scene_script ElmsLabNoop2Scene,   SCENE_ELMSLAB_NOOP
 	scene_script ElmsLabNoop3Scene,   SCENE_ELMSLAB_MEET_OFFICER
+if DEF(_CRYSTALLEGENDS)
+	scene_script ElmsLabNoop4Scene,   SCENE_ELMSLAB_SILVER_RETURNS_BIRD
+else
 	scene_script ElmsLabNoop4Scene,   SCENE_ELMSLAB_UNUSED
+endc
 	scene_script ElmsLabNoop5Scene,   SCENE_ELMSLAB_AIDE_GIVES_POTION
 	scene_const SCENE_ELMSLAB_AIDE_GIVES_POKE_BALLS
 
