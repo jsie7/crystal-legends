@@ -1,5 +1,8 @@
 	object_const_def
 	const CINNABARISLAND_BLUE
+	if DEF(_CRYSTALLEGENDS)
+	const CINNABARISLAND_BLAINES_LOG_RUBBLE
+	endc
 
 CinnabarIsland_MapScripts:
 	def_scene_scripts
@@ -34,6 +37,35 @@ CinnabarIslandPokecenterSign:
 
 CinnabarIslandHiddenRareCandy:
 	hiddenitem RARE_CANDY, EVENT_CINNABAR_ISLAND_HIDDEN_RARE_CANDY
+
+if DEF(_CRYSTALLEGENDS)
+CinnabarIslandOldGymRemains:
+	jumptext CinnabarIslandOldGymRemainsText
+
+CinnabarIslandOldLabRemains:
+	jumptext CinnabarIslandOldLabRemainsText
+
+CinnabarIslandBlainesLogRubble:
+	faceplayer
+	opentext
+	checkevent EVENT_LEARNED_LOCATION_OF_BLAINES_LOG
+	iffalse .ClaspStuck
+	writetext CinnabarIslandBlainesLogReleaseText
+	promptbutton
+	verbosegiveitem BLAINES_LOG
+	iffalse .NoRoom
+	setevent EVENT_RECOVERED_BLAINES_LOG
+	closetext
+	disappear CINNABARISLAND_BLAINES_LOG_RUBBLE
+	end
+
+.ClaspStuck:
+	writetext CinnabarIslandBlainesLogStuckText
+	waitbutton
+.NoRoom:
+	closetext
+	end
+endc
 
 CinnabarIslandBlueTeleport:
 	teleport_from
@@ -125,6 +157,37 @@ CinnabarIslandSignText:
 	line "Burning Desire"
 	done
 
+if DEF(_CRYSTALLEGENDS)
+CinnabarIslandOldGymRemainsText:
+	text "Heat-scarred stone"
+	line "marks where the"
+	cont "GYM once stood."
+	done
+
+CinnabarIslandOldLabRemainsText:
+	text "Only twisted beams"
+	line "remain of the old"
+	cont "laboratory."
+	done
+
+CinnabarIslandBlainesLogStuckText:
+	text "There's a flame-"
+	line "crested case stuck"
+	cont "under the rubble."
+
+	para "Its warped clasp"
+	line "won't open."
+	done
+
+CinnabarIslandBlainesLogReleaseText:
+	text "Press the crest in"
+	line "and pull the"
+	cont "latch sideways."
+
+	para "The rubble shifts!"
+	done
+endc
+
 CinnabarIsland_MapEvents:
 	db 0, 0 ; filler
 
@@ -138,6 +201,13 @@ CinnabarIsland_MapEvents:
 	bg_event  9, 11, BGEVENT_READ, CinnabarIslandGymSign
 	bg_event  7,  7, BGEVENT_READ, CinnabarIslandSign
 	bg_event  9,  1, BGEVENT_ITEM, CinnabarIslandHiddenRareCandy
+	if DEF(_CRYSTALLEGENDS)
+	bg_event 15,  5, BGEVENT_READ, CinnabarIslandOldGymRemains
+	bg_event 19,  8, BGEVENT_READ, CinnabarIslandOldLabRemains
+	endc
 
 	def_object_events
 	object_event  9,  6, SPRITE_BLUE, SPRITEMOVEDATA_SPINRANDOM_SLOW, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, CinnabarIslandBlue, EVENT_BLUE_IN_CINNABAR
+	if DEF(_CRYSTALLEGENDS)
+	object_event 13,  6, SPRITE_ROCK, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, CinnabarIslandBlainesLogRubble, EVENT_RECOVERED_BLAINES_LOG
+	endc

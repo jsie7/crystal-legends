@@ -7,6 +7,7 @@ import re
 from typing import Mapping, Sequence
 
 from tests.support.map_model import MapDimensions, MapEvent, MapValidationError
+from tests.support.asm_conditions import active_lines
 
 
 _BLOCK_LABEL_RE = re.compile(r"^([A-Za-z0-9_]+)_Blocks:")
@@ -38,10 +39,17 @@ def _normalized(name: str) -> str:
     return re.sub(r"[^A-Z0-9]", "", name.upper())
 
 
-def parse_block_paths(text: str) -> dict[str, str]:
+CRYSTAL_LEGENDS_DEFINITIONS = frozenset({"_CRYSTAL11", "_CRYSTALLEGENDS"})
+
+
+def parse_block_paths(
+    text: str, definitions: Sequence[str] = CRYSTAL_LEGENDS_DEFINITIONS
+) -> dict[str, str]:
     pending: list[str] = []
     paths: dict[str, str] = {}
-    for number, raw_line in enumerate(text.splitlines(), start=1):
+    for source_line in active_lines(text, definitions):
+        number = source_line.number
+        raw_line = source_line.text
         code = raw_line.split(";", 1)[0].rstrip()
         label = _BLOCK_LABEL_RE.match(code)
         if label:
@@ -106,9 +114,12 @@ def validate_block_sizes(
         raise MapValidationError("\n".join(failures))
 
 
-def parse_map_tilesets(text: str) -> dict[str, str]:
+def parse_map_tilesets(
+    text: str, definitions: Sequence[str] = CRYSTAL_LEGENDS_DEFINITIONS
+) -> dict[str, str]:
     result: dict[str, str] = {}
-    for raw_line in text.splitlines():
+    for source_line in active_lines(text, definitions):
+        raw_line = source_line.text
         match = _MAP_RE.match(raw_line.split(";", 1)[0])
         if match:
             name, tileset = match.groups()
@@ -116,9 +127,13 @@ def parse_map_tilesets(text: str) -> dict[str, str]:
     return result
 
 
-def parse_collision_rows(text: str) -> list[tuple[str, str, str, str]]:
+def parse_collision_rows(
+    text: str, definitions: Sequence[str] = CRYSTAL_LEGENDS_DEFINITIONS
+) -> list[tuple[str, str, str, str]]:
     rows: list[tuple[str, str, str, str]] = []
-    for number, raw_line in enumerate(text.splitlines(), start=1):
+    for source_line in active_lines(text, definitions):
+        number = source_line.number
+        raw_line = source_line.text
         match = _COLLISION_RE.match(raw_line)
         if match is None:
             continue

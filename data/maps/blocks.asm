@@ -221,7 +221,11 @@ BetaCherrygroveCity_Blocks: ; unreferenced
 	INCBIN "maps/unused/BetaCherrygroveCity.blk"
 
 CinnabarIsland_Blocks:
+	if DEF(_CRYSTALLEGENDS)
+	INCBIN "maps/CinnabarIslandCrystalLegends.blk"
+	else
 	INCBIN "maps/CinnabarIsland.blk"
+	endc
 
 Route4_Blocks:
 	INCBIN "maps/Route4.blk"

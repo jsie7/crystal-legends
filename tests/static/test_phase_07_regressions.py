@@ -256,8 +256,6 @@ def test_project_mew_event_slots_are_explicit_and_reference_reserved(
             "const EVENT_ARTICUNO_AVAILABLE",
             "const EVENT_ZAPDOS_AVAILABLE",
             "const EVENT_MOLTRES_AVAILABLE",
-            "const_next 2048",
-            "DEF NUM_EVENTS EQU const_value",
         ],
     )
     assert all(not any(event in line for line in reference) for event in events)
@@ -269,6 +267,7 @@ def test_project_mew_event_slots_are_explicit_and_reference_reserved(
             "const_skip 3",
             "const_skip 4",
             "const_skip 4",
+            "const_skip 18",
             "const_next 2048",
             "DEF NUM_EVENTS EQU const_value",
         ],

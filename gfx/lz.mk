@@ -59,6 +59,7 @@ gfx/tilesets/johto.2bpp.lz: LZFLAGS += --literal-only --align 1
 gfx/tilesets/johto_modern.2bpp.lz: LZFLAGS += --literal-only --align 1
 gfx/tilesets/kabuto_word_room.2bpp.lz: LZFLAGS += --literal-only --align 1
 gfx/tilesets/kanto.2bpp.lz: LZFLAGS += --literal-only --align 1
+gfx/tilesets/kanto_crystallegends.2bpp.lz: LZFLAGS += --literal-only --align 1
 gfx/tilesets/mansion.2bpp.lz: LZFLAGS += --odd-alternate --align 4
 gfx/tilesets/mart.2bpp.lz: LZFLAGS += --odd-alternate --align 4
 gfx/tilesets/omanyte_word_room.2bpp.lz: LZFLAGS += --literal-only --align 1

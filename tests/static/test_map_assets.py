@@ -97,6 +97,23 @@ def test_unresolved_block_alias_fails() -> None:
         parse_block_paths("ExampleRoom_Blocks:\n\tdb 1\n")
 
 
+def test_conditional_block_aliases_resolve_per_build() -> None:
+    source = (
+        "ExampleRoom_Blocks:\n"
+        "if DEF(_CRYSTALLEGENDS)\n"
+        '\tINCBIN "maps/ExampleRoomCrystalLegends.blk"\n'
+        "else\n"
+        '\tINCBIN "maps/ExampleRoom.blk"\n'
+        "endc\n"
+    )
+    assert parse_block_paths(source) == {
+        "ExampleRoom": "maps/ExampleRoomCrystalLegends.blk"
+    }
+    assert parse_block_paths(source, {"_CRYSTAL11"}) == {
+        "ExampleRoom": "maps/ExampleRoom.blk"
+    }
+
+
 def test_wrong_block_size_fails(tmp_path: Path) -> None:
     block = tmp_path / "room.blk"
     block.write_bytes(b"\x00\x01")

@@ -1,0 +1,87 @@
+{
+  "scenario_id": "phase-09-kanto-completion",
+  "rom": "crystallegends.gbc",
+  "symbols": "crystallegends.sym",
+  "reference_rom": "pokecrystal11.gbc",
+  "reference_symbols": "pokecrystal11.sym",
+  "save_fixture": "bedroom_initialized.sav",
+  "max_frames_per_step": 60000,
+  "delivery_contract": "stock_givepoke_0_party_1_box_2_full",
+  "events": {
+    "first": 2015,
+    "last": 2032,
+    "count": 18
+  },
+  "gifts": [
+    {
+      "species": "BULBASAUR",
+      "level": 28,
+      "giver": "ERIKA",
+      "map": "CELADON_GYM",
+      "script": "CeladonGymErikaScript",
+      "storage_label": "CeladonGymErikaScript.BulbasaurStorageFull",
+      "start": {"x": 5, "y": 4, "facing": "UP"},
+      "badge": "ENGINE_RAINBOWBADGE",
+      "service_event": "EVENT_HELPED_ERIKA_CLEAN_CELADON_POND",
+      "completion_event": "EVENT_GOT_BULBASAUR_FROM_ERIKA",
+      "generated_moves": ["POISONPOWDER", "SLEEP_POWDER", "RAZOR_LEAF", "SWEET_SCENT"]
+    },
+    {
+      "species": "SQUIRTLE",
+      "level": 28,
+      "giver": "MISTY",
+      "map": "CERULEAN_GYM",
+      "script": "CeruleanGymMistyScript",
+      "storage_label": "CeruleanGymMistyScript.SquirtleStorageFull",
+      "start": {"x": 5, "y": 4, "facing": "UP"},
+      "badge": "ENGINE_CASCADEBADGE",
+      "service_event": "EVENT_RESTORED_POWER_TO_KANTO",
+      "completion_event": "EVENT_GOT_SQUIRTLE_FROM_MISTY",
+      "generated_moves": ["WATER_GUN", "BITE", "RAPID_SPIN", "PROTECT"]
+    },
+    {
+      "species": "CHARMANDER",
+      "level": 28,
+      "giver": "BLAINE",
+      "map": "SEAFOAM_GYM",
+      "script": "SeafoamGymBlaineScript",
+      "storage_label": "SeafoamGymBlaineScript.CharmanderStorageFull",
+      "start": {"x": 5, "y": 3, "facing": "UP"},
+      "badge": "ENGINE_VOLCANOBADGE",
+      "service_event": "EVENT_RETURNED_BLAINES_LOG",
+      "completion_event": "EVENT_GOT_CHARMANDER_FROM_BLAINE",
+      "generated_moves": ["EMBER", "SMOKESCREEN", "RAGE", "SCARY_FACE"]
+    }
+  ],
+  "erika_task": {
+    "map": "CELADON_CITY",
+    "coordinate": [15, 18],
+    "species": "MUK",
+    "level": 35,
+    "completion_event": "EVENT_HELPED_ERIKA_CLEAN_CELADON_POND",
+    "success_results": ["knockout", "capture"],
+    "retry_results": ["run", "loss"]
+  },
+  "blaines_log": {
+    "item": "BLAINES_LOG",
+    "item_id": 176,
+    "reference_item": "ITEM_B0",
+    "reference_name": "TERU-SAMA",
+    "pocket": "KEY_ITEM",
+    "clue_event": "EVENT_LEARNED_LOCATION_OF_BLAINES_LOG",
+    "recovery_event": "EVENT_RECOVERED_BLAINES_LOG",
+    "return_event": "EVENT_RETURNED_BLAINES_LOG",
+    "case_coordinate": [13, 6],
+    "flavor_coordinates": [[15, 5], [19, 8]],
+    "staircase": {
+      "block_offset": 23,
+      "custom_block": 0,
+      "source_tileset": "cave",
+      "source_tiles": [54, 55],
+      "destination_tiles": [0, 13],
+      "ascent": [[7, 5], [7, 4]],
+      "collision": ["HOP_DOWN", "FLOOR", "WALL", "FLOOR"]
+    }
+  },
+  "branches_contract": "tests/contracts/legendary_branches.json"
+}

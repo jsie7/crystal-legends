@@ -12,10 +12,53 @@ CinnabarPokecenter1FNurseScript:
 	jumpstd PokecenterNurseScript
 
 CinnabarPokecenter1FCooltrainerFScript:
+	if DEF(_CRYSTALLEGENDS)
+	checkflag ENGINE_VOLCANOBADGE
+	iftrue .AfterVolcanoBadge
+	endc
 	jumptextfaceplayer CinnabarPokecenter1FCooltrainerFText
+	if DEF(_CRYSTALLEGENDS)
+
+.AfterVolcanoBadge:
+	jumptextfaceplayer CinnabarPokecenter1FCooltrainerFLogText
+	endc
 
 CinnabarPokecenter1FFisherScript:
+	if DEF(_CRYSTALLEGENDS)
+	faceplayer
+	opentext
+	checkflag ENGINE_VOLCANOBADGE
+	iffalse .StockText
+	checkevent EVENT_RECOVERED_BLAINES_LOG
+	iftrue .Recovered
+	checkevent EVENT_LEARNED_LOCATION_OF_BLAINES_LOG
+	iftrue .RepeatClue
+	writetext CinnabarPokecenter1FFisherLogClueText
+	waitbutton
+	setevent EVENT_LEARNED_LOCATION_OF_BLAINES_LOG
+	closetext
+	end
+
+.RepeatClue:
+	writetext CinnabarPokecenter1FFisherRepeatClueText
+	waitbutton
+	closetext
+	end
+
+.Recovered:
+	writetext CinnabarPokecenter1FFisherRecoveredText
+	waitbutton
+	closetext
+	end
+
+.StockText:
+	writetext CinnabarPokecenter1FFisherText
+	waitbutton
+	closetext
+	end
+	else
 	jumptextfaceplayer CinnabarPokecenter1FFisherText
+	endc
 
 CinnabarPokecenter1FCooltrainerFText:
 	text "CINNABAR GYM's"
@@ -25,6 +68,51 @@ CinnabarPokecenter1FCooltrainerFText:
 	line "SEAFOAM ISLANDS"
 	cont "cave…"
 	done
+
+if DEF(_CRYSTALLEGENDS)
+CinnabarPokecenter1FCooltrainerFLogText:
+	text "The fisherman saw"
+	line "the cases moved"
+	cont "BLAINE's old GYM."
+
+	para "Ask him about the"
+	line "missing log."
+	done
+
+CinnabarPokecenter1FFisherLogClueText:
+	text "FISHERMAN: I saw"
+	line "a flame-crested"
+	cont "case after the"
+	cont "volcano."
+
+	para "It lies on the"
+	line "high shelf, south"
+	cont "of the pool."
+
+	para "Its clasp warped."
+	line "Press the crest in"
+	cont "and pull the latch"
+	cont "sideways."
+	done
+
+CinnabarPokecenter1FFisherRepeatClueText:
+	text "FISHERMAN: The"
+	line "case rests high,"
+	cont "south of the pool."
+
+	para "Press the crest in"
+	line "and pull its"
+	cont "warped latch."
+	done
+
+CinnabarPokecenter1FFisherRecoveredText:
+	text "FISHERMAN: You got"
+	line "the old case free."
+
+	para "BLAINE will want"
+	line "that log back."
+	done
+endc
 
 CinnabarPokecenter1FFisherText:
 	text "It's been a year"

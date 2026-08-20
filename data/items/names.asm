@@ -175,7 +175,11 @@ ItemNames::
 	li "BERRY"
 	li "GOLD BERRY"
 	li "SQUIRTBOTTLE"
+	if DEF(_CRYSTALLEGENDS)
+	li "BLAINE'S LOG"
+	else
 	li "TERU-SAMA"
+	endc
 	li "PARK BALL"
 	li "RAINBOW WING"
 	li "TERU-SAMA"

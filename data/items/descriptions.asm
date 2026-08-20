@@ -176,7 +176,11 @@ ItemDescriptions:
 	dw BerryDesc
 	dw GoldBerryDesc
 	dw SquirtBottleDesc
+	if DEF(_CRYSTALLEGENDS)
+	dw BlainesLogDesc
+	else
 	dw TeruSama23Desc
+	endc
 	dw ParkBallDesc
 	dw RainbowWingDesc
 	dw TeruSama24Desc
@@ -930,6 +934,12 @@ GoldBerryDesc:
 SquirtBottleDesc:
 	db   "A bottle used for"
 	next "watering plants.@"
+
+if DEF(_CRYSTALLEGENDS)
+BlainesLogDesc:
+	db   "A fireproof log"
+	next "from CINNABAR GYM.@"
+endc
 
 TeruSama23Desc:
 	db   "?@"

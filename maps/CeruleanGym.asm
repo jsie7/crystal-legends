@@ -78,6 +78,44 @@ CeruleanGymMistyScript:
 	waitsfx
 	setflag ENGINE_CASCADEBADGE
 .FightDone:
+	if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_GOT_SQUIRTLE_FROM_MISTY
+	iftrue .StockFightDone
+	checkevent EVENT_RESTORED_POWER_TO_KANTO
+	iffalse .PowerStillOut
+	writetext MistySquirtleOfferText
+	yesorno
+	iffalse .DeclinedSquirtle
+	givepoke SQUIRTLE, 28
+	ifequal 2, .SquirtleStorageFull
+	setevent EVENT_GOT_SQUIRTLE_FROM_MISTY
+	writetext MistySquirtleReceivedText
+	playsound SFX_CAUGHT_MON
+	waitsfx
+	waitbutton
+	closetext
+	end
+
+.PowerStillOut:
+	writetext MistyPowerStillOutText
+	waitbutton
+	closetext
+	end
+
+.DeclinedSquirtle:
+	writetext MistySquirtleDeclinedText
+	waitbutton
+	closetext
+	end
+
+.SquirtleStorageFull:
+	writetext MistySquirtleStorageFullText
+	waitbutton
+	closetext
+	end
+
+.StockFightDone:
+	endc
 	writetext MistyFightDoneText
 	waitbutton
 	closetext
@@ -282,6 +320,53 @@ MistyFightDoneText:
 	para "I can battle some"
 	line "skilled trainers."
 	done
+
+if DEF(_CRYSTALLEGENDS)
+MistyPowerStillOutText:
+	text "MISTY: You won the"
+	line "battle, but KANTO"
+	cont "still needs help."
+
+	para "The POWER PLANT's"
+	line "trouble reaches"
+	cont "CERULEAN too."
+	done
+
+MistySquirtleOfferText:
+	text "MISTY: You brought"
+	line "back the MACHINE"
+	cont "PART and power."
+
+	para "CERULEAN owes you."
+
+	para "I want to entrust"
+	line "SQUIRTLE to you."
+
+	para "Will you take it?"
+	done
+
+MistySquirtleReceivedText:
+	text "MISTY: SQUIRTLE"
+	line "will be a great"
+	cont "swimmer with you!"
+	done
+
+MistySquirtleDeclinedText:
+	text "MISTY: Okay, then."
+
+	para "Come back if you"
+	line "change your mind."
+	done
+
+MistySquirtleStorageFullText:
+	text "MISTY: Your party"
+	line "and current BOX"
+	cont "are both full."
+
+	para "Make room and come"
+	line "back, okay?"
+	done
+endc
 
 SwimmerfDianaSeenText:
 	text "Sorry about being"

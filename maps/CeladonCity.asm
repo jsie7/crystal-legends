@@ -34,7 +34,16 @@ CeladonCityTeacher1Script:
 	jumptextfaceplayer CeladonCityTeacher1Text
 
 CeladonCityGramps1Script:
+	if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_HELPED_ERIKA_CLEAN_CELADON_POND
+	iftrue .PondCalmed
+	endc
 	jumptextfaceplayer CeladonCityGramps1Text
+	if DEF(_CRYSTALLEGENDS)
+
+.PondCalmed:
+	jumptextfaceplayer CeladonCityGramps1PondCalmedText
+	endc
 
 CeladonCityGramps2Script:
 	jumptextfaceplayer CeladonCityGramps2Text
@@ -74,6 +83,46 @@ CeladonCityPokecenterSign:
 
 CeladonCityHiddenPpUp:
 	hiddenitem PP_UP, EVENT_CELADON_CITY_HIDDEN_PP_UP
+
+if DEF(_CRYSTALLEGENDS)
+CeladonCityMukPond:
+	checkflag ENGINE_RAINBOWBADGE
+	iffalse .BeforeRainbowBadge
+	checkevent EVENT_HELPED_ERIKA_CLEAN_CELADON_POND
+	iftrue .PondTreated
+	opentext
+	writetext CeladonCityMukPondBattleText
+	yesorno
+	iffalse .Declined
+	writetext CeladonCityMukEmergesText
+	waitbutton
+	closetext
+	loadwildmon MUK, 35
+	startbattle
+	ifequal LOSE, .Retry
+	ifequal DRAW, .Retry
+	setevent EVENT_HELPED_ERIKA_CLEAN_CELADON_POND
+	reloadmapafterbattle
+	opentext
+	writetext CeladonCityMukCalmedText
+	waitbutton
+	closetext
+	end
+
+.Retry:
+	reloadmapafterbattle
+	end
+
+.Declined:
+	closetext
+	end
+
+.BeforeRainbowBadge:
+	jumptext CeladonCityMukPondBeforeBadgeText
+
+.PondTreated:
+	jumptext CeladonCityMukPondTreatedText
+endc
 
 CeladonCityFisherText:
 	text "This POLIWRATH is"
@@ -119,6 +168,48 @@ CeladonCityGramps1Text:
 	line "come from? This is"
 	cont "a serious problem…"
 	done
+
+if DEF(_CRYSTALLEGENDS)
+CeladonCityGramps1PondCalmedText:
+	text "That MUK has"
+	line "settled down."
+
+	para "ERIKA can treat"
+	line "the pond now."
+	done
+
+CeladonCityMukPondBeforeBadgeText:
+	text "Dark sludge swirls"
+	line "in the pond."
+
+	para "Something large is"
+	line "moving below."
+	done
+
+CeladonCityMukPondBattleText:
+	text "A MUK is churning"
+	line "the polluted pond."
+
+	para "Try to calm it?"
+	done
+
+CeladonCityMukEmergesText:
+	text "The MUK surges out"
+	line "of the sludge!"
+	done
+
+CeladonCityMukCalmedText:
+	text "MUK settles down."
+
+	para "The pond is ready"
+	line "for ERIKA's care."
+	done
+
+CeladonCityMukPondTreatedText:
+	text "The treated water"
+	line "is clearing."
+	done
+endc
 
 CeladonCityGramps2Text:
 	text "Nihihi! This GYM"
@@ -269,6 +360,9 @@ CeladonCity_MapEvents:
 	bg_event 29, 21, BGEVENT_READ, CeladonCityTrainerTips
 	bg_event 30,  9, BGEVENT_READ, CeladonCityPokecenterSign
 	bg_event 37, 21, BGEVENT_ITEM, CeladonCityHiddenPpUp
+	if DEF(_CRYSTALLEGENDS)
+	bg_event 15, 18, BGEVENT_READ, CeladonCityMukPond
+	endc
 
 	def_object_events
 	object_event 26, 11, SPRITE_FISHER, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, CeladonCityFisherScript, -1

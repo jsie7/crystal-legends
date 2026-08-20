@@ -33,11 +33,63 @@ SeafoamGymBlaineScript:
 	waitsfx
 	setflag ENGINE_VOLCANOBADGE
 	writetext BlaineAfterBattleText
+	if DEF(_CRYSTALLEGENDS)
+	promptbutton
+	sjump .KantoStarterReward
+	else
+	waitbutton
+	closetext
+	end
+	endc
+
+.FightDone:
+	if DEF(_CRYSTALLEGENDS)
+.KantoStarterReward:
+	checkevent EVENT_GOT_CHARMANDER_FROM_BLAINE
+	iftrue .StockFightDone
+	checkevent EVENT_RETURNED_BLAINES_LOG
+	iftrue .OfferCharmander
+	checkitem BLAINES_LOG
+	iftrue .ReturnLog
+	writetext BlaineLogRequestText
 	waitbutton
 	closetext
 	end
 
-.FightDone:
+.ReturnLog:
+	takeitem BLAINES_LOG
+	setevent EVENT_RETURNED_BLAINES_LOG
+	writetext BlaineReadsLogText
+	promptbutton
+
+.OfferCharmander:
+	writetext BlaineCharmanderOfferText
+	yesorno
+	iffalse .DeclinedCharmander
+	givepoke CHARMANDER, 28
+	ifequal 2, .CharmanderStorageFull
+	setevent EVENT_GOT_CHARMANDER_FROM_BLAINE
+	writetext BlaineCharmanderReceivedText
+	playsound SFX_CAUGHT_MON
+	waitsfx
+	waitbutton
+	closetext
+	end
+
+.DeclinedCharmander:
+	writetext BlaineCharmanderDeclinedText
+	waitbutton
+	closetext
+	end
+
+.CharmanderStorageFull:
+	writetext BlaineCharmanderStorageFullText
+	waitbutton
+	closetext
+	end
+
+.StockFightDone:
+	endc
 	writetext BlaineFightDoneText
 	waitbutton
 	closetext
@@ -122,6 +174,64 @@ BlaineFightDoneText:
 	para "even stronger."
 	line "Just you watch!"
 	done
+
+if DEF(_CRYSTALLEGENDS)
+BlaineLogRequestText:
+	text "BLAINE: One thing"
+	line "survived my old"
+	cont "CINNABAR GYM."
+
+	para "A fireproof log of"
+	line "my early training"
+	cont "was evacuated."
+
+	para "Please ask the"
+	line "survivors on"
+	cont "CINNABAR."
+	done
+
+BlaineReadsLogText:
+	text "BLAINE: My log!"
+	line "You found it!"
+
+	para "Here it is… My"
+	line "first CHARMANDER"
+	cont "training entry."
+
+	para "That little flame"
+	line "kept me going."
+	done
+
+BlaineCharmanderOfferText:
+	text "BLAINE: You saved"
+	line "a piece of my GYM"
+	cont "history."
+
+	para "Will you train"
+	line "this CHARMANDER?"
+	done
+
+BlaineCharmanderReceivedText:
+	text "BLAINE: Keep its"
+	line "flame burning!"
+	done
+
+BlaineCharmanderDeclinedText:
+	text "BLAINE: No hurry!"
+
+	para "My offer will stay"
+	line "hot!"
+	done
+
+BlaineCharmanderStorageFullText:
+	text "BLAINE: Your party"
+	line "and current BOX"
+	cont "are both full!"
+
+	para "Make room, then"
+	line "come back!"
+	done
+endc
 
 SeafoamGymGuideWinText:
 	text "Yo!"

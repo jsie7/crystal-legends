@@ -1492,14 +1492,33 @@ if DEF(_CRYSTALLEGENDS)
 	const EVENT_ARTICUNO_AVAILABLE
 	const EVENT_ZAPDOS_AVAILABLE
 	const EVENT_MOLTRES_AVAILABLE
+	const EVENT_HELPED_ERIKA_CLEAN_CELADON_POND
+	const EVENT_LEARNED_LOCATION_OF_BLAINES_LOG
+	const EVENT_RECOVERED_BLAINES_LOG
+	const EVENT_RETURNED_BLAINES_LOG
+	const EVENT_GOT_BULBASAUR_FROM_ERIKA
+	const EVENT_GOT_SQUIRTLE_FROM_MISTY
+	const EVENT_GOT_CHARMANDER_FROM_BLAINE
+	const EVENT_SAFARI_ZONE_ACCESSIBLE
+	const EVENT_SAFARI_ZONE_BETA_ULTRA_BALL
+	const EVENT_SAFARI_ZONE_BETA_MAX_REVIVE
+	const EVENT_POWER_PLANT_ANNEX_AUTHORIZED
+	const EVENT_OPENED_POWER_PLANT_ANNEX
+	const EVENT_CAUGHT_ARTICUNO_IN_KANTO
+	const EVENT_CAUGHT_ZAPDOS_IN_KANTO
+	const EVENT_CAUGHT_MOLTRES_IN_KANTO
+	const EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION
+	const EVENT_ZAPDOS_NOT_AT_KANTO_LOCATION
+	const EVENT_MOLTRES_NOT_AT_KANTO_LOCATION
 else
 	const_skip ; reserved for EVENT_OAK_MOVED_THIRD_BIRD
 	const_skip 3 ; reserved for Crystal Legends Johto starter gifts
 	const_skip 3 ; reserved for Crystal Legends Ruins ancient Pokemon gifts
 	const_skip 4 ; reserved for Crystal Legends Project Mew story facts
 	const_skip 4 ; reserved for Crystal Legends Silver bird release facts
+	const_skip 18 ; reserved for Crystal Legends Kanto completion facts
 endc
-; Unused: next 33 events
+; Unused: next 15 events
 
 	const_next 2048
 DEF NUM_EVENTS EQU const_value ; 800

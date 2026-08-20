@@ -42,6 +42,44 @@ CeladonGymErikaScript:
 	iffalse .GotGigaDrain
 	setevent EVENT_GOT_TM19_GIGA_DRAIN
 .GotGigaDrain:
+	if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_GOT_BULBASAUR_FROM_ERIKA
+	iftrue .StockAfterBattle
+	checkevent EVENT_HELPED_ERIKA_CLEAN_CELADON_POND
+	iffalse .RequestPondHelp
+	writetext ErikaBulbasaurOfferText
+	yesorno
+	iffalse .DeclinedBulbasaur
+	givepoke BULBASAUR, 28
+	ifequal 2, .BulbasaurStorageFull
+	setevent EVENT_GOT_BULBASAUR_FROM_ERIKA
+	writetext ErikaBulbasaurReceivedText
+	playsound SFX_CAUGHT_MON
+	waitsfx
+	waitbutton
+	closetext
+	end
+
+.RequestPondHelp:
+	writetext ErikaPondRequestText
+	waitbutton
+	closetext
+	end
+
+.DeclinedBulbasaur:
+	writetext ErikaBulbasaurDeclinedText
+	waitbutton
+	closetext
+	end
+
+.BulbasaurStorageFull:
+	writetext ErikaBulbasaurStorageFullText
+	waitbutton
+	closetext
+	end
+
+.StockAfterBattle:
+	endc
 	writetext ErikaAfterBattleText
 	waitbutton
 	closetext
@@ -186,6 +224,54 @@ ErikaAfterBattleText:
 	para "trainers spurs me"
 	line "to do better…"
 	done
+
+if DEF(_CRYSTALLEGENDS)
+ErikaPondRequestText:
+	text "ERIKA: CELADON's"
+	line "pond is fouled by"
+	cont "a restless MUK."
+
+	para "Please calm it so"
+	line "I can treat the"
+	cont "water safely."
+	done
+
+ErikaBulbasaurOfferText:
+	text "ERIKA: Thank you"
+	line "for calming MUK."
+
+	para "You protected this"
+	line "city's garden."
+
+	para "I would trust you"
+	line "with BULBASAUR."
+
+	para "Will you care for"
+	line "it?"
+	done
+
+ErikaBulbasaurReceivedText:
+	text "ERIKA: BULBASAUR"
+	line "will flourish with"
+	cont "you."
+	done
+
+ErikaBulbasaurDeclinedText:
+	text "ERIKA: I see."
+
+	para "The offer will"
+	line "remain open."
+	done
+
+ErikaBulbasaurStorageFullText:
+	text "ERIKA: Your party"
+	line "and current BOX"
+	cont "are both full."
+
+	para "Please return when"
+	line "there is room."
+	done
+endc
 
 LassMichelleSeenText:
 	text "Do you think a"

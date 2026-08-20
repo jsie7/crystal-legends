@@ -7,10 +7,18 @@ ENDM
 SECTION "Tileset Data 1", ROMX
 
 TilesetKantoGFX::
+if DEF(_CRYSTALLEGENDS)
+INCBIN "gfx/tilesets/kanto_crystallegends.2bpp.lz"
+else
 INCBIN "gfx/tilesets/kanto.2bpp.lz"
+endc
 
 TilesetKantoMeta::
+if DEF(_CRYSTALLEGENDS)
+INCBIN "data/tilesets/kanto_metatiles_crystallegends.bin"
+else
 INCBIN "data/tilesets/kanto_metatiles.bin"
+endc
 
 TilesetKantoColl::
 INCLUDE "data/tilesets/kanto_collision.asm"

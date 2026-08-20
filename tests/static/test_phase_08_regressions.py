@@ -124,8 +124,7 @@ def test_phase_8_event_slots_are_explicit_and_reference_reserved(repo_root: Path
         [
             "const EVENT_CAUGHT_PROJECT_MEW_SUBJECT",
             *(f"const {event}" for event in events),
-            "const_next 2048",
-            "DEF NUM_EVENTS EQU const_value",
+            "const EVENT_HELPED_ERIKA_CLEAN_CELADON_POND",
         ],
     )
     assert all(not any(event in line for line in reference) for event in events)
@@ -137,6 +136,7 @@ def test_phase_8_event_slots_are_explicit_and_reference_reserved(repo_root: Path
             "const_skip 3",
             "const_skip 4",
             "const_skip 4",
+            "const_skip 18",
             "const_next 2048",
             "DEF NUM_EVENTS EQU const_value",
         ],

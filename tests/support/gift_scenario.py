@@ -26,7 +26,7 @@ def interact_with_gift(
     menu_count = session.hook_history.count("VerticalMenu") + 1
     nickname_count = session.hook_history.count("GiveANickname_YesNo") + 1
     nickname_menu_count = menu_count + 1
-    storage_label = f"{gift['script']}.StorageFull"
+    storage_label = gift.get("storage_label", f"{gift['script']}.StorageFull")
     storage_count = session.script_history.count(storage_label) + 1
     for label in (
         "_YesNoBox",

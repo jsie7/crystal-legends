@@ -181,7 +181,11 @@
 	const BERRY        ; ad
 	const GOLD_BERRY   ; ae
 	const SQUIRTBOTTLE ; af
+if DEF(_CRYSTALLEGENDS)
+	const BLAINES_LOG  ; b0
+else
 	const ITEM_B0      ; b0
+endc
 	const PARK_BALL    ; b1
 	const RAINBOW_WING ; b2
 	const ITEM_B3      ; b3
