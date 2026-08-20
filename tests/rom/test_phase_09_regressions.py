@@ -41,6 +41,9 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "COLL_WATER",
             "COLL_WATER_21",
             "COLL_WALL",
+            "COLL_WARP_CARPET_LEFT",
+            "COLL_WARP_CARPET_RIGHT",
+            "EVENT_BEAT_ELITE_FOUR",
             "EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION",
             "EVENT_ARTICUNO_AVAILABLE",
             "EVENT_CAUGHT_ARTICUNO_IN_KANTO",
@@ -54,13 +57,17 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "EVENT_GOT_MOLTRES_FROM_ELM",
             "EVENT_GOT_ZAPDOS_FROM_ELM",
             "EVENT_MOLTRES_NOT_AT_KANTO_LOCATION",
+            "EVENT_MOLTRES_AVAILABLE",
             "EVENT_OAK_MOVED_THIRD_BIRD",
+            "EVENT_OPENED_POWER_PLANT_ANNEX",
             "EVENT_POWER_PLANT_ANNEX_AUTHORIZED",
             "EVENT_RECOVERED_BLAINES_LOG",
             "EVENT_SAFARI_ZONE_ACCESSIBLE",
             "EVENT_SAFARI_ZONE_BETA_ULTRA_BALL",
             "EVENT_SAFARI_ZONE_BETA_MAX_REVIVE",
             "EVENT_ZAPDOS_NOT_AT_KANTO_LOCATION",
+            "EVENT_ZAPDOS_AVAILABLE",
+            "EVENT_RESTORED_POWER_TO_KANTO",
             "GROUP_FUCHSIA_CITY",
             "MAP_FUCHSIA_CITY",
             "GROUP_SAFARI_ZONE_FUCHSIA_GATE_BETA",
@@ -75,22 +82,35 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "MAP_ROUTE_20",
             "GROUP_SEAFOAM_GYM",
             "MAP_SEAFOAM_GYM",
+            "GROUP_POWER_PLANT",
+            "MAP_POWER_PLANT",
+            "GROUP_POWER_PLANT_GENERATOR_ANNEX",
+            "MAP_POWER_PLANT_GENERATOR_ANNEX",
+            "GROUP_VICTORY_ROAD",
+            "MAP_VICTORY_ROAD",
             "TILESET_PARK",
             "TILESET_ICE_PATH",
+            "TILESET_FACILITY",
             "ROUTE",
             "CAVE",
+            "INDOOR",
             "LANDMARK_FUCHSIA_CITY",
             "LANDMARK_SEAFOAM_ISLANDS",
+            "LANDMARK_POWER_PLANT",
             "MUSIC_NATIONAL_PARK",
             "MUSIC_EVOLUTION",
             "MUSIC_UNION_CAVE",
+            "MUSIC_VIRIDIAN_CITY",
             "PALETTE_AUTO",
+            "PALETTE_DAY",
             "PALETTE_NITE",
             "FISHGROUP_SHORE",
             "FISHGROUP_OCEAN",
             "TRUE",
+            "FALSE",
             "MAP_LENGTH",
             "BGEVENT_READ",
+            "BGEVENT_RIGHT",
             "HELD_NONE",
             "ITEMATTR_STRUCT_LENGTH",
             "ITEMMENU_NOUSE",
@@ -110,7 +130,11 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "SPRITE_POKE_BALL",
             "SPRITE_ROCK",
             "PAL_NPC_BLUE",
+            "PAL_NPC_BROWN",
+            "PAL_NPC_RED",
             "ARTICUNO",
+            "ZAPDOS",
+            "MOLTRES",
             "MANKEY",
             "MAREEP",
             "VULPIX",
@@ -146,6 +170,7 @@ def test_compiled_phase_9_ids_do_not_expand_the_save_layout(
     assert constants["EVENT_SAFARI_ZONE_BETA_ULTRA_BALL"] == 2023
     assert constants["EVENT_SAFARI_ZONE_BETA_MAX_REVIVE"] == 2024
     assert constants["EVENT_POWER_PLANT_ANNEX_AUTHORIZED"] == 2025
+    assert constants["EVENT_OPENED_POWER_PLANT_ANNEX"] == 2026
     assert constants["EVENT_CAUGHT_ARTICUNO_IN_KANTO"] == 2027
     assert constants["EVENT_CAUGHT_ZAPDOS_IN_KANTO"] == 2028
     assert constants["EVENT_CAUGHT_MOLTRES_IN_KANTO"] == 2029
@@ -780,6 +805,284 @@ def test_compiled_articuno_stubs_and_capture_sequence_are_species_exact(
         + bytes([constants["setevent_command"]])
         + constants[articuno["mask_event"]].to_bytes(2, "little")
         + bytes([constants["disappear_command"], articuno["object_id"]])
+    )
+    assert encounter in compiled
+    assert caught in compiled
+    assert compiled.index(encounter) < compiled.index(caught)
+    assert compiled.index(caught) < compiled.index(
+        bytes([constants["reloadmapafterbattle_command"]])
+    )
+
+
+def test_compiled_facility_variant_and_reference_assets_are_exact(
+    repo_root: Path, phase_9_constants: dict[str, int], scenario: dict
+) -> None:
+    constants = phase_9_constants
+    facility = scenario["facility_variant"]
+    custom = RomImage.load(repo_root / "crystallegends.gbc")
+    custom_symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    reference = RomImage.load(repo_root / "pokecrystal11.gbc")
+    reference_symbols = SymbolTable.parse((repo_root / "pokecrystal11.sym").read_text())
+
+    custom_gfx = repo_root / facility["active_gfx_path"].replace(".png", ".2bpp.lz")
+    stock_gfx = repo_root / facility["stock_gfx_path"].replace(".png", ".2bpp.lz")
+    assert custom.at(custom_symbols["TilesetFacilityGFX"], custom_gfx.stat().st_size) == custom_gfx.read_bytes()
+    assert reference.at(reference_symbols["TilesetFacilityGFX"], stock_gfx.stat().st_size) == stock_gfx.read_bytes()
+
+    active_metatiles = (repo_root / facility["active_metatiles_path"]).read_bytes()
+    stock_metatiles = (repo_root / facility["stock_metatiles_path"]).read_bytes()
+    assert custom.at(custom_symbols["TilesetFacilityMeta"], len(active_metatiles)) == active_metatiles
+    assert reference.at(reference_symbols["TilesetFacilityMeta"], len(stock_metatiles)) == stock_metatiles
+
+    custom_collision = custom.slice(
+        custom_symbols["TilesetFacilityColl"].rom_offset,
+        custom_symbols["TilesetBattleTowerOutsideMeta"].rom_offset
+        - custom_symbols["TilesetFacilityColl"].rom_offset,
+    )
+    reference_collision = reference.slice(
+        reference_symbols["TilesetFacilityColl"].rom_offset,
+        reference_symbols["TilesetBattleTowerOutsideMeta"].rom_offset
+        - reference_symbols["TilesetFacilityColl"].rom_offset,
+    )
+    assert custom_collision[: len(reference_collision)] == reference_collision
+    assert custom_collision[len(reference_collision) :] == bytes(
+        [
+            constants["COLL_FLOOR"],
+            constants["COLL_WARP_CARPET_RIGHT"],
+            constants["COLL_FLOOR"],
+            constants["COLL_WARP_CARPET_RIGHT"],
+            constants["COLL_WARP_CARPET_LEFT"],
+            constants["COLL_FLOOR"],
+            constants["COLL_WARP_CARPET_LEFT"],
+            constants["COLL_FLOOR"],
+        ]
+    )
+    assert custom_symbols["TilesetFacilityPalMap"].address == reference_symbols[
+        "TilesetFacilityPalMap"
+    ].address
+
+
+def test_compiled_power_plant_annex_and_remaining_bird_objects_match_contract(
+    repo_root: Path, phase_9_constants: dict[str, int], scenario: dict
+) -> None:
+    constants = phase_9_constants
+    annex = scenario["power_plant_annex"]
+    zapdos = annex["zapdos"]
+    victory = scenario["victory_road_bird"]
+    moltres = victory["moltres"]
+    custom = RomImage.load(repo_root / "crystallegends.gbc")
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    reference = RomImage.load(repo_root / "pokecrystal11.gbc")
+    reference_symbols = SymbolTable.parse((repo_root / "pokecrystal11.sym").read_text())
+
+    active_plant = (repo_root / annex["power_plant_active_block_path"]).read_bytes()
+    stock_plant = (repo_root / annex["power_plant_stock_block_path"]).read_bytes()
+    annex_blocks = (repo_root / annex["block_path"]).read_bytes()
+    assert custom.at(symbols["PowerPlant_Blocks"], len(active_plant)) == active_plant
+    assert reference.at(reference_symbols["PowerPlant_Blocks"], len(stock_plant)) == stock_plant
+    assert custom.at(symbols["PowerPlantGeneratorAnnex_Blocks"], len(annex_blocks)) == annex_blocks
+
+    assert constants["GROUP_POWER_PLANT_GENERATOR_ANNEX"] == constants[
+        "GROUP_POWER_PLANT"
+    ]
+    assert constants["MAP_POWER_PLANT_GENERATOR_ANNEX"] == 18
+    map_record = custom.slice(
+        symbols["MapGroup_Cerulean"].rom_offset
+        + (constants["MAP_POWER_PLANT_GENERATOR_ANNEX"] - 1)
+        * constants["MAP_LENGTH"],
+        constants["MAP_LENGTH"],
+    )
+    assert map_record[1] == constants["TILESET_FACILITY"]
+    assert map_record[2] == constants["INDOOR"]
+    assert map_record[5] == constants["LANDMARK_POWER_PLANT"]
+    assert map_record[6] == constants["MUSIC_VIRIDIAN_CITY"]
+    assert map_record[7] >> 4 == constants["FALSE"]
+    assert map_record[7] & 0xF == constants["PALETTE_DAY"]
+    assert map_record[8] == constants["FISHGROUP_SHORE"]
+
+    attributes = custom.at(symbols["PowerPlantGeneratorAnnex_MapAttributes"], 12)
+    assert attributes[:3] == bytes([annex["border_block"], 4, 4])
+    assert attributes[3] == symbols["PowerPlantGeneratorAnnex_Blocks"].bank
+    assert int.from_bytes(attributes[4:6], "little") == symbols[
+        "PowerPlantGeneratorAnnex_Blocks"
+    ].address
+    assert attributes[11] == 0
+
+    plant_warps = _decode_warps(
+        custom, symbols, "PowerPlant_MapEvents", constants["WARP_EVENT_SIZE"]
+    )
+    assert plant_warps[-2:] == [
+        (
+            warp[0],
+            warp[1],
+            warp[3],
+            constants["GROUP_POWER_PLANT_GENERATOR_ANNEX"],
+            constants["MAP_POWER_PLANT_GENERATOR_ANNEX"],
+        )
+        for warp in annex["power_plant_warps"]
+    ]
+    assert len(
+        _decode_warps(
+            reference,
+            reference_symbols,
+            "PowerPlant_MapEvents",
+            constants["WARP_EVENT_SIZE"],
+        )
+    ) == 2
+    assert _decode_warps(
+        custom,
+        symbols,
+        "PowerPlantGeneratorAnnex_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+    ) == [
+        (
+            warp[0],
+            warp[1],
+            warp[3],
+            constants["GROUP_POWER_PLANT"],
+            constants["MAP_POWER_PLANT"],
+        )
+        for warp in annex["return_warps"]
+    ]
+
+    backgrounds = decode_background_events(
+        custom,
+        symbols,
+        "PowerPlant_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+    )
+    assert [
+        (event.x, event.y, event.event_type, event.script_pointer)
+        for event in backgrounds[-2:]
+    ] == [
+        (x, y, constants["BGEVENT_RIGHT"], symbols["PowerPlantAnnexShutter"].address)
+        for x, y in annex["shutter"]["door_coordinates"]
+    ]
+
+    annex_objects = decode_object_events(
+        custom,
+        symbols,
+        "PowerPlantGeneratorAnnex_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+        constants["OBJECT_EVENT_SIZE"],
+    )
+    victory_objects = decode_object_events(
+        custom,
+        symbols,
+        "VictoryRoad_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+        constants["OBJECT_EVENT_SIZE"],
+    )
+    reference_victory_objects = decode_object_events(
+        reference,
+        reference_symbols,
+        "VictoryRoad_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+        constants["OBJECT_EVENT_SIZE"],
+    )
+    assert len(annex_objects) == 1
+    assert len(victory_objects) == 7
+    assert len(reference_victory_objects) == 6
+    for bird, obj, stub in (
+        (zapdos, annex_objects[0], "PowerPlantGeneratorAnnexZapdos"),
+        (moltres, victory_objects[-1], "VictoryRoadMoltres"),
+    ):
+        assert (obj.x, obj.y) == tuple(bird["coordinate"])
+        assert obj.sprite == constants[bird["sprite"]]
+        assert obj.movement == constants[bird["movement"]]
+        assert obj.palette_and_type >> 4 == constants[bird["palette"]]
+        assert obj.palette_and_type & 0xF == constants[bird["object_type"]]
+        assert obj.script_pointer == symbols[stub].address
+        assert obj.event_flag == constants[bird["mask_event"]]
+
+    custom_only = {
+        "PowerPlantGeneratorAnnex_MapAttributes",
+        "PowerPlantGeneratorAnnex_Blocks",
+        "PowerPlantGeneratorAnnex_MapScripts",
+        "PowerPlantGeneratorAnnex_MapEvents",
+        "Phase9RefreshZapdosLocation",
+        "Phase9RefreshMoltresLocation",
+        "Phase9ZapdosEncounter",
+        "Phase9MoltresEncounter",
+        "Phase9OaksAssistant2Hints",
+        "VictoryRoadMoltres",
+    }
+    assert all(label in symbols for label in custom_only)
+    assert all(label not in reference_symbols for label in custom_only)
+
+
+@pytest.mark.parametrize(
+    ("contract_key", "bird_key", "callback_stub", "encounter_stub"),
+    [
+        (
+            "power_plant_annex",
+            "zapdos",
+            "PowerPlantGeneratorAnnexZapdosCallback",
+            "PowerPlantGeneratorAnnexZapdos",
+        ),
+        (
+            "victory_road_bird",
+            "moltres",
+            "VictoryRoadMoltresCallback",
+            "VictoryRoadMoltres",
+        ),
+    ],
+)
+def test_compiled_remaining_bird_stubs_and_capture_sequences_are_species_exact(
+    repo_root: Path,
+    phase_9_constants: dict[str, int],
+    scenario: dict,
+    contract_key: str,
+    bird_key: str,
+    callback_stub: str,
+    encounter_stub: str,
+) -> None:
+    constants = phase_9_constants
+    bird = scenario[contract_key][bird_key]
+    rom = RomImage.load(repo_root / "crystallegends.gbc")
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+
+    for stub_label, target_label in (
+        (callback_stub, bird["callback"]),
+        (encounter_stub, bird["script"]),
+    ):
+        target = symbols[target_label]
+        expected = bytes([constants["farsjump_command"], target.bank]) + target.address.to_bytes(2, "little")
+        assert rom.at(symbols[stub_label], len(expected)) == expected
+        assert symbols[stub_label].bank != target.bank
+
+    compiled = rom.slice(
+        symbols[bird["script"]].rom_offset,
+        symbols["Phase9LegendaryBirdsEnd"].rom_offset
+        - symbols[bird["script"]].rom_offset,
+    )
+    special_id = (
+        symbols["CheckCaughtPokemonSpecial"].address
+        - symbols["SpecialsPointers"].address
+    ) // 3
+    encounter = bytes(
+        [
+            constants["loadwildmon_command"],
+            constants[bird["species"]],
+            bird["level"],
+            constants["startbattle_command"],
+            constants["special_command"],
+        ]
+    ) + special_id.to_bytes(2, "little")
+    caught = (
+        bytes([constants["setevent_command"]])
+        + constants[bird["capture_event"]].to_bytes(2, "little")
+        + bytes([constants["setevent_command"]])
+        + constants[bird["mask_event"]].to_bytes(2, "little")
+        + bytes([constants["disappear_command"], bird["object_id"]])
     )
     assert encounter in compiled
     assert caught in compiled

@@ -218,6 +218,9 @@ endc
 	map_const ROUTE_24,                                    10,  9 ; 15
 	map_const ROUTE_25,                                    30,  9 ; 16
 	map_const CERULEAN_CITY,                               20, 18 ; 17
+if DEF(_CRYSTALLEGENDS)
+	map_const POWER_PLANT_GENERATOR_ANNEX,                   4,  4 ; 18
+endc
 	endgroup
 
 	newgroup AZALEA                                               ;  8

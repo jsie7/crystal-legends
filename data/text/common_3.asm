@@ -1564,4 +1564,52 @@ Phase9ArticunoEncounterText::
 	line "rings with a sharp"
 	cont "cry!"
 	done
+
+Phase9ZapdosEncounterText::
+	text "Generators roar"
+	line "beneath a piercing"
+	cont "cry!"
+	done
+
+Phase9MoltresEncounterText::
+	text "A fiery cry echoes"
+	line "through VICTORY"
+	cont "ROAD!"
+	done
+
+Phase9PowerPlantGeneratorAnnexConsoleText::
+	text "AUXILIARY"
+	line "GENERATOR-"
+
+	para "OUTPUT EXCEEDS"
+	line "SAFE LIMIT."
+	done
+
+Phase9PowerPlantManagerAnnexAuthorizationText::
+	text "MANAGER: Hey!"
+	line "The auxiliary"
+
+	para "generator voltage"
+	line "is way too high!"
+
+	para "I'm authorizing"
+	line "you to inspect the"
+	cont "east annex."
+	done
+
+Phase9PowerPlantAnnexShutterNoPowerText::
+	text "The auxiliary"
+	line "generator has no"
+	cont "power."
+	done
+
+Phase9PowerPlantAnnexShutterNeedsAuthorizationText::
+	text "MANAGER authoriza-"
+	line "tion is required."
+	done
+
+Phase9PowerPlantAnnexShutterOpensText::
+	text "The east service"
+	line "shutter opened."
+	done
 endc

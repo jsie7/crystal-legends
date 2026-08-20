@@ -875,7 +875,11 @@ SaffronGym_Blocks:
 	INCBIN "maps/SaffronGym.blk"
 
 PowerPlant_Blocks:
+	if DEF(_CRYSTALLEGENDS)
+	INCBIN "maps/PowerPlantCrystalLegends.blk"
+	else
 	INCBIN "maps/PowerPlant.blk"
+	endc
 
 PokemonFanClub_Blocks:
 SafariZoneWardensHome_Blocks:
@@ -1066,6 +1070,9 @@ GoldenrodDeptStoreRoof_Blocks:
 if DEF(_CRYSTALLEGENDS)
 RadioTowerTransmitterAnnex_Blocks:
 	INCBIN "maps/RadioTowerTransmitterAnnex.blk"
+
+PowerPlantGeneratorAnnex_Blocks:
+	INCBIN "maps/PowerPlantGeneratorAnnex.blk"
 endc
 
 ENDSECTION

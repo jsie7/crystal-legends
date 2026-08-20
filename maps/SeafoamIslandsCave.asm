@@ -5,7 +5,7 @@ SeafoamIslandsCave_MapScripts:
 	def_scene_scripts
 
 	def_callbacks
-	callback MAPCALLBACK_OBJECTS, SeafoamIslandsCaveArticunoCallback
+	callback MAPCALLBACK_TILES, SeafoamIslandsCaveArticunoCallback
 
 SeafoamIslandsCaveArticunoCallback:
 	farsjump Phase9RefreshArticunoLocation

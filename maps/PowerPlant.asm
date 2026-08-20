@@ -13,6 +13,18 @@ PowerPlant_MapScripts:
 	scene_script PowerPlantNoop2Scene, SCENE_POWERPLANT_GUARD_GETS_PHONE_CALL
 
 	def_callbacks
+if DEF(_CRYSTALLEGENDS)
+	callback MAPCALLBACK_TILES, PowerPlantAnnexShutterCallback
+endc
+
+if DEF(_CRYSTALLEGENDS)
+PowerPlantAnnexShutterCallback:
+	checkevent EVENT_OPENED_POWER_PLANT_ANNEX
+	iffalse .Closed
+	changeblock 18, 10, $40 ; open east service shutter
+.Closed:
+	endcallback
+endc
 
 PowerPlantNoop1Scene:
 	end
@@ -181,10 +193,23 @@ PowerPlantManager:
 	end
 
 .GotZapCannon:
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_POWER_PLANT_ANNEX_AUTHORIZED
+	iffalse .AuthorizeAnnex
+endc
 	writetext PowerPlantManagerMyBelovedGeneratorText
 	waitbutton
 	closetext
 	end
+
+if DEF(_CRYSTALLEGENDS)
+.AuthorizeAnnex:
+	farwritetext Phase9PowerPlantManagerAnnexAuthorizationText
+	waitbutton
+	setevent EVENT_POWER_PLANT_ANNEX_AUTHORIZED
+	closetext
+	end
+endc
 
 Forest:
 	faceplayer
@@ -196,6 +221,42 @@ Forest:
 
 PowerPlantBookshelf:
 	jumpstd DifficultBookshelfScript
+
+if DEF(_CRYSTALLEGENDS)
+PowerPlantAnnexShutter:
+	opentext
+	checkevent EVENT_RESTORED_POWER_TO_KANTO
+	iffalse .NoPower
+	checkevent EVENT_POWER_PLANT_ANNEX_AUTHORIZED
+	iffalse .NeedsAuthorization
+	checkevent EVENT_OPENED_POWER_PLANT_ANNEX
+	iftrue .AlreadyOpen
+	farwritetext Phase9PowerPlantAnnexShutterOpensText
+	waitbutton
+	playsound SFX_ENTER_DOOR
+	changeblock 18, 10, $40 ; open east service shutter
+	refreshmap
+	setevent EVENT_OPENED_POWER_PLANT_ANNEX
+	waitsfx
+	closetext
+	end
+
+.NoPower:
+	farwritetext Phase9PowerPlantAnnexShutterNoPowerText
+	waitbutton
+	closetext
+	end
+
+.NeedsAuthorization:
+	farwritetext Phase9PowerPlantAnnexShutterNeedsAuthorizationText
+	waitbutton
+	closetext
+	end
+
+.AlreadyOpen:
+	closetext
+	end
+endc
 
 PowerPlantOfficer1ApproachGymGuide2Movement:
 	step RIGHT
@@ -392,6 +453,10 @@ PowerPlant_MapEvents:
 	def_warp_events
 	warp_event  2, 17, ROUTE_10_NORTH, 2
 	warp_event  3, 17, ROUTE_10_NORTH, 2
+if DEF(_CRYSTALLEGENDS)
+	warp_event 19, 10, POWER_PLANT_GENERATOR_ANNEX, 1
+	warp_event 19, 11, POWER_PLANT_GENERATOR_ANNEX, 2
+endc
 
 	def_coord_events
 	coord_event  5, 12, SCENE_POWERPLANT_GUARD_GETS_PHONE_CALL, PowerPlantGuardPhoneScript
@@ -399,6 +464,10 @@ PowerPlant_MapEvents:
 	def_bg_events
 	bg_event  0,  1, BGEVENT_READ, PowerPlantBookshelf
 	bg_event  1,  1, BGEVENT_READ, PowerPlantBookshelf
+if DEF(_CRYSTALLEGENDS)
+	bg_event 19, 10, BGEVENT_RIGHT, PowerPlantAnnexShutter
+	bg_event 19, 11, BGEVENT_RIGHT, PowerPlantAnnexShutter
+endc
 
 	def_object_events
 	object_event  4, 14, SPRITE_OFFICER, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, PowerPlantOfficerScript, -1

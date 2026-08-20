@@ -5,6 +5,9 @@
 	const VICTORYROAD_POKE_BALL3
 	const VICTORYROAD_POKE_BALL4
 	const VICTORYROAD_POKE_BALL5
+if DEF(_CRYSTALLEGENDS)
+	const VICTORYROAD_MOLTRES
+endc
 
 if DEF(_CRYSTALLEGENDS)
 DEF VICTORY_ROAD_RIVAL_SECOND_STARTER_EVENT EQU EVENT_GOT_ZAPDOS_FROM_ELM
@@ -26,6 +29,17 @@ VictoryRoad_MapScripts:
 	scene_script VictoryRoadNoop2Scene, SCENE_VICTORYROAD_NOOP
 
 	def_callbacks
+if DEF(_CRYSTALLEGENDS)
+	callback MAPCALLBACK_TILES, VictoryRoadMoltresCallback
+endc
+
+if DEF(_CRYSTALLEGENDS)
+VictoryRoadMoltresCallback:
+	farsjump Phase9RefreshMoltresLocation
+
+VictoryRoadMoltres:
+	farsjump Phase9MoltresEncounter
+endc
 
 VictoryRoadNoop1Scene:
 	end
@@ -280,3 +294,6 @@ VictoryRoad_MapEvents:
 	object_event 18, 29, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, VictoryRoadFullRestore, EVENT_VICTORY_ROAD_FULL_RESTORE
 	object_event 15, 48, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, VictoryRoadFullHeal, EVENT_VICTORY_ROAD_FULL_HEAL
 	object_event  7, 38, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, VictoryRoadHPUp, EVENT_VICTORY_ROAD_HP_UP
+if DEF(_CRYSTALLEGENDS)
+	object_event 17, 31, SPRITE_MOLTRES, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, VictoryRoadMoltres, EVENT_MOLTRES_NOT_AT_KANTO_LOCATION
+endc

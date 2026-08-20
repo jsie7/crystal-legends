@@ -295,10 +295,18 @@ TilesetForestColl::
 INCLUDE "data/tilesets/forest_collision.asm"
 
 TilesetFacilityGFX::
+if DEF(_CRYSTALLEGENDS)
+INCBIN "gfx/tilesets/facility_crystallegends.2bpp.lz"
+else
 INCBIN "gfx/tilesets/facility.2bpp.lz"
+endc
 
 TilesetFacilityMeta::
+if DEF(_CRYSTALLEGENDS)
+INCBIN "data/tilesets/facility_metatiles_crystallegends.bin"
+else
 INCBIN "data/tilesets/facility_metatiles.bin"
+endc
 
 TilesetFacilityColl::
 INCLUDE "data/tilesets/facility_collision.asm"

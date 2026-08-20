@@ -55,7 +55,7 @@ def _assert_in_order(lines: list[str], expected: list[str]) -> None:
         position = lines.index(value, position + 1)
 
 
-def _png_tiles(path: Path) -> tuple[tuple[int, ...], ...]:
+def _png_tiles(path: Path, *, expected_height: int = 48) -> tuple[tuple[int, ...], ...]:
     raw = path.read_bytes()
     assert raw.startswith(b"\x89PNG\r\n\x1a\n")
     offset = 8
@@ -72,7 +72,7 @@ def _png_tiles(path: Path) -> tuple[tuple[int, ...], ...]:
             payload.extend(data)
         elif kind == b"IEND":
             break
-    assert (width, height, depth, color_type) == (128, 48, 2, 0)
+    assert (width, height, depth, color_type) == (128, expected_height, 2, 0)
     packed = zlib.decompress(payload)
     stride = width // 4
     pixels: list[list[int]] = []
@@ -89,7 +89,7 @@ def _png_tiles(path: Path) -> tuple[tuple[int, ...], ...]:
             for y in range(8)
             for x in range(8)
         )
-        for tile_y in range(6)
+        for tile_y in range(expected_height // 8)
         for tile_x in range(16)
     )
 
@@ -818,6 +818,14 @@ def test_seafoam_warps_object_and_articuno_scripts_match_the_contract(
     assert bird.args[11] == "SeafoamIslandsCaveArticuno"
     assert bird.args[12] == articuno["mask_event"]
     assert not [event for event in cave_events if event.event_type == "bg_event"]
+    cave_source = _active_code(
+        repo_root / "maps/SeafoamIslandsCave.asm", CRYSTAL_LEGENDS
+    )
+    assert (
+        "callback MAPCALLBACK_TILES, SeafoamIslandsCaveArticunoCallback"
+        in cave_source
+    )
+    assert not any("MAPCALLBACK_OBJECTS" in line for line in cave_source)
 
     shared = _active_code(
         repo_root / "maps/Phase9LegendaryBirds.asm", CRYSTAL_LEGENDS
@@ -1032,4 +1040,370 @@ def test_custom_block_zero_collision_guard_preserves_reference_lookup(
             "jr z, .nope",
             "ld l, a",
         ],
+    )
+
+
+def test_facility_variant_reuses_only_the_locked_gate_tiles_and_appends_doors(
+    repo_root: Path, scenario: dict
+) -> None:
+    facility = scenario["facility_variant"]
+    stock_tiles = _png_tiles(repo_root / facility["stock_gfx_path"])
+    active_tiles = _png_tiles(repo_root / facility["active_gfx_path"])
+    gate_tiles = _png_tiles(
+        repo_root / facility["source_gfx_path"], expected_height=96
+    )
+    assert [
+        index
+        for index, (stock, active) in enumerate(zip(stock_tiles, active_tiles))
+        if stock != active
+    ] == facility["destination_tiles"]
+    for source, destination in zip(
+        facility["source_tiles"], facility["destination_tiles"]
+    ):
+        assert active_tiles[destination] == gate_tiles[source]
+
+    stock_metatiles = (repo_root / facility["stock_metatiles_path"]).read_bytes()
+    active_metatiles = (repo_root / facility["active_metatiles_path"]).read_bytes()
+    assert len(stock_metatiles) == 0x40 * 16
+    assert len(active_metatiles) == 0x42 * 16
+    assert active_metatiles[: len(stock_metatiles)] == stock_metatiles
+    assert all(tile not in stock_metatiles for tile in facility["destination_tiles"])
+    for block, expected in facility["metatiles"].items():
+        index = int(block)
+        assert active_metatiles[index * 16 : (index + 1) * 16] == bytes(expected)
+
+    collision_source = (repo_root / "data/tilesets/facility_collision.asm").read_text()
+    custom_rows = parse_collision_rows(collision_source, CRYSTAL_LEGENDS)
+    reference_rows = parse_collision_rows(collision_source, REFERENCE)
+    assert custom_rows[:0x40] == reference_rows
+    assert len(reference_rows) == 0x40
+    assert len(custom_rows) == 0x42
+    for block, expected in facility["collisions"].items():
+        assert custom_rows[int(block)] == tuple(expected)
+
+    tileset_source = _active_code(repo_root / "gfx/tilesets.asm", CRYSTAL_LEGENDS)
+    reference_source = _active_code(repo_root / "gfx/tilesets.asm", REFERENCE)
+    assert (
+        f'INCBIN "{facility["active_gfx_path"].replace(".png", ".2bpp.lz")}"'
+        in tileset_source
+    )
+    assert f'INCBIN "{facility["active_metatiles_path"]}"' in tileset_source
+    assert (
+        f'INCBIN "{facility["stock_gfx_path"].replace(".png", ".2bpp.lz")}"'
+        in reference_source
+    )
+    assert f'INCBIN "{facility["stock_metatiles_path"]}"' in reference_source
+    assert (repo_root / facility["palette_map_path"]).is_file()
+
+
+def test_power_plant_annex_layout_shutter_warps_and_route_match_the_contract(
+    repo_root: Path, scenario: dict
+) -> None:
+    annex = scenario["power_plant_annex"]
+    block_source = (repo_root / "data/maps/blocks.asm").read_text()
+    custom_paths = parse_block_paths(block_source, CRYSTAL_LEGENDS)
+    reference_paths = parse_block_paths(block_source, REFERENCE)
+    assert custom_paths["PowerPlant"] == annex["power_plant_active_block_path"]
+    assert reference_paths["PowerPlant"] == annex["power_plant_stock_block_path"]
+    assert custom_paths["PowerPlantGeneratorAnnex"] == annex["block_path"]
+    assert "PowerPlantGeneratorAnnex" not in reference_paths
+
+    stock = (repo_root / annex["power_plant_stock_block_path"]).read_bytes()
+    active = (repo_root / annex["power_plant_active_block_path"]).read_bytes()
+    assert len(stock) == len(active) == 90
+    assert [
+        {"offset": offset, "old_block": old, "new_block": new}
+        for offset, (old, new) in enumerate(zip(stock, active))
+        if old != new
+    ] == [annex["power_plant_block_delta"]]
+    assert (repo_root / annex["block_path"]).read_bytes() == bytes(annex["blocks"])
+
+    dimensions = parse_map_dimensions(
+        (repo_root / "constants/map_constants.asm").read_text()
+    )
+    assert [
+        dimensions[annex["map"]].width_blocks,
+        dimensions[annex["map"]].height_blocks,
+    ] == annex["dimensions"]
+    declaration = "map PowerPlantGeneratorAnnex, " + ", ".join(annex["metadata"])
+    assert declaration in _active_code(repo_root / "data/maps/maps.asm", CRYSTAL_LEGENDS)
+    assert declaration not in _active_code(repo_root / "data/maps/maps.asm", REFERENCE)
+    assert (
+        f'map_attributes PowerPlantGeneratorAnnex, {annex["map"]}, '
+        f'${annex["border_block"]:02x}'
+        in (repo_root / "data/maps/attributes.asm").read_text()
+    )
+
+    sources = {source.map_name: source for source in map_sources_from_repository(repo_root)}
+    plant_events = parse_events(sources["POWER_PLANT"])
+    reference_plant_events = parse_events(sources["POWER_PLANT"], REFERENCE)
+    annex_events = parse_events(sources[annex["map"]])
+    assert [
+        list(event.args)
+        for event in plant_events
+        if event.event_type == "warp_event"
+    ][-2:] == [[str(value) for value in warp] for warp in annex["power_plant_warps"]]
+    assert len(
+        [event for event in reference_plant_events if event.event_type == "warp_event"]
+    ) == 2
+    assert [
+        list(event.args)
+        for event in annex_events
+        if event.event_type == "warp_event"
+    ] == [[str(value) for value in warp] for warp in annex["return_warps"]]
+    assert [
+        [event.x, event.y]
+        for event in plant_events
+        if event.event_type == "bg_event"
+        and event.identity == "PowerPlantAnnexShutter"
+    ] == annex["shutter"]["door_coordinates"]
+    assert len([event for event in plant_events if event.event_type == "object_event"]) == 7
+    assert [
+        [event.x, event.y]
+        for event in annex_events
+        if event.event_type == "bg_event"
+    ] == [annex["console_coordinate"]]
+
+    resolved = {
+        "POWER_PLANT": annex["power_plant_active_block_path"],
+        annex["map"]: annex["block_path"],
+    }
+    relevant_dimensions = {
+        "POWER_PLANT": dimensions["POWER_PLANT"],
+        annex["map"]: dimensions[annex["map"]],
+    }
+    tilesets = parse_map_tilesets((repo_root / "data/maps/maps.asm").read_text())
+    for coordinate in annex["shutter"]["door_coordinates"]:
+        assert collision_at(
+            repo_root,
+            "POWER_PLANT",
+            tuple(coordinate),
+            relevant_dimensions,
+            resolved,
+            tilesets,
+        ) == "WALL"
+    for coordinate in [warp[:2] for warp in annex["return_warps"]]:
+        assert collision_at(
+            repo_root,
+            annex["map"],
+            tuple(coordinate),
+            relevant_dimensions,
+            resolved,
+            tilesets,
+        ) == "WARP_CARPET_LEFT"
+    for coordinate in annex["route"]:
+        assert collision_at(
+            repo_root,
+            annex["map"],
+            tuple(coordinate),
+            relevant_dimensions,
+            resolved,
+            tilesets,
+        ) == "FLOOR"
+
+    plant_source = _active_code(repo_root / "maps/PowerPlant.asm", CRYSTAL_LEGENDS)
+    _assert_in_order(
+        plant_source,
+        [
+            f'checkevent {annex["shutter"]["power_event"]}',
+            f'checkevent {annex["shutter"]["authorization_event"]}',
+            f'checkevent {annex["shutter"]["open_event"]}',
+            "playsound SFX_ENTER_DOOR",
+            f'changeblock {annex["shutter"]["block_origin"][0]}, {annex["shutter"]["block_origin"][1]}, ${annex["shutter"]["open_block"]:02x}',
+            "refreshmap",
+            f'setevent {annex["shutter"]["open_event"]}',
+        ],
+    )
+
+
+def test_zapdos_moltres_and_oak_tracker_use_the_locked_branch_contract(
+    repo_root: Path, scenario: dict
+) -> None:
+    annex = scenario["power_plant_annex"]
+    zapdos = annex["zapdos"]
+    victory = scenario["victory_road_bird"]
+    moltres = victory["moltres"]
+    sources = {source.map_name: source for source in map_sources_from_repository(repo_root)}
+
+    annex_objects = [
+        event
+        for event in parse_events(sources[annex["map"]])
+        if event.event_type == "object_event"
+    ]
+    assert len(annex_objects) == 1
+    victory_objects = [
+        event
+        for event in parse_events(sources[victory["map"]])
+        if event.event_type == "object_event"
+    ]
+    reference_victory_objects = [
+        event
+        for event in parse_events(sources[victory["map"]], REFERENCE)
+        if event.event_type == "object_event"
+    ]
+    assert len(victory_objects) == 7
+    assert len(reference_victory_objects) == 6
+    victory_warps = [
+        [event.x, event.y]
+        for event in parse_events(sources[victory["map"]])
+        if event.event_type == "warp_event"
+    ]
+    assert len(victory_warps) == 10
+    assert all(coordinate in victory_warps for coordinate in victory["route_warps"])
+
+    dimensions = {victory["map"]: MapDimensions(victory["map"], 10, 36)}
+    resolved = {victory["map"]: "maps/VictoryRoad.blk"}
+    tilesets = parse_map_tilesets((repo_root / "data/maps/maps.asm").read_text())
+    assert collision_at(
+        repo_root,
+        victory["map"],
+        tuple(moltres["coordinate"]),
+        dimensions,
+        resolved,
+        tilesets,
+    ) == "FLOOR"
+    assert collision_at(
+        repo_root,
+        victory["map"],
+        tuple(moltres["approach"]),
+        dimensions,
+        resolved,
+        tilesets,
+    ) == "FLOOR"
+    assert collision_at(
+        repo_root,
+        victory["map"],
+        tuple(victory["full_restore"]),
+        dimensions,
+        resolved,
+        tilesets,
+    ) == "FLOOR"
+    for coordinate in victory["route_warps"]:
+        assert collision_at(
+            repo_root,
+            victory["map"],
+            tuple(coordinate),
+            dimensions,
+            resolved,
+            tilesets,
+        ) == "LADDER"
+    for coordinate in victory["east_hops"]:
+        assert collision_at(
+            repo_root,
+            victory["map"],
+            tuple(coordinate),
+            dimensions,
+            resolved,
+            tilesets,
+        ) == "HOP_RIGHT"
+    for coordinate in victory["south_hops"]:
+        assert collision_at(
+            repo_root,
+            victory["map"],
+            tuple(coordinate),
+            dimensions,
+            resolved,
+            tilesets,
+        ) == "HOP_DOWN"
+
+    for bird, event, script_stub in (
+        (zapdos, annex_objects[0], "PowerPlantGeneratorAnnexZapdos"),
+        (moltres, victory_objects[-1], "VictoryRoadMoltres"),
+    ):
+        assert [event.x, event.y] == bird["coordinate"]
+        assert event.args[2] == bird["sprite"]
+        assert event.args[3] == bird["movement"]
+        assert event.args[8] == bird["palette"]
+        assert event.args[9] == bird["object_type"]
+        assert event.args[11] == script_stub
+        assert event.args[12] == bird["mask_event"]
+
+    shared = _active_code(repo_root / "maps/Phase9LegendaryBirds.asm", CRYSTAL_LEGENDS)
+    for bird, refresh_end, encounter_end, disappearance in (
+        (
+            zapdos,
+            f'{moltres["callback"]}:',
+            f'{moltres["script"]}:',
+            "POWERPLANTGENERATORANNEX_ZAPDOS",
+        ),
+        (
+            moltres,
+            "Phase9ArticunoEncounter:",
+            "Phase9OaksAssistant2Hints:",
+            "VICTORYROAD_MOLTRES",
+        ),
+    ):
+        refresh = _section(shared, f'{bird["callback"]}:', refresh_end)
+        _assert_in_order(
+            refresh,
+            [
+                f'checkevent {bird["capture_event"]}',
+                f'checkevent {bird["location_gate_event"]}',
+                f'checkevent {bird["player_choice_event"]}',
+                f'checkevent {bird["silver_choice_event"]}',
+                f'checkevent {bird["oak_choice_event"]}',
+                f'checkevent {bird["oak_handoff_event"]}',
+                f'checkevent {bird["silver_availability_event"]}',
+                f'clearevent {bird["mask_event"]}',
+                f'setevent {bird["mask_event"]}',
+            ],
+        )
+        encounter = _section(shared, f'{bird["script"]}:', encounter_end)
+        _assert_in_order(
+            encounter,
+            [
+                f'cry {bird["species"]}',
+                f'loadwildmon {bird["species"]}, {bird["level"]}',
+                "startbattle",
+                "special CheckCaughtPokemon",
+                f'setevent {bird["capture_event"]}',
+                f'setevent {bird["mask_event"]}',
+                f'disappear {disappearance}',
+                "reloadmapafterbattle",
+            ],
+        )
+
+    oak = _active_code(repo_root / "maps/OaksLab.asm", CRYSTAL_LEGENDS)
+    reference_oak = _active_code(repo_root / "maps/OaksLab.asm", REFERENCE)
+    assistant = oak.index("OaksAssistant2Script:")
+    assert oak[assistant + 1 : assistant + 4] == [
+        "checkevent EVENT_OAK_MOVED_THIRD_BIRD",
+        "iftrue .LegendaryBirdHints",
+        "jumptextfaceplayer OaksAssistant2Text",
+    ]
+    reference_assistant = reference_oak.index("OaksAssistant2Script:")
+    assert (
+        reference_oak[reference_assistant + 1]
+        == "jumptextfaceplayer OaksAssistant2Text"
+    )
+    assert "farsjump Phase9OaksAssistant2Hints" in oak
+    tracker = _section(
+        shared, "Phase9OaksAssistant2Hints:", "Phase9LegendaryBirdsEnd:"
+    )
+    assert all(
+        f"checkevent {event}" in tracker
+        for event in (
+            "EVENT_RESTORED_POWER_TO_KANTO",
+            "EVENT_POWER_PLANT_ANNEX_AUTHORIZED",
+            "EVENT_OPENED_POWER_PLANT_ANNEX",
+            "EVENT_BEAT_ELITE_FOUR",
+            "EVENT_CAUGHT_ARTICUNO_IN_KANTO",
+            "EVENT_CAUGHT_ZAPDOS_IN_KANTO",
+            "EVENT_CAUGHT_MOLTRES_IN_KANTO",
+        )
+    )
+    assert not any("NOT_AT_KANTO_LOCATION" in line for line in tracker)
+    assert all(
+        shared[shared.index(label) + 1].startswith('text "AIDE:')
+        for label in (
+            "Phase9OaksAssistantArticunoHintText:",
+            "Phase9OaksAssistantZapdosRepairHintText:",
+            "Phase9OaksAssistantZapdosAuthorizationHintText:",
+            "Phase9OaksAssistantZapdosShutterHintText:",
+            "Phase9OaksAssistantZapdosOpenHintText:",
+            "Phase9OaksAssistantMoltresLeagueHintText:",
+            "Phase9OaksAssistantMoltresOpenHintText:",
+            "Phase9OaksAssistantNoNewSightingText:",
+            "Phase9OaksAssistantBothBirdsCaughtText:",
+        )
     )

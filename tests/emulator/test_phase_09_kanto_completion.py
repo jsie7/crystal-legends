@@ -97,16 +97,36 @@ def phase_9_constants(
         "EVENT_SAFARI_ZONE_BETA_ULTRA_BALL",
         "EVENT_SAFARI_ZONE_BETA_MAX_REVIVE",
         "EVENT_ARTICUNO_AVAILABLE",
+        "EVENT_ZAPDOS_AVAILABLE",
+        "EVENT_MOLTRES_AVAILABLE",
         "EVENT_OAK_MOVED_THIRD_BIRD",
         "EVENT_GOT_ARTICUNO_FROM_ELM",
         "EVENT_GOT_ZAPDOS_FROM_ELM",
         "EVENT_GOT_MOLTRES_FROM_ELM",
         "EVENT_CAUGHT_ARTICUNO_IN_KANTO",
+        "EVENT_CAUGHT_ZAPDOS_IN_KANTO",
+        "EVENT_CAUGHT_MOLTRES_IN_KANTO",
         "EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION",
+        "EVENT_ZAPDOS_NOT_AT_KANTO_LOCATION",
+        "EVENT_MOLTRES_NOT_AT_KANTO_LOCATION",
+        "EVENT_POWER_PLANT_ANNEX_AUTHORIZED",
+        "EVENT_OPENED_POWER_PLANT_ANNEX",
+        "EVENT_RESTORED_POWER_TO_KANTO",
+        "EVENT_RETURNED_MACHINE_PART",
+        "EVENT_GOT_TM07_ZAP_CANNON",
+        "EVENT_BEAT_ELITE_FOUR",
         "GROUP_ROUTE_20",
         "MAP_ROUTE_20",
         "GROUP_SEAFOAM_ISLANDS_CAVE",
         "MAP_SEAFOAM_ISLANDS_CAVE",
+        "GROUP_POWER_PLANT",
+        "MAP_POWER_PLANT",
+        "GROUP_POWER_PLANT_GENERATOR_ANNEX",
+        "MAP_POWER_PLANT_GENERATOR_ANNEX",
+        "GROUP_VICTORY_ROAD",
+        "MAP_VICTORY_ROAD",
+        "GROUP_OAKS_LAB",
+        "MAP_OAKS_LAB",
         "MORN",
         "DAY",
         "NITE",
@@ -126,10 +146,14 @@ def phase_9_constants(
         "REMORAID",
         "MUK",
         "ARTICUNO",
+        "ZAPDOS",
+        "MOLTRES",
         "MASTER_BALL",
         "BALL_POCKET",
         "BATTLERESULT_CAUGHT_POKEMON",
         "OW_UP",
+        "OW_DOWN",
+        "OW_RIGHT",
         "ITEM_POCKET",
         "WIN",
         "LOSE",
@@ -1419,3 +1443,593 @@ def test_articuno_capture_and_absence_survive_native_continue(
         for _ in range(20):
             session.tap("a", 2, 10)
         assert "BattleMenu" not in session.hook_history
+
+
+def _remaining_bird_checkpoint_events(
+    bird: str,
+    branch: str,
+    *,
+    silver_available: bool = False,
+    oak_handoff: bool = False,
+    location_gate: bool = False,
+    caught: bool = False,
+    mask: bool = False,
+) -> dict[str, bool]:
+    upper = bird.upper()
+    events = {
+        "EVENT_GOT_ARTICUNO_FROM_ELM": branch == "articuno",
+        "EVENT_GOT_ZAPDOS_FROM_ELM": branch == "zapdos",
+        "EVENT_GOT_MOLTRES_FROM_ELM": branch == "moltres",
+        "EVENT_ARTICUNO_AVAILABLE": False,
+        "EVENT_ZAPDOS_AVAILABLE": False,
+        "EVENT_MOLTRES_AVAILABLE": False,
+        "EVENT_OAK_MOVED_THIRD_BIRD": oak_handoff,
+        "EVENT_RESTORED_POWER_TO_KANTO": bird == "zapdos" and location_gate,
+        "EVENT_BEAT_ELITE_FOUR": bird == "moltres" and location_gate,
+        "EVENT_CAUGHT_ZAPDOS_IN_KANTO": bird == "zapdos" and caught,
+        "EVENT_CAUGHT_MOLTRES_IN_KANTO": bird == "moltres" and caught,
+        "EVENT_ZAPDOS_NOT_AT_KANTO_LOCATION": bird == "zapdos" and mask,
+        "EVENT_MOLTRES_NOT_AT_KANTO_LOCATION": bird == "moltres" and mask,
+    }
+    events[f"EVENT_{upper}_AVAILABLE"] = silver_available
+    return events
+
+
+@pytest.mark.parametrize(
+    (
+        "bird",
+        "branch",
+        "silver_available",
+        "oak_handoff",
+        "location_gate",
+        "caught",
+        "visible",
+    ),
+    [
+        ("zapdos", "zapdos", True, True, True, False, False),
+        ("zapdos", "moltres", False, True, True, False, False),
+        ("zapdos", "moltres", True, False, True, False, True),
+        ("zapdos", "articuno", True, False, True, False, False),
+        ("zapdos", "articuno", False, True, True, False, True),
+        ("zapdos", "articuno", False, True, False, False, False),
+        ("zapdos", "articuno", False, True, True, True, False),
+        ("moltres", "moltres", True, True, True, False, False),
+        ("moltres", "articuno", False, True, True, False, False),
+        ("moltres", "articuno", True, False, True, False, True),
+        ("moltres", "zapdos", True, False, True, False, False),
+        ("moltres", "zapdos", False, True, True, False, True),
+        ("moltres", "zapdos", False, True, False, False, False),
+        ("moltres", "zapdos", False, True, True, True, False),
+    ],
+    ids=[
+        "zapdos-player-species",
+        "zapdos-silver-pending",
+        "zapdos-silver-released",
+        "zapdos-oak-pending",
+        "zapdos-oak-handoff",
+        "zapdos-power-pending",
+        "zapdos-already-caught",
+        "moltres-player-species",
+        "moltres-silver-pending",
+        "moltres-silver-released",
+        "moltres-oak-pending",
+        "moltres-oak-handoff",
+        "moltres-league-pending",
+        "moltres-already-caught",
+    ],
+)
+def test_remaining_bird_visibility_uses_branch_source_and_location_gate(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+    bird: str,
+    branch: str,
+    silver_available: bool,
+    oak_handoff: bool,
+    location_gate: bool,
+    caught: bool,
+    visible: bool,
+) -> None:
+    constants = phase_9_constants
+    contract = (
+        scenario["power_plant_annex"]["zapdos"]
+        if bird == "zapdos"
+        else scenario["victory_road_bird"]["moltres"]
+    )
+    map_name = (
+        scenario["power_plant_annex"]["map"]
+        if bird == "zapdos"
+        else scenario["victory_road_bird"]["map"]
+    )
+    object_symbol = "wMap1ObjectStructID" if bird == "zapdos" else "wMap7ObjectStructID"
+    mask_event = constants[contract["mask_event"]]
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        map_name=map_name,
+        x=contract["approach"][0],
+        y=contract["approach"][1],
+        events=_remaining_bird_checkpoint_events(
+            bird,
+            branch,
+            silver_available=silver_available,
+            oak_handoff=oak_handoff,
+            location_gate=location_gate,
+            caught=caught,
+            mask=visible,
+        ),
+    ) as session:
+        assert event_is_set(session, mask_event) is not visible
+        assert (session.read_symbol(object_symbol) != 0xFF) is visible
+
+
+def _interact_with_power_plant_shutter(
+    session, constants: dict[str, int], max_frames: int, *, y: int = 11
+) -> None:
+    place_player(session, 18, y)
+    session.enable_script_tracing()
+    session.write_symbol("wPlayerDirection", constants["OW_RIGHT"])
+    session.tap("a", 2, 10)
+    session.wait_for_script("PowerPlantAnnexShutter", max_frames)
+    _finish_overworld_script(session, max_frames)
+
+
+@pytest.mark.parametrize(
+    ("powered", "authorized"),
+    [(False, False), (True, False)],
+    ids=["unpowered", "manager-authorization-required"],
+)
+def test_power_plant_shutter_stays_closed_without_each_access_fact(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+    powered: bool,
+    authorized: bool,
+) -> None:
+    constants = phase_9_constants
+    shutter = scenario["power_plant_annex"]["shutter"]
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        map_name="POWER_PLANT",
+        x=18,
+        y=11,
+        events={
+            shutter["power_event"]: powered,
+            shutter["authorization_event"]: authorized,
+            shutter["open_event"]: False,
+        },
+    ) as session:
+        assert _loaded_block(session, *shutter["block_origin"]) == shutter[
+            "closed_block"
+        ]
+        _interact_with_power_plant_shutter(
+            session, constants, scenario["max_frames_per_step"]
+        )
+        assert not event_is_set(session, constants[shutter["open_event"]])
+        assert _loaded_block(session, *shutter["block_origin"]) == shutter[
+            "closed_block"
+        ]
+
+
+def test_manager_authorizes_the_annex_only_after_the_repair_reward_flow(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+) -> None:
+    constants = phase_9_constants
+    authorization = constants["EVENT_POWER_PLANT_ANNEX_AUTHORIZED"]
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        map_name="POWER_PLANT",
+        x=14,
+        y=11,
+        events={
+            "EVENT_RETURNED_MACHINE_PART": True,
+            "EVENT_RESTORED_POWER_TO_KANTO": True,
+            "EVENT_GOT_TM07_ZAP_CANNON": True,
+            "EVENT_POWER_PLANT_ANNEX_AUTHORIZED": False,
+        },
+    ) as session:
+        session.enable_script_tracing()
+        place_player(session, 14, 11)
+        session.write_symbol("wPlayerDirection", constants["OW_UP"])
+        session.tap("a", 2, 10)
+        session.wait_for_script("PowerPlantManager", scenario["max_frames_per_step"])
+        _finish_overworld_script(session, scenario["max_frames_per_step"])
+        assert event_is_set(session, authorization)
+
+
+def test_power_plant_annex_round_trip_and_open_block_survive_native_continue(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+) -> None:
+    constants = phase_9_constants
+    annex = scenario["power_plant_annex"]
+    shutter = annex["shutter"]
+    persisted = tmp_path / "power-plant-annex-open.sav"
+    events = {
+        **_remaining_bird_checkpoint_events(
+            "zapdos", "zapdos", location_gate=True
+        ),
+        shutter["authorization_event"]: True,
+        shutter["open_event"]: False,
+    }
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path / "open",
+        constants,
+        scenario,
+        map_name="POWER_PLANT",
+        x=18,
+        y=11,
+        events=events,
+    ) as session:
+        _interact_with_power_plant_shutter(
+            session, constants, scenario["max_frames_per_step"]
+        )
+        assert event_is_set(session, constants[shutter["open_event"]])
+        assert _loaded_block(session, *shutter["block_origin"]) == shutter["open_block"]
+
+        _walk_until_map(
+            session,
+            "right",
+            constants,
+            annex["map"],
+            scenario["max_frames_per_step"],
+        )
+        assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (
+            0,
+            5,
+        )
+        walk_steps(
+            session,
+            "right",
+            "wXCoord",
+            1,
+            1,
+            scenario["max_frames_per_step"],
+        )
+        _walk_until_map(
+            session,
+            "left",
+            constants,
+            "POWER_PLANT",
+            scenario["max_frames_per_step"],
+        )
+        assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (
+            19,
+            11,
+        )
+        walk_steps(
+            session,
+            "left",
+            "wXCoord",
+            -1,
+            1,
+            scenario["max_frames_per_step"],
+        )
+        assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (
+            18,
+            11,
+        )
+        save_game_from_overworld(session, scenario["max_frames_per_step"])
+        dump_battery_ram(session, persisted)
+
+    with loaded_phase_9_saved_game(
+        repo_root,
+        tmp_path / "continue",
+        constants,
+        scenario,
+        persisted,
+    ) as session:
+        assert event_is_set(session, constants[shutter["open_event"]])
+        assert _loaded_block(session, *shutter["block_origin"]) == shutter["open_block"]
+
+
+def _remaining_bird_runtime_contract(scenario: dict, bird: str) -> tuple[dict, str, str, str]:
+    if bird == "zapdos":
+        return (
+            scenario["power_plant_annex"]["zapdos"],
+            scenario["power_plant_annex"]["map"],
+            "articuno",
+            "wMap1ObjectStructID",
+        )
+    return (
+        scenario["victory_road_bird"]["moltres"],
+        scenario["victory_road_bird"]["map"],
+        "zapdos",
+        "wMap7ObjectStructID",
+    )
+
+
+def _start_remaining_bird_battle(
+    session,
+    constants: dict[str, int],
+    contract: dict,
+    max_frames: int,
+    cursor: int,
+) -> None:
+    session.enable_script_tracing()
+    session.register_hook(
+        "BattleMenu",
+        lambda current: current.write_symbol("wBattleMenuCursorPosition", cursor),
+    )
+    session.register_hook("CheckCaughtPokemon")
+    battle_count = session.hook_history.count("BattleMenu") + 1
+    session.write_symbol("wPlayerDirection", constants["OW_UP"])
+    session.tap("a", 2, 10)
+    advance_with_a_until(
+        session,
+        lambda current: current.hook_history.count("BattleMenu") >= battle_count,
+        max_frames,
+        f'{contract["species"]} battle menu',
+    )
+    assert session.read_symbol("wEnemyMonSpecies") == constants[contract["species"]]
+    assert session.read_symbol("wEnemyMonLevel") == contract["level"]
+
+
+@pytest.mark.parametrize(
+    ("bird", "outcome"),
+    [("zapdos", "escape"), ("moltres", "knockout")],
+)
+def test_remaining_bird_non_capture_results_restore_a_healthy_retry(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+    bird: str,
+    outcome: str,
+) -> None:
+    constants = phase_9_constants
+    max_frames = scenario["max_frames_per_step"]
+    contract, map_name, branch, object_symbol = _remaining_bird_runtime_contract(
+        scenario, bird
+    )
+    capture_event = constants[contract["capture_event"]]
+    mask_event = constants[contract["mask_event"]]
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        map_name=map_name,
+        x=contract["approach"][0],
+        y=contract["approach"][1],
+        events=_remaining_bird_checkpoint_events(
+            bird,
+            branch,
+            oak_handoff=True,
+            location_gate=True,
+        ),
+    ) as session:
+        prepare_battle_party(session, constants, constants["MAREEP"], should_win=True)
+        _start_remaining_bird_battle(
+            session, constants, contract, max_frames, 4 if outcome == "escape" else 1
+        )
+        if outcome == "knockout":
+            session.register_hook(
+                "HasEnemyFainted",
+                lambda current: current.write_symbol_bytes("wEnemyMonHP", b"\0\0"),
+            )
+        else:
+            session.write_symbol_bytes("wBattleMonSpeed", (999).to_bytes(2, "big"))
+            session.write_symbol_bytes("wEnemyMonSpeed", (1).to_bytes(2, "big"))
+        checked = session.hook_history.count("CheckCaughtPokemon") + 1
+        session.tap("a", 2, 10)
+        advance_with_a_until(
+            session,
+            lambda current: current.hook_history.count("CheckCaughtPokemon") >= checked,
+            max_frames,
+            f'{contract["species"]} {outcome} capture query',
+        )
+        _finish_overworld_script(session, max_frames)
+        assert not event_is_set(session, capture_event)
+        assert not event_is_set(session, mask_event)
+        assert session.read_symbol(object_symbol) != 0xFF
+
+        place_player(session, *contract["approach"])
+        _start_remaining_bird_battle(session, constants, contract, max_frames, 1)
+        assert session.read_symbol_bytes("wEnemyMonHP", 2) == session.read_symbol_bytes(
+            "wEnemyMonMaxHP", 2
+        )
+        assert session.read_symbol("wEnemyMonStatus") == 0
+
+
+@pytest.mark.parametrize("bird", ["zapdos", "moltres"])
+def test_remaining_bird_capture_and_absence_survive_native_continue(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+    bird: str,
+) -> None:
+    constants = phase_9_constants
+    max_frames = scenario["max_frames_per_step"]
+    contract, map_name, branch, object_symbol = _remaining_bird_runtime_contract(
+        scenario, bird
+    )
+    capture_event = constants[contract["capture_event"]]
+    mask_event = constants[contract["mask_event"]]
+    persisted = tmp_path / f"{bird}-captured.sav"
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path / "capture",
+        constants,
+        scenario,
+        map_name=map_name,
+        x=contract["approach"][0],
+        y=contract["approach"][1],
+        events=_remaining_bird_checkpoint_events(
+            bird,
+            branch,
+            oak_handoff=True,
+            location_gate=True,
+        ),
+    ) as session:
+        prepare_battle_party(session, constants, constants["MAREEP"], should_win=True)
+        session.write_symbol("wNumBalls", 1)
+        session.write_symbol_bytes(
+            "wBalls", bytes([constants["MASTER_BALL"], 1, 0xFF])
+        )
+        session.write_symbol("wLastPocket", constants["BALL_POCKET"])
+        _start_remaining_bird_battle(session, constants, contract, max_frames, 3)
+        session.register_hook("PokeBallEffect")
+        session.tap("a", 2, 10)
+        advance_with_a_until(
+            session,
+            lambda current: "PokeBallEffect" in current.hook_history,
+            max_frames,
+            f'{contract["species"]} Master Ball use',
+        )
+        advance_with_a_until(
+            session,
+            lambda current: event_is_set(current, capture_event),
+            max_frames,
+            f'{contract["species"]} capture fact',
+        )
+        result = session.read_symbol("wBattleResult")
+        _finish_overworld_script(session, max_frames)
+        assert result & (1 << constants["BATTLERESULT_CAUGHT_POKEMON"])
+        assert event_is_set(session, mask_event)
+        assert session.read_symbol(object_symbol) == 0xFF
+        assert read_progress(session).owns(constants[contract["species"]])
+        save_game_from_overworld(session, max_frames)
+        dump_battery_ram(session, persisted)
+
+    with loaded_phase_9_saved_game(
+        repo_root,
+        tmp_path / "continue",
+        constants,
+        scenario,
+        persisted,
+    ) as session:
+        assert event_is_set(session, capture_event)
+        assert event_is_set(session, mask_event)
+        assert session.read_symbol(object_symbol) == 0xFF
+        assert read_progress(session).owns(constants[contract["species"]])
+        session.register_hook("BattleMenu")
+        place_player(session, *contract["approach"])
+        session.write_symbol("wPlayerDirection", constants["OW_UP"])
+        for _ in range(20):
+            session.tap("a", 2, 10)
+        assert "BattleMenu" not in session.hook_history
+
+
+@pytest.mark.parametrize(
+    ("case", "events", "expected_label"),
+    [
+        (
+            "stock-before-handoff",
+            {
+                "EVENT_GOT_ARTICUNO_FROM_ELM": True,
+                "EVENT_OAK_MOVED_THIRD_BIRD": False,
+            },
+            None,
+        ),
+        (
+            "zapdos-repair-hint",
+            {
+                "EVENT_GOT_ARTICUNO_FROM_ELM": True,
+                "EVENT_OAK_MOVED_THIRD_BIRD": True,
+                "EVENT_RESTORED_POWER_TO_KANTO": False,
+            },
+            "Phase9OaksAssistantZapdosHint.NeedsRepair",
+        ),
+        (
+            "zapdos-closed-shutter-hint",
+            {
+                "EVENT_GOT_MOLTRES_FROM_ELM": True,
+                "EVENT_OAK_MOVED_THIRD_BIRD": True,
+                "EVENT_CAUGHT_ARTICUNO_IN_KANTO": True,
+                "EVENT_ZAPDOS_AVAILABLE": True,
+                "EVENT_RESTORED_POWER_TO_KANTO": True,
+                "EVENT_POWER_PLANT_ANNEX_AUTHORIZED": True,
+                "EVENT_OPENED_POWER_PLANT_ANNEX": False,
+            },
+            "Phase9OaksAssistantZapdosHint.NeedsOpening",
+        ),
+        (
+            "both-nonstarter-birds-caught",
+            {
+                "EVENT_GOT_ZAPDOS_FROM_ELM": True,
+                "EVENT_OAK_MOVED_THIRD_BIRD": True,
+                "EVENT_CAUGHT_ARTICUNO_IN_KANTO": True,
+                "EVENT_CAUGHT_MOLTRES_IN_KANTO": True,
+            },
+            "Phase9OaksAssistant2Hints.BothCaught",
+        ),
+    ],
+)
+def test_oaks_second_assistant_tracks_access_and_capture_state(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+    case: str,
+    events: dict[str, bool],
+    expected_label: str | None,
+) -> None:
+    constants = phase_9_constants
+    defaults = {
+        "EVENT_GOT_ARTICUNO_FROM_ELM": False,
+        "EVENT_GOT_ZAPDOS_FROM_ELM": False,
+        "EVENT_GOT_MOLTRES_FROM_ELM": False,
+        "EVENT_ARTICUNO_AVAILABLE": False,
+        "EVENT_ZAPDOS_AVAILABLE": False,
+        "EVENT_MOLTRES_AVAILABLE": False,
+        "EVENT_OAK_MOVED_THIRD_BIRD": False,
+        "EVENT_RESTORED_POWER_TO_KANTO": False,
+        "EVENT_POWER_PLANT_ANNEX_AUTHORIZED": False,
+        "EVENT_OPENED_POWER_PLANT_ANNEX": False,
+        "EVENT_BEAT_ELITE_FOUR": False,
+        "EVENT_CAUGHT_ARTICUNO_IN_KANTO": False,
+        "EVENT_CAUGHT_ZAPDOS_IN_KANTO": False,
+        "EVENT_CAUGHT_MOLTRES_IN_KANTO": False,
+    }
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path / case,
+        constants,
+        scenario,
+        map_name="OAKS_LAB",
+        x=8,
+        y=10,
+        events={**defaults, **events},
+    ) as session:
+        session.enable_script_tracing()
+        object_struct = session.read_symbol("wMap3ObjectStructID")
+        assistant_x = session.read_symbol(f"wObject{object_struct}MapX") - 4
+        assistant_y = session.read_symbol(f"wObject{object_struct}MapY") - 4
+        # Prime the camera-relative object coordinates after the save-fixture
+        # checkpoint places the player beside this walking NPC.
+        place_player(session, assistant_x, assistant_y + 1)
+        session.write_symbol("wPlayerDirection", constants["OW_UP"])
+        session.tick(10)
+        session.tap("a", 2, 10)
+        place_player(session, assistant_x, assistant_y - 1)
+        session.write_symbol("wPlayerDirection", constants["OW_DOWN"])
+        session.tick(10)
+        session.tap("a", 2, 10)
+        session.wait_for_script("OaksAssistant2Script", scenario["max_frames_per_step"])
+        if expected_label is None:
+            _finish_overworld_script(session, scenario["max_frames_per_step"])
+            assert "Phase9OaksAssistant2Hints" not in session.script_history
+        else:
+            session.wait_for_script(
+                expected_label, scenario["max_frames_per_step"]
+            )
+            _finish_overworld_script(session, scenario["max_frames_per_step"])
+            assert "Phase9OaksAssistant2Hints" in session.script_history

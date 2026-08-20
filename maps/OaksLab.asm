@@ -57,7 +57,16 @@ OaksAssistant1Script:
 	jumptextfaceplayer OaksAssistant1Text
 
 OaksAssistant2Script:
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_OAK_MOVED_THIRD_BIRD
+	iftrue .LegendaryBirdHints
+endc
 	jumptextfaceplayer OaksAssistant2Text
+
+if DEF(_CRYSTALLEGENDS)
+.LegendaryBirdHints:
+	farsjump Phase9OaksAssistant2Hints
+endc
 
 OaksAssistant3Script:
 	jumptextfaceplayer OaksAssistant3Text

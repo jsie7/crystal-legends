@@ -717,4 +717,5 @@ ENDM
 if DEF(_CRYSTALLEGENDS)
 	map_attributes RadioTowerTransmitterAnnex, RADIO_TOWER_TRANSMITTER_ANNEX, $00
 	map_attributes SeafoamIslandsCave, SEAFOAM_ISLANDS_CAVE, $19
+	map_attributes PowerPlantGeneratorAnnex, POWER_PLANT_GENERATOR_ANNEX, $00
 endc

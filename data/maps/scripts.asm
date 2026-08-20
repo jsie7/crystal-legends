@@ -495,6 +495,7 @@ if DEF(_CRYSTALLEGENDS)
 INCLUDE "maps/PlayersHouse2FDebug.asm"
 INCLUDE "maps/RadioTowerTransmitterAnnex.asm"
 INCLUDE "maps/SeafoamIslandsCave.asm"
+INCLUDE "maps/PowerPlantGeneratorAnnex.asm"
 endc
 
 ENDSECTION
