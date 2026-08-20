@@ -3,6 +3,14 @@ SafariZoneFuchsiaGateBeta_MapScripts:
 
 	def_callbacks
 
+if DEF(_CRYSTALLEGENDS)
+SafariZoneFuchsiaGateBetaSouthNotice:
+	farjumptext SafariZoneFuchsiaGateBetaSouthNoticeText
+
+SafariZoneFuchsiaGateBetaNorthNotice:
+	farjumptext SafariZoneFuchsiaGateBetaNorthNoticeText
+endc
+
 SafariZoneFuchsiaGateBeta_MapEvents:
 	db 0, 0 ; filler
 
@@ -15,5 +23,9 @@ SafariZoneFuchsiaGateBeta_MapEvents:
 	def_coord_events
 
 	def_bg_events
+	if DEF(_CRYSTALLEGENDS)
+	bg_event  2,  0, BGEVENT_READ, SafariZoneFuchsiaGateBetaSouthNotice
+	bg_event  7,  7, BGEVENT_READ, SafariZoneFuchsiaGateBetaNorthNotice
+	endc
 
 	def_object_events

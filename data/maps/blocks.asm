@@ -955,7 +955,11 @@ FuchsiaGym_Blocks:
 	INCBIN "maps/FuchsiaGym.blk"
 
 SafariZoneBeta_Blocks:
+	if DEF(_CRYSTALLEGENDS)
+	INCBIN "maps/SafariZoneBetaCrystalLegends.blk"
+	else
 	INCBIN "maps/SafariZoneBeta.blk"
+	endc
 
 UndergroundPath_Blocks:
 	INCBIN "maps/UndergroundPath.blk"

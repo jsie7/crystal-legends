@@ -83,5 +83,61 @@
       "collision": ["HOP_DOWN", "FLOOR", "WALL", "FLOOR"]
     }
   },
+  "safari": {
+    "quest_owner": {
+      "map": "SAFARI_ZONE_WARDENS_HOME",
+      "script": "WardensGranddaughter",
+      "coordinate": [2, 4],
+      "sprite": "SPRITE_LASS",
+      "first_talk_event": "EVENT_TALKED_TO_WARDENS_GRANDDAUGHTER",
+      "badge": "ENGINE_SOULBADGE",
+      "access_event": "EVENT_SAFARI_ZONE_ACCESSIBLE"
+    },
+    "fuchsia_gate": {
+      "map": "FUCHSIA_CITY",
+      "warp": [18, 3, "SAFARI_ZONE_FUCHSIA_GATE_BETA", 3],
+      "block_coordinate": [18, 2],
+      "closed_block": 125,
+      "open_block": 71,
+      "metatile": [10, 50, 10, 10, 75, 75, 75, 75, 11, 12, 75, 75, 27, 28, 26, 26],
+      "open_collision": ["WALL", "WALL", "DOOR", "WALL"]
+    },
+    "maintenance_gate": {
+      "map": "SAFARI_ZONE_FUCHSIA_GATE_BETA",
+      "dimensions": [5, 4],
+      "block_path": "maps/NorthSouthGate.blk",
+      "warps": [[4, 0, "SAFARI_ZONE_BETA", 1], [5, 0, "SAFARI_ZONE_BETA", 2], [4, 7, "FUCHSIA_CITY", 7], [5, 7, "FUCHSIA_CITY", 7]],
+      "notice_coordinates": [[2, 0], [7, 7]],
+      "object_count": 0
+    },
+    "preserve": {
+      "map": "SAFARI_ZONE_BETA",
+      "dimensions": [10, 18],
+      "stock_block_path": "maps/SafariZoneBeta.blk",
+      "custom_block_path": "maps/SafariZoneBetaCrystalLegends.blk",
+      "proposal_delta": [
+        {"offset": 114, "old_block": 1, "new_block": 10},
+        {"offset": 115, "old_block": 1, "new_block": 10}
+      ],
+      "warps": [[9, 23, "SAFARI_ZONE_FUCHSIA_GATE_BETA", 1], [10, 23, "SAFARI_ZONE_FUCHSIA_GATE_BETA", 2]],
+      "sign_coordinates": [[6, 20], [13, 21]],
+      "metadata": ["TILESET_PARK", "ROUTE", "LANDMARK_FUCHSIA_CITY", "MUSIC_NATIONAL_PARK", "FALSE", "PALETTE_AUTO", "FISHGROUP_SHORE"],
+      "water_collision": {"block": 7, "custom": "WATER", "reference": "WATER_21"},
+      "pickups": [
+        {"item": "ULTRA_BALL", "pocket": "BALL_POCKET", "quantity": 1, "coordinate": [3, 19], "event": "EVENT_SAFARI_ZONE_BETA_ULTRA_BALL", "script": "SafariZoneBetaUltraBall"},
+        {"item": "MAX_REVIVE", "pocket": "ITEM_POCKET", "quantity": 1, "coordinate": [17, 3], "event": "EVENT_SAFARI_ZONE_BETA_MAX_REVIVE", "script": "SafariZoneBetaMaxRevive"}
+      ]
+    },
+    "grass": {
+      "rates": [10, 10, 10],
+      "morning": [[22, "MANKEY"], [20, "MAREEP"], [24, "VULPIX"], [24, "EXEGGCUTE"], [26, "TAUROS"], [28, "CHANSEY"], [28, "KANGASKHAN"]],
+      "day": [[20, "MAREEP"], [24, "VULPIX"], [22, "MANKEY"], [24, "EXEGGCUTE"], [26, "SCYTHER"], [28, "CHANSEY"], [28, "KANGASKHAN"]],
+      "night": [[24, "VULPIX"], [22, "MANKEY"], [20, "MAREEP"], [24, "EXEGGCUTE"], [26, "PINSIR"], [28, "CHANSEY"], [28, "KANGASKHAN"]]
+    },
+    "water": {
+      "rate": 6,
+      "slots": [[22, "REMORAID"], [24, "REMORAID"], [28, "OCTILLERY"]]
+    }
+  },
   "branches_contract": "tests/contracts/legendary_branches.json"
 }

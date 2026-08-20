@@ -170,4 +170,13 @@ KantoWaterWildMons:
 	db 35, TENTACRUEL
 	end_water_wildmons
 
+	if DEF(_CRYSTALLEGENDS)
+	def_water_wildmons SAFARI_ZONE_BETA
+	db 6 percent ; encounter rate
+	db 22, REMORAID
+	db 24, REMORAID
+	db 28, OCTILLERY
+	end_water_wildmons
+	endc
+
 	db -1 ; end

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -17,6 +18,15 @@ pytestmark = [pytest.mark.rom, pytest.mark.phase9]
 
 
 @pytest.fixture(scope="module")
+def scenario(repo_root: Path) -> dict:
+    return json.loads(
+        (
+            repo_root / "tests/fixtures/scenarios/phase_09_kanto_completion.json"
+        ).read_text()
+    )
+
+
+@pytest.fixture(scope="module")
 def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
     return resolve_constants(
         repo_root,
@@ -27,6 +37,9 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "CANT_TOSS",
             "COLL_FLOOR",
             "COLL_HOP_DOWN",
+            "COLL_DOOR",
+            "COLL_WATER",
+            "COLL_WATER_21",
             "COLL_WALL",
             "EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION",
             "EVENT_CAUGHT_ARTICUNO_IN_KANTO",
@@ -40,7 +53,25 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "EVENT_POWER_PLANT_ANNEX_AUTHORIZED",
             "EVENT_RECOVERED_BLAINES_LOG",
             "EVENT_SAFARI_ZONE_ACCESSIBLE",
+            "EVENT_SAFARI_ZONE_BETA_ULTRA_BALL",
+            "EVENT_SAFARI_ZONE_BETA_MAX_REVIVE",
             "EVENT_ZAPDOS_NOT_AT_KANTO_LOCATION",
+            "GROUP_FUCHSIA_CITY",
+            "MAP_FUCHSIA_CITY",
+            "GROUP_SAFARI_ZONE_FUCHSIA_GATE_BETA",
+            "MAP_SAFARI_ZONE_FUCHSIA_GATE_BETA",
+            "GROUP_SAFARI_ZONE_BETA",
+            "MAP_SAFARI_ZONE_BETA",
+            "TILESET_PARK",
+            "ROUTE",
+            "CAVE",
+            "LANDMARK_FUCHSIA_CITY",
+            "MUSIC_NATIONAL_PARK",
+            "MUSIC_EVOLUTION",
+            "PALETTE_AUTO",
+            "FISHGROUP_SHORE",
+            "MAP_LENGTH",
+            "BGEVENT_READ",
             "HELD_NONE",
             "ITEMATTR_STRUCT_LENGTH",
             "ITEMMENU_NOUSE",
@@ -49,11 +80,25 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "NUM_EVENTS",
             "NUM_ITEMS",
             "OBJECTTYPE_SCRIPT",
+            "OBJECTTYPE_ITEMBALL",
             "OBJECT_EVENT_SIZE",
             "BG_EVENT_SIZE",
             "COORD_EVENT_SIZE",
             "SPRITEMOVEDATA_STILL",
+            "SPRITE_LASS",
+            "SPRITE_POKE_BALL",
             "SPRITE_ROCK",
+            "MANKEY",
+            "MAREEP",
+            "VULPIX",
+            "EXEGGCUTE",
+            "TAUROS",
+            "SCYTHER",
+            "PINSIR",
+            "CHANSEY",
+            "KANGASKHAN",
+            "REMORAID",
+            "OCTILLERY",
             "WARP_EVENT_SIZE",
         ],
     )
@@ -68,6 +113,8 @@ def test_compiled_phase_9_ids_do_not_expand_the_save_layout(
     assert constants["EVENT_GOT_SQUIRTLE_FROM_MISTY"] == 2020
     assert constants["EVENT_GOT_CHARMANDER_FROM_BLAINE"] == 2021
     assert constants["EVENT_SAFARI_ZONE_ACCESSIBLE"] == 2022
+    assert constants["EVENT_SAFARI_ZONE_BETA_ULTRA_BALL"] == 2023
+    assert constants["EVENT_SAFARI_ZONE_BETA_MAX_REVIVE"] == 2024
     assert constants["EVENT_POWER_PLANT_ANNEX_AUTHORIZED"] == 2025
     assert constants["EVENT_CAUGHT_ARTICUNO_IN_KANTO"] == 2027
     assert constants["EVENT_CAUGHT_ZAPDOS_IN_KANTO"] == 2028
@@ -131,7 +178,7 @@ def test_compiled_blaines_log_occupies_b0_without_shifting_item_tables(
 
 
 def test_compiled_cinnabar_assets_are_custom_replacements_only(
-    repo_root: Path, phase_9_constants: dict[str, int]
+    repo_root: Path, phase_9_constants: dict[str, int], scenario: dict
 ) -> None:
     custom = RomImage.load(repo_root / "crystallegends.gbc")
     custom_symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
@@ -167,6 +214,25 @@ def test_compiled_cinnabar_assets_are_custom_replacements_only(
             phase_9_constants["COLL_FLOOR"],
             phase_9_constants["COLL_WALL"],
             phase_9_constants["COLL_FLOOR"],
+        ]
+    )
+    gate = scenario["safari"]["fuchsia_gate"]
+    assert custom.slice(
+        custom_symbols["TilesetKantoColl"].rom_offset + gate["open_block"] * 4,
+        4,
+    ) == bytes(
+        [
+            phase_9_constants[f"COLL_{collision}"]
+            for collision in gate["open_collision"]
+        ]
+    )
+    assert reference.slice(
+        reference_symbols["TilesetKantoColl"].rom_offset + gate["open_block"] * 4,
+        4,
+    ) != bytes(
+        [
+            phase_9_constants[f"COLL_{collision}"]
+            for collision in gate["open_collision"]
         ]
     )
 
@@ -235,6 +301,260 @@ def test_compiled_phase_9_starter_labels_are_custom_only(repo_root: Path) -> Non
         "BlaineCharmanderOfferText",
         "CeladonCityMukPond",
         "CinnabarIslandBlainesLogRubble",
+    }
+    assert all(label in custom_symbols for label in labels)
+    assert all(label not in reference_symbols for label in labels)
+
+
+def _decode_warps(
+    rom: RomImage,
+    symbols: SymbolTable,
+    map_events_label: str,
+    warp_event_size: int,
+) -> list[tuple[int, int, int, int, int]]:
+    assert warp_event_size == 5
+    offset = symbols[map_events_label].rom_offset + 2
+    count = rom.u8(offset)
+    offset += 1
+    return [
+        (
+            rom.u8(offset + index * warp_event_size + 1),
+            rom.u8(offset + index * warp_event_size),
+            rom.u8(offset + index * warp_event_size + 2),
+            rom.u8(offset + index * warp_event_size + 3),
+            rom.u8(offset + index * warp_event_size + 4),
+        )
+        for index in range(count)
+    ]
+
+
+def test_compiled_safari_blocks_metadata_and_warps_are_variant_safe(
+    repo_root: Path, phase_9_constants: dict[str, int], scenario: dict
+) -> None:
+    constants = phase_9_constants
+    safari = scenario["safari"]
+    custom = RomImage.load(repo_root / "crystallegends.gbc")
+    custom_symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    reference = RomImage.load(repo_root / "pokecrystal11.gbc")
+    reference_symbols = SymbolTable.parse((repo_root / "pokecrystal11.sym").read_text())
+
+    custom_blocks = (repo_root / safari["preserve"]["custom_block_path"]).read_bytes()
+    stock_blocks = (repo_root / safari["preserve"]["stock_block_path"]).read_bytes()
+    assert custom.at(custom_symbols["SafariZoneBeta_Blocks"], 180) == custom_blocks
+    assert reference.at(reference_symbols["SafariZoneBeta_Blocks"], 180) == stock_blocks
+
+    water_block = safari["preserve"]["water_collision"]["block"]
+    custom_water = constants[
+        f'COLL_{safari["preserve"]["water_collision"]["custom"]}'
+    ]
+    reference_water = constants[
+        f'COLL_{safari["preserve"]["water_collision"]["reference"]}'
+    ]
+    assert custom.slice(
+        custom_symbols["TilesetParkColl"].rom_offset + water_block * 4, 4
+    ) == bytes([custom_water] * 4)
+    assert reference.slice(
+        reference_symbols["TilesetParkColl"].rom_offset + water_block * 4, 4
+    ) == bytes([reference_water] * 4)
+
+    map_index = constants["MAP_SAFARI_ZONE_BETA"] - 1
+    custom_record = custom.slice(
+        custom_symbols["MapGroup_Dungeons"].rom_offset
+        + map_index * constants["MAP_LENGTH"],
+        constants["MAP_LENGTH"],
+    )
+    reference_record = reference.slice(
+        reference_symbols["MapGroup_Dungeons"].rom_offset
+        + map_index * constants["MAP_LENGTH"],
+        constants["MAP_LENGTH"],
+    )
+    assert custom_record[1] == reference_record[1] == constants["TILESET_PARK"]
+    assert custom_record[2] == constants["ROUTE"]
+    assert reference_record[2] == constants["CAVE"]
+    assert custom_record[5] == reference_record[5] == constants["LANDMARK_FUCHSIA_CITY"]
+    assert custom_record[6] == constants["MUSIC_NATIONAL_PARK"]
+    assert reference_record[6] == constants["MUSIC_EVOLUTION"]
+    assert custom_record[7] & 0xF == reference_record[7] & 0xF == constants["PALETTE_AUTO"]
+    assert custom_record[8] == reference_record[8] == constants["FISHGROUP_SHORE"]
+
+    def expected_warps(records: list[list[int | str]]) -> list[tuple[int, int, int, int, int]]:
+        return [
+            (
+                x,
+                y,
+                destination_warp,
+                constants[f"GROUP_{destination}"],
+                constants[f"MAP_{destination}"],
+            )
+            for x, y, destination, destination_warp in records
+        ]
+
+    for rom, symbols in (
+        (custom, custom_symbols),
+        (reference, reference_symbols),
+    ):
+        assert _decode_warps(
+            rom,
+            symbols,
+            "SafariZoneFuchsiaGateBeta_MapEvents",
+            constants["WARP_EVENT_SIZE"],
+        ) == expected_warps(safari["maintenance_gate"]["warps"])
+        assert _decode_warps(
+            rom,
+            symbols,
+            "SafariZoneBeta_MapEvents",
+            constants["WARP_EVENT_SIZE"],
+        ) == expected_warps(safari["preserve"]["warps"])
+
+
+def test_compiled_safari_events_keep_the_gate_empty_and_only_two_item_objects(
+    repo_root: Path, phase_9_constants: dict[str, int], scenario: dict
+) -> None:
+    constants = phase_9_constants
+    safari = scenario["safari"]
+    custom = RomImage.load(repo_root / "crystallegends.gbc")
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    reference = RomImage.load(repo_root / "pokecrystal11.gbc")
+    reference_symbols = SymbolTable.parse((repo_root / "pokecrystal11.sym").read_text())
+
+    gate_backgrounds = decode_background_events(
+        custom,
+        symbols,
+        "SafariZoneFuchsiaGateBeta_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+    )
+    preserve_backgrounds = decode_background_events(
+        custom,
+        symbols,
+        "SafariZoneBeta_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+    )
+    assert [(event.x, event.y) for event in gate_backgrounds] == [
+        tuple(coordinate) for coordinate in safari["maintenance_gate"]["notice_coordinates"]
+    ]
+    assert [(event.x, event.y) for event in preserve_backgrounds] == [
+        tuple(coordinate) for coordinate in safari["preserve"]["sign_coordinates"]
+    ]
+    assert all(event.event_type == constants["BGEVENT_READ"] for event in gate_backgrounds)
+    assert all(
+        event.event_type == constants["BGEVENT_READ"] for event in preserve_backgrounds
+    )
+
+    gate_objects = decode_object_events(
+        custom,
+        symbols,
+        "SafariZoneFuchsiaGateBeta_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+        constants["OBJECT_EVENT_SIZE"],
+    )
+    preserve_objects = decode_object_events(
+        custom,
+        symbols,
+        "SafariZoneBeta_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+        constants["OBJECT_EVENT_SIZE"],
+    )
+    assert gate_objects == []
+    assert len(preserve_objects) == 2
+    for event, pickup in zip(preserve_objects, safari["preserve"]["pickups"], strict=True):
+        assert (event.x, event.y) == tuple(pickup["coordinate"])
+        assert event.sprite == constants["SPRITE_POKE_BALL"]
+        assert event.movement == constants["SPRITEMOVEDATA_STILL"]
+        assert event.palette_and_type & 0xF == constants["OBJECTTYPE_ITEMBALL"]
+        assert event.script_pointer == symbols[pickup["script"]].address
+        assert event.event_flag == constants[pickup["event"]]
+
+    for label in (
+        "SafariZoneFuchsiaGateBeta_MapEvents",
+        "SafariZoneBeta_MapEvents",
+    ):
+        assert decode_background_events(
+            reference,
+            reference_symbols,
+            label,
+            constants["WARP_EVENT_SIZE"],
+            constants["COORD_EVENT_SIZE"],
+            constants["BG_EVENT_SIZE"],
+        ) == []
+        assert decode_object_events(
+            reference,
+            reference_symbols,
+            label,
+            constants["WARP_EVENT_SIZE"],
+            constants["COORD_EVENT_SIZE"],
+            constants["BG_EVENT_SIZE"],
+            constants["OBJECT_EVENT_SIZE"],
+        ) == []
+
+    home_objects = decode_object_events(
+        custom,
+        symbols,
+        "SafariZoneWardensHome_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+        constants["OBJECT_EVENT_SIZE"],
+    )
+    assert len(home_objects) == 1
+    granddaughter = home_objects[0]
+    assert (granddaughter.x, granddaughter.y) == tuple(
+        safari["quest_owner"]["coordinate"]
+    )
+    assert granddaughter.sprite == constants["SPRITE_LASS"]
+    assert granddaughter.script_pointer == symbols["WardensGranddaughter"].address
+
+
+def test_compiled_safari_wild_records_match_every_locked_slot(
+    repo_root: Path, phase_9_constants: dict[str, int], scenario: dict
+) -> None:
+    constants = phase_9_constants
+    safari = scenario["safari"]
+    rom = RomImage.load(repo_root / "crystallegends.gbc")
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    reference_symbols = SymbolTable.parse((repo_root / "pokecrystal11.sym").read_text())
+
+    map_id = bytes(
+        [constants["GROUP_SAFARI_ZONE_BETA"], constants["MAP_SAFARI_ZONE_BETA"]]
+    )
+    grass = map_id + bytes(rate * 255 // 100 for rate in safari["grass"]["rates"])
+    grass += bytes(
+        value
+        for time in ("morning", "day", "night")
+        for level, species in safari["grass"][time]
+        for value in (level, constants[species])
+    )
+    grass_label = "KantoGrassWildMons._def_grass_wildmons_SAFARI_ZONE_BETA"
+    assert rom.at(symbols[grass_label], len(grass)) == grass
+
+    water = map_id + bytes([safari["water"]["rate"] * 255 // 100])
+    water += bytes(
+        value
+        for level, species in safari["water"]["slots"]
+        for value in (level, constants[species])
+    )
+    water_label = "KantoWaterWildMons._def_water_wildmons_SAFARI_ZONE_BETA"
+    assert rom.at(symbols[water_label], len(water)) == water
+    assert grass_label not in reference_symbols
+    assert water_label not in reference_symbols
+
+
+def test_compiled_safari_labels_are_custom_only(repo_root: Path) -> None:
+    custom_symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    reference_symbols = SymbolTable.parse((repo_root / "pokecrystal11.sym").read_text())
+    labels = {
+        "FuchsiaCitySafariGateCallback",
+        "SafariZoneBetaUltraBall",
+        "SafariZoneBetaMaxRevive",
+        "WardensGranddaughterSoulBadgeText",
+        "SafariZoneFuchsiaGateBetaNorthNotice",
     }
     assert all(label in custom_symbols for label in labels)
     assert all(label not in reference_symbols for label in labels)

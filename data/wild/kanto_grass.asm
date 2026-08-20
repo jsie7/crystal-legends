@@ -842,4 +842,34 @@ KantoGrassWildMons:
 	db 42, GOLBAT
 	end_grass_wildmons
 
+	if DEF(_CRYSTALLEGENDS)
+	def_grass_wildmons SAFARI_ZONE_BETA
+	db 10 percent, 10 percent, 10 percent ; encounter rates: morn/day/nite
+	; morn
+	db 22, MANKEY
+	db 20, MAREEP
+	db 24, VULPIX
+	db 24, EXEGGCUTE
+	db 26, TAUROS
+	db 28, CHANSEY
+	db 28, KANGASKHAN
+	; day
+	db 20, MAREEP
+	db 24, VULPIX
+	db 22, MANKEY
+	db 24, EXEGGCUTE
+	db 26, SCYTHER
+	db 28, CHANSEY
+	db 28, KANGASKHAN
+	; nite
+	db 24, VULPIX
+	db 22, MANKEY
+	db 20, MAREEP
+	db 24, EXEGGCUTE
+	db 26, PINSIR
+	db 28, CHANSEY
+	db 28, KANGASKHAN
+	end_grass_wildmons
+	endc
+
 	db -1 ; end

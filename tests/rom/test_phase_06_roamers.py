@@ -89,9 +89,18 @@ def test_compiled_stock_roamer_engine_matches_reference(repo_root: Path) -> None
         ("BattleEnd_HandleRoamMons", "GetRoamMonMapGroup"),
     )
     for start, end in ranges:
-        assert _range(custom, custom_symbols, start, end) == _range(
-            reference, reference_symbols, start, end
-        )
+        custom_code = bytearray(_range(custom, custom_symbols, start, end))
+        reference_code = _range(reference, reference_symbols, start, end)
+        for label in ("KantoWaterWildMons",):
+            custom_pointer = custom_symbols[label].address.to_bytes(2, "little")
+            reference_pointer = reference_symbols[label].address.to_bytes(2, "little")
+            for offset in range(len(custom_code) - 1):
+                if (
+                    custom_code[offset : offset + 2] == custom_pointer
+                    and reference_code[offset : offset + 2] == reference_pointer
+                ):
+                    custom_code[offset : offset + 2] = reference_pointer
+        assert bytes(custom_code) == reference_code
 
 
 def test_compiled_initial_roamer_slots_match_stock_constants(

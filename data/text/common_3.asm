@@ -1524,3 +1524,38 @@ _MomLostGearBookletText::
 	para "Come back again in"
 	line "a while."
 	prompt
+
+if DEF(_CRYSTALLEGENDS)
+SafariZoneFuchsiaGateBetaSouthNoticeText::
+	text "MAINTENANCE GATE"
+
+	para "Released by the"
+	line "WARDEN'S grand-"
+	cont "daughter."
+	done
+
+SafariZoneFuchsiaGateBetaNorthNoticeText::
+	text "WARNING!"
+
+	para "Grounds unattended."
+
+	para "Wild #MON use"
+	line "normal battles."
+	done
+
+SafariZoneBetaUnattendedSignText::
+	text "PRESERVE NOTICE"
+
+	para "These grounds are"
+	line "unattended. Explore"
+	cont "at your own risk."
+	done
+
+SafariZoneBetaNormalBattleSignText::
+	text "TRAINER NOTICE"
+
+	para "Wild #MON use"
+	line "ordinary battles"
+	cont "and capture rules."
+	done
+endc

@@ -7,6 +7,35 @@ SafariZoneWardensHome_MapScripts:
 	def_callbacks
 
 WardensGranddaughter:
+	if DEF(_CRYSTALLEGENDS)
+	faceplayer
+	opentext
+	checkevent EVENT_SAFARI_ZONE_ACCESSIBLE
+	iftrue .Unattended
+	checkevent EVENT_TALKED_TO_WARDENS_GRANDDAUGHTER
+	iftrue .CheckBadge
+	writetext WardensGranddaughterText1
+	promptbutton
+	setevent EVENT_TALKED_TO_WARDENS_GRANDDAUGHTER
+.CheckBadge:
+	checkflag ENGINE_SOULBADGE
+	iftrue .ReleaseGate
+	writetext WardensGranddaughterSoulBadgeText
+	waitbutton
+	closetext
+	end
+.ReleaseGate:
+	writetext WardensGranddaughterReleaseGateText
+	waitbutton
+	setevent EVENT_SAFARI_ZONE_ACCESSIBLE
+	closetext
+	end
+.Unattended:
+	writetext WardensGranddaughterUnattendedText
+	waitbutton
+	closetext
+	end
+	else
 	faceplayer
 	opentext
 	checkevent EVENT_TALKED_TO_WARDENS_GRANDDAUGHTER
@@ -21,6 +50,7 @@ WardensGranddaughter:
 	waitbutton
 	closetext
 	end
+	endc
 
 WardenPhoto:
 	jumptext WardenPhotoText
@@ -57,6 +87,45 @@ WardensGranddaughterText2:
 	line "down, but Grandpa"
 	cont "is so stubborn…"
 	done
+
+if DEF(_CRYSTALLEGENDS)
+WardensGranddaughterSoulBadgeText:
+	text "GRANDDAUGHTER:"
+	line "JANINE asked me to"
+
+	para "admit only proven"
+	line "TRAINERS to the"
+	cont "unattended grounds."
+
+	para "Earn the SOULBADGE"
+	line "at FUCHSIA GYM,"
+	cont "then come see me."
+	done
+
+WardensGranddaughterReleaseGateText:
+	text "GRANDDAUGHTER:"
+	line "That SOULBADGE"
+	cont "proves you're ready."
+
+	para "I'll release the old"
+	line "maintenance gate at"
+	cont "the north edge of"
+	cont "town."
+
+	para "The business office"
+	line "is still closed."
+	done
+
+WardensGranddaughterUnattendedText:
+	text "GRANDDAUGHTER:"
+	line "The north gate is"
+	cont "open at your risk."
+
+	para "There are no staff,"
+	line "rescue service or"
+	cont "official SAFARI GAME."
+	done
+endc
 
 WardenPhotoText:
 	text "It's a photo of a"

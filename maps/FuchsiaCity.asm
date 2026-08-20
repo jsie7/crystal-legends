@@ -9,10 +9,22 @@ FuchsiaCity_MapScripts:
 
 	def_callbacks
 	callback MAPCALLBACK_NEWMAP, FuchsiaCityFlypointCallback
+	if DEF(_CRYSTALLEGENDS)
+	callback MAPCALLBACK_TILES, FuchsiaCitySafariGateCallback
+	endc
 
 FuchsiaCityFlypointCallback:
 	setflag ENGINE_FLYPOINT_FUCHSIA
 	endcallback
+
+if DEF(_CRYSTALLEGENDS)
+FuchsiaCitySafariGateCallback:
+	checkevent EVENT_SAFARI_ZONE_ACCESSIBLE
+	iffalse .Locked
+	changeblock 18, 2, $47
+.Locked:
+	endcallback
+endc
 
 FuchsiaCityYoungster:
 	jumptextfaceplayer FuchsiaCityYoungsterText
@@ -21,7 +33,19 @@ FuchsiaCityPokefanM:
 	jumptextfaceplayer FuchsiaCityPokefanMText
 
 FuchsiaCityTeacher:
+	if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_SAFARI_ZONE_ACCESSIBLE
+	iftrue .Open
+	checkevent EVENT_TALKED_TO_WARDENS_GRANDDAUGHTER
+	iftrue .GymHint
+	jumptextfaceplayer FuchsiaCityTeacherGranddaughterText
+.GymHint:
+	jumptextfaceplayer FuchsiaCityTeacherGymHintText
+.Open:
+	jumptextfaceplayer FuchsiaCityTeacherMaintenanceGateText
+	else
 	jumptextfaceplayer FuchsiaCityTeacherText
+	endc
 
 FuchsiaCitySign:
 	jumptext FuchsiaCitySignText
@@ -36,7 +60,19 @@ WardensHomeSign:
 	jumptext WardensHomeSignText
 
 SafariZoneClosedSign:
+	if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_SAFARI_ZONE_ACCESSIBLE
+	iftrue .MaintenanceGate
+	checkevent EVENT_TALKED_TO_WARDENS_GRANDDAUGHTER
+	iftrue .GymHint
+	jumptext SafariZoneGranddaughterSignText
+.GymHint:
+	jumptext SafariZoneGymHintSignText
+.MaintenanceGate:
+	jumptext SafariZoneMaintenanceGateSignText
+	else
 	jumptext SafariZoneClosedSignText
+	endc
 
 NoLitteringSign:
 	jumptext NoLitteringSignText
@@ -76,6 +112,35 @@ FuchsiaCityTeacherText:
 	cont "attraction."
 	done
 
+if DEF(_CRYSTALLEGENDS)
+FuchsiaCityTeacherGranddaughterText:
+	text "The SAFARI ZONE is"
+	line "still closed."
+
+	para "The WARDEN'S grand-"
+	line "daughter may know"
+	cont "about the old gate."
+	done
+
+FuchsiaCityTeacherGymHintText:
+	text "JANINE trusts only"
+	line "proven TRAINERS."
+
+	para "Try FUCHSIA GYM,"
+	line "then visit the"
+	cont "WARDEN'S home."
+	done
+
+FuchsiaCityTeacherMaintenanceGateText:
+	text "The SAFARI business"
+	line "is still closed,"
+
+	para "but the old north"
+	line "maintenance gate is"
+	cont "open at your risk."
+	done
+endc
+
 FuchsiaCitySignText:
 	text "FUCHSIA CITY"
 
@@ -114,6 +179,34 @@ SafariZoneClosedSignText:
 	line "SAFARI ZONE is"
 	cont "closed."
 	done
+
+if DEF(_CRYSTALLEGENDS)
+SafariZoneGranddaughterSignText:
+	text "SAFARI ZONE"
+	line "BUSINESS CLOSED"
+
+	para "Ask at the WARDEN'S"
+	line "home about access."
+	done
+
+SafariZoneGymHintSignText:
+	text "SAFARI ZONE"
+	line "BUSINESS CLOSED"
+
+	para "Proven TRAINERS may"
+	line "ask about the north"
+	cont "maintenance gate."
+	done
+
+SafariZoneMaintenanceGateSignText:
+	text "SAFARI ZONE"
+	line "BUSINESS CLOSED"
+
+	para "Unattended grounds:"
+	line "use the north"
+	cont "maintenance gate."
+	done
+endc
 
 NoLitteringSignText:
 	text "No littering."

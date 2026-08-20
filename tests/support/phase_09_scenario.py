@@ -80,6 +80,7 @@ def build_phase_9_map_checkpoint(
     y: int,
     events: dict[str, bool] | None = None,
     badges: tuple[str, ...] = (),
+    player_state: str | None = None,
 ) -> Path:
     fixture = repo_root / "tests/fixtures/saves/bedroom_initialized.sav"
     symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
@@ -89,6 +90,8 @@ def build_phase_9_map_checkpoint(
     save.write_saved_u8("wMapNumber", constants[f"MAP_{map_name}"])
     save.write_saved_u8("wXCoord", x)
     save.write_saved_u8("wYCoord", y)
+    if player_state is not None:
+        save.write_saved_u8("wPlayerState", constants[player_state])
     for badge in badges:
         _set_kanto_badge(save, constants, badge, True)
     for event, enabled in (events or {}).items():
@@ -157,6 +160,7 @@ def loaded_phase_9_map_checkpoint(
     y: int,
     events: dict[str, bool] | None = None,
     badges: tuple[str, ...] = (),
+    player_state: str | None = None,
 ) -> Iterator[PyBoySession]:
     canonical = repo_root / "tests/fixtures/saves/bedroom_initialized.sav"
     canonical_hash = _sha256(canonical)
@@ -169,6 +173,7 @@ def loaded_phase_9_map_checkpoint(
         y=y,
         events=events,
         badges=badges,
+        player_state=player_state,
     )
     prepared = prepare_rom(
         work_dir / "rom",

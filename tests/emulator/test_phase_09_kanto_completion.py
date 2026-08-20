@@ -58,14 +58,21 @@ def phase_9_constants(
         "SPAWN_N_A",
         "MAPSETUP_WARP",
         "ENGINE_BOULDERBADGE",
+        "ENGINE_SOULBADGE",
         "EVENT_GOT_TM19_GIGA_DRAIN",
         "EVENT_TRAINERS_IN_CERULEAN_GYM",
         "EVENT_CERULEAN_GYM_ROCKET",
         "PARTY_LENGTH",
         "MONS_PER_BOX",
         "MAX_KEY_ITEMS",
+        "MAX_ITEMS",
+        "MAX_BALLS",
         "BICYCLE",
         "BLAINES_LOG",
+        "POTION",
+        "POKE_BALL",
+        "ULTRA_BALL",
+        "MAX_REVIVE",
         "EEVEE",
         "GROUP_CINNABAR_ISLAND",
         "MAP_CINNABAR_ISLAND",
@@ -77,10 +84,38 @@ def phase_9_constants(
         "EVENT_RETURNED_BLAINES_LOG",
         "GROUP_CELADON_CITY",
         "MAP_CELADON_CITY",
+        "GROUP_SAFARI_ZONE_WARDENS_HOME",
+        "MAP_SAFARI_ZONE_WARDENS_HOME",
+        "GROUP_FUCHSIA_CITY",
+        "MAP_FUCHSIA_CITY",
+        "GROUP_SAFARI_ZONE_FUCHSIA_GATE_BETA",
+        "MAP_SAFARI_ZONE_FUCHSIA_GATE_BETA",
+        "GROUP_SAFARI_ZONE_BETA",
+        "MAP_SAFARI_ZONE_BETA",
+        "EVENT_TALKED_TO_WARDENS_GRANDDAUGHTER",
+        "EVENT_SAFARI_ZONE_ACCESSIBLE",
+        "EVENT_SAFARI_ZONE_BETA_ULTRA_BALL",
+        "EVENT_SAFARI_ZONE_BETA_MAX_REVIVE",
+        "MORN",
+        "DAY",
+        "NITE",
+        "MORN_F",
+        "DAY_F",
+        "NITE_F",
+        "PLAYER_SURF",
+        "COLL_WATER_21",
+        "COLL_WATER",
+        "BATTLETYPE_NORMAL",
+        "WILD_BATTLE",
+        "MANKEY",
+        "MAREEP",
+        "VULPIX",
+        "REMORAID",
         "MUK",
         "ARTICUNO",
         "MASTER_BALL",
         "BALL_POCKET",
+        "ITEM_POCKET",
         "WIN",
         "LOSE",
         "DRAW",
@@ -652,3 +687,421 @@ def test_celadon_muk_player_loss_leaves_service_pending(
             "Muk player-loss whiteout",
         )
         assert not event_is_set(session, service)
+
+
+def _interact_with_wardens_granddaughter(session, max_frames: int) -> None:
+    session.enable_script_tracing()
+    session.tap("left", 2, 10)
+    session.tap("a", 2, 10)
+    session.wait_for_script("WardensGranddaughter", max_frames)
+    _finish_overworld_script(session, max_frames)
+
+
+def _set_soul_badge(session, constants: dict[str, int]) -> None:
+    bit = constants["ENGINE_SOULBADGE"] - constants["ENGINE_BOULDERBADGE"]
+    session.write_symbol(
+        "wKantoBadges", session.read_symbol("wKantoBadges") | (1 << bit)
+    )
+
+
+@pytest.mark.parametrize("badge_first", [False, True], ids=["talk-first", "badge-first"])
+def test_safari_access_orders_converge_only_in_the_granddaughter_conversation(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+    badge_first: bool,
+) -> None:
+    constants = phase_9_constants
+    owner = scenario["safari"]["quest_owner"]
+    initial_badges = (owner["badge"],) if badge_first else ()
+    persisted = tmp_path / "safari-access.sav"
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        map_name=owner["map"],
+        x=3,
+        y=4,
+        events={
+            owner["first_talk_event"]: False,
+            owner["access_event"]: False,
+        },
+        badges=initial_badges,
+    ) as session:
+        _interact_with_wardens_granddaughter(
+            session, scenario["max_frames_per_step"]
+        )
+        assert event_is_set(session, constants[owner["first_talk_event"]])
+        assert event_is_set(session, constants[owner["access_event"]]) is badge_first
+        if not badge_first:
+            _set_soul_badge(session, constants)
+            _interact_with_wardens_granddaughter(
+                session, scenario["max_frames_per_step"]
+            )
+            assert event_is_set(session, constants[owner["access_event"]])
+        save_game_from_overworld(session, scenario["max_frames_per_step"])
+        dump_battery_ram(session, persisted)
+
+    with loaded_phase_9_saved_game(
+        repo_root,
+        tmp_path / "reload",
+        constants,
+        scenario,
+        persisted,
+    ) as session:
+        assert event_is_set(session, constants[owner["first_talk_event"]])
+        assert event_is_set(session, constants[owner["access_event"]])
+
+
+def _loaded_block(session, x: int, y: int) -> int:
+    width = session.read_symbol("wMapWidth")
+    row_width = width + 6
+    offset = row_width * 3 + 3 + (y // 2) * row_width + (x // 2)
+    return session.read_symbol_bytes("wOverworldMapBlocks", offset + 1)[offset]
+
+
+def _walk_until_map(
+    session,
+    button: str,
+    constants: dict[str, int],
+    map_name: str,
+    max_frames: int,
+) -> None:
+    start = session.frames
+    while session.frames - start < max_frames:
+        if (
+            session.read_symbol("wMapGroup") == constants[f"GROUP_{map_name}"]
+            and session.read_symbol("wMapNumber") == constants[f"MAP_{map_name}"]
+        ):
+            session.tick(60)
+            return
+        session.tap(button, 2, 12)
+    session.wait_until(lambda current: False, 1, f"warp to {map_name}")
+
+
+def test_fuchsia_gate_stays_solid_until_access_then_round_trips_through_safari(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+) -> None:
+    constants = phase_9_constants
+    safari = scenario["safari"]
+    access = safari["quest_owner"]["access_event"]
+    gate = safari["fuchsia_gate"]
+    max_frames = scenario["max_frames_per_step"]
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path / "locked",
+        constants,
+        scenario,
+        map_name="FUCHSIA_CITY",
+        x=18,
+        y=4,
+        events={access: False},
+    ) as session:
+        assert _loaded_block(session, *gate["block_coordinate"]) == gate[
+            "closed_block"
+        ]
+        session.tap("up", 2, 30)
+        assert session.read_symbol("wMapGroup") == constants["GROUP_FUCHSIA_CITY"]
+        assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (
+            18,
+            4,
+        )
+
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path / "open",
+        constants,
+        scenario,
+        map_name="FUCHSIA_CITY",
+        x=18,
+        y=4,
+        events={access: True},
+    ) as session:
+        assert _loaded_block(session, *gate["block_coordinate"]) == gate["open_block"]
+        _walk_until_map(
+            session,
+            "up",
+            constants,
+            "SAFARI_ZONE_FUCHSIA_GATE_BETA",
+            max_frames,
+        )
+        assert session.read_symbol("wMap1ObjectStructID") == 0xFF
+        _walk_until_map(
+            session, "up", constants, "SAFARI_ZONE_BETA", max_frames
+        )
+        assert session.read_symbol("wMapGroup") == constants["GROUP_SAFARI_ZONE_BETA"]
+        walk_steps(session, "up", "wYCoord", -1, 1, max_frames)
+        _walk_until_map(
+            session,
+            "down",
+            constants,
+            "SAFARI_ZONE_FUCHSIA_GATE_BETA",
+            max_frames,
+        )
+        _walk_until_map(session, "down", constants, "FUCHSIA_CITY", max_frames)
+        assert _loaded_block(session, *gate["block_coordinate"]) == gate["open_block"]
+
+
+@pytest.mark.parametrize("pickup_index", [0, 1], ids=["ultra-ball", "max-revive"])
+def test_safari_pickups_retry_when_items_are_full_and_finalize_independently(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+    pickup_index: int,
+) -> None:
+    constants = phase_9_constants
+    pickup = scenario["safari"]["preserve"]["pickups"][pickup_index]
+    x, y = pickup["coordinate"]
+    max_frames = scenario["max_frames_per_step"]
+    persisted = tmp_path / f"{pickup['item'].lower()}-collected.sav"
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        map_name="SAFARI_ZONE_BETA",
+        x=x,
+        y=y + 1,
+        events={
+            "EVENT_SAFARI_ZONE_BETA_ULTRA_BALL": False,
+            "EVENT_SAFARI_ZONE_BETA_MAX_REVIVE": False,
+        },
+    ) as session:
+        object_label = f"wMap{pickup_index + 1}ObjectStructID"
+        session.wait_until(
+            lambda current: current.read_symbol(object_label) != 0xFF,
+            max_frames,
+            f"{pickup['item']} object to load",
+        )
+        if pickup["pocket"] == "BALL_POCKET":
+            count_label = "wNumBalls"
+            entries_label = "wBalls"
+            capacity = constants["MAX_BALLS"]
+            filler = constants["POKE_BALL"]
+            inventory_pocket = "balls"
+        else:
+            count_label = "wNumItems"
+            entries_label = "wItems"
+            capacity = constants["MAX_ITEMS"]
+            filler = constants["POTION"]
+            inventory_pocket = "items"
+        session.write_symbol(count_label, capacity)
+        session.write_symbol_bytes(
+            entries_label,
+            bytes([filler, 1] * capacity + [0xFF]),
+        )
+        session.tap("up", 2, 10)
+        session.tap("a", 2, 10)
+        _finish_overworld_script(session, max_frames)
+        assert not event_is_set(session, constants[pickup["event"]])
+        assert session.read_symbol(object_label) != 0xFF
+
+        session.write_symbol(count_label, capacity - 1)
+        session.write_symbol_bytes(
+            entries_label,
+            bytes([filler, 1] * (capacity - 1) + [0xFF]),
+        )
+        session.tap("a", 2, 10)
+        _finish_overworld_script(session, max_frames)
+        assert event_is_set(session, constants[pickup["event"]])
+        assert session.read_symbol(object_label) == 0xFF
+        assert sum(
+            quantity
+            for item, quantity in getattr(
+                read_progress(session).inventory, inventory_pocket
+            )
+            if item == constants[pickup["item"]]
+        ) == pickup["quantity"]
+        other = scenario["safari"]["preserve"]["pickups"][1 - pickup_index]
+        assert not event_is_set(session, constants[other["event"]])
+        save_game_from_overworld(session, max_frames)
+        dump_battery_ram(session, persisted)
+
+    with loaded_phase_9_saved_game(
+        repo_root,
+        tmp_path / "reload",
+        constants,
+        scenario,
+        persisted,
+    ) as session:
+        assert session.read_symbol("wMapGroup") == constants["GROUP_SAFARI_ZONE_BETA"]
+        assert session.read_symbol("wMapNumber") == constants["MAP_SAFARI_ZONE_BETA"]
+        assert event_is_set(session, constants[pickup["event"]])
+        assert not event_is_set(session, constants[other["event"]])
+        assert session.read_symbol(object_label) == 0xFF
+        assert sum(
+            quantity
+            for item, quantity in getattr(
+                read_progress(session).inventory, inventory_pocket
+            )
+            if item == constants[pickup["item"]]
+        ) == pickup["quantity"]
+
+
+def _force_wild_selection(session, selection: int) -> None:
+    if selection not in range(100):
+        raise ValueError("wild selection must be in 0..99")
+    start = session.symbols["ChooseWildEncounter.randomloop"]
+    end = session.symbols["ChooseWildEncounter.got_it"]
+    random = session.symbols["Random"]
+    rom = session.prepared.rom.read_bytes()
+    physical_start = start.bank * 0x4000 + (start.address - 0x4000)
+    physical_end = physical_start + (end.address - start.address)
+    call = bytes([0xCD, random.address & 0xFF, random.address >> 8])
+    call_offset = rom.find(call, physical_start, physical_end)
+    if call_offset < 0:
+        raise AssertionError("ChooseWildEncounter no longer calls Random")
+    after_call = start.address + (call_offset - physical_start) + len(call)
+
+    def force(current) -> None:
+        current.pyboy.register_file.A = selection
+
+    session.pyboy.hook_register(start.bank, after_call, force, session)
+
+
+def _start_safari_wild_battle(
+    session,
+    constants: dict[str, int],
+    scenario: dict,
+    *,
+    time: str,
+    selection: int,
+    water: bool,
+    battle_cursor: int | None = None,
+) -> None:
+    max_frames = scenario["max_frames_per_step"]
+    session.write_symbol("wTimeOfDay", constants[f"{time}_F"])
+    prepare_battle_party(session, constants, constants["ARTICUNO"], should_win=True)
+    session.register_hook(
+        "ChooseWildEncounter",
+        lambda current: current.write_symbol(
+            "wTimeOfDay", constants[f"{time}_F"]
+        ),
+    )
+    session.register_hook(
+        "BattleMenu",
+        (
+            lambda current: current.write_symbol(
+                "wBattleMenuCursorPosition", battle_cursor
+            )
+        )
+        if battle_cursor is not None
+        else None,
+    )
+    session.register_hook("SafariBattleMenu")
+    _force_wild_selection(session, selection)
+    session.write_symbol_bytes("wMornEncounterRate", b"\xff\xff\xff\xff")
+    if water:
+        directions = ("right", "right", "left", "left")
+    else:
+        place_player(session, 4, 2)
+        directions = ("right",)
+    start = session.frames
+    index = 0
+    while (
+        "BattleMenu" not in session.hook_history
+        and session.frames - start < max_frames
+    ):
+        if session.read_symbol("wBattleMode") or session.read_symbol("wScriptMode"):
+            session.tap("a", 2, 20)
+        else:
+            session.tap(directions[index % len(directions)], 2, 12)
+            index += 1
+    session.wait_for_hook("BattleMenu", max_frames)
+
+
+@pytest.mark.parametrize(
+    ("time", "species"),
+    [("MORN", "MANKEY"), ("DAY", "MAREEP"), ("NITE", "VULPIX")],
+    ids=["morning-mankey", "day-mareep", "night-vulpix"],
+)
+def test_safari_common_grass_slots_start_normal_battles_with_pack_access(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+    time: str,
+    species: str,
+) -> None:
+    constants = phase_9_constants
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        map_name="SAFARI_ZONE_BETA",
+        x=4,
+        y=2,
+    ) as session:
+        assert session.read_symbol_bytes("wMornEncounterRate", 4) == bytes(
+            [25, 25, 25, 15]
+        )
+        session.write_symbol("wSafariBallsRemaining", 17)
+        session.write_symbol_bytes("wSafariTimeRemaining", b"\x12\x34")
+        safari_state = session.read_symbol_bytes("wSafariBallsRemaining", 3)
+        if species == "MANKEY":
+            session.register_hook("BattlePack")
+        _start_safari_wild_battle(
+            session,
+            constants,
+            scenario,
+            time=time,
+            selection=0,
+            water=False,
+            battle_cursor=3 if species == "MANKEY" else None,
+        )
+        assert session.read_symbol("wBattleType") == constants["BATTLETYPE_NORMAL"]
+        assert session.read_symbol("wBattleMode") == constants["WILD_BATTLE"]
+        assert session.read_symbol("wEnemyMonSpecies") == constants[species]
+        assert session.read_symbol("wEnemyMonLevel") == {
+            "MANKEY": 22,
+            "MAREEP": 20,
+            "VULPIX": 24,
+        }[species]
+        assert "SafariBattleMenu" not in session.hook_history
+        assert session.read_symbol_bytes("wSafariBallsRemaining", 3) == safari_state
+        if species == "MANKEY":
+            session.tap("a", 2, 10)
+            session.wait_for_hook("BattlePack", scenario["max_frames_per_step"])
+
+
+def test_safari_water_slot_uses_remoraid_in_a_normal_surf_battle(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+) -> None:
+    constants = phase_9_constants
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        map_name="SAFARI_ZONE_BETA",
+        x=12,
+        y=4,
+        player_state="PLAYER_SURF",
+    ) as session:
+        assert session.read_symbol("wPlayerState") == constants["PLAYER_SURF"]
+        assert session.read_symbol("wPlayerTileCollision") == constants[
+            "COLL_WATER"
+        ]
+        _start_safari_wild_battle(
+            session,
+            constants,
+            scenario,
+            time="MORN",
+            selection=0,
+            water=True,
+        )
+        assert session.read_symbol("wBattleType") == constants["BATTLETYPE_NORMAL"]
+        assert session.read_symbol("wBattleMode") == constants["WILD_BATTLE"]
+        assert session.read_symbol("wEnemyMonSpecies") == constants["REMORAID"]
+        assert 22 <= session.read_symbol("wEnemyMonLevel") <= 26
+        assert "SafariBattleMenu" not in session.hook_history

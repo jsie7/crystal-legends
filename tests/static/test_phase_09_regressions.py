@@ -16,7 +16,12 @@ from tests.support.map_assets import (
     parse_collision_rows,
     parse_map_tilesets,
 )
-from tests.support.map_model import MapDimensions
+from tests.support.map_model import (
+    MapDimensions,
+    map_sources_from_repository,
+    parse_events,
+    parse_map_dimensions,
+)
 
 
 pytestmark = [pytest.mark.static, pytest.mark.phase9]
@@ -295,7 +300,7 @@ def test_erika_muk_and_blaine_log_retry_only_after_success(repo_root: Path) -> N
     assert "bg_event 19,  8, BGEVENT_READ, CinnabarIslandOldLabRemains" in island
 
 
-def test_cinnabar_staircase_is_the_only_phase_9_kanto_asset_delta_so_far(
+def test_phase_9_kanto_assets_change_only_the_staircase_and_safari_gate(
     repo_root: Path, scenario: dict
 ) -> None:
     blocks_source = (repo_root / "data/maps/blocks.asm").read_text()
@@ -329,7 +334,15 @@ def test_cinnabar_staircase_is_the_only_phase_9_kanto_asset_delta_so_far(
     ).read_bytes()
     assert len(stock_meta) == len(custom_meta) == 0x800
     assert custom_meta[:16] == bytes([0x11] * 12 + [0x37, 0x34, 0x00, 0x0D])
-    assert custom_meta[16:] == stock_meta[16:]
+    changed_metatiles = [
+        index
+        for index in range(len(stock_meta) // 16)
+        if stock_meta[index * 16 : (index + 1) * 16]
+        != custom_meta[index * 16 : (index + 1) * 16]
+    ]
+    assert changed_metatiles == [0x00, scenario["safari"]["fuchsia_gate"]["open_block"]]
+    gate = scenario["safari"]["fuchsia_gate"]
+    assert custom_meta[0x470:0x480] == bytes(gate["metatile"])
 
     stock_tiles = _png_tiles(repo_root / "gfx/tilesets/kanto.png")
     custom_tiles = _png_tiles(repo_root / "gfx/tilesets/kanto_crystallegends.png")
@@ -352,6 +365,15 @@ def test_cinnabar_staircase_is_the_only_phase_9_kanto_asset_delta_so_far(
         "CUT_TREE",
         "CUT_TREE",
     )
+    assert parse_collision_rows(collision_source)[gate["open_block"]] == tuple(
+        gate["open_collision"]
+    )
+    assert parse_collision_rows(collision_source, REFERENCE)[gate["open_block"]] == (
+        "HOP_RIGHT",
+        "WALL",
+        "HOP_RIGHT",
+        "WALL",
+    )
 
     dimensions = {"CinnabarIsland": MapDimensions("CinnabarIsland", 10, 9)}
     resolved = {"CinnabarIsland": "maps/CinnabarIslandCrystalLegends.blk"}
@@ -365,6 +387,345 @@ def test_cinnabar_staircase_is_the_only_phase_9_kanto_asset_delta_so_far(
     assert collision_at(
         repo_root, "CinnabarIsland", (13, 6), dimensions, resolved, tilesets
     ) == "FLOOR"
+
+    reference_tilesets = parse_map_tilesets(
+        (repo_root / "data/maps/maps.asm").read_text(), REFERENCE
+    )
+    reference_paths = parse_block_paths(blocks_source, REFERENCE)
+    stock_kanto_maps = [
+        map_name
+        for map_name, tileset in reference_tilesets.items()
+        if tileset == "TILESET_KANTO"
+    ]
+    assert len(stock_kanto_maps) == 39
+    paths_by_normalized = {
+        re.sub(r"[^A-Z0-9]", "", map_name.upper()): path
+        for map_name, path in reference_paths.items()
+    }
+    assert all(
+        gate["open_block"] not in (repo_root / paths_by_normalized[map_name]).read_bytes()
+        for map_name in stock_kanto_maps
+    )
+
+
+def test_safari_access_is_owned_by_the_granddaughter_and_opens_one_door(
+    repo_root: Path, scenario: dict
+) -> None:
+    safari = scenario["safari"]
+    owner = safari["quest_owner"]
+    home = _active_code(repo_root / "maps/SafariZoneWardensHome.asm", CRYSTAL_LEGENDS)
+    script = _section(home, f'{owner["script"]}:', "WardenPhoto:")
+    _assert_in_order(
+        script,
+        [
+            f'checkevent {owner["access_event"]}',
+            f'checkevent {owner["first_talk_event"]}',
+            f'setevent {owner["first_talk_event"]}',
+            f'checkflag {owner["badge"]}',
+            f'setevent {owner["access_event"]}',
+        ],
+    )
+    assert sum(line == f'setevent {owner["access_event"]}' for line in home) == 1
+    assert any(
+        line.startswith("object_event  2,  4, SPRITE_LASS")
+        and f", {owner['script']}, -1" in line
+        for line in home
+    )
+
+    mutations: list[str] = []
+    for source in (repo_root / "maps").glob("*.asm"):
+        if f'setevent {owner["access_event"]}' in _active_code(source, CRYSTAL_LEGENDS):
+            mutations.append(source.name)
+    assert mutations == ["SafariZoneWardensHome.asm"]
+
+    gate = safari["fuchsia_gate"]
+    city = _active_code(repo_root / "maps/FuchsiaCity.asm", CRYSTAL_LEGENDS)
+    _assert_contiguous(
+        city,
+        [
+            "FuchsiaCitySafariGateCallback:",
+            f'checkevent {owner["access_event"]}',
+            "iffalse .Locked",
+            f'changeblock {gate["block_coordinate"][0]}, {gate["block_coordinate"][1]}, ${gate["open_block"]:02x}',
+            ".Locked:",
+            "endcallback",
+        ],
+    )
+    assert (
+        f'warp_event {gate["warp"][0]:2}, {gate["warp"][1]:2}, '
+        f'{gate["warp"][2]}, {gate["warp"][3]}'
+    ) in city
+    assert "SAFARI ZONE OFFICE" in "\n".join(city)
+    assert "SAFARI GAME" not in "\n".join(city)
+
+
+def test_safari_beta_maps_preserve_warps_and_add_only_approved_interactions(
+    repo_root: Path, scenario: dict
+) -> None:
+    safari = scenario["safari"]
+    dimensions = parse_map_dimensions(
+        (repo_root / "constants/map_constants.asm").read_text()
+    )
+    assert [
+        dimensions["SAFARI_ZONE_FUCHSIA_GATE_BETA"].width_blocks,
+        dimensions["SAFARI_ZONE_FUCHSIA_GATE_BETA"].height_blocks,
+    ] == safari["maintenance_gate"]["dimensions"]
+    assert [
+        dimensions["SAFARI_ZONE_BETA"].width_blocks,
+        dimensions["SAFARI_ZONE_BETA"].height_blocks,
+    ] == safari["preserve"]["dimensions"]
+
+    blocks = (repo_root / "data/maps/blocks.asm").read_text()
+    assert parse_block_paths(blocks)["SafariZoneFuchsiaGateBeta"] == safari[
+        "maintenance_gate"
+    ]["block_path"]
+    assert parse_block_paths(blocks)["SafariZoneBeta"] == safari["preserve"][
+        "custom_block_path"
+    ]
+    assert parse_block_paths(blocks, REFERENCE)["SafariZoneBeta"] == safari[
+        "preserve"
+    ]["stock_block_path"]
+    custom_blocks = (repo_root / safari["preserve"]["custom_block_path"]).read_bytes()
+    stock_blocks = (repo_root / safari["preserve"]["stock_block_path"]).read_bytes()
+    proposal = (
+        repo_root / "plan/proposals/SafariZoneBetaCrystalLegendsProposal.blk"
+    ).read_bytes()
+    assert len(custom_blocks) == len(stock_blocks) == 180
+    assert [
+        {
+            "offset": offset,
+            "old_block": old,
+            "new_block": new,
+        }
+        for offset, (old, new) in enumerate(zip(proposal, custom_blocks))
+        if old != new
+    ] == safari["preserve"]["proposal_delta"]
+
+    sources = {source.map_name: source for source in map_sources_from_repository(repo_root)}
+    gate_events = parse_events(sources["SAFARI_ZONE_FUCHSIA_GATE_BETA"])
+    preserve_events = parse_events(sources["SAFARI_ZONE_BETA"])
+    reference_gate_events = parse_events(
+        sources["SAFARI_ZONE_FUCHSIA_GATE_BETA"], REFERENCE
+    )
+    reference_preserve_events = parse_events(sources["SAFARI_ZONE_BETA"], REFERENCE)
+
+    def event_args(events, event_type: str) -> list[list[str]]:
+        return [list(event.args) for event in events if event.event_type == event_type]
+
+    expected_gate_warps = [
+        [str(x), str(y), destination, str(warp)]
+        for x, y, destination, warp in safari["maintenance_gate"]["warps"]
+    ]
+    expected_preserve_warps = [
+        [str(x), str(y), destination, str(warp)]
+        for x, y, destination, warp in safari["preserve"]["warps"]
+    ]
+    assert event_args(gate_events, "warp_event") == expected_gate_warps
+    assert event_args(reference_gate_events, "warp_event") == expected_gate_warps
+    assert event_args(preserve_events, "warp_event") == expected_preserve_warps
+    assert event_args(reference_preserve_events, "warp_event") == expected_preserve_warps
+    assert event_args(gate_events, "object_event") == []
+    assert event_args(reference_gate_events, "object_event") == []
+    assert [
+        [event.x, event.y]
+        for event in gate_events
+        if event.event_type == "bg_event"
+    ] == safari["maintenance_gate"]["notice_coordinates"]
+    assert [
+        [event.x, event.y]
+        for event in preserve_events
+        if event.event_type == "bg_event"
+    ] == safari["preserve"]["sign_coordinates"]
+    assert event_args(reference_preserve_events, "bg_event") == []
+
+    objects = [event for event in preserve_events if event.event_type == "object_event"]
+    assert len(objects) == 2
+    assert all(event.args[2] == "SPRITE_POKE_BALL" for event in objects)
+    assert all(event.args[9] == "OBJECTTYPE_ITEMBALL" for event in objects)
+    assert [
+        ([event.x, event.y], event.args[11], event.args[12]) for event in objects
+    ] == [
+        (pickup["coordinate"], pickup["script"], pickup["event"])
+        for pickup in safari["preserve"]["pickups"]
+    ]
+    assert event_args(reference_preserve_events, "object_event") == []
+
+
+def test_safari_layout_is_reachable_without_surf_and_metadata_is_conditional(
+    repo_root: Path, scenario: dict
+) -> None:
+    safari = scenario["safari"]
+    preserve = safari["preserve"]
+    dimensions = {
+        "SAFARI_ZONE_BETA": MapDimensions(
+            "SAFARI_ZONE_BETA", *preserve["dimensions"]
+        )
+    }
+    resolved = {"SAFARI_ZONE_BETA": preserve["custom_block_path"]}
+    maps_source = (repo_root / "data/maps/maps.asm").read_text()
+    tilesets = parse_map_tilesets(maps_source)
+    passable = {"FLOOR", "TALL_GRASS", "LONG_GRASS", "WARP_CARPET_DOWN"}
+    start = (9, 22)
+    seen = {start}
+    pending = [start]
+    while pending:
+        x, y = pending.pop()
+        for neighbor in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+            if neighbor in seen:
+                continue
+            nx, ny = neighbor
+            if not (0 <= nx < 20 and 0 <= ny < 36):
+                continue
+            if (
+                collision_at(
+                    repo_root,
+                    "SAFARI_ZONE_BETA",
+                    neighbor,
+                    dimensions,
+                    resolved,
+                    tilesets,
+                )
+                not in passable
+            ):
+                continue
+            seen.add(neighbor)
+            pending.append(neighbor)
+
+    for pickup in preserve["pickups"]:
+        assert tuple(pickup["coordinate"]) in seen
+        assert (
+            collision_at(
+                repo_root,
+                "SAFARI_ZONE_BETA",
+                tuple(pickup["coordinate"]),
+                dimensions,
+                resolved,
+                tilesets,
+            )
+            == "FLOOR"
+        )
+    for sign in preserve["sign_coordinates"]:
+        x, y = sign
+        assert any((x + dx, y + dy) in seen for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1)))
+    assert (9, 23) in seen and (10, 23) in seen
+    assert all(
+        collision_at(
+            repo_root,
+            "SAFARI_ZONE_BETA",
+            tuple(warp[:2]),
+            dimensions,
+            resolved,
+            tilesets,
+        )
+        == "WARP_CARPET_DOWN"
+        for warp in preserve["warps"]
+    )
+    assert any(
+        collision_at(
+            repo_root,
+            "SAFARI_ZONE_BETA",
+            coordinate,
+            dimensions,
+            resolved,
+            tilesets,
+        )
+        == "TALL_GRASS"
+        for coordinate in seen
+    )
+    assert any(
+        collision_at(
+            repo_root,
+            "SAFARI_ZONE_BETA",
+            (x, y),
+            dimensions,
+            resolved,
+            tilesets,
+        )
+        == preserve["water_collision"]["custom"]
+        for y in range(36)
+        for x in range(20)
+    )
+    park_collision = (repo_root / "data/tilesets/park_collision.asm").read_text()
+    water_block = preserve["water_collision"]["block"]
+    assert parse_collision_rows(park_collision)[water_block] == (
+        preserve["water_collision"]["custom"],
+    ) * 4
+    assert parse_collision_rows(park_collision, REFERENCE)[water_block] == (
+        preserve["water_collision"]["reference"],
+    ) * 4
+
+    custom_map = next(
+        line
+        for line in _active_code(repo_root / "data/maps/maps.asm", CRYSTAL_LEGENDS)
+        if line.startswith("map SafariZoneBeta,")
+    )
+    assert custom_map == "map SafariZoneBeta, " + ", ".join(preserve["metadata"])
+    reference_map = next(
+        line
+        for line in _active_code(repo_root / "data/maps/maps.asm", REFERENCE)
+        if line.startswith("map SafariZoneBeta,")
+    )
+    assert reference_map == (
+        "map SafariZoneBeta, TILESET_PARK, CAVE, LANDMARK_FUCHSIA_CITY, "
+        "MUSIC_EVOLUTION, FALSE, PALETTE_AUTO, FISHGROUP_SHORE"
+    )
+
+
+def test_safari_wild_tables_and_item_scripts_match_the_contract(
+    repo_root: Path, scenario: dict
+) -> None:
+    safari = scenario["safari"]
+    grass_lines = _active_code(repo_root / "data/wild/kanto_grass.asm", CRYSTAL_LEGENDS)
+    grass = _section(
+        grass_lines, "def_grass_wildmons SAFARI_ZONE_BETA", "end_grass_wildmons"
+    )
+    expected_grass = [
+        "def_grass_wildmons SAFARI_ZONE_BETA",
+        "db 10 percent, 10 percent, 10 percent",
+        *(
+            f"db {level}, {species}"
+            for time in ("morning", "day", "night")
+            for level, species in safari["grass"][time]
+        ),
+    ]
+    assert grass == expected_grass
+
+    water_lines = _active_code(repo_root / "data/wild/kanto_water.asm", CRYSTAL_LEGENDS)
+    water = _section(
+        water_lines, "def_water_wildmons SAFARI_ZONE_BETA", "end_water_wildmons"
+    )
+    assert water == [
+        "def_water_wildmons SAFARI_ZONE_BETA",
+        f'db {safari["water"]["rate"]} percent',
+        *(f"db {level}, {species}" for level, species in safari["water"]["slots"]),
+    ]
+    assert "def_grass_wildmons SAFARI_ZONE_BETA" not in _active_code(
+        repo_root / "data/wild/kanto_grass.asm", REFERENCE
+    )
+    assert "def_water_wildmons SAFARI_ZONE_BETA" not in _active_code(
+        repo_root / "data/wild/kanto_water.asm", REFERENCE
+    )
+    assert not any(
+        species == "GIRAFARIG"
+        for time in ("morning", "day", "night")
+        for _, species in safari["grass"][time]
+    )
+
+    source = _active_code(repo_root / "maps/SafariZoneBeta.asm", CRYSTAL_LEGENDS)
+    for pickup in safari["preserve"]["pickups"]:
+        index = source.index(f'{pickup["script"]}:')
+        assert source[index + 1] == f'itemball {pickup["item"]}'
+    denylist = ("safarigame", "parkball", "bait", "rock", "stepcount", "takemoney")
+    safari_sources = "\n".join(
+        "\n".join(_active_code(repo_root / relative, CRYSTAL_LEGENDS)).lower()
+        for relative in (
+            "maps/SafariZoneWardensHome.asm",
+            "maps/FuchsiaCity.asm",
+            "maps/SafariZoneFuchsiaGateBeta.asm",
+            "maps/SafariZoneBeta.asm",
+        )
+    )
+    assert all(token not in safari_sources for token in denylist)
 
 
 def test_phase_9_starter_source_is_absent_from_reference_builds(repo_root: Path) -> None:
