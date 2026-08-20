@@ -101,6 +101,35 @@ def build_phase_9_map_checkpoint(
     return destination
 
 
+def relocate_phase_9_saved_game(
+    repo_root: Path,
+    source: Path,
+    destination: Path,
+    constants: dict[str, int],
+    *,
+    map_name: str,
+    x: int,
+    y: int,
+    events: dict[str, bool] | None = None,
+    badges: tuple[str, ...] = (),
+) -> Path:
+    """Move one evolving battery save between Phase 9 runtime checkpoints."""
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    save = BatterySave.load(source, symbols)
+    save.write_saved_u8("wWarpNumber", 0)
+    save.write_saved_u8("wMapGroup", constants[f"GROUP_{map_name}"])
+    save.write_saved_u8("wMapNumber", constants[f"MAP_{map_name}"])
+    save.write_saved_u8("wXCoord", x)
+    save.write_saved_u8("wYCoord", y)
+    for badge in badges:
+        _set_kanto_badge(save, constants, badge, True)
+    for event, enabled in (events or {}).items():
+        save.set_event(constants[event], enabled)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    save.write(destination)
+    return destination
+
+
 @contextmanager
 def loaded_phase_9_gift_checkpoint(
     repo_root: Path,

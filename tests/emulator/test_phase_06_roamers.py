@@ -452,7 +452,11 @@ def test_flee_persists_hp_and_dvs_through_native_save_reload(
         scenario,
         saved,
     ) as session:
-        assert session.read_symbol_bytes(roamer["slot"], ROAM_STRUCT_LENGTH) == stored
+        reloaded = session.read_symbol_bytes(roamer["slot"], ROAM_STRUCT_LENGTH)
+        # Native Continue deliberately calls JumpRoamMons, so the location
+        # bytes may change while identity, HP, and DVs remain persistent.
+        assert reloaded[:2] == stored[:2]
+        assert reloaded[4:] == stored[4:]
 
 
 def _use_fast_ball_and_record_multiplier(

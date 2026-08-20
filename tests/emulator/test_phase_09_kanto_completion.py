@@ -26,9 +26,11 @@ from tests.support.legendary_scenario import (
     walk_steps,
 )
 from tests.support.phase_09_scenario import (
+    build_phase_9_gift_checkpoint,
     loaded_phase_9_gift_checkpoint,
     loaded_phase_9_map_checkpoint,
     loaded_phase_9_saved_game,
+    relocate_phase_9_saved_game,
 )
 from tests.support.symbol_table import SymbolTable
 
@@ -1168,6 +1170,7 @@ def _articuno_checkpoint_events(
 @pytest.mark.parametrize(
     ("branch", "silver_available", "oak_handoff", "caught", "visible"),
     [
+        ("none", True, True, False, False),
         ("articuno", True, True, False, False),
         ("zapdos", False, True, False, False),
         ("zapdos", True, False, False, True),
@@ -1176,6 +1179,7 @@ def _articuno_checkpoint_events(
         ("moltres", False, True, True, False),
     ],
     ids=[
+        "invalid-no-starter-choice",
         "player-species",
         "silver-pending",
         "silver-released",
@@ -1486,6 +1490,7 @@ def _remaining_bird_checkpoint_events(
         "visible",
     ),
     [
+        ("zapdos", "none", True, True, True, False, False),
         ("zapdos", "zapdos", True, True, True, False, False),
         ("zapdos", "moltres", False, True, True, False, False),
         ("zapdos", "moltres", True, False, True, False, True),
@@ -1493,6 +1498,7 @@ def _remaining_bird_checkpoint_events(
         ("zapdos", "articuno", False, True, True, False, True),
         ("zapdos", "articuno", False, True, False, False, False),
         ("zapdos", "articuno", False, True, True, True, False),
+        ("moltres", "none", True, True, True, False, False),
         ("moltres", "moltres", True, True, True, False, False),
         ("moltres", "articuno", False, True, True, False, False),
         ("moltres", "articuno", True, False, True, False, True),
@@ -1502,6 +1508,7 @@ def _remaining_bird_checkpoint_events(
         ("moltres", "zapdos", False, True, True, True, False),
     ],
     ids=[
+        "zapdos-invalid-no-starter-choice",
         "zapdos-player-species",
         "zapdos-silver-pending",
         "zapdos-silver-released",
@@ -1509,6 +1516,7 @@ def _remaining_bird_checkpoint_events(
         "zapdos-oak-handoff",
         "zapdos-power-pending",
         "zapdos-already-caught",
+        "moltres-invalid-no-starter-choice",
         "moltres-player-species",
         "moltres-silver-pending",
         "moltres-silver-released",
@@ -1926,6 +1934,196 @@ def test_remaining_bird_capture_and_absence_survive_native_continue(
         for _ in range(20):
             session.tap("a", 2, 10)
         assert "BattleMenu" not in session.hook_history
+
+
+def test_single_save_collects_all_gifts_and_both_nonstarter_birds(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+) -> None:
+    constants = phase_9_constants
+    max_frames = scenario["max_frames_per_step"]
+    gifts = scenario["gifts"]
+    initial = build_phase_9_gift_checkpoint(
+        repo_root,
+        tmp_path / "combined-initial.sav",
+        constants,
+        scenario,
+        gifts[0],
+        service_complete=True,
+    )
+    combined_events = {
+        **{gift["service_event"]: True for gift in gifts},
+        **{gift["completion_event"]: False for gift in gifts},
+        "EVENT_GOT_ARTICUNO_FROM_ELM": False,
+        "EVENT_GOT_ZAPDOS_FROM_ELM": True,
+        "EVENT_GOT_MOLTRES_FROM_ELM": False,
+        "EVENT_OAK_MOVED_THIRD_BIRD": True,
+        "EVENT_ARTICUNO_AVAILABLE": True,
+        "EVENT_ZAPDOS_AVAILABLE": False,
+        "EVENT_MOLTRES_AVAILABLE": False,
+        "EVENT_BEAT_ELITE_FOUR": True,
+        "EVENT_CAUGHT_ARTICUNO_IN_KANTO": False,
+        "EVENT_CAUGHT_ZAPDOS_IN_KANTO": False,
+        "EVENT_CAUGHT_MOLTRES_IN_KANTO": False,
+    }
+    relocate_phase_9_saved_game(
+        repo_root,
+        initial,
+        initial,
+        constants,
+        map_name=gifts[0]["map"],
+        x=gifts[0]["start"]["x"],
+        y=gifts[0]["start"]["y"],
+        events=combined_events,
+        badges=tuple(gift["badge"] for gift in gifts),
+    )
+
+    current_save = initial
+    collected_species: list[int] = []
+    for index, gift in enumerate(gifts):
+        if index:
+            relocated = tmp_path / f"combined-gift-{index}-ready.sav"
+            relocate_phase_9_saved_game(
+                repo_root,
+                current_save,
+                relocated,
+                constants,
+                map_name=gift["map"],
+                x=gift["start"]["x"],
+                y=gift["start"]["y"],
+            )
+            current_save = relocated
+        persisted = tmp_path / f"combined-gift-{index}-complete.sav"
+        with loaded_phase_9_saved_game(
+            repo_root,
+            tmp_path / f"combined-gift-{index}",
+            constants,
+            scenario,
+            current_save,
+        ) as session:
+            assert (
+                interact_with_gift(
+                    session, _gift_scenario(scenario, gift), accept=True
+                )
+                == 0
+            )
+            collected_species.append(constants[gift["species"]])
+            progress = read_progress(session)
+            assert all(progress.owns(species) for species in collected_species)
+            assert all(
+                event_is_set(session, constants[completed["completion_event"]])
+                for completed in gifts[: index + 1]
+            )
+            save_game_from_overworld(session, max_frames)
+            dump_battery_ram(session, persisted)
+        current_save = persisted
+
+    articuno = scenario["seafoam"]["articuno"]
+    articuno_ready = relocate_phase_9_saved_game(
+        repo_root,
+        current_save,
+        tmp_path / "combined-articuno-ready.sav",
+        constants,
+        map_name=scenario["seafoam"]["map"],
+        x=articuno["approach"][0],
+        y=articuno["approach"][1],
+    )
+    articuno_caught = tmp_path / "combined-articuno-caught.sav"
+    with loaded_phase_9_saved_game(
+        repo_root,
+        tmp_path / "combined-articuno",
+        constants,
+        scenario,
+        articuno_ready,
+    ) as session:
+        session.write_symbol("wNumBalls", 1)
+        session.write_symbol_bytes(
+            "wBalls", bytes([constants["MASTER_BALL"], 1, 0xFF])
+        )
+        session.write_symbol("wLastPocket", constants["BALL_POCKET"])
+        _start_articuno_battle(session, constants, max_frames, 3)
+        session.register_hook("PokeBallEffect")
+        session.tap("a", 2, 10)
+        advance_with_a_until(
+            session,
+            lambda current: event_is_set(
+                current, constants[articuno["capture_event"]]
+            ),
+            max_frames,
+            "combined-save Articuno capture",
+        )
+        _finish_overworld_script(session, max_frames)
+        progress = read_progress(session)
+        assert progress.owns(constants["ARTICUNO"])
+        assert all(progress.owns(species) for species in collected_species)
+        save_game_from_overworld(session, max_frames)
+        dump_battery_ram(session, articuno_caught)
+
+    moltres = scenario["victory_road_bird"]["moltres"]
+    moltres_ready = relocate_phase_9_saved_game(
+        repo_root,
+        articuno_caught,
+        tmp_path / "combined-moltres-ready.sav",
+        constants,
+        map_name=scenario["victory_road_bird"]["map"],
+        x=moltres["approach"][0],
+        y=moltres["approach"][1],
+    )
+    completed = tmp_path / "combined-complete.sav"
+    with loaded_phase_9_saved_game(
+        repo_root,
+        tmp_path / "combined-moltres",
+        constants,
+        scenario,
+        moltres_ready,
+    ) as session:
+        session.write_symbol("wNumBalls", 1)
+        session.write_symbol_bytes(
+            "wBalls", bytes([constants["MASTER_BALL"], 1, 0xFF])
+        )
+        session.write_symbol("wLastPocket", constants["BALL_POCKET"])
+        _start_remaining_bird_battle(
+            session, constants, moltres, max_frames, 3
+        )
+        session.register_hook("PokeBallEffect")
+        session.tap("a", 2, 10)
+        advance_with_a_until(
+            session,
+            lambda current: event_is_set(
+                current, constants[moltres["capture_event"]]
+            ),
+            max_frames,
+            "combined-save Moltres capture",
+        )
+        _finish_overworld_script(session, max_frames)
+        save_game_from_overworld(session, max_frames)
+        dump_battery_ram(session, completed)
+
+    with loaded_phase_9_saved_game(
+        repo_root,
+        tmp_path / "combined-continue",
+        constants,
+        scenario,
+        completed,
+    ) as session:
+        expected_species = [
+            *collected_species,
+            constants["ARTICUNO"],
+            constants["MOLTRES"],
+        ]
+        progress = read_progress(session)
+        assert all(progress.owns(species) for species in expected_species)
+        assert all(
+            event_is_set(session, constants[gift["completion_event"]])
+            for gift in gifts
+        )
+        assert event_is_set(session, constants[articuno["capture_event"]])
+        assert event_is_set(session, constants[moltres["capture_event"]])
+        assert not event_is_set(
+            session, constants["EVENT_CAUGHT_ZAPDOS_IN_KANTO"]
+        )
 
 
 @pytest.mark.parametrize(
