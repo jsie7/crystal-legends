@@ -23,15 +23,15 @@ data, an external distribution, or the optional cheat menu.
 
 | Dex | Species | Method | Location / requirement | Earliest point | Availability | Renewable | Source |
 |---:|---|---|---|---|---|---|---|
-| 001 | Bulbasaur | Gift or quest | Kanto quest; exact condition TBD | Kanto | Reserved Phase 9 | Yes after gift through breeding | Phase 9; planned Kanto map script |
-| 002 | Ivysaur | Evolution | Bulbasaur at level 16 | Kanto | Reserved Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Bulbasaur source |
-| 003 | Venusaur | Evolution | Ivysaur at level 32 | Kanto | Reserved Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Bulbasaur source |
-| 004 | Charmander | Gift or quest | Kanto quest; exact condition TBD | Kanto | Reserved Phase 9 | Yes after gift through breeding | Phase 9; planned Kanto map script |
-| 005 | Charmeleon | Evolution | Charmander at level 16 | Kanto | Reserved Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Charmander source |
-| 006 | Charizard | Evolution | Charmeleon at level 36 | Kanto | Reserved Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Charmander source |
-| 007 | Squirtle | Gift or quest | Kanto quest; exact condition TBD | Kanto | Reserved Phase 9 | Yes after gift through breeding | Phase 9; planned Kanto map script |
-| 008 | Wartortle | Evolution | Squirtle at level 16 | Kanto | Reserved Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Squirtle source |
-| 009 | Blastoise | Evolution | Wartortle at level 36 | Kanto | Reserved Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Squirtle source |
+| 001 | Bulbasaur | Gift | Level 28 from Erika after the Rainbow Badge and the retryable Celadon pond Muk task | Kanto | Phase 9 | Yes after the gift through breeding | `maps/CeladonGym.asm`; `maps/CeladonCity.asm` |
+| 002 | Ivysaur | Evolution | Level up the Phase 9 Bulbasaur once; it is already above level 16 | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Bulbasaur source |
+| 003 | Venusaur | Evolution | Ivysaur at level 32 | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Bulbasaur source |
+| 004 | Charmander | Gift | Level 28 from Blaine after the Volcano Badge, survivor clue, recovery of `BLAINE'S LOG`, and return of the log | Kanto | Phase 9 | Yes after the gift through breeding | `maps/SeafoamGym.asm`; `maps/CinnabarIsland.asm`; `maps/CinnabarPokecenter1F.asm` |
+| 005 | Charmeleon | Evolution | Level up the Phase 9 Charmander once; it is already above level 16 | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Charmander source |
+| 006 | Charizard | Evolution | Charmeleon at level 36 | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Charmander source |
+| 007 | Squirtle | Gift | Level 28 from Misty after the Cascade Badge and restored Kanto power | Kanto | Phase 9 | Yes after the gift through breeding | `maps/CeruleanGym.asm`; existing Machine Part/Power Plant arc |
+| 008 | Wartortle | Evolution | Level up the Phase 9 Squirtle once; it is already above level 16 | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Squirtle source |
+| 009 | Blastoise | Evolution | Wartortle at level 36 | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Squirtle source |
 | 010 | Caterpie | Wild | Ilex Forest, morning or day | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 011 | Metapod | Evolution or wild | Caterpie at level 7; Ilex Forest | After Badge 2 | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
 | 012 | Butterfree | Evolution | Metapod at level 10 | After Badge 2 | Existing | Yes | `data/pokemon/evos_attacks.asm` |
@@ -59,8 +59,8 @@ data, an external distribution, or the optional cheat menu.
 | 034 | Nidoking | Evolution | Use Moon Stone on Nidorino | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 035 | Clefairy | Wild | Mt. Moon | Kanto | Existing | Yes | `data/wild/kanto_grass.asm` |
 | 036 | Clefable | Evolution | Use Moon Stone on Clefairy | Kanto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
-| 037 | Vulpix | Wild | Unattended Safari Zone; area, level, rate, and slot TBD | Kanto | Reserved Phase 9 | Yes when implemented | Phase 9; `maps/SafariZoneBeta.asm`; `data/wild/kanto_grass.asm` |
-| 038 | Ninetales | Evolution | Use Fire Stone on Phase 9 Vulpix | Kanto | Reserved Phase 9 | Yes when implemented | `data/pokemon/evos_attacks.asm`; Phase 9 Vulpix source |
+| 037 | Vulpix | Wild | Level 24 in unattended SafariZoneBeta grass; one of the three common slots at morning, day, and night | Kanto | Phase 9 | Yes | `data/wild/kanto_grass.asm`; `maps/SafariZoneBeta.asm` |
+| 038 | Ninetales | Evolution | Use Fire Stone on Phase 9 Vulpix | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Vulpix source |
 | 039 | Jigglypuff | Wild | Route 34 | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 040 | Wigglytuff | Evolution | Use Moon Stone on Jigglypuff | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 041 | Zubat | Wild | Burned Tower and many caves | Before Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
@@ -78,8 +78,8 @@ data, an external distribution, or the optional cheat menu.
 | 053 | Persian | Evolution or wild | Meowth at level 28; Route 7 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/kanto_grass.asm` |
 | 054 | Psyduck | Wild | National Park or via Surf | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm`; `data/wild/johto_water.asm` |
 | 055 | Golduck | Evolution or wild | Psyduck at level 33; Silver Cave | Late Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
-| 056 | Mankey | Wild | Unattended Safari Zone; area, level, rate, and slot TBD | Kanto | Reserved Phase 9 | Yes when implemented | Phase 9; `maps/SafariZoneBeta.asm`; `data/wild/kanto_grass.asm` |
-| 057 | Primeape | Evolution | Mankey at level 28 | Kanto | Reserved Phase 9 | Yes when implemented | `data/pokemon/evos_attacks.asm`; Phase 9 Mankey source |
+| 056 | Mankey | Wild | Level 22 in unattended SafariZoneBeta grass; one of the three common slots at morning, day, and night | Kanto | Phase 9 | Yes | `data/wild/kanto_grass.asm`; `maps/SafariZoneBeta.asm` |
+| 057 | Primeape | Evolution | Mankey at level 28 | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Mankey source |
 | 058 | Growlithe | Wild | Route 35 | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 059 | Arcanine | Evolution | Use Fire Stone on Growlithe | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 060 | Poliwag | Wild or fishing | Route 30 and pond fishing groups | Early Johto | Existing | Yes | `data/wild/johto_grass.asm`; `data/wild/fish.asm` |
@@ -166,9 +166,9 @@ data, an external distribution, or the optional cheat menu.
 | 141 | Kabutops | Evolution | Kabuto at level 40 | Before Badge 1 source; later evolution | Phase 5 | Yes through breeding Kabuto | `data/pokemon/evos_attacks.asm`; Phase 5 Kabuto gift |
 | 142 | Aerodactyl | World gift | Level 23 after the final glyph in the Aerodactyl word room, reached after solving the picture and using Flash in the chamber | After Badge 4 | Phase 5 | Yes through breeding after the one-time gift | `maps/RuinsOfAlphAerodactylChamber.asm`; `maps/RuinsOfAlphAerodactylWordRoom.asm` |
 | 143 | Snorlax | Static encounter | Vermilion City after restoring the Pokégear radio | Kanto | Existing | No; stock event ends after battle | `maps/VermilionCity.asm` |
-| 144 | Articuno | Starter or later bird quest | Elm starter if selected; otherwise Phase 8 can mark Silver's returned Articuno available, but Phase 9 must place its encounter and Oak's third-bird branch | Start or Kanto | Existing Phase 1 / Implemented Phase 8 release state / Reserved Phase 9 encounter | No; the starter is one-time and the later encounter is not implemented yet | `maps/ElmsLab.asm`; `maps/ElmsLabSilverArc.asm`; planned Phase 9 bird scripts |
-| 145 | Zapdos | Starter or later bird quest | Elm starter if selected; otherwise Phase 8 can mark Silver's returned Zapdos available, but Phase 9 must place its encounter and Oak's third-bird branch | Start or Kanto | Existing Phase 1 / Implemented Phase 8 release state / Reserved Phase 9 encounter | No; the starter is one-time and the later encounter is not implemented yet | `maps/ElmsLab.asm`; `maps/ElmsLabSilverArc.asm`; planned Phase 9 bird scripts |
-| 146 | Moltres | Starter or later bird quest | Elm starter if selected; otherwise Phase 8 can mark Silver's returned Moltres available, but Phase 9 must place its encounter and Oak's third-bird branch | Start or Kanto | Existing Phase 1 / Implemented Phase 8 release state / Reserved Phase 9 encounter | No; the starter is one-time and the later encounter is not implemented yet | `maps/ElmsLab.asm`; `maps/ElmsLabSilverArc.asm`; planned Phase 9 bird scripts |
+| 144 | Articuno | Starter or one-time encounter | Elm starter if selected; otherwise level 60 in the compact Seafoam cave off Route 20 when it is Oak's handoff bird or Silver's released bird | Start or Kanto | Phase 1 / Phase 8 / Phase 9 | No; exactly one source exists on each starter branch | `maps/ElmsLab.asm`; `maps/ElmsLabSilverArc.asm`; `maps/SeafoamIslandsCave.asm`; `maps/Phase9LegendaryBirds.asm` |
+| 145 | Zapdos | Starter or one-time encounter | Elm starter if selected; otherwise level 60 in the Power Plant Generator Annex after power restoration when it is Oak's handoff bird or Silver's released bird | Start or Kanto | Phase 1 / Phase 8 / Phase 9 | No; exactly one source exists on each starter branch | `maps/ElmsLab.asm`; `maps/ElmsLabSilverArc.asm`; `maps/PowerPlantGeneratorAnnex.asm`; `maps/Phase9LegendaryBirds.asm` |
+| 146 | Moltres | Starter or one-time encounter | Elm starter if selected; otherwise level 60 on Victory Road's upper east shelf after Hall of Fame when it is Oak's handoff bird or Silver's released bird | Start or Kanto | Phase 1 / Phase 8 / Phase 9 | No; exactly one source exists on each starter branch | `maps/ElmsLab.asm`; `maps/ElmsLabSilverArc.asm`; `maps/VictoryRoad.asm`; `maps/Phase9LegendaryBirds.asm` |
 | 147 | Dratini | Gift, wild, or fishing | Dragon's Den gift and encounters | After Badge 8 | Existing | Yes | `maps/DragonShrine.asm`; `data/wild/johto_water.asm`; `data/wild/fish.asm` |
 | 148 | Dragonair | Evolution or NPC-trade input | Dratini at level 30; Dragon's Den fishing | After Badge 8 | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/fish.asm` |
 | 149 | Dragonite | Evolution | Dragonair at level 55 | Post-League training | Existing | Yes | `data/pokemon/evos_attacks.asm` |
@@ -201,9 +201,9 @@ data, an external distribution, or the optional cheat menu.
 | 176 | Togetic | Evolution | Togepi with high friendship | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 177 | Natu | Wild | Ruins of Alph outside | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 178 | Xatu | Evolution or NPC trade | Natu at level 25; trade Haunter | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/events/npc_trades.asm` |
-| 179 | Mareep | Wild | Unattended Safari Zone; area, level, rate, and slot TBD | Kanto | Reserved Phase 9 | Yes when implemented | Phase 9; `maps/SafariZoneBeta.asm`; `data/wild/kanto_grass.asm` |
-| 180 | Flaaffy | Evolution | Mareep at level 15 | Kanto | Reserved Phase 9 | Yes when implemented | `data/pokemon/evos_attacks.asm`; Phase 9 Mareep source |
-| 181 | Ampharos | Evolution | Flaaffy at level 30 | Kanto | Reserved Phase 9 | Yes when implemented | `data/pokemon/evos_attacks.asm`; Phase 9 Mareep source |
+| 179 | Mareep | Wild | Level 20 in unattended SafariZoneBeta grass; one of the three common slots at morning, day, and night | Kanto | Phase 9 | Yes | `data/wild/kanto_grass.asm`; `maps/SafariZoneBeta.asm` |
+| 180 | Flaaffy | Evolution | Level up the Phase 9 Mareep once; it is already above level 15 | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Mareep source |
+| 181 | Ampharos | Evolution | Flaaffy at level 30 | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Mareep source |
 | 182 | Bellossom | Evolution | Use Sun Stone on Gloom | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `engine/events/std_scripts.asm` |
 | 183 | Marill | Wild | Mt. Mortar | Mid-Johto | Existing | Yes | `data/wild/johto_grass.asm` |
 | 184 | Azumarill | Evolution | Marill at level 18 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
@@ -225,7 +225,7 @@ data, an external distribution, or the optional cheat menu.
 | 200 | Misdreavus | Wild | Silver Cave Room 2 at night | After 16 badges | Existing | Yes | `data/wild/johto_grass.asm` |
 | 201 | Unown | Wild | Ruins of Alph inner chambers | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 202 | Wobbuffet | Wild or prize | Dark Cave Blackthorn entrance; Goldenrod Game Corner | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm`; `maps/GoldenrodGameCorner.asm` |
-| 203 | Girafarig | NPC trade | Trade Chansey to Kim on Route 14 for a same-level Girafarig named `GIRAFY`; an optional future Safari encounter is not required for completion | Kanto | Phase 5 | Yes through breeding after the one-time trade | `data/events/npc_trades.asm`; `maps/Route14.asm` |
+| 203 | Girafarig | NPC trade | Trade Chansey to Kim on Route 14 for a same-level Girafarig named `GIRAFY`; Phase 9 deliberately adds no wild Safari source | Kanto | Phase 5 | Yes through breeding after the one-time trade | `data/events/npc_trades.asm`; `maps/Route14.asm` |
 | 204 | Pineco | Wild | Headbutt trees | After obtaining Headbutt | Existing | Yes | `data/wild/treemons.asm`; `data/wild/treemon_maps.asm` |
 | 205 | Forretress | Evolution | Pineco at level 31 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 206 | Dunsparce | Wild | Dark Cave Violet entrance, including swarm | Before Badge 1 | Existing | Yes | `data/wild/johto_grass.asm` |
@@ -245,8 +245,8 @@ data, an external distribution, or the optional cheat menu.
 | 220 | Swinub | Wild | Ice Path | Before Badge 8 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 221 | Piloswine | Evolution | Swinub at level 33 | Before League | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 222 | Corsola | Fishing | Shore and ocean fishing groups during the day | After obtaining the appropriate rod | Existing | Yes | `data/wild/fish.asm` |
-| 223 | Remoraid | Wild | Unattended Safari Zone; area, level, rate, and slot TBD | Kanto | Reserved Phase 9 | Yes when implemented | Phase 9; `maps/SafariZoneBeta.asm`; `data/wild/kanto_grass.asm` |
-| 224 | Octillery | Evolution | Remoraid at level 25 | Kanto | Reserved Phase 9 | Yes when implemented | `data/pokemon/evos_attacks.asm`; Phase 9 Remoraid source |
+| 223 | Remoraid | Wild | Levels 22 and 24 in the two common unattended SafariZoneBeta water slots | Kanto | Phase 9 | Yes | `data/wild/kanto_water.asm`; `maps/SafariZoneBeta.asm` |
+| 224 | Octillery | Evolution or wild | Remoraid at level 25; optional level-28 third SafariZoneBeta water slot | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/kanto_water.asm` |
 | 225 | Delibird | Wild | Ice Path at night | Before Badge 8 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 226 | Mantine | Wild | Surf on Route 41 | After Surf | Existing | Yes | `data/wild/johto_water.asm` |
 | 227 | Skarmory | Wild | Route 45 | After Badge 8 | Existing | Yes | `data/wild/johto_grass.asm` |
@@ -274,6 +274,42 @@ data, an external distribution, or the optional cheat menu.
 | 249 | Lugia | Static encounter | Whirl Islands chamber with Silver Wing | Kanto | Existing | No; stock event ends after battle | `maps/WhirlIslandLugiaChamber.asm` |
 | 250 | Ho-Oh | Static encounter | Tin Tower roof after the required beast quest | Postgame | Existing | No; stock event ends after battle | `maps/TinTowerRoof.asm` |
 | 251 | Celebi | Story encounter | Post-Hall-of-Fame GS Ball, Kurt, and Ilex Forest shrine | Post-League | Phase 2 | No duplicates; retryable until captured | `maps/GoldenrodPokecenter1F.asm`; `maps/KurtsHouse.asm`; `maps/IlexForest.asm` |
+
+## Phase 9 Kanto completion details
+
+SafariZoneBeta becomes accessible only after speaking with the Warden's
+granddaughter and owning the Soul Badge. It is an unattended ordinary-battle
+area: no fee, timer, Safari Balls, bait, rocks, or Safari battle menu. Grass
+uses rate 10 at every time; water uses rate 6. The exact renewable slots are:
+
+| Slot | Morning | Day | Night |
+| ---: | --- | --- | --- |
+| 1 | Lv.22 Mankey | Lv.20 Mareep | Lv.24 Vulpix |
+| 2 | Lv.20 Mareep | Lv.24 Vulpix | Lv.22 Mankey |
+| 3 | Lv.24 Vulpix | Lv.22 Mankey | Lv.20 Mareep |
+| 4 | Lv.24 Exeggcute | Lv.24 Exeggcute | Lv.24 Exeggcute |
+| 5 | Lv.26 Tauros | Lv.26 Scyther | Lv.26 Pinsir |
+| 6 | Lv.28 Chansey | Lv.28 Chansey | Lv.28 Chansey |
+| 7 | Lv.28 Kangaskhan | Lv.28 Kangaskhan | Lv.28 Kangaskhan |
+
+| Water slot | Encounter |
+| ---: | --- |
+| 1 | Lv.22 Remoraid |
+| 2 | Lv.24 Remoraid |
+| 3 | Lv.28 Octillery |
+
+The classic Safari species are optional late-game alternatives; their earlier
+canonical sources remain valid. The bird branch is also explicit and
+single-save safe:
+
+| Elm starter | Oak encounter | Silver-release encounter | Never spawns |
+| --- | --- | --- | --- |
+| Articuno | Zapdos in the Generator Annex | Moltres on Victory Road after Hall of Fame | Seafoam Articuno |
+| Zapdos | Moltres on Victory Road after Hall of Fame | Articuno in Seafoam | Generator Annex Zapdos |
+| Moltres | Articuno in Seafoam | Zapdos in the Generator Annex | Victory Road Moltres |
+
+Only capture completes a world-bird encounter. Knockout, escape, and player
+loss leave a full-HP retry, and native save/reload cannot create a duplicate.
 
 ## Maintenance rule
 

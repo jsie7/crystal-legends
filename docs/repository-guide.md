@@ -2,7 +2,7 @@
 
 This guide explains what is in the repository, how the pieces fit together, and
 where to look before changing a subsystem. It reflects the Crystal Legends fork
-state as of 2026-08-10.
+state as of 2026-08-20.
 
 ## Current project state
 
@@ -13,9 +13,17 @@ Silver branches, Oak's third-bird handoff, and minimal title-screen branding.
 
 The Phase 2 completion foundation adds the 251-species acquisition ledger,
 single-player replacements for all ten trade evolutions, renewable evolution
-items, and the post-League retryable Celebi event. The ordinary missing
-families are reserved for the Phase 9 Safari Zone, so the ledger assigns all
-251 paths without claiming all 251 are catchable yet.
+items, and the post-League retryable Celebi event. Phase 9 now closes its
+reserved Kanto starter, Safari-family, and legendary-bird sources. The ledger
+still does not claim all 251 are catchable: Phase 10 owns the opposite Project
+Mew species in Cerulean Cave.
+
+Phase 9's production routes are intentionally compact. Leader scripts own the
+three level-28 Kanto gifts; the Warden's granddaughter and Fuchsia tile callback
+own access to one unattended `SafariZoneBeta`; and shared branch logic in
+`maps/Phase9LegendaryBirds.asm` selects the Seafoam Articuno, Generator Annex
+Zapdos, and Victory Road Moltres encounters without duplicating the Elm starter.
+Conditional Kanto, Park, and Facility assets keep all reference builds exact.
 
 The Phase 3 bedroom-TV CHEAT MODE is also implemented in source. Its renewable
 supplies, capped money grants, and four ordinary Pokémon gifts deliberately
@@ -105,6 +113,9 @@ far calls and data-bank assumptions can introduce runtime bugs.
 | Change items, shops, or item behavior | `data/items/`, `constants/item*_constants.asm`, `engine/items/` | Upstream item and Mart tutorials |
 | Change trainers or battle AI | `data/trainers/`, `data/battle/`, `engine/battle/ai/`, `engine/battle/` | Existing neighboring tables and the upstream wiki |
 | Change wild encounters | `data/wild/`, `engine/overworld/wildmons.asm` | Upstream wild-slot tutorials |
+| Change Phase 9 Kanto starter services | `maps/CeladonGym.asm`, `maps/CeladonCity.asm`, `maps/CeruleanGym.asm`, `maps/SeafoamGym.asm`, `maps/CinnabarIsland.asm` | `pokemon-acquisition.md`, `workflows.md`, and `decisions.md` |
+| Change the unattended Safari preserve | `maps/SafariZoneWardensHome.asm`, `maps/FuchsiaCity.asm`, `maps/SafariZoneFuchsiaGateBeta.asm`, `maps/SafariZoneBeta.asm`, `data/wild/kanto_*.asm` | `pokemon-acquisition.md` and the Phase 9 workflow |
+| Change Phase 9 legendary-bird locations or branches | `maps/Phase9LegendaryBirds.asm`, `maps/SeafoamIslandsCave.asm`, `maps/PowerPlant.asm`, `maps/PowerPlantGeneratorAnnex.asm`, `maps/VictoryRoad.asm`, `maps/OaksLab.asm` | `decisions.md`, `pokemon-acquisition.md`, and the Phase 9 scenario contract |
 | Change menus or UI behavior | `engine/menus/`, subsystem-specific menu code | `menus.md`; search for the visible label or controlling routine |
 | Change Crystal Legends CHEAT MODE | `maps/PlayersHouse2F.asm`, `maps/PlayersHouse2FDebug.asm`, `data/maps/scripts.asm` | `workflows.md`, `decisions.md`, and the neighboring event-script conventions |
 | Change battle animations | `data/moves/animations.asm`, `engine/battle_anims/`, `gfx/battle_anims/` | `battle_anim_commands.md` |

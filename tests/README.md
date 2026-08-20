@@ -139,3 +139,24 @@ committed save is required. The user-owned manual matrix in
 [`docs/workflows.md`](../docs/workflows.md#validate-phase-8-silvers-kanto-arc)
 owns travel discoverability, visual and audio presentation, dialogue pacing,
 look-back readability, and provisional Silver balance.
+
+Run the focused Phase 9 profile with:
+
+```bash
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/static/test_phase_09_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/rom/test_phase_09_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/emulator/test_phase_09_kanto_completion.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest -m phase9
+```
+
+Phase 9 has 106 focused tests: 19 source contracts, 16 compiled-ROM contracts,
+and 71 production-ROM scenarios. They own the three level-28 service gifts,
+Cinnabar log flow and asset variants, both Safari access orders, exact wild
+tables and normal battles, Seafoam/Power Plant/Victory Road geometry, the full
+three-branch bird matrix, retry and native Continue behavior, Oak's tracker,
+invalid-state hiding, bank floors, reference isolation, and one evolving-save
+flow that obtains all three gifts and both non-starter birds. No new committed
+save is required. The user-owned manual matrix in
+[`docs/workflows.md`](../docs/workflows.md#validate-phase-9-kanto-completion)
+owns visual presentation, dialogue wrapping, natural exploration and routes,
+palette/icon readability, pacing, and provisional balance.

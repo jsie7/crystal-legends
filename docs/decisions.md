@@ -29,11 +29,11 @@ records and item behavior in every reference build.
 
 Mareep, Vulpix, Mankey, and Remoraid and their dependent evolutions belong to
 the Phase 9 unattended Safari Zone. The canonical acquisition ledger must
-identify the reservation now, but the exact Safari area, level, encounter rate,
-and slot remain TBD until Phase 9. Phase 2 must not add substitute Johto
-encounters for these families. Girafarig was originally included in this
-reservation; Phase 5 instead makes Kim's Route 14 trade its canonical source,
-with any future Safari appearance optional.
+identify the reservation until Phase 9 lands; the implemented area, levels,
+rates, and slots are recorded in the later Phase 9 decision below. Phase 2 must
+not add substitute Johto encounters for these families. Girafarig was
+originally included in this reservation; Phase 5 instead makes Kim's Route 14
+trade its canonical source, and Phase 9 adds no wild Girafarig.
 
 ## 2026-08-09 — Activate and harden the native Celebi sequence
 
@@ -185,8 +185,8 @@ independent, retry-safe contract. Kim's existing Route 14 trade keeps its
 Chansey request, table index, dialog set, DVs, Gold Berry, OT identity, and
 gender rule, but Crystal Legends offers a same-level Girafarig named `GIRAFY`.
 Reference builds retain the complete stock Aerodactyl `AEROY` row. Girafarig is
-renewable through breeding after this one-time trade, so Phase 9 may add a wild
-Safari encounter for flavor but no longer needs one for 251-species completion.
+renewable through breeding after this one-time trade, and Phase 9 deliberately
+adds no wild Safari encounter that would undermine it.
 
 ## 2026-08-12 — Preserve stock roamers and fix only the custom Fast Ball scan
 
@@ -288,3 +288,52 @@ The accepted ROM is commit `0e73807d2`, SHA-256
 The exact SameBoy version was not supplied. This evidence makes Phase 8
 playtest-certified; it does not certify earlier phases, the Phase 12 Silver
 balance pass, the complete project, or release readiness.
+
+## 2026-08-20 — Earn all three Kanto starters through independent services
+
+Erika, Misty, and Blaine each give one retry-safe level-28 starter after their
+badge and a separate thematic service. Erika requires the deterministic
+Celadon pond Muk task, Misty recognizes completion of the existing Machine
+Part and Power Plant arc, and Blaine requires the Cinnabar survivor trail plus
+recovery and return of `BLAINE'S LOG`. All three rewards coexist on one save.
+
+Use the stock `givepoke` party/current-box transaction and ordinary generated
+moves. Decline or full party plus full current box must not set the gift event
+or repeat a completed service. The Blaine return fact is set before the gift
+attempt so storage failure never repeats the investigation. The visible
+Cinnabar case and gray shelf staircase use Crystal Legends-only item, block,
+metatile, collision, and graphics variants; reference assets remain exact.
+
+## 2026-08-20 — Open one unattended Safari preserve through existing Fuchsia state
+
+Phase 9 reworks `SafariZoneBeta` as one outdoor Park-tileset preserve. The
+existing Warden's granddaughter releases the north maintenance gate only after
+the player has spoken with her and owns the Soul Badge; both prerequisite
+orders converge in her conversation. The access event is permanent.
+
+The preserve uses normal wild battles, the Bag, ordinary Poké Balls, experience,
+and escape rules. It has no clerk, fee, timer, step counter, Safari Balls,
+bait/rock commands, prize, or reopening ceremony. A 10-percent all-time grass
+table makes level-20 Mareep, level-24 Vulpix, and level-22 Mankey common; a
+6-percent water table puts Remoraid in both common slots. Two ordinary visible
+item balls reward exploration. Multi-area ports and official Safari mechanics
+remain deferred.
+
+## 2026-08-20 — Place branch-safe birds in compact Kanto world locations
+
+Articuno, Zapdos, and Moltres use explicit starter, Oak-handoff, Silver-release,
+location-gate, capture, and object-mask facts. The player's starter species
+never appears in the world; Oak's bird and Silver's bird unlock independently.
+Only `CheckCaughtPokemon` success sets capture and mask facts, so knockout,
+escape, and player loss remain retryable and native Continue cannot respawn a
+captured bird. Oak's second assistant reports only the remaining eligible
+targets.
+
+Articuno is level 60 in a compact Ice Path cave off Route 20 built from the
+unused `BetaUnionCave` backbone. Zapdos is level 60 in a 4-by-4 Power Plant
+Generator Annex after restored power and a later Manager authorization; the
+east shutter opens permanently through directional custom Facility door
+metatiles. Moltres is level 60 on Victory Road's existing isolated eastern
+shelf and always waits for the first Hall of Fame. These maps reuse stock
+sprites and tiles wherever possible, change no save-layout dimensions, and
+remain wholly absent from reference builds.

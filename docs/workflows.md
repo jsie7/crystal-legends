@@ -58,6 +58,11 @@ species-specific availability state, bird-free Indigo rematch, and Dragon's
 Den chronology pass every automated layer. Its user-owned presentation,
 discoverability, and provisional balance review also passed on 2026-08-19, so
 Phase 8 is playtest-certified.
+Phase 9 is source-complete: all three level-28 Kanto service gifts, the
+Soul Badge-gated unattended Safari preserve, and both branch-correct
+non-starter birds pass every automated layer and the combined single-save
+flow. Its user-owned starter, Safari, bird-route, dialogue, palette, and
+provisional-balance review remains pending.
 
 ## Validate the Crystal Legends build
 
@@ -82,11 +87,11 @@ The complete local handoff gate now covers the legendary-bird starter paths,
 Phase 2 evolution/item/Celebi behavior, Phase 3 CHEAT MODE, Phase 4's three
 production-map gifts, Phase 5's three Ruins gifts and Route 14 Girafarig trade,
 Phase 6's roamer/Fast Ball contracts, and Phase 7's Project Mew story and
-branching encounter, plus Phase 8's Silver release and post-release chronology.
-Rerun the narrower owning profile after a focused change and `make test-all` at
-a milestone handoff. Four ordinary Crystal-missing families remain reserved
-for the Phase 9 Safari Zone; Phase 5 makes Kim's Route 14 trade Girafarig's
-canonical source.
+branching encounter, Phase 8's Silver release and post-release chronology, and
+Phase 9's Kanto gifts, Safari preserve, and world birds. Rerun the narrower
+owning profile after a focused change and `make test-all` at a milestone
+handoff. Phase 5 keeps Kim's Route 14 trade as Girafarig's canonical source;
+Phase 9 deliberately adds no wild Girafarig.
 
 ## Run the local automated test harness
 
@@ -410,6 +415,87 @@ Evidence applies to ROM commit `0e73807d2`, SHA-256
 `a5c2b67aaad42b1f3f06290bd40da6204c98279b7a037e0e14549cdd5fcc26f9`.
 Phase 8 is therefore playtest-certified; Silver's full balance pass remains
 separate Phase 12 work.
+
+### Validate Phase 9 Kanto completion
+
+Run the focused Phase 9 layers while editing, then the clean handoff gate:
+
+```bash
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/static/test_phase_09_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/rom/test_phase_09_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/emulator/test_phase_09_kanto_completion.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest -m phase9
+make test-crystallegends
+make clean
+make test-all
+rgbfix -v crystallegends.gbc
+git diff --check
+git status --short
+shasum -a 256 crystallegends.gbc
+```
+
+The accepted automated boundary on 2026-08-20 is:
+
+- implementation commits `22a79cb05`, `561e1e8d4`, `0cabf0395`, and
+  `dca936fe9`, followed by hardening commit `4723464c0`;
+- 106 focused Phase 9 tests: 19 static, 16 compiled-ROM, and 71
+  production-ROM emulator cases;
+- 409 complete-gate tests: 108 static, 64 compiled-ROM, and 237 emulator cases;
+- all six upstream reference artifacts reproduced by `make compare`;
+- ROM SHA-256
+  `c136026e9693f025ff4e6919ad781e2942fd7aea05dd726db9519da76289b9de`;
+- event IDs 2015 through 2032 with `NUM_EVENTS`, WRAM, SRAM, and the save-layout
+  fingerprint unchanged;
+- reviewed Phase 9 bank reserves: ROMX `$06=$0202`, `$1c=$06b7`,
+  `$1d=$0cce`, `$2c=$249a`, `$62=$0646`, `$65=$0653`, `$66=$052f`,
+  `$6a=$01fa`, `$6b=$1310`, and `$6c=$1640`.
+
+Automation owns exact gift prerequisites and level-28 delivery, decline/full
+storage retry, service isolation, the Cinnabar log and staircase, both Safari
+access orders, visible gate collision, pickups, complete grass/water tables,
+normal battle rules, Seafoam sliding and round trip, the Power Plant shutter
+and annex round trip, the complete three-branch bird selector, Hall-of-Fame and
+power gates, capture-only completion, non-capture retry, native Continue,
+Oak-assistant hints, invalid no-choice states, and one evolving save that
+collects all three gifts plus both non-starter birds. Static and compiled-ROM
+contracts also own conditional asset bytes, geometry, bank floors, save layout,
+and reference isolation.
+
+For playtest certification, use SameBoy with a backed-up or disposable save and
+record the exact version, ROM commit/hash, date, save boundary, starter branch,
+and pass/fail result. Manually confirm:
+
+1. For Erika, Misty, and Blaine, review the service request after the stock
+   badge/TM flow; named dialogue and wrapping; confirmation, nickname, party
+   and box delivery; decline/full-storage retry; and natural repeat dialogue.
+   Confirm the pond Muk is conspicuous and retryable, Misty's power hint works
+   in either order, and the survivor clue, visible gray Cinnabar staircase,
+   flame-crested case, log recovery, and return form one coherent task without
+   an HM requirement. Explicitly judge level-28 Charmander's Ember-to-level-34
+   Flamethrower interval.
+2. Before and after the two Safari prerequisites, confirm Fuchsia's north
+   opening looks closed/open rather than relying on an invisible wall. Review
+   the reused empty beta gate, unattended wording, no clerk/fee/timer/Safari
+   mechanics, ordinary Fight/Pack/Run behavior, entrance rediscovery, grass and
+   water density, both visible item rewards, complete-map collision and escape,
+   and morning/day/night readability.
+3. On all three starter branches, confirm only Oak's and Silver's species
+   appear. Review the recognizable compact Seafoam route and Articuno alcove;
+   the Power Plant's red east shutter, permanent opening, industrial
+   one-console annex, and brown Zapdos icon; and the complete Victory Road
+   higher-floor loop, Full Restore bypass, approach tile, south return hops,
+   and red Moltres icon after Hall of Fame. Confirm cry, name, species, level,
+   palette, capture disappearance, knockout/escape/loss retry, save/reload, and
+   Oak's assistant hints all read naturally.
+4. Keep balance review provisional: the three starter rewards should be useful
+   without replacing leader teams, level-60 birds should be catchable with
+   ordinary late-game resources, and Safari levels should fit Kanto. Phase 12,
+   not this review, owns the full Kanto/Silver/Red balance pass.
+
+Phase 9 is source-complete but not playtest-certified until this SameBoy matrix
+is reported and any presentation failure is fixed or explicitly assigned. The
+automated evidence does not claim all 251 species, Phase 10 completion, a
+full-game playthrough, or release readiness.
 
 ### Battery-save and scenario fixtures
 

@@ -8,7 +8,8 @@ guide.
 
 Crystal Legends v0.1, the Phase 2 completion foundation, Phase 3 CHEAT MODE,
 the Phase 4 Johto starter events, the Phase 5 Ruins gifts, Phase 6 roamer
-quality-of-life, and Phase 7 Project Mew story are source-complete. Chikorita is a
+quality-of-life, Phase 7 Project Mew, Phase 8 Silver arc, and Phase 9 Kanto
+completion are source-complete. Chikorita is a
 level-14 gift at the Ilex Forest shrine after Cut, Cyndaquil is a level-19 gift
 in Burned Tower after the legendary beasts awaken, and Totodile is a level-24
 rescue on Cianwood's east shore after SecretPotion receipt. Their independent,
@@ -37,7 +38,14 @@ look back, and the completed scene records only that species' availability for
 Phase 9. The release also becomes the chronology gate for Silver's bird-free
 Monday/Wednesday Indigo rematch, Tuesday/Thursday Dragon's Den training cameo,
 and the Dragon Shrine elder hint. Phase 8 adds no physical bird encounter or
-Oak handoff; those remain Phase 9 work.
+Oak handoff; Phase 9 now consumes those branch facts without changing the
+release sequence.
+Phase 9 makes Bulbasaur, Squirtle, and Charmander independent level-28 service
+rewards; opens one Soul Badge-gated unattended Safari preserve with renewable
+Mareep, Vulpix, Mankey, and Remoraid; and places the two non-starter legendary
+birds in Seafoam, the Power Plant Generator Annex, and Victory Road according
+to the existing branch. Only capture finalizes a bird. The remaining main-story
+acquisition gap is Phase 10's opposite Project Mew species.
 
 The earlier manual pass confirmed the title screen, all three legendary-bird
 starter branches, the first Silver battle, the Elm/Oak handoff, player-bird
@@ -52,7 +60,11 @@ branches, loss/retry and return travel, one natural Indigo rematch, and one
 natural Dragon's Den cameo. Silver's full balance pass remains Phase 12 work.
 Phase 2 presentation and full-game acceptance also remain deferred. Phase 8 is
 playtest-certified, but the overall milestone is not yet release-ready because
-the other listed manual gates remain open.
+the other listed manual gates remain open. Phase 9 passes its static,
+compiled-ROM, production-ROM, persistence, and reference-isolation gates but is
+not yet playtest-certified: starter presentation, Safari exploration, bird
+routes, dialogue, palettes, and provisional balance still require user review
+in SameBoy.
 See
 [workflows.md](workflows.md) for the validation boundary and
 [decisions.md](decisions.md) for the sequencing decision.
