@@ -42,6 +42,7 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "COLL_WATER_21",
             "COLL_WALL",
             "EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION",
+            "EVENT_ARTICUNO_AVAILABLE",
             "EVENT_CAUGHT_ARTICUNO_IN_KANTO",
             "EVENT_CAUGHT_MOLTRES_IN_KANTO",
             "EVENT_CAUGHT_ZAPDOS_IN_KANTO",
@@ -49,7 +50,11 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "EVENT_GOT_CHARMANDER_FROM_BLAINE",
             "EVENT_GOT_SQUIRTLE_FROM_MISTY",
             "EVENT_HELPED_ERIKA_CLEAN_CELADON_POND",
+            "EVENT_GOT_ARTICUNO_FROM_ELM",
+            "EVENT_GOT_MOLTRES_FROM_ELM",
+            "EVENT_GOT_ZAPDOS_FROM_ELM",
             "EVENT_MOLTRES_NOT_AT_KANTO_LOCATION",
+            "EVENT_OAK_MOVED_THIRD_BIRD",
             "EVENT_POWER_PLANT_ANNEX_AUTHORIZED",
             "EVENT_RECOVERED_BLAINES_LOG",
             "EVENT_SAFARI_ZONE_ACCESSIBLE",
@@ -62,14 +67,28 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "MAP_SAFARI_ZONE_FUCHSIA_GATE_BETA",
             "GROUP_SAFARI_ZONE_BETA",
             "MAP_SAFARI_ZONE_BETA",
+            "GROUP_SEAFOAM_ISLANDS_CAVE",
+            "MAP_SEAFOAM_ISLANDS_CAVE",
+            "GROUP_RADIO_TOWER_TRANSMITTER_ANNEX",
+            "MAP_RADIO_TOWER_TRANSMITTER_ANNEX",
+            "GROUP_ROUTE_20",
+            "MAP_ROUTE_20",
+            "GROUP_SEAFOAM_GYM",
+            "MAP_SEAFOAM_GYM",
             "TILESET_PARK",
+            "TILESET_ICE_PATH",
             "ROUTE",
             "CAVE",
             "LANDMARK_FUCHSIA_CITY",
+            "LANDMARK_SEAFOAM_ISLANDS",
             "MUSIC_NATIONAL_PARK",
             "MUSIC_EVOLUTION",
+            "MUSIC_UNION_CAVE",
             "PALETTE_AUTO",
+            "PALETTE_NITE",
             "FISHGROUP_SHORE",
+            "FISHGROUP_OCEAN",
+            "TRUE",
             "MAP_LENGTH",
             "BGEVENT_READ",
             "HELD_NONE",
@@ -85,9 +104,13 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "BG_EVENT_SIZE",
             "COORD_EVENT_SIZE",
             "SPRITEMOVEDATA_STILL",
+            "SPRITEMOVEDATA_POKEMON",
             "SPRITE_LASS",
+            "SPRITE_MOLTRES",
             "SPRITE_POKE_BALL",
             "SPRITE_ROCK",
+            "PAL_NPC_BLUE",
+            "ARTICUNO",
             "MANKEY",
             "MAREEP",
             "VULPIX",
@@ -100,6 +123,13 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "REMORAID",
             "OCTILLERY",
             "WARP_EVENT_SIZE",
+            "farsjump_command",
+            "loadwildmon_command",
+            "startbattle_command",
+            "special_command",
+            "setevent_command",
+            "disappear_command",
+            "reloadmapafterbattle_command",
         ],
     )
 
@@ -558,3 +588,202 @@ def test_compiled_safari_labels_are_custom_only(repo_root: Path) -> None:
     }
     assert all(label in custom_symbols for label in labels)
     assert all(label not in reference_symbols for label in labels)
+
+
+def test_compiled_seafoam_reuses_the_beta_slot_and_has_custom_only_metadata(
+    repo_root: Path, phase_9_constants: dict[str, int], scenario: dict
+) -> None:
+    constants = phase_9_constants
+    seafoam = scenario["seafoam"]
+    custom = RomImage.load(repo_root / "crystallegends.gbc")
+    custom_symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    reference = RomImage.load(repo_root / "pokecrystal11.gbc")
+    reference_symbols = SymbolTable.parse((repo_root / "pokecrystal11.sym").read_text())
+
+    active = (repo_root / seafoam["active_block_path"]).read_bytes()
+    seed = (repo_root / seafoam["seed_block_path"]).read_bytes()
+    active_route = (repo_root / seafoam["route20_active_block_path"]).read_bytes()
+    stock_route = (repo_root / seafoam["route20_stock_block_path"]).read_bytes()
+    assert (
+        custom_symbols["SeafoamIslandsCave_Blocks"].bank,
+        custom_symbols["SeafoamIslandsCave_Blocks"].address,
+    ) == (
+        custom_symbols["BetaUnionCave_Blocks"].bank,
+        custom_symbols["BetaUnionCave_Blocks"].address,
+    )
+    assert custom.at(custom_symbols["SeafoamIslandsCave_Blocks"], 90) == active
+    assert reference.at(reference_symbols["BetaUnionCave_Blocks"], 90) == seed
+    assert custom.at(custom_symbols["Route20_Blocks"], 270) == active_route
+    assert reference.at(reference_symbols["Route20_Blocks"], 270) == stock_route
+
+    assert constants["GROUP_SEAFOAM_ISLANDS_CAVE"] == constants[
+        "GROUP_RADIO_TOWER_TRANSMITTER_ANNEX"
+    ]
+    assert constants["MAP_SEAFOAM_ISLANDS_CAVE"] == (
+        constants["MAP_RADIO_TOWER_TRANSMITTER_ANNEX"] + 1
+    )
+    map_record = custom.slice(
+        custom_symbols["MapGroup_Dungeons"].rom_offset
+        + (constants["MAP_SEAFOAM_ISLANDS_CAVE"] - 1) * constants["MAP_LENGTH"],
+        constants["MAP_LENGTH"],
+    )
+    assert map_record[1] == constants["TILESET_ICE_PATH"]
+    assert map_record[2] == constants["CAVE"]
+    assert map_record[5] == constants["LANDMARK_SEAFOAM_ISLANDS"]
+    assert map_record[6] == constants["MUSIC_UNION_CAVE"]
+    assert map_record[7] >> 4 == constants["TRUE"]
+    assert map_record[7] & 0xF == constants["PALETTE_NITE"]
+    assert map_record[8] == constants["FISHGROUP_OCEAN"]
+
+    attributes = custom.at(custom_symbols["SeafoamIslandsCave_MapAttributes"], 12)
+    assert attributes[:3] == bytes(
+        [seafoam["border_block"], seafoam["dimensions"][1], seafoam["dimensions"][0]]
+    )
+    assert attributes[3] == custom_symbols["SeafoamIslandsCave_Blocks"].bank
+    assert int.from_bytes(attributes[4:6], "little") == custom_symbols[
+        "SeafoamIslandsCave_Blocks"
+    ].address
+    assert attributes[11] == 0
+
+    custom_only = {
+        "SeafoamIslandsCave_MapAttributes",
+        "SeafoamIslandsCave_Blocks",
+        "SeafoamIslandsCave_MapScripts",
+        "SeafoamIslandsCave_MapEvents",
+        "Phase9RefreshArticunoLocation",
+        "Phase9ArticunoEncounter",
+    }
+    assert all(label in custom_symbols for label in custom_only)
+    assert all(label not in reference_symbols for label in custom_only)
+
+
+def test_compiled_seafoam_warps_and_articuno_object_match_the_contract(
+    repo_root: Path, phase_9_constants: dict[str, int], scenario: dict
+) -> None:
+    constants = phase_9_constants
+    seafoam = scenario["seafoam"]
+    articuno = seafoam["articuno"]
+    custom = RomImage.load(repo_root / "crystallegends.gbc")
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    reference = RomImage.load(repo_root / "pokecrystal11.gbc")
+    reference_symbols = SymbolTable.parse((repo_root / "pokecrystal11.sym").read_text())
+
+    assert _decode_warps(
+        custom, symbols, "Route20_MapEvents", constants["WARP_EVENT_SIZE"]
+    ) == [
+        (
+            38,
+            7,
+            1,
+            constants["GROUP_SEAFOAM_GYM"],
+            constants["MAP_SEAFOAM_GYM"],
+        ),
+        (
+            seafoam["route20_warp"][0],
+            seafoam["route20_warp"][1],
+            seafoam["route20_warp"][3],
+            constants["GROUP_SEAFOAM_ISLANDS_CAVE"],
+            constants["MAP_SEAFOAM_ISLANDS_CAVE"],
+        ),
+    ]
+    assert len(
+        _decode_warps(
+            reference,
+            reference_symbols,
+            "Route20_MapEvents",
+            constants["WARP_EVENT_SIZE"],
+        )
+    ) == 1
+    assert _decode_warps(
+        custom,
+        symbols,
+        "SeafoamIslandsCave_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+    ) == [
+        (
+            seafoam["return_warp"][0],
+            seafoam["return_warp"][1],
+            seafoam["return_warp"][3],
+            constants["GROUP_ROUTE_20"],
+            constants["MAP_ROUTE_20"],
+        )
+    ]
+
+    objects = decode_object_events(
+        custom,
+        symbols,
+        "SeafoamIslandsCave_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+        constants["OBJECT_EVENT_SIZE"],
+    )
+    assert len(objects) == 1
+    bird = objects[0]
+    assert (bird.x, bird.y) == tuple(articuno["coordinate"])
+    assert bird.sprite == constants[articuno["sprite"]]
+    assert bird.movement == constants[articuno["movement"]]
+    assert bird.palette_and_type >> 4 == constants[articuno["palette"]]
+    assert bird.palette_and_type & 0xF == constants[articuno["object_type"]]
+    assert bird.script_pointer == symbols["SeafoamIslandsCaveArticuno"].address
+    assert bird.event_flag == constants[articuno["mask_event"]]
+    assert decode_background_events(
+        custom,
+        symbols,
+        "SeafoamIslandsCave_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+    ) == []
+
+
+def test_compiled_articuno_stubs_and_capture_sequence_are_species_exact(
+    repo_root: Path, phase_9_constants: dict[str, int], scenario: dict
+) -> None:
+    constants = phase_9_constants
+    articuno = scenario["seafoam"]["articuno"]
+    rom = RomImage.load(repo_root / "crystallegends.gbc")
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+
+    for stub_label, target_label in (
+        ("SeafoamIslandsCaveArticunoCallback", articuno["callback"]),
+        ("SeafoamIslandsCaveArticuno", articuno["script"]),
+    ):
+        target = symbols[target_label]
+        expected = bytes([constants["farsjump_command"], target.bank]) + target.address.to_bytes(
+            2, "little"
+        )
+        assert rom.at(symbols[stub_label], len(expected)) == expected
+        assert symbols[stub_label].bank != target.bank
+
+    compiled = rom.slice(
+        symbols[articuno["script"]].rom_offset,
+        symbols["Phase9LegendaryBirdsEnd"].rom_offset
+        - symbols[articuno["script"]].rom_offset,
+    )
+    special_id = (
+        symbols["CheckCaughtPokemonSpecial"].address
+        - symbols["SpecialsPointers"].address
+    ) // 3
+    encounter = bytes(
+        [
+            constants["loadwildmon_command"],
+            constants[articuno["species"]],
+            articuno["level"],
+            constants["startbattle_command"],
+            constants["special_command"],
+        ]
+    ) + special_id.to_bytes(2, "little")
+    caught = (
+        bytes([constants["setevent_command"]])
+        + constants[articuno["capture_event"]].to_bytes(2, "little")
+        + bytes([constants["setevent_command"]])
+        + constants[articuno["mask_event"]].to_bytes(2, "little")
+        + bytes([constants["disappear_command"], articuno["object_id"]])
+    )
+    assert encounter in compiled
+    assert caught in compiled
+    assert compiled.index(encounter) < compiled.index(caught)
+    assert compiled.index(caught) < compiled.index(
+        bytes([constants["reloadmapafterbattle_command"]])
+    )

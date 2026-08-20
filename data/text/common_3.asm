@@ -1558,4 +1558,10 @@ SafariZoneBetaNormalBattleSignText::
 	line "ordinary battles"
 	cont "and capture rules."
 	done
+
+Phase9ArticunoEncounterText::
+	text "The freezing air"
+	line "rings with a sharp"
+	cont "cry!"
+	done
 endc

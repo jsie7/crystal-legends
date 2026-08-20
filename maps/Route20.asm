@@ -115,6 +115,9 @@ Route20_MapEvents:
 
 	def_warp_events
 	warp_event 38,  7, SEAFOAM_GYM, 1
+	if DEF(_CRYSTALLEGENDS)
+	warp_event 32,  5, SEAFOAM_ISLANDS_CAVE, 1
+	endc
 
 	def_coord_events
 

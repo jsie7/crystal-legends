@@ -96,6 +96,17 @@ def phase_9_constants(
         "EVENT_SAFARI_ZONE_ACCESSIBLE",
         "EVENT_SAFARI_ZONE_BETA_ULTRA_BALL",
         "EVENT_SAFARI_ZONE_BETA_MAX_REVIVE",
+        "EVENT_ARTICUNO_AVAILABLE",
+        "EVENT_OAK_MOVED_THIRD_BIRD",
+        "EVENT_GOT_ARTICUNO_FROM_ELM",
+        "EVENT_GOT_ZAPDOS_FROM_ELM",
+        "EVENT_GOT_MOLTRES_FROM_ELM",
+        "EVENT_CAUGHT_ARTICUNO_IN_KANTO",
+        "EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION",
+        "GROUP_ROUTE_20",
+        "MAP_ROUTE_20",
+        "GROUP_SEAFOAM_ISLANDS_CAVE",
+        "MAP_SEAFOAM_ISLANDS_CAVE",
         "MORN",
         "DAY",
         "NITE",
@@ -105,6 +116,8 @@ def phase_9_constants(
         "PLAYER_SURF",
         "COLL_WATER_21",
         "COLL_WATER",
+        "COLL_FLOOR",
+        "COLL_ICE",
         "BATTLETYPE_NORMAL",
         "WILD_BATTLE",
         "MANKEY",
@@ -115,6 +128,8 @@ def phase_9_constants(
         "ARTICUNO",
         "MASTER_BALL",
         "BALL_POCKET",
+        "BATTLERESULT_CAUGHT_POKEMON",
+        "OW_UP",
         "ITEM_POCKET",
         "WIN",
         "LOSE",
@@ -1105,3 +1120,302 @@ def test_safari_water_slot_uses_remoraid_in_a_normal_surf_battle(
         assert session.read_symbol("wEnemyMonSpecies") == constants["REMORAID"]
         assert 22 <= session.read_symbol("wEnemyMonLevel") <= 26
         assert "SafariBattleMenu" not in session.hook_history
+
+
+def _articuno_checkpoint_events(
+    branch: str,
+    *,
+    silver_available: bool = False,
+    oak_handoff: bool = False,
+    caught: bool = False,
+    mask: bool = False,
+) -> dict[str, bool]:
+    return {
+        "EVENT_GOT_ARTICUNO_FROM_ELM": branch == "articuno",
+        "EVENT_GOT_ZAPDOS_FROM_ELM": branch == "zapdos",
+        "EVENT_GOT_MOLTRES_FROM_ELM": branch == "moltres",
+        "EVENT_ARTICUNO_AVAILABLE": silver_available,
+        "EVENT_OAK_MOVED_THIRD_BIRD": oak_handoff,
+        "EVENT_CAUGHT_ARTICUNO_IN_KANTO": caught,
+        "EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION": mask,
+    }
+
+
+@pytest.mark.parametrize(
+    ("branch", "silver_available", "oak_handoff", "caught", "visible"),
+    [
+        ("articuno", True, True, False, False),
+        ("zapdos", False, True, False, False),
+        ("zapdos", True, False, False, True),
+        ("moltres", True, False, False, False),
+        ("moltres", False, True, False, True),
+        ("moltres", False, True, True, False),
+    ],
+    ids=[
+        "player-species",
+        "silver-pending",
+        "silver-released",
+        "oak-pending",
+        "oak-handoff",
+        "already-caught",
+    ],
+)
+def test_articuno_visibility_uses_only_the_locked_branch_source(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+    branch: str,
+    silver_available: bool,
+    oak_handoff: bool,
+    caught: bool,
+    visible: bool,
+) -> None:
+    constants = phase_9_constants
+    mask_event = constants["EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION"]
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        map_name="SEAFOAM_ISLANDS_CAVE",
+        x=9,
+        y=5,
+        events=_articuno_checkpoint_events(
+            branch,
+            silver_available=silver_available,
+            oak_handoff=oak_handoff,
+            caught=caught,
+            mask=visible,
+        ),
+    ) as session:
+        assert event_is_set(session, mask_event) is not visible
+        assert (session.read_symbol("wMap1ObjectStructID") != 0xFF) is visible
+
+
+def test_route_20_seafoam_round_trip_and_forced_slide_are_runtime_safe(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+) -> None:
+    constants = phase_9_constants
+    max_frames = scenario["max_frames_per_step"]
+    events = _articuno_checkpoint_events("moltres", oak_handoff=True)
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path / "round-trip",
+        constants,
+        scenario,
+        map_name="ROUTE_20",
+        x=32,
+        y=6,
+        events=events,
+    ) as session:
+        _walk_until_map(
+            session,
+            "up",
+            constants,
+            "SEAFOAM_ISLANDS_CAVE",
+            max_frames,
+        )
+        assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (
+            10,
+            17,
+        )
+        walk_steps(session, "up", "wYCoord", -1, 1, max_frames)
+        _walk_until_map(session, "down", constants, "ROUTE_20", max_frames)
+        assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (
+            32,
+            6,
+        )
+
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path / "slide",
+        constants,
+        scenario,
+        map_name="SEAFOAM_ISLANDS_CAVE",
+        x=10,
+        y=16,
+        events=events,
+    ) as session:
+        walk_steps(session, "up", "wYCoord", -1, 3, max_frames)
+        walk_steps(session, "left", "wXCoord", -1, 1, max_frames)
+        walk_steps(session, "up", "wYCoord", -1, 3, max_frames)
+        assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (
+            9,
+            10,
+        )
+
+        session.pyboy.button_press("up")
+        session.tick(2)
+        session.pyboy.button_release("up")
+        session.tick(1)
+        session.pyboy.button_press("left")
+        session.wait_until(
+            lambda current: current.read_symbol("wYCoord") == 5,
+            max_frames,
+            "northbound Seafoam ice slide",
+        )
+        session.pyboy.button_release("left")
+        session.tick(1)
+        wait_for_idle(session, max_frames)
+        assert session.read_symbol("wXCoord") == 9
+        assert session.read_symbol("wPlayerTileCollision") == constants["COLL_FLOOR"]
+        assert session.read_symbol("wBattleMode") == 0
+
+        session.tap("down", 2, 20)
+        if session.read_symbol("wYCoord") == 5:
+            session.tap("down", 2, 20)
+        session.wait_until(
+            lambda current: current.read_symbol("wYCoord") == 10,
+            max_frames,
+            "southbound Seafoam ice slide",
+        )
+        assert session.read_symbol("wXCoord") == 9
+        assert session.read_symbol("wPlayerTileCollision") == constants["COLL_FLOOR"]
+
+
+def _start_articuno_battle(session, constants: dict[str, int], max_frames: int, cursor: int) -> None:
+    session.enable_script_tracing()
+    session.register_hook(
+        "BattleMenu",
+        lambda current: current.write_symbol("wBattleMenuCursorPosition", cursor),
+    )
+    session.register_hook("CheckCaughtPokemon")
+    battle_count = session.hook_history.count("BattleMenu") + 1
+    session.write_symbol("wPlayerDirection", constants["OW_UP"])
+    session.tap("a", 2, 10)
+    advance_with_a_until(
+        session,
+        lambda current: current.hook_history.count("BattleMenu") >= battle_count,
+        max_frames,
+        "Articuno battle menu",
+    )
+    assert session.read_symbol("wEnemyMonSpecies") == constants["ARTICUNO"]
+    assert session.read_symbol("wEnemyMonLevel") == 60
+
+
+@pytest.mark.parametrize("outcome", ["knockout", "escape"])
+def test_articuno_non_capture_results_restore_a_healthy_retry(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+    outcome: str,
+) -> None:
+    constants = phase_9_constants
+    max_frames = scenario["max_frames_per_step"]
+    capture_event = constants["EVENT_CAUGHT_ARTICUNO_IN_KANTO"]
+    mask_event = constants["EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION"]
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        map_name="SEAFOAM_ISLANDS_CAVE",
+        x=9,
+        y=5,
+        events=_articuno_checkpoint_events("moltres", oak_handoff=True),
+    ) as session:
+        prepare_battle_party(session, constants, constants["MAREEP"], should_win=True)
+        _start_articuno_battle(
+            session, constants, max_frames, 1 if outcome == "knockout" else 4
+        )
+        if outcome == "knockout":
+            session.register_hook(
+                "HasEnemyFainted",
+                lambda current: current.write_symbol_bytes("wEnemyMonHP", b"\0\0"),
+            )
+        else:
+            session.write_symbol_bytes("wBattleMonSpeed", (999).to_bytes(2, "big"))
+            session.write_symbol_bytes("wEnemyMonSpeed", (1).to_bytes(2, "big"))
+        checked = session.hook_history.count("CheckCaughtPokemon") + 1
+        session.tap("a", 2, 10)
+        advance_with_a_until(
+            session,
+            lambda current: current.hook_history.count("CheckCaughtPokemon") >= checked,
+            max_frames,
+            f"Articuno {outcome} capture query",
+        )
+        _finish_overworld_script(session, max_frames)
+        assert not event_is_set(session, capture_event)
+        assert not event_is_set(session, mask_event)
+        assert session.read_symbol("wMap1ObjectStructID") != 0xFF
+
+        place_player(session, 9, 5)
+        _start_articuno_battle(session, constants, max_frames, 1)
+        assert session.read_symbol_bytes("wEnemyMonHP", 2) == session.read_symbol_bytes(
+            "wEnemyMonMaxHP", 2
+        )
+        assert session.read_symbol("wEnemyMonStatus") == 0
+
+
+def test_articuno_capture_and_absence_survive_native_continue(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+) -> None:
+    constants = phase_9_constants
+    max_frames = scenario["max_frames_per_step"]
+    capture_event = constants["EVENT_CAUGHT_ARTICUNO_IN_KANTO"]
+    mask_event = constants["EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION"]
+    persisted = tmp_path / "articuno-captured.sav"
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path / "capture",
+        constants,
+        scenario,
+        map_name="SEAFOAM_ISLANDS_CAVE",
+        x=9,
+        y=5,
+        events=_articuno_checkpoint_events("moltres", oak_handoff=True),
+    ) as session:
+        prepare_battle_party(session, constants, constants["MAREEP"], should_win=True)
+        session.write_symbol("wNumBalls", 1)
+        session.write_symbol_bytes(
+            "wBalls", bytes([constants["MASTER_BALL"], 1, 0xFF])
+        )
+        session.write_symbol("wLastPocket", constants["BALL_POCKET"])
+        _start_articuno_battle(session, constants, max_frames, 3)
+        session.register_hook("PokeBallEffect")
+        session.tap("a", 2, 10)
+        advance_with_a_until(
+            session,
+            lambda current: "PokeBallEffect" in current.hook_history,
+            max_frames,
+            "Articuno Master Ball use",
+        )
+        advance_with_a_until(
+            session,
+            lambda current: event_is_set(current, capture_event),
+            max_frames,
+            "Articuno capture fact",
+        )
+        result = session.read_symbol("wBattleResult")
+        _finish_overworld_script(session, max_frames)
+        assert result & (1 << constants["BATTLERESULT_CAUGHT_POKEMON"])
+        assert event_is_set(session, mask_event)
+        assert session.read_symbol("wMap1ObjectStructID") == 0xFF
+        assert read_progress(session).owns(constants["ARTICUNO"])
+        save_game_from_overworld(session, max_frames)
+        dump_battery_ram(session, persisted)
+
+    with loaded_phase_9_saved_game(
+        repo_root,
+        tmp_path / "continue",
+        constants,
+        scenario,
+        persisted,
+    ) as session:
+        assert event_is_set(session, capture_event)
+        assert event_is_set(session, mask_event)
+        assert session.read_symbol("wMap1ObjectStructID") == 0xFF
+        assert read_progress(session).owns(constants["ARTICUNO"])
+        session.register_hook("BattleMenu")
+        session.write_symbol("wPlayerDirection", constants["OW_UP"])
+        for _ in range(20):
+            session.tap("a", 2, 10)
+        assert "BattleMenu" not in session.hook_history

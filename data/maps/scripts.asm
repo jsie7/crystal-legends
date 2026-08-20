@@ -481,6 +481,9 @@ INCLUDE "maps/Route10South.asm"
 INCLUDE "maps/Route23.asm"
 INCLUDE "maps/SilverCavePokecenter1F.asm"
 INCLUDE "maps/Route28SteelWingHouse.asm"
+if DEF(_CRYSTALLEGENDS)
+INCLUDE "maps/Phase9LegendaryBirds.asm"
+endc
 
 
 SECTION "Map Scripts 25", ROMX
@@ -491,6 +494,7 @@ INCLUDE "maps/Route10North.asm"
 if DEF(_CRYSTALLEGENDS)
 INCLUDE "maps/PlayersHouse2FDebug.asm"
 INCLUDE "maps/RadioTowerTransmitterAnnex.asm"
+INCLUDE "maps/SeafoamIslandsCave.asm"
 endc
 
 ENDSECTION

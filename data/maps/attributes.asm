@@ -716,4 +716,5 @@ ENDM
 	map_attributes Route31VioletGate, ROUTE_31_VIOLET_GATE, $00
 if DEF(_CRYSTALLEGENDS)
 	map_attributes RadioTowerTransmitterAnnex, RADIO_TOWER_TRANSMITTER_ANNEX, $00
+	map_attributes SeafoamIslandsCave, SEAFOAM_ISLANDS_CAVE, $19
 endc

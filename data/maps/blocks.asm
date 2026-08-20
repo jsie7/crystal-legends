@@ -116,7 +116,11 @@ BetaGoldenrodCity_Blocks: ; unreferenced
 	INCBIN "maps/unused/BetaGoldenrodCity.blk"
 
 Route20_Blocks:
+	if DEF(_CRYSTALLEGENDS)
+	INCBIN "maps/Route20CrystalLegends.blk"
+	else
 	INCBIN "maps/Route20.blk"
+	endc
 
 BetaSproutTower6_Blocks: ; unreferenced
 	INCBIN "maps/unused/BetaSproutTower6.blk"
@@ -450,8 +454,13 @@ VioletNicknameSpeechHouse_Blocks:
 VioletKylesHouse_Blocks:
 	INCBIN "maps/House2.blk"
 
-BetaUnionCave_Blocks: ; unreferenced
+BetaUnionCave_Blocks: ; unreferenced in reference builds
+	if DEF(_CRYSTALLEGENDS)
+SeafoamIslandsCave_Blocks:
+	INCBIN "maps/SeafoamIslandsCave.blk"
+	else
 	INCBIN "maps/unused/BetaUnionCave.blk"
+	endc
 
 UnionCaveB1F_Blocks:
 	INCBIN "maps/UnionCaveB1F.blk"

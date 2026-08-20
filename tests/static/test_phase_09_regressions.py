@@ -728,6 +728,239 @@ def test_safari_wild_tables_and_item_scripts_match_the_contract(
     assert all(token not in safari_sources for token in denylist)
 
 
+def test_seafoam_reuses_the_beta_block_slot_and_changes_only_locked_blocks(
+    repo_root: Path, scenario: dict
+) -> None:
+    seafoam = scenario["seafoam"]
+    blocks_source = (repo_root / "data/maps/blocks.asm").read_text()
+    custom_paths = parse_block_paths(blocks_source)
+    reference_paths = parse_block_paths(blocks_source, REFERENCE)
+    assert custom_paths["Route20"] == seafoam["route20_active_block_path"]
+    assert reference_paths["Route20"] == seafoam["route20_stock_block_path"]
+    assert custom_paths["BetaUnionCave"] == seafoam["active_block_path"]
+    assert custom_paths["SeafoamIslandsCave"] == seafoam["active_block_path"]
+    assert reference_paths["BetaUnionCave"] == seafoam["seed_block_path"]
+    assert "SeafoamIslandsCave" not in reference_paths
+
+    seed = (repo_root / seafoam["seed_block_path"]).read_bytes()
+    active = (repo_root / seafoam["active_block_path"]).read_bytes()
+    assert len(seed) == len(active) == 90
+    assert [
+        {"offset": offset, "old_block": old, "new_block": new}
+        for offset, (old, new) in enumerate(zip(seed, active))
+        if old != new
+    ] == seafoam["layout_delta"]
+
+    stock_route = (repo_root / seafoam["route20_stock_block_path"]).read_bytes()
+    active_route = (repo_root / seafoam["route20_active_block_path"]).read_bytes()
+    assert len(stock_route) == len(active_route) == 270
+    assert [
+        {"offset": offset, "old_block": old, "new_block": new}
+        for offset, (old, new) in enumerate(zip(stock_route, active_route))
+        if old != new
+    ] == [seafoam["route20_block_delta"]]
+
+    dimensions = parse_map_dimensions(
+        (repo_root / "constants/map_constants.asm").read_text()
+    )
+    assert [
+        dimensions[seafoam["map"]].width_blocks,
+        dimensions[seafoam["map"]].height_blocks,
+    ] == seafoam["dimensions"]
+
+    custom_maps = _active_code(repo_root / "data/maps/maps.asm", CRYSTAL_LEGENDS)
+    reference_maps = _active_code(repo_root / "data/maps/maps.asm", REFERENCE)
+    declaration = "map SeafoamIslandsCave, " + ", ".join(seafoam["metadata"])
+    assert declaration in custom_maps
+    assert declaration not in reference_maps
+    attributes_source = (repo_root / "data/maps/attributes.asm").read_text()
+    assert (
+        f'map_attributes SeafoamIslandsCave, {seafoam["map"]}, '
+        f'${seafoam["border_block"]:02x}' in attributes_source
+    )
+    assert "INCLUDE \"maps/SeafoamIslandsCave.asm\"" in _active_code(
+        repo_root / "data/maps/scripts.asm", CRYSTAL_LEGENDS
+    )
+    assert "INCLUDE \"maps/SeafoamIslandsCave.asm\"" not in _active_code(
+        repo_root / "data/maps/scripts.asm", REFERENCE
+    )
+
+
+def test_seafoam_warps_object_and_articuno_scripts_match_the_contract(
+    repo_root: Path, scenario: dict
+) -> None:
+    seafoam = scenario["seafoam"]
+    articuno = seafoam["articuno"]
+    sources = {source.map_name: source for source in map_sources_from_repository(repo_root)}
+    cave_events = parse_events(sources[seafoam["map"]])
+    route_events = parse_events(sources["ROUTE_20"])
+    reference_route_events = parse_events(sources["ROUTE_20"], REFERENCE)
+
+    cave_warps = [event for event in cave_events if event.event_type == "warp_event"]
+    assert [list(event.args) for event in cave_warps] == [
+        [str(value) for value in seafoam["return_warp"][:2]]
+        + [seafoam["return_warp"][2], str(seafoam["return_warp"][3])]
+    ]
+    route_warps = [event for event in route_events if event.event_type == "warp_event"]
+    assert [event.args[2] for event in route_warps] == ["SEAFOAM_GYM", seafoam["map"]]
+    assert [event.args[2] for event in reference_route_events if event.event_type == "warp_event"] == [
+        "SEAFOAM_GYM"
+    ]
+
+    objects = [event for event in cave_events if event.event_type == "object_event"]
+    assert len(objects) == 1
+    bird = objects[0]
+    assert [bird.x, bird.y] == articuno["coordinate"]
+    assert bird.args[2] == articuno["sprite"]
+    assert bird.args[3] == articuno["movement"]
+    assert bird.args[8] == articuno["palette"]
+    assert bird.args[9] == articuno["object_type"]
+    assert bird.args[11] == "SeafoamIslandsCaveArticuno"
+    assert bird.args[12] == articuno["mask_event"]
+    assert not [event for event in cave_events if event.event_type == "bg_event"]
+
+    shared = _active_code(
+        repo_root / "maps/Phase9LegendaryBirds.asm", CRYSTAL_LEGENDS
+    )
+    refresh = _section(shared, f'{articuno["callback"]}:', f'{articuno["script"]}:')
+    _assert_in_order(
+        refresh,
+        [
+            f'checkevent {articuno["capture_event"]}',
+            f'checkevent {articuno["player_choice_event"]}',
+            f'checkevent {articuno["silver_choice_event"]}',
+            f'checkevent {articuno["oak_choice_event"]}',
+            f'checkevent {articuno["oak_handoff_event"]}',
+            f'checkevent {articuno["silver_availability_event"]}',
+            f'clearevent {articuno["mask_event"]}',
+            f'setevent {articuno["mask_event"]}',
+        ],
+    )
+    encounter = _section(shared, f'{articuno["script"]}:', "Phase9LegendaryBirdsEnd:")
+    _assert_in_order(
+        encounter,
+        [
+            f'cry {articuno["species"]}',
+            "farwritetext Phase9ArticunoEncounterText",
+            f'loadwildmon {articuno["species"]}, {articuno["level"]}',
+            "startbattle",
+            "special CheckCaughtPokemon",
+            f'setevent {articuno["capture_event"]}',
+            f'setevent {articuno["mask_event"]}',
+            "disappear SEAFOAMISLANDSCAVE_ARTICUNO",
+            "reloadmapafterbattle",
+        ],
+    )
+
+
+def test_seafoam_route_and_forced_ice_slide_reach_the_articuno_approach(
+    repo_root: Path, scenario: dict
+) -> None:
+    seafoam = scenario["seafoam"]
+    dimensions = {
+        seafoam["map"]: MapDimensions(seafoam["map"], *seafoam["dimensions"]),
+        "ROUTE_20": MapDimensions("ROUTE_20", 30, 9),
+    }
+    resolved = {
+        seafoam["map"]: seafoam["active_block_path"],
+        "ROUTE_20": seafoam["route20_active_block_path"],
+    }
+    tilesets = parse_map_tilesets((repo_root / "data/maps/maps.asm").read_text())
+    assert collision_at(
+        repo_root,
+        "ROUTE_20",
+        tuple(seafoam["route20_warp"][:2]),
+        dimensions,
+        resolved,
+        tilesets,
+    ) == "CAVE"
+    assert collision_at(
+        repo_root,
+        "ROUTE_20",
+        tuple(seafoam["route20_approach"]),
+        dimensions,
+        resolved,
+        tilesets,
+    ) == "FLOOR"
+
+    passable = {"FLOOR", "ICE", "WARP_CARPET_DOWN"}
+    start = tuple(seafoam["return_warp"][:2])
+    seen = {start}
+    pending = [start]
+    while pending:
+        x, y = pending.pop()
+        for neighbor in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+            if neighbor in seen:
+                continue
+            nx, ny = neighbor
+            if not (0 <= nx < 20 and 0 <= ny < 18):
+                continue
+            if collision_at(
+                repo_root,
+                seafoam["map"],
+                neighbor,
+                dimensions,
+                resolved,
+                tilesets,
+            ) not in passable:
+                continue
+            seen.add(neighbor)
+            pending.append(neighbor)
+
+    articuno = seafoam["articuno"]
+    assert tuple(articuno["coordinate"]) in seen
+    assert tuple(articuno["approach"]) in seen
+    assert collision_at(
+        repo_root,
+        seafoam["map"],
+        tuple(articuno["approach"]),
+        dimensions,
+        resolved,
+        tilesets,
+    ) == "FLOOR"
+    assert collision_at(
+        repo_root,
+        seafoam["map"],
+        start,
+        dimensions,
+        resolved,
+        tilesets,
+    ) == "WARP_CARPET_DOWN"
+
+    for slide in seafoam["slides"]:
+        x, y = slide["start"]
+        dx, dy = slide["direction"]
+        x += dx
+        y += dy
+        assert collision_at(
+            repo_root,
+            seafoam["map"],
+            (x, y),
+            dimensions,
+            resolved,
+            tilesets,
+        ) == "ICE"
+        while collision_at(
+            repo_root,
+            seafoam["map"],
+            (x, y),
+            dimensions,
+            resolved,
+            tilesets,
+        ) == "ICE":
+            x += dx
+            y += dy
+        assert [x, y] == slide["stop"]
+        assert collision_at(
+            repo_root,
+            seafoam["map"],
+            (x, y),
+            dimensions,
+            resolved,
+            tilesets,
+        ) == "FLOOR"
+
+
 def test_phase_9_starter_source_is_absent_from_reference_builds(repo_root: Path) -> None:
     paths = (
         "maps/CeladonGym.asm",

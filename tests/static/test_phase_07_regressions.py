@@ -330,6 +330,7 @@ def test_annex_map_and_subject_sprites_append_only_to_custom_tables(
             "DEF SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP       EQU 1",
             "EXPORT SCENE_RADIOTOWERTRANSMITTERANNEX_LOCK_ENTRY",
             "EXPORT SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP",
+            "map_const SEAFOAM_ISLANDS_CAVE,                         10,  9",
             "endgroup",
         ],
     )
