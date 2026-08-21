@@ -470,7 +470,7 @@ and pass/fail result. Manually confirm:
    and box delivery; decline/full-storage retry; and natural repeat dialogue.
    Confirm the pond Muk is conspicuous and retryable, Misty's power hint works
    in either order, and the survivor clue, visible gray Cinnabar staircase,
-   flame-crested case, log recovery, and return form one coherent task without
+   hidden rubble cache, log recovery, and return form one coherent task without
    an HM requirement. Explicitly judge level-28 Charmander's Ember-to-level-34
    Flamethrower interval.
 2. Before and after the two Safari prerequisites, confirm Fuchsia's north

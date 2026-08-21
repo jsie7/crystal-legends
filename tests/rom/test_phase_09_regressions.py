@@ -334,21 +334,7 @@ def test_compiled_cinnabar_case_and_flavor_events_match_the_locked_coordinates(
         constants["BG_EVENT_SIZE"],
         constants["OBJECT_EVENT_SIZE"],
     )
-    assert len(custom_objects) == 2
-    assert len(reference_objects) == 1
-    rubble = custom_objects[-1]
-    assert (rubble.x, rubble.y, rubble.sprite, rubble.movement) == (
-        13,
-        6,
-        constants["SPRITE_ROCK"],
-        constants["SPRITEMOVEDATA_STILL"],
-    )
-    assert rubble.palette_and_type & 0xF == constants["OBJECTTYPE_SCRIPT"]
-    assert (
-        rubble.script_pointer
-        == custom_symbols["CinnabarIslandBlainesLogRubble"].address
-    )
-    assert rubble.event_flag == constants["EVENT_RECOVERED_BLAINES_LOG"]
+    assert len(custom_objects) == len(reference_objects) == 1
 
     backgrounds = decode_background_events(
         custom,
@@ -358,7 +344,17 @@ def test_compiled_cinnabar_case_and_flavor_events_match_the_locked_coordinates(
         constants["COORD_EVENT_SIZE"],
         constants["BG_EVENT_SIZE"],
     )
-    assert [(event.x, event.y) for event in backgrounds[-2:]] == [(15, 5), (19, 8)]
+    assert [(event.x, event.y) for event in backgrounds[-3:]] == [
+        (13, 6),
+        (15, 5),
+        (19, 8),
+    ]
+    hidden_case = backgrounds[-3]
+    assert hidden_case.event_type == constants["BGEVENT_READ"]
+    assert (
+        hidden_case.script_pointer
+        == custom_symbols["CinnabarIslandBlainesLogRubble"].address
+    )
 
 
 def test_compiled_phase_9_starter_labels_are_custom_only(repo_root: Path) -> None:

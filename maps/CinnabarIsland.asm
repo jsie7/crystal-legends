@@ -1,8 +1,5 @@
 	object_const_def
 	const CINNABARISLAND_BLUE
-	if DEF(_CRYSTALLEGENDS)
-	const CINNABARISLAND_BLAINES_LOG_RUBBLE
-	endc
 
 CinnabarIsland_MapScripts:
 	def_scene_scripts
@@ -46,8 +43,9 @@ CinnabarIslandOldLabRemains:
 	jumptext CinnabarIslandOldLabRemainsText
 
 CinnabarIslandBlainesLogRubble:
-	faceplayer
 	opentext
+	checkevent EVENT_RECOVERED_BLAINES_LOG
+	iftrue .Empty
 	checkevent EVENT_LEARNED_LOCATION_OF_BLAINES_LOG
 	iffalse .ClaspStuck
 	writetext CinnabarIslandBlainesLogReleaseText
@@ -56,7 +54,12 @@ CinnabarIslandBlainesLogRubble:
 	iffalse .NoRoom
 	setevent EVENT_RECOVERED_BLAINES_LOG
 	closetext
-	disappear CINNABARISLAND_BLAINES_LOG_RUBBLE
+	end
+
+.Empty:
+	writetext CinnabarIslandBlainesLogEmptyText
+	waitbutton
+	closetext
 	end
 
 .ClaspStuck:
@@ -186,6 +189,11 @@ CinnabarIslandBlainesLogReleaseText:
 
 	para "The rubble shifts!"
 	done
+
+CinnabarIslandBlainesLogEmptyText:
+	text "The hollow under"
+	line "the rock is empty."
+	done
 endc
 
 CinnabarIsland_MapEvents:
@@ -202,12 +210,10 @@ CinnabarIsland_MapEvents:
 	bg_event  7,  7, BGEVENT_READ, CinnabarIslandSign
 	bg_event  9,  1, BGEVENT_ITEM, CinnabarIslandHiddenRareCandy
 	if DEF(_CRYSTALLEGENDS)
+	bg_event 13,  6, BGEVENT_READ, CinnabarIslandBlainesLogRubble
 	bg_event 15,  5, BGEVENT_READ, CinnabarIslandOldGymRemains
 	bg_event 19,  8, BGEVENT_READ, CinnabarIslandOldLabRemains
 	endc
 
 	def_object_events
 	object_event  9,  6, SPRITE_BLUE, SPRITEMOVEDATA_SPINRANDOM_SLOW, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, CinnabarIslandBlue, EVENT_BLUE_IN_CINNABAR
-	if DEF(_CRYSTALLEGENDS)
-	object_event 13,  6, SPRITE_ROCK, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, CinnabarIslandBlainesLogRubble, EVENT_RECOVERED_BLAINES_LOG
-	endc

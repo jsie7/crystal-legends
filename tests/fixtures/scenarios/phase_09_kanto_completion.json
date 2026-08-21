@@ -73,6 +73,11 @@
     "return_event": "EVENT_RETURNED_BLAINES_LOG",
     "case_coordinate": [13, 6],
     "flavor_coordinates": [[15, 5], [19, 8]],
+    "rubble_block": {
+      "block_offset": 36,
+      "custom_block": 122,
+      "collision": ["FLOOR", "WALL", "FLOOR", "FLOOR"]
+    },
     "staircase": {
       "block_offset": 23,
       "custom_block": 75,
