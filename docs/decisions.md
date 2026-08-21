@@ -343,9 +343,10 @@ Oak's second assistant reports only the remaining eligible targets.
 
 Articuno is level 60 in a compact Ice Path cave off Route 20 built from the
 unused `BetaUnionCave` backbone. Zapdos is level 60 in a 4-by-4 Power Plant
-Generator Annex after restored power and a later Manager authorization; the
-east shutter opens permanently through directional custom Facility door
-metatiles. Moltres is level 60 on Victory Road's existing isolated eastern
+Generator Annex after restored power and a later Manager authorization. The
+east-edge carpet stays visible while closed, reports the shutter state when
+examined, and becomes a permanent directional warp after authorization.
+Moltres is level 60 on Victory Road's existing isolated eastern
 shelf and always waits for the first Hall of Fame. These maps reuse stock
 sprites and tiles wherever possible, change no save-layout dimensions, and
 remain wholly absent from reference builds.

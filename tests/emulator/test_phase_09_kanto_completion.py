@@ -1722,7 +1722,7 @@ def test_remaining_bird_visibility_uses_branch_source_and_location_gate(
 
 
 @pytest.mark.parametrize("caught", [False, True], ids=["over-limit", "stable"])
-@pytest.mark.parametrize("console_x", [3, 4], ids=["left-console", "right-console"])
+@pytest.mark.parametrize("console_x", [2, 3], ids=["left-console", "right-console"])
 def test_both_generator_consoles_reflect_zapdos_capture(
     repo_root: Path,
     tmp_path: Path,
@@ -1760,7 +1760,7 @@ def test_both_generator_consoles_reflect_zapdos_capture(
 def _interact_with_power_plant_shutter(
     session, constants: dict[str, int], max_frames: int, *, y: int = 11
 ) -> None:
-    place_player(session, 18, y)
+    place_player(session, 19, y)
     session.enable_script_tracing()
     session.write_symbol("wPlayerDirection", constants["OW_RIGHT"])
     session.tap("a", 2, 10)
@@ -1773,6 +1773,7 @@ def _interact_with_power_plant_shutter(
     [(False, False), (True, False)],
     ids=["unpowered", "manager-authorization-required"],
 )
+@pytest.mark.parametrize("door_y", [10, 11], ids=["upper-carpet", "lower-carpet"])
 def test_power_plant_shutter_stays_closed_without_each_access_fact(
     repo_root: Path,
     tmp_path: Path,
@@ -1780,6 +1781,7 @@ def test_power_plant_shutter_stays_closed_without_each_access_fact(
     phase_9_constants: dict[str, int],
     powered: bool,
     authorized: bool,
+    door_y: int,
 ) -> None:
     constants = phase_9_constants
     shutter = scenario["power_plant_annex"]["shutter"]
@@ -1789,8 +1791,8 @@ def test_power_plant_shutter_stays_closed_without_each_access_fact(
         constants,
         scenario,
         map_name="POWER_PLANT",
-        x=18,
-        y=11,
+        x=19,
+        y=door_y,
         events={
             shutter["power_event"]: powered,
             shutter["authorization_event"]: authorized,
@@ -1801,7 +1803,7 @@ def test_power_plant_shutter_stays_closed_without_each_access_fact(
             "closed_block"
         ]
         _interact_with_power_plant_shutter(
-            session, constants, scenario["max_frames_per_step"]
+            session, constants, scenario["max_frames_per_step"], y=door_y
         )
         assert not event_is_set(session, constants[shutter["open_event"]])
         assert _loaded_block(session, *shutter["block_origin"]) == shutter[
@@ -1841,11 +1843,18 @@ def test_manager_authorizes_the_annex_only_after_the_repair_reward_flow(
         assert event_is_set(session, authorization)
 
 
+@pytest.mark.parametrize(
+    ("door_y", "annex_y"),
+    [(10, 5), (11, 6)],
+    ids=["upper-carpet", "lower-carpet"],
+)
 def test_power_plant_annex_round_trip_and_open_block_survive_native_continue(
     repo_root: Path,
     tmp_path: Path,
     scenario: dict,
     phase_9_constants: dict[str, int],
+    door_y: int,
+    annex_y: int,
 ) -> None:
     constants = phase_9_constants
     annex = scenario["power_plant_annex"]
@@ -1864,15 +1873,14 @@ def test_power_plant_annex_round_trip_and_open_block_survive_native_continue(
         constants,
         scenario,
         map_name="POWER_PLANT",
-        x=18,
-        y=11,
+        x=19,
+        y=door_y,
         events=events,
     ) as session:
         _interact_with_power_plant_shutter(
-            session, constants, scenario["max_frames_per_step"]
+            session, constants, scenario["max_frames_per_step"], y=door_y
         )
         assert event_is_set(session, constants[shutter["open_event"]])
-        assert _loaded_block(session, *shutter["block_origin"]) == shutter["open_block"]
 
         _walk_until_map(
             session,
@@ -1883,7 +1891,7 @@ def test_power_plant_annex_round_trip_and_open_block_survive_native_continue(
         )
         assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (
             0,
-            5,
+            annex_y,
         )
         walk_steps(
             session,
@@ -1902,8 +1910,11 @@ def test_power_plant_annex_round_trip_and_open_block_survive_native_continue(
         )
         assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (
             19,
-            11,
+            door_y,
         )
+        assert _loaded_block(session, *shutter["block_origin"]) == shutter[
+            "open_block"
+        ]
         walk_steps(
             session,
             "left",
@@ -1914,7 +1925,7 @@ def test_power_plant_annex_round_trip_and_open_block_survive_native_continue(
         )
         assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (
             18,
-            11,
+            door_y,
         )
         save_game_from_overworld(session, scenario["max_frames_per_step"])
         dump_battery_ram(session, persisted)

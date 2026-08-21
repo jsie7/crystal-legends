@@ -961,16 +961,9 @@ def test_compiled_facility_variant_and_reference_assets_are_exact(
     )
     assert custom_collision[: len(reference_collision)] == reference_collision
     assert custom_collision[len(reference_collision) :] == bytes(
-        [
-            constants["COLL_FLOOR"],
-            constants["COLL_WARP_CARPET_RIGHT"],
-            constants["COLL_FLOOR"],
-            constants["COLL_WARP_CARPET_RIGHT"],
-            constants["COLL_WARP_CARPET_LEFT"],
-            constants["COLL_FLOOR"],
-            constants["COLL_WARP_CARPET_LEFT"],
-            constants["COLL_FLOOR"],
-        ]
+        constants[f"COLL_{collision}"]
+        for block in sorted(facility["collisions"], key=int)
+        for collision in facility["collisions"][block]
     )
     assert custom_symbols["TilesetFacilityPalMap"].address == reference_symbols[
         "TilesetFacilityPalMap"
@@ -1073,7 +1066,7 @@ def test_compiled_power_plant_annex_and_remaining_bird_objects_match_contract(
         for event in backgrounds[-2:]
     ] == [
         (x, y, constants["BGEVENT_RIGHT"], symbols["PowerPlantAnnexShutter"].address)
-        for x, y in annex["shutter"]["door_coordinates"]
+        for x, y in annex["shutter"]["interaction_event_coordinates"]
     ]
 
     annex_backgrounds = decode_background_events(

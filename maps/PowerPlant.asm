@@ -21,7 +21,7 @@ if DEF(_CRYSTALLEGENDS)
 PowerPlantAnnexShutterCallback:
 	checkevent EVENT_OPENED_POWER_PLANT_ANNEX
 	iffalse .Closed
-	changeblock 18, 10, $40 ; open east service shutter
+	changeblock 18, 10, $40 ; activate east service carpet warp
 .Closed:
 	endcallback
 endc
@@ -234,12 +234,13 @@ PowerPlantAnnexShutter:
 	farwritetext Phase9PowerPlantAnnexShutterOpensText
 	waitbutton
 	playsound SFX_ENTER_DOOR
-	changeblock 18, 10, $40 ; open east service shutter
+	changeblock 18, 10, $40 ; activate east service carpet warp
 	refreshmap
 	setevent EVENT_OPENED_POWER_PLANT_ANNEX
 	waitsfx
 	closetext
-	end
+	warpcheck
+	newloadmap MAPSETUP_DOOR
 
 .NoPower:
 	farwritetext Phase9PowerPlantAnnexShutterNoPowerText
@@ -465,8 +466,9 @@ endc
 	bg_event  0,  1, BGEVENT_READ, PowerPlantBookshelf
 	bg_event  1,  1, BGEVENT_READ, PowerPlantBookshelf
 if DEF(_CRYSTALLEGENDS)
-	bg_event 19, 10, BGEVENT_RIGHT, PowerPlantAnnexShutter
-	bg_event 19, 11, BGEVENT_RIGHT, PowerPlantAnnexShutter
+	; Read from the visible edge carpet while facing the off-map shutter.
+	bg_event 20, 10, BGEVENT_RIGHT, PowerPlantAnnexShutter
+	bg_event 20, 11, BGEVENT_RIGHT, PowerPlantAnnexShutter
 endc
 
 	def_object_events

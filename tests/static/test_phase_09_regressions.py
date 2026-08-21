@@ -1380,7 +1380,7 @@ def test_facility_variant_reuses_only_the_locked_gate_tiles_and_appends_doors(
     stock_metatiles = (repo_root / facility["stock_metatiles_path"]).read_bytes()
     active_metatiles = (repo_root / facility["active_metatiles_path"]).read_bytes()
     assert len(stock_metatiles) == 0x40 * 16
-    assert len(active_metatiles) == 0x42 * 16
+    assert len(active_metatiles) == 0x45 * 16
     assert active_metatiles[: len(stock_metatiles)] == stock_metatiles
     assert all(tile not in stock_metatiles for tile in facility["destination_tiles"])
     for block, expected in facility["metatiles"].items():
@@ -1392,7 +1392,7 @@ def test_facility_variant_reuses_only_the_locked_gate_tiles_and_appends_doors(
     reference_rows = parse_collision_rows(collision_source, REFERENCE)
     assert custom_rows[:0x40] == reference_rows
     assert len(reference_rows) == 0x40
-    assert len(custom_rows) == 0x42
+    assert len(custom_rows) == 0x45
     for block, expected in facility["collisions"].items():
         assert custom_rows[int(block)] == tuple(expected)
 
@@ -1471,7 +1471,7 @@ def test_power_plant_annex_layout_shutter_warps_and_route_match_the_contract(
         for event in plant_events
         if event.event_type == "bg_event"
         and event.identity == "PowerPlantAnnexShutter"
-    ] == annex["shutter"]["door_coordinates"]
+    ] == annex["shutter"]["interaction_event_coordinates"]
     assert len([event for event in plant_events if event.event_type == "object_event"]) == 7
     assert [
         [event.x, event.y]
@@ -1513,7 +1513,7 @@ def test_power_plant_annex_layout_shutter_warps_and_route_match_the_contract(
             relevant_dimensions,
             resolved,
             tilesets,
-        ) == "WALL"
+        ) == "FLOOR"
     for coordinate in [warp[:2] for warp in annex["return_warps"]]:
         assert collision_at(
             repo_root,
@@ -1544,6 +1544,8 @@ def test_power_plant_annex_layout_shutter_warps_and_route_match_the_contract(
             f'changeblock {annex["shutter"]["block_origin"][0]}, {annex["shutter"]["block_origin"][1]}, ${annex["shutter"]["open_block"]:02x}',
             "refreshmap",
             f'setevent {annex["shutter"]["open_event"]}',
+            "warpcheck",
+            "newloadmap MAPSETUP_DOOR",
         ],
     )
 

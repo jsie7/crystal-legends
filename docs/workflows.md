@@ -484,8 +484,9 @@ and pass/fail result. Manually confirm:
    and morning/day/night readability.
 3. On all three starter branches, confirm only Oak's and Silver's species
    appear. Review the recognizable compact Seafoam route and Articuno alcove;
-   the Power Plant's red east shutter, permanent opening, industrial
-   one-console annex, and brown Zapdos icon; and the complete Victory Road
+   the Power Plant's red east carpet, closed-state interaction, permanent
+   opening, industrial one-console annex, and brown Zapdos icon; and the
+   complete Victory Road
    higher-floor loop, Full Restore bypass, approach tile, south return hops,
    and red Moltres icon after Hall of Fame. Confirm cry, name, species, level,
    and palette; verify that none of the three birds flees on its own and that

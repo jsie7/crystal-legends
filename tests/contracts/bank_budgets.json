@@ -10,6 +10,7 @@
   {"domain": "ROMX", "bank": 30, "minimum_free": 1536, "reason": "Protect Map Scripts 9, including PlayersHouse2F, below the clean baseline of $07f1 free."},
   {"domain": "ROMX", "bank": 39, "minimum_free": 896, "reason": "Protect Map Scripts 12 and the short Phase 4 Cianwood pharmacist hint below the reviewed baseline of $044e free."},
   {"domain": "ROMX", "bank": 44, "minimum_free": 8192, "reason": "Protect the Phase 9 conditional map layouts and Generator Annex block data below the reviewed final reserve of $249a free."},
+  {"domain": "ROMX", "bank": 55, "minimum_free": 512, "reason": "Protect the Facility tileset data below the reviewed $021c reserve after the persistent edge carpet and split annex doorway metatiles."},
   {"domain": "ROMX", "bank": 96, "minimum_free": 2560, "reason": "Protect Map Scripts 13 and reserve space for the Phase 8 Silver release scene below the clean bank baseline of $0e5e free."},
   {"domain": "ROMX", "bank": 97, "minimum_free": 6656, "reason": "Protect Map Scripts 14 and the Phase 4 Burned Tower event below the reviewed baseline of $1b81 free."},
   {"domain": "ROMX", "bank": 98, "minimum_free": 1536, "reason": "Protect Map Scripts 15 and the Phase 9 Misty and Power Plant flows below the reviewed final reserve of $0646 free."},

@@ -280,12 +280,18 @@
     "stock_metatiles_path": "data/tilesets/facility_metatiles.bin",
     "active_metatiles_path": "data/tilesets/facility_metatiles_crystallegends.bin",
     "metatiles": {
-      "64": [1, 38, 52, 53, 38, 1, 52, 53, 1, 38, 52, 53, 38, 1, 52, 53],
-      "65": [52, 53, 1, 38, 52, 53, 38, 1, 52, 53, 1, 38, 52, 53, 38, 1]
+      "64": [28, 28, 52, 53, 28, 28, 52, 53, 28, 28, 52, 53, 28, 28, 52, 53],
+      "65": [52, 53, 1, 38, 52, 53, 38, 1, 52, 53, 1, 38, 52, 53, 38, 1],
+      "66": [28, 28, 52, 53, 28, 28, 52, 53, 28, 28, 52, 53, 28, 28, 52, 53],
+      "67": [1, 38, 1, 38, 38, 1, 38, 1, 52, 53, 1, 38, 52, 53, 38, 1],
+      "68": [52, 53, 1, 38, 52, 53, 38, 1, 59, 59, 59, 59, 59, 59, 59, 59]
     },
     "collisions": {
       "64": ["FLOOR", "WARP_CARPET_RIGHT", "FLOOR", "WARP_CARPET_RIGHT"],
-      "65": ["WARP_CARPET_LEFT", "FLOOR", "WARP_CARPET_LEFT", "FLOOR"]
+      "65": ["WARP_CARPET_LEFT", "FLOOR", "WARP_CARPET_LEFT", "FLOOR"],
+      "66": ["FLOOR", "FLOOR", "FLOOR", "FLOOR"],
+      "67": ["FLOOR", "FLOOR", "WARP_CARPET_LEFT", "FLOOR"],
+      "68": ["WARP_CARPET_LEFT", "FLOOR", "WALL", "WALL"]
     },
     "palette_map_path": "gfx/tilesets/facility_palette_map.asm"
   },
@@ -293,30 +299,31 @@
     "map": "POWER_PLANT_GENERATOR_ANNEX",
     "dimensions": [4, 4],
     "block_path": "maps/PowerPlantGeneratorAnnex.blk",
-    "blocks": [2, 2, 2, 2, 18, 7, 7, 18, 65, 8, 7, 18, 32, 32, 32, 32],
+    "blocks": [2, 2, 2, 2, 18, 7, 7, 18, 67, 8, 7, 18, 68, 32, 32, 32],
     "metadata": ["TILESET_FACILITY", "INDOOR", "LANDMARK_POWER_PLANT", "MUSIC_VIRIDIAN_CITY", "FALSE", "PALETTE_DAY", "FISHGROUP_SHORE"],
     "border_block": 0,
     "power_plant_stock_block_path": "maps/PowerPlant.blk",
     "power_plant_active_block_path": "maps/PowerPlantCrystalLegends.blk",
-    "power_plant_block_delta": {"offset": 59, "old_block": 27, "new_block": 51},
+    "power_plant_block_delta": {"offset": 59, "old_block": 27, "new_block": 66},
     "shutter": {
       "block_origin": [18, 10],
       "door_coordinates": [[19, 10], [19, 11]],
-      "closed_block": 51,
+      "interaction_event_coordinates": [[20, 10], [20, 11]],
+      "closed_block": 66,
       "open_block": 64,
       "authorization_event": "EVENT_POWER_PLANT_ANNEX_AUTHORIZED",
       "open_event": "EVENT_OPENED_POWER_PLANT_ANNEX",
       "power_event": "EVENT_RESTORED_POWER_TO_KANTO"
     },
     "power_plant_warps": [[19, 10, "POWER_PLANT_GENERATOR_ANNEX", 1], [19, 11, "POWER_PLANT_GENERATOR_ANNEX", 2]],
-    "return_warps": [[0, 4, "POWER_PLANT", 3], [0, 5, "POWER_PLANT", 4]],
-    "console_coordinates": [[3, 4], [4, 4]],
-    "route": [[1, 5], [2, 5], [3, 5], [4, 5], [4, 4], [4, 3]],
+    "return_warps": [[0, 5, "POWER_PLANT", 3], [0, 6, "POWER_PLANT", 4]],
+    "console_coordinates": [[2, 4], [3, 4]],
+    "route": [[1, 5], [2, 5], [3, 5], [4, 5], [4, 4], [4, 3], [3, 3]],
     "zapdos": {
       "species": "ZAPDOS",
       "level": 60,
-      "coordinate": [4, 2],
-      "approach": [4, 3],
+      "coordinate": [3, 2],
+      "approach": [3, 3],
       "object_id": 2,
       "sprite": "SPRITE_MOLTRES",
       "movement": "SPRITEMOVEDATA_POKEMON",
