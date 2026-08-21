@@ -53,6 +53,7 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "EVENT_GOT_CHARMANDER_FROM_BLAINE",
             "EVENT_GOT_SQUIRTLE_FROM_MISTY",
             "EVENT_HELPED_ERIKA_CLEAN_CELADON_POND",
+            "EVENT_ERIKA_REQUESTED_CELADON_POND_HELP",
             "EVENT_GOT_ARTICUNO_FROM_ELM",
             "EVENT_GOT_MOLTRES_FROM_ELM",
             "EVENT_GOT_ZAPDOS_FROM_ELM",
@@ -177,6 +178,7 @@ def test_compiled_phase_9_ids_do_not_expand_the_save_layout(
     assert constants["EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION"] == 2030
     assert constants["EVENT_ZAPDOS_NOT_AT_KANTO_LOCATION"] == 2031
     assert constants["EVENT_MOLTRES_NOT_AT_KANTO_LOCATION"] == 2032
+    assert constants["EVENT_ERIKA_REQUESTED_CELADON_POND_HELP"] == 2033
     assert constants["NUM_EVENTS"] == 2048
 
     symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
@@ -365,7 +367,8 @@ def test_compiled_phase_9_starter_labels_are_custom_only(repo_root: Path) -> Non
         "ErikaBulbasaurOfferText",
         "MistySquirtleOfferText",
         "BlaineCharmanderOfferText",
-        "CeladonCityMukPond",
+        "CeladonCityMukPondEntry",
+        "CeladonCityMukPondEncounter",
         "CinnabarIslandBlainesLogRubble",
         "ErikaStarterOTName",
         "MistyStarterOTName",

@@ -10,8 +10,8 @@
   "delivery_contract": "stock_givepoke_0_party_1_box_2_full",
   "events": {
     "first": 2015,
-    "last": 2032,
-    "count": 18
+    "last": 2033,
+    "count": 19
   },
   "gifts": [
     {
@@ -63,8 +63,10 @@
   "erika_task": {
     "map": "CELADON_CITY",
     "coordinate": [15, 18],
+    "entry_coordinates": [[13, 18], [14, 18], [15, 18]],
     "species": "MUK",
     "level": 35,
+    "request_event": "EVENT_ERIKA_REQUESTED_CELADON_POND_HELP",
     "completion_event": "EVENT_HELPED_ERIKA_CLEAN_CELADON_POND",
     "success_results": ["knockout", "capture"],
     "retry_results": ["run", "loss"]

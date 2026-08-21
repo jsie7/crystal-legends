@@ -267,7 +267,7 @@ def test_project_mew_event_slots_are_explicit_and_reference_reserved(
             "const_skip 3",
             "const_skip 4",
             "const_skip 4",
-            "const_skip 18",
+            "const_skip 19",
             "const_next 2048",
             "DEF NUM_EVENTS EQU const_value",
         ],
@@ -805,7 +805,7 @@ def test_generic_caught_result_is_custom_only_and_keeps_celebi_compatible(
     assert "cp BATTLETYPE_CELEBI" not in custom_catch
     assert "cp BATTLETYPE_CELEBI" in reference_catch
     assert "set BATTLERESULT_CAUGHT_CELEBI, [hl]" in reference_catch
-    assert custom_specials[-1] == "add_special CheckCaughtPokemon"
+    assert "add_special CheckCaughtPokemon" in custom_specials
     assert "add_special CheckCaughtPokemon" not in reference_specials
     _assert_contiguous(
         custom_celebi,

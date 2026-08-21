@@ -103,7 +103,7 @@ def scenario(repo_root: Path) -> dict:
 
 def test_phase_9_contract_locks_the_three_starter_rewards(scenario: dict) -> None:
     assert scenario["scenario_id"] == "phase-09-kanto-completion"
-    assert scenario["events"] == {"first": 2015, "last": 2032, "count": 18}
+    assert scenario["events"] == {"first": 2015, "last": 2033, "count": 19}
     assert [(gift["species"], gift["level"]) for gift in scenario["gifts"]] == [
         ("BULBASAUR", 28),
         ("SQUIRTLE", 28),
@@ -114,8 +114,10 @@ def test_phase_9_contract_locks_the_three_starter_rewards(scenario: dict) -> Non
     assert scenario["erika_task"] == {
         "map": "CELADON_CITY",
         "coordinate": [15, 18],
+        "entry_coordinates": [[13, 18], [14, 18], [15, 18]],
         "species": "MUK",
         "level": 35,
+        "request_event": "EVENT_ERIKA_REQUESTED_CELADON_POND_HELP",
         "completion_event": "EVENT_HELPED_ERIKA_CLEAN_CELADON_POND",
         "success_results": ["knockout", "capture"],
         "retry_results": ["run", "loss"],
@@ -145,6 +147,7 @@ def test_phase_9_events_are_contiguous_and_reference_reserved(repo_root: Path) -
         "EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION",
         "EVENT_ZAPDOS_NOT_AT_KANTO_LOCATION",
         "EVENT_MOLTRES_NOT_AT_KANTO_LOCATION",
+        "EVENT_ERIKA_REQUESTED_CELADON_POND_HELP",
     ]
     _assert_contiguous(
         crystal,
@@ -156,7 +159,7 @@ def test_phase_9_events_are_contiguous_and_reference_reserved(repo_root: Path) -
         ],
     )
     assert all(not any(event in line for line in reference) for event in events)
-    assert "const_skip 18" in reference
+    assert "const_skip 19" in reference
 
 
 def test_blaines_log_reuses_only_item_b0_in_the_custom_build(
@@ -235,6 +238,14 @@ def test_starter_scripts_keep_service_and_delivery_state_independent(
         ],
     )
     _assert_in_order(
+        erika,
+        [
+            ".RequestPondHelp:",
+            "setevent EVENT_ERIKA_REQUESTED_CELADON_POND_HELP",
+            "writetext ErikaPondRequestText",
+        ],
+    )
+    _assert_in_order(
         misty,
         [
             "checkevent EVENT_RESTORED_POWER_TO_KANTO",
@@ -284,11 +295,23 @@ def test_starter_scripts_keep_service_and_delivery_state_independent(
 
 def test_erika_muk_and_blaine_log_retry_only_after_success(repo_root: Path) -> None:
     celadon = _active_code(repo_root / "maps/CeladonCity.asm", CRYSTAL_LEGENDS)
-    pond = _section(celadon, "CeladonCityMukPond:", "CeladonCityFisherText:")
+    entry = _section(
+        celadon, "CeladonCityMukPondEntry:", "CeladonCityMukPondEncounter:"
+    )
+    _assert_in_order(
+        entry,
+        [
+            "checkevent EVENT_ERIKA_REQUESTED_CELADON_POND_HELP",
+            "checkevent EVENT_HELPED_ERIKA_CLEAN_CELADON_POND",
+            "sjump CeladonCityMukPondEncounter",
+        ],
+    )
+    pond = _section(
+        celadon, "CeladonCityMukPondEncounter:", "CeladonCityFisherText:"
+    )
     _assert_in_order(
         pond,
         [
-            "checkflag ENGINE_RAINBOWBADGE",
             "loadwildmon MUK, 35",
             "startbattle",
             "ifequal LOSE, .Retry",
@@ -296,6 +319,12 @@ def test_erika_muk_and_blaine_log_retry_only_after_success(repo_root: Path) -> N
             "setevent EVENT_HELPED_ERIKA_CLEAN_CELADON_POND",
         ],
     )
+    for x in (13, 14, 15):
+        assert (
+            f"coord_event {x}, 18, SCENE_ALWAYS, CeladonCityMukPondEntry"
+            in celadon
+        )
+    assert not any("BGEVENT_READ, CeladonCityMukPond" in line for line in celadon)
 
     island = _active_code(repo_root / "maps/CinnabarIsland.asm", CRYSTAL_LEGENDS)
     case = _section(

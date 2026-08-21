@@ -85,11 +85,17 @@ CeladonCityHiddenPpUp:
 	hiddenitem PP_UP, EVENT_CELADON_CITY_HIDDEN_PP_UP
 
 if DEF(_CRYSTALLEGENDS)
-CeladonCityMukPond:
-	checkflag ENGINE_RAINBOWBADGE
-	iffalse .BeforeRainbowBadge
+CeladonCityMukPondEntry:
+	checkevent EVENT_ERIKA_REQUESTED_CELADON_POND_HELP
+	iffalse .Done
 	checkevent EVENT_HELPED_ERIKA_CLEAN_CELADON_POND
-	iftrue .PondTreated
+	iftrue .Done
+	sjump CeladonCityMukPondEncounter
+
+.Done:
+	end
+
+CeladonCityMukPondEncounter:
 	opentext
 	writetext CeladonCityMukPondBattleText
 	yesorno
@@ -117,11 +123,6 @@ CeladonCityMukPond:
 	closetext
 	end
 
-.BeforeRainbowBadge:
-	jumptext CeladonCityMukPondBeforeBadgeText
-
-.PondTreated:
-	jumptext CeladonCityMukPondTreatedText
 endc
 
 CeladonCityFisherText:
@@ -178,14 +179,6 @@ CeladonCityGramps1PondCalmedText:
 	line "the pond now."
 	done
 
-CeladonCityMukPondBeforeBadgeText:
-	text "Dark sludge swirls"
-	line "in the pond."
-
-	para "Something large is"
-	line "moving below."
-	done
-
 CeladonCityMukPondBattleText:
 	text "A MUK is churning"
 	line "the polluted pond."
@@ -205,10 +198,6 @@ CeladonCityMukCalmedText:
 	line "for ERIKA's care."
 	done
 
-CeladonCityMukPondTreatedText:
-	text "The treated water"
-	line "is clearing."
-	done
 endc
 
 CeladonCityGramps2Text:
@@ -350,6 +339,11 @@ CeladonCity_MapEvents:
 	warp_event 25, 29, CELADON_CAFE, 1
 
 	def_coord_events
+	if DEF(_CRYSTALLEGENDS)
+	coord_event 13, 18, SCENE_ALWAYS, CeladonCityMukPondEntry
+	coord_event 14, 18, SCENE_ALWAYS, CeladonCityMukPondEntry
+	coord_event 15, 18, SCENE_ALWAYS, CeladonCityMukPondEntry
+	endc
 
 	def_bg_events
 	bg_event 23, 21, BGEVENT_READ, CeladonCitySign
@@ -360,9 +354,6 @@ CeladonCity_MapEvents:
 	bg_event 29, 21, BGEVENT_READ, CeladonCityTrainerTips
 	bg_event 30,  9, BGEVENT_READ, CeladonCityPokecenterSign
 	bg_event 37, 21, BGEVENT_ITEM, CeladonCityHiddenPpUp
-	if DEF(_CRYSTALLEGENDS)
-	bg_event 15, 18, BGEVENT_READ, CeladonCityMukPond
-	endc
 
 	def_object_events
 	object_event 26, 11, SPRITE_FISHER, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, CeladonCityFisherScript, -1

@@ -296,6 +296,9 @@ badge and a separate thematic service. Erika requires the deterministic
 Celadon pond Muk task, Misty recognizes completion of the existing Machine
 Part and Power Plant arc, and Blaine requires the Cinnabar survivor trail plus
 recovery and return of `BLAINE'S LOG`. All three rewards coexist on one save.
+Erika's request is recorded separately from task completion; after that
+conversation, entering any of the pond's three northern water tiles starts the
+Muk prompt. Entry remains silent before the request and after completion.
 
 Use the stock `givepoke` party/current-box transaction and ordinary generated
 moves, then assign the gifting leader's OT name and a deterministic OT ID based

@@ -84,6 +84,7 @@ def phase_9_constants(
         "EVENT_LEARNED_LOCATION_OF_BLAINES_LOG",
         "EVENT_RECOVERED_BLAINES_LOG",
         "EVENT_RETURNED_BLAINES_LOG",
+        "EVENT_ERIKA_REQUESTED_CELADON_POND_HELP",
         "GROUP_CELADON_CITY",
         "MAP_CELADON_CITY",
         "GROUP_SAFARI_ZONE_WARDENS_HOME",
@@ -224,6 +225,11 @@ def test_kanto_gifts_require_service_and_declines_remain_retryable(
         assert session.hook_history.count("_YesNoBox") == yes_no_count
         assert not event_is_set(session, completion)
         assert read_progress(session).party.count == 0
+        if gift["giver"] == "ERIKA":
+            assert event_is_set(
+                session,
+                phase_9_constants["EVENT_ERIKA_REQUESTED_CELADON_POND_HELP"],
+            )
 
     with loaded_phase_9_gift_checkpoint(
         repo_root,
@@ -563,8 +569,7 @@ def _start_muk_battle(session, max_frames: int, menu_cursor: int) -> None:
     yes_no_count = session.hook_history.count("_YesNoBox") + 1
     menu_count = session.hook_history.count("VerticalMenu") + 1
     battle_count = session.hook_history.count("BattleMenu") + 1
-    session.tap("down", 2, 10)
-    session.tap("a", 2, 10)
+    walk_steps(session, "up", "wYCoord", -1, 1, max_frames)
     advance_with_a_until(
         session,
         lambda current: (
@@ -584,7 +589,7 @@ def _start_muk_battle(session, max_frames: int, menu_cursor: int) -> None:
     )
 
 
-def test_celadon_pond_is_badge_gated_and_decline_is_non_mutating(
+def test_celadon_pond_is_request_gated(
     repo_root: Path,
     tmp_path: Path,
     scenario: dict,
@@ -614,19 +619,60 @@ def test_celadon_pond_is_badge_gated_and_decline_is_non_mutating(
 
     with loaded_phase_9_map_checkpoint(
         repo_root,
-        tmp_path / "decline",
+        tmp_path / "not-requested",
         constants,
         scenario,
         map_name="CELADON_CITY",
-        x=15,
-        y=17,
-        events={"EVENT_HELPED_ERIKA_CLEAN_CELADON_POND": False},
+        x=14,
+        y=19,
+        events={
+            "EVENT_HELPED_ERIKA_CLEAN_CELADON_POND": False,
+            "EVENT_ERIKA_REQUESTED_CELADON_POND_HELP": False,
+        },
         badges=("ENGINE_RAINBOWBADGE",),
+        player_state="PLAYER_SURF",
+    ) as session:
+        session.register_hook("_YesNoBox")
+        assert session.read_symbol("wPlayerState") == constants["PLAYER_SURF"]
+        assert session.read_symbol("wPlayerTileCollision") in (
+            constants["COLL_WATER"],
+            constants["COLL_WATER_21"],
+        )
+        walk_steps(session, "up", "wYCoord", -1, 1, max_frames)
+        _finish_overworld_script(session, max_frames)
+        assert session.read_symbol("wYCoord") == 18
+        assert "_YesNoBox" not in session.hook_history
+        assert not event_is_set(session, service)
+
+
+@pytest.mark.parametrize("entry_x", [13, 14, 15])
+def test_each_celadon_pond_entry_tile_triggers_the_requested_muk(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+    entry_x: int,
+) -> None:
+    constants = phase_9_constants
+    max_frames = scenario["max_frames_per_step"]
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        map_name="CELADON_CITY",
+        x=entry_x,
+        y=19,
+        events={
+            "EVENT_HELPED_ERIKA_CLEAN_CELADON_POND": False,
+            "EVENT_ERIKA_REQUESTED_CELADON_POND_HELP": True,
+        },
+        badges=("ENGINE_RAINBOWBADGE",),
+        player_state="PLAYER_SURF",
     ) as session:
         session.register_hook("_YesNoBox")
         session.register_hook("VerticalMenu")
-        session.tap("down", 2, 10)
-        session.tap("a", 2, 10)
+        walk_steps(session, "up", "wYCoord", -1, 1, max_frames)
         advance_with_a_until(
             session,
             lambda current: (
@@ -634,11 +680,14 @@ def test_celadon_pond_is_badge_gated_and_decline_is_non_mutating(
                 and "VerticalMenu" in current.hook_history
             ),
             max_frames,
-            "Celadon pond decline menu",
+            f"Celadon pond entry at x={entry_x}",
+        )
+        assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (
+            entry_x,
+            18,
         )
         session.tap("b", 2, 10)
         _finish_overworld_script(session, max_frames)
-        assert not event_is_set(session, service)
 
 
 @pytest.mark.parametrize("outcome", ["escape", "knockout", "capture"])
@@ -659,9 +708,13 @@ def test_celadon_muk_battle_outcomes_match_the_service_contract(
         scenario,
         map_name="CELADON_CITY",
         x=15,
-        y=17,
-        events={"EVENT_HELPED_ERIKA_CLEAN_CELADON_POND": False},
+        y=19,
+        events={
+            "EVENT_HELPED_ERIKA_CLEAN_CELADON_POND": False,
+            "EVENT_ERIKA_REQUESTED_CELADON_POND_HELP": True,
+        },
         badges=("ENGINE_RAINBOWBADGE",),
+        player_state="PLAYER_SURF",
     ) as session:
         prepare_battle_party(
             session, constants, constants["ARTICUNO"], should_win=True
@@ -721,9 +774,13 @@ def test_celadon_muk_player_loss_leaves_service_pending(
         scenario,
         map_name="CELADON_CITY",
         x=15,
-        y=17,
-        events={"EVENT_HELPED_ERIKA_CLEAN_CELADON_POND": False},
+        y=19,
+        events={
+            "EVENT_HELPED_ERIKA_CLEAN_CELADON_POND": False,
+            "EVENT_ERIKA_REQUESTED_CELADON_POND_HELP": True,
+        },
         badges=("ENGINE_RAINBOWBADGE",),
+        player_state="PLAYER_SURF",
     ) as session:
         prepare_battle_party(
             session, constants, constants["ARTICUNO"], should_win=False

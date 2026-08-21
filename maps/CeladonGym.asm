@@ -62,6 +62,7 @@ CeladonGymErikaScript:
 	end
 
 .RequestPondHelp:
+	setevent EVENT_ERIKA_REQUESTED_CELADON_POND_HELP
 	writetext ErikaPondRequestText
 	waitbutton
 	closetext
