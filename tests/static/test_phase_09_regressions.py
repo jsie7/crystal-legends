@@ -1240,7 +1240,24 @@ def test_power_plant_annex_layout_shutter_warps_and_route_match_the_contract(
         [event.x, event.y]
         for event in annex_events
         if event.event_type == "bg_event"
-    ] == [annex["console_coordinate"]]
+    ] == annex["console_coordinates"]
+
+    annex_source = (repo_root / "maps/PowerPlantGeneratorAnnex.asm").read_text()
+    console_script = _section(
+        annex_source,
+        "PowerPlantGeneratorAnnexConsole:",
+        "PowerPlantGeneratorAnnex_MapEvents:",
+    )
+    _assert_in_order(
+        console_script,
+        [
+            "checkevent EVENT_CAUGHT_ZAPDOS_IN_KANTO",
+            "iftrue .Stable",
+            "farjumptext Phase9PowerPlantGeneratorAnnexConsoleText",
+            ".Stable:",
+            "farjumptext Phase9PowerPlantGeneratorAnnexStableText",
+        ],
+    )
 
     resolved = {
         "POWER_PLANT": annex["power_plant_active_block_path"],

@@ -348,3 +348,7 @@ metatiles. Moltres is level 60 on Victory Road's existing isolated eastern
 shelf and always waits for the first Hall of Fame. These maps reuse stock
 sprites and tiles wherever possible, change no save-layout dimensions, and
 remain wholly absent from reference builds.
+
+Both tiles of the annex's two-tile generator console share one reading. It
+reports unsafe output while Zapdos is present and safe output after Zapdos is
+captured.

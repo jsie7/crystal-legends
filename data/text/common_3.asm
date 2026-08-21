@@ -1585,6 +1585,14 @@ Phase9PowerPlantGeneratorAnnexConsoleText::
 	line "SAFE LIMIT."
 	done
 
+Phase9PowerPlantGeneratorAnnexStableText::
+	text "AUXILIARY"
+	line "GENERATOR-"
+
+	para "OUTPUT WITHIN"
+	line "SAFE LIMIT."
+	done
+
 Phase9PowerPlantManagerAnnexAuthorizationText::
 	text "MANAGER: Hey!"
 	line "The auxiliary"

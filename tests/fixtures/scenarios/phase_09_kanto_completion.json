@@ -255,7 +255,7 @@
     },
     "power_plant_warps": [[19, 10, "POWER_PLANT_GENERATOR_ANNEX", 1], [19, 11, "POWER_PLANT_GENERATOR_ANNEX", 2]],
     "return_warps": [[0, 4, "POWER_PLANT", 3], [0, 5, "POWER_PLANT", 4]],
-    "console_coordinate": [3, 4],
+    "console_coordinates": [[3, 4], [4, 4]],
     "route": [[1, 5], [2, 5], [3, 5], [4, 5], [4, 4], [4, 3]],
     "zapdos": {
       "species": "ZAPDOS",

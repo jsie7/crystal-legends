@@ -987,6 +987,27 @@ def test_compiled_power_plant_annex_and_remaining_bird_objects_match_contract(
         for x, y in annex["shutter"]["door_coordinates"]
     ]
 
+    annex_backgrounds = decode_background_events(
+        custom,
+        symbols,
+        "PowerPlantGeneratorAnnex_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+    )
+    assert [
+        (event.x, event.y, event.event_type, event.script_pointer)
+        for event in annex_backgrounds
+    ] == [
+        (
+            x,
+            y,
+            constants["BGEVENT_READ"],
+            symbols["PowerPlantGeneratorAnnexConsole"].address,
+        )
+        for x, y in annex["console_coordinates"]
+    ]
+
     annex_objects = decode_object_events(
         custom,
         symbols,

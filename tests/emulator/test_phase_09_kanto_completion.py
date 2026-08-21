@@ -1713,6 +1713,42 @@ def test_remaining_bird_visibility_uses_branch_source_and_location_gate(
         assert (session.read_symbol(object_symbol) != 0xFF) is visible
 
 
+@pytest.mark.parametrize("caught", [False, True], ids=["over-limit", "stable"])
+@pytest.mark.parametrize("console_x", [3, 4], ids=["left-console", "right-console"])
+def test_both_generator_consoles_reflect_zapdos_capture(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+    caught: bool,
+    console_x: int,
+) -> None:
+    constants = phase_9_constants
+    max_frames = scenario["max_frames_per_step"]
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        map_name="POWER_PLANT_GENERATOR_ANNEX",
+        x=console_x,
+        y=5,
+        events={
+            "EVENT_CAUGHT_ZAPDOS_IN_KANTO": caught,
+            "EVENT_ZAPDOS_NOT_AT_KANTO_LOCATION": caught,
+        },
+    ) as session:
+        place_player(session, console_x, 5)
+        session.enable_script_tracing()
+        session.write_symbol("wPlayerDirection", constants["OW_UP"])
+        session.tap("a", 2, 10)
+        session.wait_for_script("PowerPlantGeneratorAnnexConsole", max_frames)
+        _finish_overworld_script(session, max_frames)
+        assert (
+            "PowerPlantGeneratorAnnexConsole.Stable" in session.script_history
+        ) is caught
+
+
 def _interact_with_power_plant_shutter(
     session, constants: dict[str, int], max_frames: int, *, y: int = 11
 ) -> None:
