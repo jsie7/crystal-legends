@@ -224,93 +224,22 @@ Phase9OaksAssistant2Hints:
 	end
 
 Phase9OaksAssistantArticunoHint:
-	writetext Phase9OaksAssistantArticunoHintText
+	writetext Phase9OaksAssistantLegendaryHabitatHintText
 	return
 
 Phase9OaksAssistantZapdosHint:
-	checkevent EVENT_RESTORED_POWER_TO_KANTO
-	iffalse .NeedsRepair
-	checkevent EVENT_POWER_PLANT_ANNEX_AUTHORIZED
-	iffalse .NeedsAuthorization
-	checkevent EVENT_OPENED_POWER_PLANT_ANNEX
-	iffalse .NeedsOpening
-	writetext Phase9OaksAssistantZapdosOpenHintText
-	return
-
-.NeedsRepair:
-	writetext Phase9OaksAssistantZapdosRepairHintText
-	return
-
-.NeedsAuthorization:
-	writetext Phase9OaksAssistantZapdosAuthorizationHintText
-	return
-
-.NeedsOpening:
-	writetext Phase9OaksAssistantZapdosShutterHintText
+	writetext Phase9OaksAssistantLegendaryHabitatHintText
 	return
 
 Phase9OaksAssistantMoltresHint:
-	checkevent EVENT_BEAT_ELITE_FOUR
-	iffalse .BeforeLeague
-	writetext Phase9OaksAssistantMoltresOpenHintText
+	writetext Phase9OaksAssistantLegendaryHabitatHintText
 	return
 
-.BeforeLeague:
-	writetext Phase9OaksAssistantMoltresLeagueHintText
-	return
-
-Phase9OaksAssistantArticunoHintText:
-	text "AIDE: ARTICUNO"
-	line "waits in the icy"
-	cont "cave off ROUTE 20."
-	done
-
-Phase9OaksAssistantZapdosRepairHintText:
-	text "AIDE: Restore the"
-	line "POWER PLANT before"
-	cont "seeking ZAPDOS in"
-	cont "the GENERATOR"
-	cont "ANNEX."
-	done
-
-Phase9OaksAssistantZapdosAuthorizationHintText:
-	text "AIDE: Ask the"
-	line "POWER PLANT's"
-	cont "MANAGER about"
-	cont "ZAPDOS in the"
-	cont "GENERATOR ANNEX."
-	done
-
-Phase9OaksAssistantZapdosShutterHintText:
-	text "AIDE: The east"
-	line "service shutter"
-	cont "leads to ZAPDOS in"
-	cont "the GENERATOR"
-	cont "ANNEX."
-	done
-
-Phase9OaksAssistantZapdosOpenHintText:
-	text "AIDE: ZAPDOS waits"
-	line "in the POWER PLANT"
-	cont "GENERATOR ANNEX."
-	done
-
-Phase9OaksAssistantMoltresLeagueHintText:
-	text "AIDE: After the"
-	line "LEAGUE, search the"
-	cont "upper east shelf"
-	cont "of VICTORY ROAD"
-	cont "for MOLTRES."
-	done
-
-Phase9OaksAssistantMoltresOpenHintText:
-	text "AIDE: MOLTRES"
-	line "waits on VICTORY"
-	cont "ROAD's upper east"
-	cont "shelf."
-
-	para "Loop through the"
-	line "higher floor."
+Phase9OaksAssistantLegendaryHabitatHintText:
+	text "AIDE: Legendary"
+	line "birds are drawn to"
+	cont "their natural"
+	cont "habitat."
 	done
 
 Phase9OaksAssistantNoNewSightingText:

@@ -335,8 +335,8 @@ MistyPowerStillOutText:
 
 MistySquirtleOfferText:
 	text "MISTY: You brought"
-	line "back the MACHINE"
-	cont "PART and power."
+	line "back the power to"
+	cont "KANTO."
 
 	para "CERULEAN owes you."
 

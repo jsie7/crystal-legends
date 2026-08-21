@@ -312,7 +312,7 @@ def test_compiled_cinnabar_assets_are_custom_replacements_only(
     )
 
 
-def test_compiled_cinnabar_case_and_flavor_events_match_the_locked_coordinates(
+def test_compiled_cinnabar_case_event_matches_the_locked_coordinate(
     repo_root: Path, phase_9_constants: dict[str, int]
 ) -> None:
     constants = phase_9_constants
@@ -361,9 +361,18 @@ def test_compiled_cinnabar_case_and_flavor_events_match_the_locked_coordinates(
         constants["COORD_EVENT_SIZE"],
         constants["BG_EVENT_SIZE"],
     )
-    assert [(event.x, event.y) for event in backgrounds[-2:]] == [
-        (15, 5),
-        (19, 8),
+    reference_backgrounds = decode_background_events(
+        reference,
+        reference_symbols,
+        "CinnabarIsland_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+    )
+    assert [
+        (event.x, event.y, event.event_type) for event in backgrounds
+    ] == [
+        (event.x, event.y, event.event_type) for event in reference_backgrounds
     ]
 
 

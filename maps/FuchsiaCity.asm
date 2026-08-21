@@ -34,15 +34,7 @@ FuchsiaCityPokefanM:
 
 FuchsiaCityTeacher:
 	if DEF(_CRYSTALLEGENDS)
-	checkevent EVENT_SAFARI_ZONE_ACCESSIBLE
-	iftrue .Open
-	checkevent EVENT_TALKED_TO_WARDENS_GRANDDAUGHTER
-	iftrue .GymHint
 	jumptextfaceplayer FuchsiaCityTeacherGranddaughterText
-.GymHint:
-	jumptextfaceplayer FuchsiaCityTeacherGymHintText
-.Open:
-	jumptextfaceplayer FuchsiaCityTeacherMaintenanceGateText
 	else
 	jumptextfaceplayer FuchsiaCityTeacherText
 	endc
@@ -117,27 +109,10 @@ FuchsiaCityTeacherGranddaughterText:
 	text "The SAFARI ZONE is"
 	line "still closed."
 
-	para "The WARDEN'S grand-"
-	line "daughter may know"
-	cont "about the old gate."
-	done
-
-FuchsiaCityTeacherGymHintText:
-	text "JANINE trusts only"
-	line "proven TRAINERS."
-
-	para "Try FUCHSIA GYM,"
-	line "then visit the"
-	cont "WARDEN'S home."
-	done
-
-FuchsiaCityTeacherMaintenanceGateText:
-	text "The SAFARI business"
-	line "is still closed,"
-
-	para "but the old north"
-	line "maintenance gate is"
-	cont "open at your risk."
+	para "The WARDEN'S"
+	line "granddaughter may"
+	cont "know about the old"
+	cont "gate."
 	done
 endc
 

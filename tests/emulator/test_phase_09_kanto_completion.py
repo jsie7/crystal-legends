@@ -590,29 +590,15 @@ def test_blaine_consumes_the_log_before_retryable_charmander_storage(
 
 def _start_muk_battle(session, max_frames: int, menu_cursor: int) -> None:
     session.enable_script_tracing()
-    for label in ("_YesNoBox", "VerticalMenu", "ExitBattle"):
-        session.register_hook(label)
+    session.register_hook("ExitBattle")
     session.register_hook(
         "BattleMenu",
         lambda current: current.write_symbol(
             "wBattleMenuCursorPosition", menu_cursor
         ),
     )
-    yes_no_count = session.hook_history.count("_YesNoBox") + 1
-    menu_count = session.hook_history.count("VerticalMenu") + 1
     battle_count = session.hook_history.count("BattleMenu") + 1
     walk_steps(session, "up", "wYCoord", -1, 1, max_frames)
-    advance_with_a_until(
-        session,
-        lambda current: (
-            current.hook_history.count("_YesNoBox") >= yes_no_count
-            and current.hook_history.count("VerticalMenu") >= menu_count
-        ),
-        max_frames,
-        "Celadon pond confirmation",
-    )
-    session.tick(20)
-    session.tap("a", 2, 10)
     advance_with_a_until(
         session,
         lambda current: current.hook_history.count("BattleMenu") >= battle_count,
@@ -640,12 +626,12 @@ def test_celadon_pond_is_request_gated(
         y=17,
         events={"EVENT_HELPED_ERIKA_CLEAN_CELADON_POND": False},
     ) as session:
-        session.register_hook("_YesNoBox")
+        session.register_hook("BattleMenu")
         before = read_progress(session)
         session.tap("down", 2, 10)
         session.tap("a", 2, 10)
         _finish_overworld_script(session, max_frames)
-        assert "_YesNoBox" not in session.hook_history
+        assert "BattleMenu" not in session.hook_history
         assert not event_is_set(session, service)
         assert read_progress(session) == before
 
@@ -664,7 +650,7 @@ def test_celadon_pond_is_request_gated(
         badges=("ENGINE_RAINBOWBADGE",),
         player_state="PLAYER_SURF",
     ) as session:
-        session.register_hook("_YesNoBox")
+        session.register_hook("BattleMenu")
         assert session.read_symbol("wPlayerState") == constants["PLAYER_SURF"]
         assert session.read_symbol("wPlayerTileCollision") in (
             constants["COLL_WATER"],
@@ -673,12 +659,12 @@ def test_celadon_pond_is_request_gated(
         walk_steps(session, "up", "wYCoord", -1, 1, max_frames)
         _finish_overworld_script(session, max_frames)
         assert session.read_symbol("wYCoord") == 18
-        assert "_YesNoBox" not in session.hook_history
+        assert "BattleMenu" not in session.hook_history
         assert not event_is_set(session, service)
 
 
 @pytest.mark.parametrize("entry_x", [13, 14, 15])
-def test_each_celadon_pond_entry_tile_triggers_the_requested_muk(
+def test_each_celadon_pond_entry_tile_starts_the_requested_muk_directly(
     repo_root: Path,
     tmp_path: Path,
     scenario: dict,
@@ -702,15 +688,15 @@ def test_each_celadon_pond_entry_tile_triggers_the_requested_muk(
         badges=("ENGINE_RAINBOWBADGE",),
         player_state="PLAYER_SURF",
     ) as session:
+        prepare_battle_party(
+            session, constants, constants["ARTICUNO"], should_win=True
+        )
         session.register_hook("_YesNoBox")
-        session.register_hook("VerticalMenu")
+        session.register_hook("BattleMenu")
         walk_steps(session, "up", "wYCoord", -1, 1, max_frames)
         advance_with_a_until(
             session,
-            lambda current: (
-                "_YesNoBox" in current.hook_history
-                and "VerticalMenu" in current.hook_history
-            ),
+            lambda current: "BattleMenu" in current.hook_history,
             max_frames,
             f"Celadon pond entry at x={entry_x}",
         )
@@ -718,8 +704,7 @@ def test_each_celadon_pond_entry_tile_triggers_the_requested_muk(
             entry_x,
             18,
         )
-        session.tap("b", 2, 10)
-        _finish_overworld_script(session, max_frames)
+        assert "_YesNoBox" not in session.hook_history
 
 
 @pytest.mark.parametrize("outcome", ["escape", "knockout", "capture"])
@@ -2320,7 +2305,7 @@ def test_single_save_collects_all_gifts_and_both_nonstarter_birds(
                 "EVENT_OAK_MOVED_THIRD_BIRD": True,
                 "EVENT_RESTORED_POWER_TO_KANTO": False,
             },
-            "Phase9OaksAssistantZapdosHint.NeedsRepair",
+            "Phase9OaksAssistantZapdosHint",
         ),
         (
             "zapdos-closed-shutter-hint",
@@ -2333,7 +2318,7 @@ def test_single_save_collects_all_gifts_and_both_nonstarter_birds(
                 "EVENT_POWER_PLANT_ANNEX_AUTHORIZED": True,
                 "EVENT_OPENED_POWER_PLANT_ANNEX": False,
             },
-            "Phase9OaksAssistantZapdosHint.NeedsOpening",
+            "Phase9OaksAssistantZapdosHint",
         ),
         (
             "both-nonstarter-birds-caught",
@@ -2347,7 +2332,7 @@ def test_single_save_collects_all_gifts_and_both_nonstarter_birds(
         ),
     ],
 )
-def test_oaks_second_assistant_tracks_access_and_capture_state(
+def test_oaks_second_assistant_tracks_handoff_and_capture_state(
     repo_root: Path,
     tmp_path: Path,
     scenario: dict,

@@ -1547,8 +1547,10 @@ SafariZoneBetaUnattendedSignText::
 	text "PRESERVE NOTICE"
 
 	para "These grounds are"
-	line "unattended. Explore"
-	cont "at your own risk."
+	line "unattended."
+
+	para "Explore at your"
+	line "own risk."
 	done
 
 SafariZoneBetaNormalBattleSignText::
@@ -1556,7 +1558,8 @@ SafariZoneBetaNormalBattleSignText::
 
 	para "Wild #MON use"
 	line "ordinary battles"
-	cont "and capture rules."
+
+	para "and capture rules."
 	done
 
 Phase9ArticunoEncounterText::
@@ -1596,13 +1599,12 @@ Phase9PowerPlantGeneratorAnnexStableText::
 Phase9PowerPlantManagerAnnexAuthorizationText::
 	text "MANAGER: Hey!"
 	line "The auxiliary"
-
-	para "generator voltage"
-	line "is way too high!"
+	cont "generator voltage"
+	cont "is way too high!"
 
 	para "I'm authorizing"
-	line "you to inspect the"
-	cont "east annex."
+	line "you to"
+	cont "investigate."
 	done
 
 Phase9PowerPlantAnnexShutterNoPowerText::

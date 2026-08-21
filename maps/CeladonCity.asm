@@ -98,9 +98,6 @@ CeladonCityMukPondEntry:
 CeladonCityMukPondEncounter:
 	opentext
 	writetext CeladonCityMukPondBattleText
-	yesorno
-	iffalse .Declined
-	writetext CeladonCityMukEmergesText
 	waitbutton
 	closetext
 	loadwildmon MUK, 35
@@ -117,10 +114,6 @@ CeladonCityMukPondEncounter:
 
 .Retry:
 	reloadmapafterbattle
-	end
-
-.Declined:
-	closetext
 	end
 
 endc
@@ -183,11 +176,7 @@ CeladonCityMukPondBattleText:
 	text "A MUK is churning"
 	line "the polluted pond."
 
-	para "Try to calm it?"
-	done
-
-CeladonCityMukEmergesText:
-	text "The MUK surges out"
+	para "The MUK surges out"
 	line "of the sludge!"
 	done
 

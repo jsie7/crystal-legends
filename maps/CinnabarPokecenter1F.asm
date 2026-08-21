@@ -73,30 +73,28 @@ if DEF(_CRYSTALLEGENDS)
 CinnabarPokecenter1FCooltrainerFLogText:
 	text "The fisherman saw"
 	line "the cases moved"
-	cont "BLAINE's old GYM."
-
-	para "Ask him about the"
-	line "missing log."
+	cont "from the old GYM."
 	done
 
 CinnabarPokecenter1FFisherLogClueText:
-	text "FISHERMAN: I saw"
+	text "I saw"
 	line "a flame-crested"
 	cont "case after the"
 	cont "volcano."
 
-	para "It lies on the"
-	line "high shelf, south"
-	cont "of the pool."
+	para "It lies somewhere"
+	line "in the rubble."
 
-	para "Its clasp warped."
-	line "Press the crest in"
+	para "Its clasp has a"
+	line "secret mechanism."
+
+	para "Press the crest in"
 	cont "and pull the latch"
 	cont "sideways."
 	done
 
 CinnabarPokecenter1FFisherRepeatClueText:
-	text "FISHERMAN: The"
+	text "The"
 	line "case rests high,"
 	cont "south of the pool."
 
@@ -106,8 +104,8 @@ CinnabarPokecenter1FFisherRepeatClueText:
 	done
 
 CinnabarPokecenter1FFisherRecoveredText:
-	text "FISHERMAN: You got"
-	line "the old case free."
+	text "You got the old"
+	line "case!"
 
 	para "BLAINE will want"
 	line "that log back."

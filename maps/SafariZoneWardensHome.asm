@@ -90,8 +90,7 @@ WardensGranddaughterText2:
 
 if DEF(_CRYSTALLEGENDS)
 WardensGranddaughterSoulBadgeText:
-	text "GRANDDAUGHTER:"
-	line "JANINE asked me to"
+	text "JANINE asked me to"
 
 	para "admit only proven"
 	line "TRAINERS to the"
@@ -103,23 +102,19 @@ WardensGranddaughterSoulBadgeText:
 	done
 
 WardensGranddaughterReleaseGateText:
-	text "GRANDDAUGHTER:"
-	line "That SOULBADGE"
-	cont "proves you're ready."
+	text "That SOULBADGE"
+	line "proves you're"
+	cont "capable."
 
-	para "I'll release the old"
-	line "maintenance gate at"
-	cont "the north edge of"
-	cont "town."
-
-	para "The business office"
-	line "is still closed."
+	para "Feel free to"
+	line "explore the SAFARI"
+	cont "ZONE."
 	done
 
 WardensGranddaughterUnattendedText:
-	text "GRANDDAUGHTER:"
-	line "The north gate is"
-	cont "open at your risk."
+	text "The north gate is"
+	line "open at your own"
+	cont "risk."
 
 	para "There are no staff,"
 	line "rescue service or"

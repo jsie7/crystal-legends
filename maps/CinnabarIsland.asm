@@ -39,12 +39,6 @@ CinnabarIslandHiddenRareCandy:
 	hiddenitem RARE_CANDY, EVENT_CINNABAR_ISLAND_HIDDEN_RARE_CANDY
 
 if DEF(_CRYSTALLEGENDS)
-CinnabarIslandOldGymRemains:
-	jumptext CinnabarIslandOldGymRemainsText
-
-CinnabarIslandOldLabRemains:
-	jumptext CinnabarIslandOldLabRemainsText
-
 CinnabarIslandBlainesLogRubble:
 	opentext
 	checkevent EVENT_RECOVERED_BLAINES_LOG
@@ -164,24 +158,12 @@ CinnabarIslandSignText:
 	done
 
 if DEF(_CRYSTALLEGENDS)
-CinnabarIslandOldGymRemainsText:
-	text "Heat-scarred stone"
-	line "marks where the"
-	cont "GYM once stood."
-	done
-
-CinnabarIslandOldLabRemainsText:
-	text "Only twisted beams"
-	line "remain of the old"
-	cont "laboratory."
-	done
-
 CinnabarIslandBlainesLogStuckText:
 	text "There's a flame-"
 	line "crested case stuck"
 	cont "under the rubble."
 
-	para "Its warped clasp"
+	para "Its clasp"
 	line "won't open."
 	done
 
@@ -190,7 +172,7 @@ CinnabarIslandBlainesLogReleaseText:
 	line "and pull the"
 	cont "latch sideways."
 
-	para "The rubble shifts!"
+	para "The case opens!"
 	done
 
 CinnabarIslandBlainesLogEmptyText:
@@ -212,10 +194,6 @@ CinnabarIsland_MapEvents:
 	bg_event  9, 11, BGEVENT_READ, CinnabarIslandGymSign
 	bg_event  7,  7, BGEVENT_READ, CinnabarIslandSign
 	bg_event  9,  1, BGEVENT_ITEM, CinnabarIslandHiddenRareCandy
-	if DEF(_CRYSTALLEGENDS)
-	bg_event 15,  5, BGEVENT_READ, CinnabarIslandOldGymRemains
-	bg_event 19,  8, BGEVENT_READ, CinnabarIslandOldLabRemains
-	endc
 
 	def_object_events
 	object_event  9,  6, SPRITE_BLUE, SPRITEMOVEDATA_SPINRANDOM_SLOW, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, CinnabarIslandBlue, EVENT_BLUE_IN_CINNABAR

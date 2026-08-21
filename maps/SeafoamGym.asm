@@ -179,17 +179,14 @@ BlaineFightDoneText:
 
 if DEF(_CRYSTALLEGENDS)
 BlaineLogRequestText:
-	text "BLAINE: One thing"
-	line "survived my old"
+	text "BLAINE: I hope"
+	line "something survived"
+	cont "my old"
 	cont "CINNABAR GYM."
 
-	para "A fireproof log of"
-	line "my early training"
-	cont "was evacuated."
-
-	para "Please ask the"
-	line "survivors on"
-	cont "CINNABAR."
+	para "My early training"
+	line "log was evacuated"
+	cont "but never found."
 	done
 
 BlaineReadsLogText:

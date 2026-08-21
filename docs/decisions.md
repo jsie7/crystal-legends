@@ -298,7 +298,8 @@ Part and Power Plant arc, and Blaine requires the Cinnabar survivor trail plus
 recovery and return of `BLAINE'S LOG`. All three rewards coexist on one save.
 Erika's request is recorded separately from task completion; after that
 conversation, entering any of the pond's three northern water tiles starts the
-Muk prompt. Entry remains silent before the request and after completion.
+Muk encounter directly. Entry remains silent before the request and after
+completion.
 Blaine's request is likewise recorded when he actually asks for help, so the
 Cinnabar survivors retain their stock dialogue until that conversation.
 

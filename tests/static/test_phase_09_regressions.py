@@ -55,6 +55,28 @@ def _assert_in_order(lines: list[str], expected: list[str]) -> None:
         position = lines.index(value, position + 1)
 
 
+def _dialogue(lines: list[str], label: str) -> str:
+    paragraphs: list[list[str]] = [[]]
+    for line in lines[lines.index(label) + 1 :]:
+        if line in {"done", "prompt"}:
+            break
+        match = re.fullmatch(r'(text|line|cont|para) "(.*)"', line)
+        if match is None:
+            continue
+        command, value = match.groups()
+        if command == "para":
+            paragraphs.append([])
+        paragraphs[-1].append(value)
+
+    def join_wrapped_text(paragraph: list[str]) -> str:
+        joined = paragraph[0]
+        for value in paragraph[1:]:
+            joined += ("" if joined.endswith("-") else " ") + value
+        return joined
+
+    return " ¶ ".join(join_wrapped_text(paragraph) for paragraph in paragraphs)
+
+
 def _png_tiles(path: Path, *, expected_height: int = 48) -> tuple[tuple[int, ...], ...]:
     raw = path.read_bytes()
     assert raw.startswith(b"\x89PNG\r\n\x1a\n")
@@ -303,6 +325,82 @@ def test_starter_scripts_keep_service_and_delivery_state_independent(
     assert 'INCLUDE "engine/events/kanto_starter_ot.asm"' not in reference_main
 
 
+def test_phase_9_review_dialogue_matches_the_approved_copy(repo_root: Path) -> None:
+    misty = _active_code(repo_root / "maps/CeruleanGym.asm", CRYSTAL_LEGENDS)
+    assert _dialogue(misty, "MistySquirtleOfferText:") == (
+        "MISTY: You brought back the power to KANTO. ¶ CERULEAN owes you. ¶ "
+        "I want to entrust SQUIRTLE to you. ¶ Will you take it?"
+    )
+
+    blaine = _active_code(repo_root / "maps/SeafoamGym.asm", CRYSTAL_LEGENDS)
+    assert _dialogue(blaine, "BlaineLogRequestText:") == (
+        "BLAINE: I hope something survived my old CINNABAR GYM. ¶ "
+        "My early training log was evacuated but never found."
+    )
+
+    pokecenter = _active_code(
+        repo_root / "maps/CinnabarPokecenter1F.asm", CRYSTAL_LEGENDS
+    )
+    assert _dialogue(pokecenter, "CinnabarPokecenter1FCooltrainerFLogText:") == (
+        "The fisherman saw the cases moved from the old GYM."
+    )
+    assert _dialogue(pokecenter, "CinnabarPokecenter1FFisherLogClueText:") == (
+        "I saw a flame-crested case after the volcano. ¶ "
+        "It lies somewhere in the rubble. ¶ Its clasp has a secret mechanism. "
+        "¶ Press the crest in and pull the latch sideways."
+    )
+    assert _dialogue(pokecenter, "CinnabarPokecenter1FFisherRecoveredText:") == (
+        "You got the old case! ¶ BLAINE will want that log back."
+    )
+    assert not any("FISHERMAN:" in line for line in pokecenter)
+
+    wardens_home = _active_code(
+        repo_root / "maps/SafariZoneWardensHome.asm", CRYSTAL_LEGENDS
+    )
+    assert _dialogue(wardens_home, "WardensGranddaughterReleaseGateText:") == (
+        "That SOULBADGE proves you're capable. ¶ "
+        "Feel free to explore the SAFARI ZONE."
+    )
+    assert _dialogue(wardens_home, "WardensGranddaughterUnattendedText:") == (
+        "The north gate is open at your own risk. ¶ There are no staff, "
+        "rescue service or official SAFARI GAME."
+    )
+    assert not any("GRANDDAUGHTER:" in line for line in wardens_home)
+
+    fuchsia = _active_code(repo_root / "maps/FuchsiaCity.asm", CRYSTAL_LEGENDS)
+    assert _dialogue(fuchsia, "FuchsiaCityTeacherGranddaughterText:") == (
+        "The SAFARI ZONE is still closed. ¶ The WARDEN'S granddaughter may "
+        "know about the old gate."
+    )
+
+    celadon = _active_code(repo_root / "maps/CeladonCity.asm", CRYSTAL_LEGENDS)
+    assert _dialogue(celadon, "CeladonCityMukPondBattleText:") == (
+        "A MUK is churning the polluted pond. ¶ "
+        "The MUK surges out of the sludge!"
+    )
+
+    cinnabar = _active_code(repo_root / "maps/CinnabarIsland.asm", CRYSTAL_LEGENDS)
+    assert _dialogue(cinnabar, "CinnabarIslandBlainesLogStuckText:") == (
+        "There's a flame-crested case stuck under the rubble. ¶ "
+        "Its clasp won't open."
+    )
+    assert _dialogue(cinnabar, "CinnabarIslandBlainesLogReleaseText:") == (
+        "Press the crest in and pull the latch sideways. ¶ The case opens!"
+    )
+
+    common = _active_code(repo_root / "data/text/common_3.asm", CRYSTAL_LEGENDS)
+    assert _dialogue(common, "SafariZoneBetaUnattendedSignText::") == (
+        "PRESERVE NOTICE ¶ These grounds are unattended. ¶ Explore at your own risk."
+    )
+    assert _dialogue(common, "SafariZoneBetaNormalBattleSignText::") == (
+        "TRAINER NOTICE ¶ Wild #MON use ordinary battles ¶ and capture rules."
+    )
+    assert _dialogue(common, "Phase9PowerPlantManagerAnnexAuthorizationText::") == (
+        "MANAGER: Hey! The auxiliary generator voltage is way too high! ¶ "
+        "I'm authorizing you to investigate."
+    )
+
+
 def test_erika_muk_and_blaine_log_retry_only_after_success(repo_root: Path) -> None:
     celadon = _active_code(repo_root / "maps/CeladonCity.asm", CRYSTAL_LEGENDS)
     entry = _section(
@@ -358,8 +456,8 @@ def test_erika_muk_and_blaine_log_retry_only_after_success(repo_root: Path) -> N
         "CinnabarIslandBlainesLogRubble, -1" in line
         for line in island
     )
-    assert "bg_event 15,  5, BGEVENT_READ, CinnabarIslandOldGymRemains" in island
-    assert "bg_event 19,  8, BGEVENT_READ, CinnabarIslandOldLabRemains" in island
+    assert not any("CinnabarIslandOldGymRemains" in line for line in island)
+    assert not any("CinnabarIslandOldLabRemains" in line for line in island)
 
     pokecenter = _active_code(
         repo_root / "maps/CinnabarPokecenter1F.asm", CRYSTAL_LEGENDS
@@ -1508,27 +1606,36 @@ def test_zapdos_moltres_and_oak_tracker_use_the_locked_branch_contract(
     assert all(
         f"checkevent {event}" in tracker
         for event in (
-            "EVENT_RESTORED_POWER_TO_KANTO",
-            "EVENT_POWER_PLANT_ANNEX_AUTHORIZED",
-            "EVENT_OPENED_POWER_PLANT_ANNEX",
-            "EVENT_BEAT_ELITE_FOUR",
             "EVENT_CAUGHT_ARTICUNO_IN_KANTO",
             "EVENT_CAUGHT_ZAPDOS_IN_KANTO",
             "EVENT_CAUGHT_MOLTRES_IN_KANTO",
         )
     )
-    assert not any("NOT_AT_KANTO_LOCATION" in line for line in tracker)
     assert all(
-        shared[shared.index(label) + 1].startswith('text "AIDE:')
-        for label in (
-            "Phase9OaksAssistantArticunoHintText:",
-            "Phase9OaksAssistantZapdosRepairHintText:",
-            "Phase9OaksAssistantZapdosAuthorizationHintText:",
-            "Phase9OaksAssistantZapdosShutterHintText:",
-            "Phase9OaksAssistantZapdosOpenHintText:",
-            "Phase9OaksAssistantMoltresLeagueHintText:",
-            "Phase9OaksAssistantMoltresOpenHintText:",
-            "Phase9OaksAssistantNoNewSightingText:",
-            "Phase9OaksAssistantBothBirdsCaughtText:",
+        event not in tracker
+        for event in (
+            "EVENT_RESTORED_POWER_TO_KANTO",
+            "EVENT_POWER_PLANT_ANNEX_AUTHORIZED",
+            "EVENT_OPENED_POWER_PLANT_ANNEX",
+            "EVENT_BEAT_ELITE_FOUR",
         )
     )
+    assert not any("NOT_AT_KANTO_LOCATION" in line for line in tracker)
+    assert tracker.count(
+        "writetext Phase9OaksAssistantLegendaryHabitatHintText"
+    ) == 3
+    assert "Phase9OaksAssistantLegendaryHabitatHintText:" in tracker
+    assert 'text "AIDE: Legendary"' in tracker
+    assert 'line "birds are drawn to"' in tracker
+    assert 'cont "their natural"' in tracker
+    assert 'cont "habitat."' in tracker
+    for retired in (
+        "Phase9OaksAssistantArticunoHintText",
+        "Phase9OaksAssistantZapdosRepairHintText",
+        "Phase9OaksAssistantZapdosAuthorizationHintText",
+        "Phase9OaksAssistantZapdosShutterHintText",
+        "Phase9OaksAssistantZapdosOpenHintText",
+        "Phase9OaksAssistantMoltresLeagueHintText",
+        "Phase9OaksAssistantMoltresOpenHintText",
+    ):
+        assert retired not in tracker
