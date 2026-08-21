@@ -66,3 +66,18 @@
 	tilecoll WALL, WALL, WALL, WALL ; 3d
 	tilecoll WALL, WALL, WALL, WALL ; 3e
 	tilecoll LONG_GRASS, LONG_GRASS, LONG_GRASS, LONG_GRASS ; 3f
+	if DEF(_CRYSTALLEGENDS)
+		; Safari Zone pond shores
+		tilecoll WATER, WATER, WATER, WATER ; 40
+		tilecoll WATER, WATER, WATER, WATER ; 41
+		tilecoll WATER, WATER, WATER, WATER ; 42
+		tilecoll WATER, WATER, WATER, WATER ; 43
+		tilecoll WATER, WATER, WATER, WATER ; 44
+		tilecoll WATER, WATER, WATER, WATER ; 45
+		tilecoll WATER, WATER, WATER, WATER ; 46
+		tilecoll WATER, WATER, WATER, WATER ; 47
+		; Safari Zone east-facing notice and two-tile exit carpet
+		tilecoll FLOOR, WALL, FLOOR, FLOOR ; 48
+		tilecoll FLOOR, FLOOR, FLOOR, WARP_CARPET_DOWN ; 49
+		tilecoll FLOOR, FLOOR, WARP_CARPET_DOWN, FLOOR ; 4a
+	endc

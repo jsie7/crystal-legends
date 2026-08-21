@@ -697,19 +697,65 @@ def test_safari_beta_maps_preserve_warps_and_add_only_approved_interactions(
     ]["stock_block_path"]
     custom_blocks = (repo_root / safari["preserve"]["custom_block_path"]).read_bytes()
     stock_blocks = (repo_root / safari["preserve"]["stock_block_path"]).read_bytes()
-    proposal = (
-        repo_root / "plan/proposals/SafariZoneBetaCrystalLegendsProposal.blk"
-    ).read_bytes()
     assert len(custom_blocks) == len(stock_blocks) == 180
-    assert [
-        {
-            "offset": offset,
-            "old_block": old,
-            "new_block": new,
-        }
-        for offset, (old, new) in enumerate(zip(proposal, custom_blocks))
-        if old != new
-    ] == safari["preserve"]["proposal_delta"]
+    assert custom_blocks != stock_blocks
+
+    preserve = safari["preserve"]
+    first_custom, last_custom = preserve["custom_metatile_range"]
+    extra_metatiles = (repo_root / preserve["custom_metatile_path"]).read_bytes()
+    assert len(extra_metatiles) == (last_custom - first_custom + 1) * 16
+    assert max(custom_blocks) == last_custom
+    base_metatiles = (repo_root / "data/tilesets/park_metatiles.bin").read_bytes()
+    combined_metatiles = base_metatiles + extra_metatiles
+
+    def metatile(block_id: int) -> bytes:
+        return combined_metatiles[block_id * 16 : (block_id + 1) * 16]
+
+    water, shore = 0x14, 0x15
+    assert metatile(0x40) == metatile(0x08)
+    assert metatile(0x41) == bytes([shore] * 4 + [water] * 12)
+    assert metatile(0x42) == metatile(0x09)
+    assert metatile(0x43) == bytes([shore, water, water, water] * 4)
+    assert metatile(0x44) == bytes([water, water, water, shore] * 4)
+    assert metatile(0x45) == metatile(0x0C)
+    assert metatile(0x46) == bytes([water] * 12 + [shore] * 4)
+    assert metatile(0x47) == metatile(0x0D)
+    assert metatile(0x48) == bytes(
+        [0x00, 0x16, 0x45, 0x46, 0x06, 0x00, 0x55, 0x56,
+         0x00, 0x16, 0x00, 0x16, 0x06, 0x00, 0x06, 0x00]
+    )
+    assert metatile(0x49) == bytes(
+        [0x00, 0x16, 0x00, 0x16, 0x06, 0x00, 0x06, 0x00,
+         0x00, 0x16, 0x4F, 0x4F, 0x06, 0x00, 0x4F, 0x4F]
+    )
+    assert metatile(0x4A) == bytes(
+        [0x00, 0x16, 0x00, 0x16, 0x06, 0x00, 0x06, 0x00,
+         0x4F, 0x4F, 0x00, 0x16, 0x4F, 0x4F, 0x06, 0x00]
+    )
+    gfx = repo_root / "gfx/tilesets.asm"
+    extra_incbin = f'INCBIN "{preserve["custom_metatile_path"]}"'
+    assert extra_incbin in _active_code(gfx, CRYSTAL_LEGENDS)
+    assert extra_incbin not in _active_code(gfx, REFERENCE)
+
+    collision_source = (repo_root / "data/tilesets/park_collision.asm").read_text()
+    custom_collisions = parse_collision_rows(collision_source)
+    reference_collisions = parse_collision_rows(collision_source, REFERENCE)
+    assert len(custom_collisions) == last_custom + 1
+    assert len(reference_collisions) == first_custom
+    assert custom_collisions[0x40:0x48] == [("WATER",) * 4] * 8
+    assert custom_collisions[0x48] == ("FLOOR", "WALL", "FLOOR", "FLOOR")
+    assert custom_collisions[0x49] == (
+        "FLOOR",
+        "FLOOR",
+        "FLOOR",
+        "WARP_CARPET_DOWN",
+    )
+    assert custom_collisions[0x4A] == (
+        "FLOOR",
+        "FLOOR",
+        "WARP_CARPET_DOWN",
+        "FLOOR",
+    )
 
     sources = {source.map_name: source for source in map_sources_from_repository(repo_root)}
     gate_events = parse_events(sources["SAFARI_ZONE_FUCHSIA_GATE_BETA"])
@@ -774,6 +820,80 @@ def test_safari_layout_is_reachable_without_surf_and_metadata_is_conditional(
     resolved = {"SAFARI_ZONE_BETA": preserve["custom_block_path"]}
     maps_source = (repo_root / "data/maps/maps.asm").read_text()
     tilesets = parse_map_tilesets(maps_source)
+    blocks = (repo_root / preserve["custom_block_path"]).read_bytes()
+
+    def block_at(x: int, y: int) -> int:
+        return blocks[(y // 2) * preserve["dimensions"][0] + x // 2]
+
+    pond = preserve["pond"]
+    pond_blocks = [
+        [block_at(x, y) for x in range(pond["x_range"][0], pond["x_range"][1] + 1, 2)]
+        for y in range(pond["y_range"][0], pond["y_range"][1] + 1, 2)
+    ]
+    assert pond_blocks == pond["block_ids"]
+    for y in range(pond["y_range"][0], pond["y_range"][1] + 1):
+        for x in range(pond["x_range"][0], pond["x_range"][1] + 1):
+            assert collision_at(
+                repo_root,
+                "SAFARI_ZONE_BETA",
+                (x, y),
+                dimensions,
+                resolved,
+                tilesets,
+            ) == pond["collision"]
+
+    for coordinate in preserve["tree_tiles"]:
+        assert block_at(*coordinate) == 0x06
+        assert collision_at(
+            repo_root,
+            "SAFARI_ZONE_BETA",
+            tuple(coordinate),
+            dimensions,
+            resolved,
+            tilesets,
+        ) == "WALL"
+
+    for rectangle in preserve["grass_rectangles"]:
+        for y in range(rectangle["y_range"][0], rectangle["y_range"][1] + 1):
+            for x in range(rectangle["x_range"][0], rectangle["x_range"][1] + 1):
+                assert collision_at(
+                    repo_root,
+                    "SAFARI_ZONE_BETA",
+                    (x, y),
+                    dimensions,
+                    resolved,
+                    tilesets,
+                ) == "TALL_GRASS"
+
+    assert [block_at(*coordinate) for coordinate in preserve["sign_coordinates"]] == [
+        0x15,
+        0x48,
+    ]
+    assert all(
+        collision_at(
+            repo_root,
+            "SAFARI_ZONE_BETA",
+            tuple(coordinate),
+            dimensions,
+            resolved,
+            tilesets,
+        )
+        == "WALL"
+        for coordinate in preserve["sign_coordinates"]
+    )
+    assert all(
+        collision_at(
+            repo_root,
+            "SAFARI_ZONE_BETA",
+            tuple(coordinate),
+            dimensions,
+            resolved,
+            tilesets,
+        )
+        == "FLOOR"
+        for coordinate in preserve["old_sign_coordinates"]
+    )
+
     passable = {"FLOOR", "TALL_GRASS", "LONG_GRASS", "WARP_CARPET_DOWN"}
     start = (9, 22)
     seen = {start}
@@ -812,7 +932,7 @@ def test_safari_layout_is_reachable_without_surf_and_metadata_is_conditional(
                 resolved,
                 tilesets,
             )
-            == "FLOOR"
+            == pickup["collision"]
         )
     for sign in preserve["sign_coordinates"]:
         x, y = sign
@@ -829,6 +949,18 @@ def test_safari_layout_is_reachable_without_surf_and_metadata_is_conditional(
         )
         == "WARP_CARPET_DOWN"
         for warp in preserve["warps"]
+    )
+    assert all(
+        collision_at(
+            repo_root,
+            "SAFARI_ZONE_BETA",
+            tuple(coordinate),
+            dimensions,
+            resolved,
+            tilesets,
+        )
+        == "FLOOR"
+        for coordinate in preserve["exit_floor_coordinates"]
     )
     assert any(
         collision_at(

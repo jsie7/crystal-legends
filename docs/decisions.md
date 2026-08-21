@@ -327,8 +327,10 @@ and escape rules. It has no clerk, fee, timer, step counter, Safari Balls,
 bait/rock commands, prize, or reopening ceremony. A 10-percent all-time grass
 table makes level-20 Mareep, level-24 Vulpix, and level-22 Mankey common; a
 6-percent water table puts Remoraid in both common slots. Two ordinary visible
-item balls reward exploration. Multi-area ports and official Safari mechanics
-remain deferred.
+item balls reward exploration. The compact northern preserve uses denser grass,
+a six-by-six-tile shore-framed pond, and one additional tree barrier. Its two
+notices flank the two-tile south exit, whose carpet is limited to the actual
+warp tiles. Multi-area ports and official Safari mechanics remain deferred.
 
 ## 2026-08-20 — Place branch-safe birds in compact Kanto world locations
 

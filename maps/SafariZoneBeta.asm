@@ -34,12 +34,12 @@ SafariZoneBeta_MapEvents:
 
 	def_bg_events
 	if DEF(_CRYSTALLEGENDS)
-	bg_event  6, 20, BGEVENT_READ, SafariZoneBetaUnattendedSign
-	bg_event 13, 21, BGEVENT_READ, SafariZoneBetaNormalBattleSign
+	bg_event  8, 20, BGEVENT_READ, SafariZoneBetaUnattendedSign
+	bg_event 11, 20, BGEVENT_READ, SafariZoneBetaNormalBattleSign
 	endc
 
 	def_object_events
 	if DEF(_CRYSTALLEGENDS)
-	object_event  3, 19, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, SafariZoneBetaUltraBall, EVENT_SAFARI_ZONE_BETA_ULTRA_BALL
+	object_event  2, 19, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, SafariZoneBetaUltraBall, EVENT_SAFARI_ZONE_BETA_ULTRA_BALL
 	object_event 17,  3, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, SafariZoneBetaMaxRevive, EVENT_SAFARI_ZONE_BETA_MAX_REVIVE
 	endc

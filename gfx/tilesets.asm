@@ -174,6 +174,10 @@ INCBIN "gfx/tilesets/park.2bpp.lz"
 
 TilesetParkMeta::
 INCBIN "data/tilesets/park_metatiles.bin"
+if DEF(_CRYSTALLEGENDS)
+TilesetParkCrystalLegendsExtraMeta::
+INCBIN "data/tilesets/park_crystal_legends_extra_metatiles.bin"
+endc
 
 TilesetParkColl::
 INCLUDE "data/tilesets/park_collision.asm"

@@ -445,6 +445,14 @@ def test_compiled_safari_blocks_metadata_and_warps_are_variant_safe(
     assert custom.at(custom_symbols["SafariZoneBeta_Blocks"], 180) == custom_blocks
     assert reference.at(reference_symbols["SafariZoneBeta_Blocks"], 180) == stock_blocks
 
+    extra_metatiles = (
+        repo_root / safari["preserve"]["custom_metatile_path"]
+    ).read_bytes()
+    assert custom.at(
+        custom_symbols["TilesetParkCrystalLegendsExtraMeta"], len(extra_metatiles)
+    ) == extra_metatiles
+    assert "TilesetParkCrystalLegendsExtraMeta" not in reference_symbols
+
     water_block = safari["preserve"]["water_collision"]["block"]
     custom_water = constants[
         f'COLL_{safari["preserve"]["water_collision"]["custom"]}'
@@ -458,6 +466,30 @@ def test_compiled_safari_blocks_metadata_and_warps_are_variant_safe(
     assert reference.slice(
         reference_symbols["TilesetParkColl"].rom_offset + water_block * 4, 4
     ) == bytes([reference_water] * 4)
+
+    first_custom, last_custom = safari["preserve"]["custom_metatile_range"]
+    assert len(extra_metatiles) == (last_custom - first_custom + 1) * 16
+    custom_collision_bytes = custom.slice(
+        custom_symbols["TilesetParkColl"].rom_offset + first_custom * 4,
+        (last_custom - first_custom + 1) * 4,
+    )
+    assert custom_collision_bytes[: 8 * 4] == bytes([custom_water] * 8 * 4)
+    assert custom_collision_bytes[8 * 4 :] == bytes(
+        [
+            constants["COLL_FLOOR"],
+            constants["COLL_WALL"],
+            constants["COLL_FLOOR"],
+            constants["COLL_FLOOR"],
+            constants["COLL_FLOOR"],
+            constants["COLL_FLOOR"],
+            constants["COLL_FLOOR"],
+            constants["COLL_WARP_CARPET_DOWN"],
+            constants["COLL_FLOOR"],
+            constants["COLL_FLOOR"],
+            constants["COLL_WARP_CARPET_DOWN"],
+            constants["COLL_FLOOR"],
+        ]
+    )
 
     map_index = constants["MAP_SAFARI_ZONE_BETA"] - 1
     custom_record = custom.slice(
