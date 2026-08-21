@@ -80,6 +80,4 @@
 		tilecoll FLOOR, WALL, FLOOR, FLOOR ; 48
 		tilecoll FLOOR, FLOOR, FLOOR, WARP_CARPET_DOWN ; 49
 		tilecoll FLOOR, FLOOR, WARP_CARPET_DOWN, FLOOR ; 4a
-		; Safari Zone left-half grass strip
-		tilecoll TALL_GRASS, FLOOR, TALL_GRASS, FLOOR ; 4b
 	endc

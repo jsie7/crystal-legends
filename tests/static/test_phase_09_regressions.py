@@ -740,7 +740,6 @@ def test_safari_beta_maps_preserve_warps_and_add_only_approved_interactions(
         [0x00, 0x16, 0x00, 0x16, 0x06, 0x00, 0x06, 0x00,
          0x4F, 0x4F, 0x00, 0x16, 0x4F, 0x4F, 0x06, 0x00]
     )
-    assert metatile(0x4B) == bytes([0x04, 0x04, 0x01, 0x01] * 4)
     gfx = repo_root / "gfx/tilesets.asm"
     extra_incbin = f'INCBIN "{preserve["custom_metatile_path"]}"'
     assert extra_incbin in _active_code(gfx, CRYSTAL_LEGENDS)
@@ -791,13 +790,6 @@ def test_safari_beta_maps_preserve_warps_and_add_only_approved_interactions(
         "WARP_CARPET_DOWN",
         "FLOOR",
     )
-    assert custom_collisions[0x4B] == (
-        "TALL_GRASS",
-        "FLOOR",
-        "TALL_GRASS",
-        "FLOOR",
-    )
-
     sources = {source.map_name: source for source in map_sources_from_repository(repo_root)}
     gate_events = parse_events(sources["SAFARI_ZONE_FUCHSIA_GATE_BETA"])
     preserve_events = parse_events(sources["SAFARI_ZONE_BETA"])
