@@ -59,29 +59,3 @@ INCLUDE "home/battle.asm"
 INCLUDE "home/sprite_anims.asm"
 INCLUDE "home/audio.asm"
 INCLUDE "home/mobile.asm"
-
-if DEF(_CRYSTALLEGENDS)
-; Stock treats block $00 as the surrounding-map sentinel. Crystal Legends
-; uses it once at Cinnabar's locked block coordinate (3, 2), so accept only
-; that in-map coordinate; connected-map and void sentinels stay blocked.
-CheckCurrentMapBlockZero:
-	and a
-	ret nz
-	ld a, [wMapWidth]
-	cp 4
-	jr c, .sentinel
-	ld a, d
-	and $fe
-	cp 3 * 2 + 4
-	jr nz, .sentinel
-	ld a, e
-	and $fe
-	cp 2 * 2 + 4
-	jr nz, .sentinel
-	xor a
-	ret
-
-.sentinel:
-	pop hl
-	jp GetCoordTileCollision.nope
-endc

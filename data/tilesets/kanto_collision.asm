@@ -1,8 +1,4 @@
-if DEF(_CRYSTALLEGENDS)
-	tilecoll HOP_DOWN, FLOOR, WALL, FLOOR ; 00
-else
 	tilecoll CUT_TREE, CUT_TREE, CUT_TREE, CUT_TREE ; 00
-endc
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 01
 	tilecoll WALL, WALL, WALL, DOOR ; 02
 	tilecoll WALL, WALL, WALL, WALL ; 03
@@ -81,7 +77,11 @@ endc
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 48
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 49
 	tilecoll FLOOR, FLOOR, WARP_CARPET_DOWN, WALL ; 4a
-	tilecoll HOP_DOWN_RIGHT, WALL, WALL, WALL ; 4b
+	if DEF(_CRYSTALLEGENDS)
+		tilecoll HOP_DOWN, FLOOR, WALL, FLOOR ; 4b
+	else
+		tilecoll HOP_DOWN_RIGHT, WALL, WALL, WALL ; 4b
+	endc
 	tilecoll FLOOR, FLOOR, WALL, FLOOR ; 4c
 	tilecoll FLOOR, WALL, FLOOR, WALL ; 4d
 	tilecoll WALL, FLOOR, WALL, FLOOR ; 4e

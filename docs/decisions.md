@@ -302,7 +302,9 @@ moves. Decline or full party plus full current box must not set the gift event
 or repeat a completed service. The Blaine return fact is set before the gift
 attempt so storage failure never repeats the investigation. The visible
 Cinnabar case and gray shelf staircase use Crystal Legends-only item, block,
-metatile, collision, and graphics variants; reference assets remain exact.
+metatile, collision, and graphics variants; reference assets remain exact. The
+staircase uses nonzero Kanto metatile `$4b` because block `$00` is a rendering
+and collision sentinel, not a usable map block.
 
 ## 2026-08-20 — Open one unattended Safari preserve through existing Fuchsia state
 

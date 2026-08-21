@@ -263,7 +263,22 @@ def test_compiled_cinnabar_assets_are_custom_replacements_only(
         "TilesetKantoGFX"
     ].rom_offset
 
-    assert custom.at(custom_symbols["TilesetKantoColl"], 4) == bytes(
+    staircase_block = scenario["blaines_log"]["staircase"]["custom_block"]
+    assert custom.slice(
+        custom_symbols["TilesetKantoColl"].rom_offset + staircase_block * 4,
+        4,
+    ) == bytes(
+        [
+            phase_9_constants["COLL_HOP_DOWN"],
+            phase_9_constants["COLL_FLOOR"],
+            phase_9_constants["COLL_WALL"],
+            phase_9_constants["COLL_FLOOR"],
+        ]
+    )
+    assert reference.slice(
+        reference_symbols["TilesetKantoColl"].rom_offset + staircase_block * 4,
+        4,
+    ) != bytes(
         [
             phase_9_constants["COLL_HOP_DOWN"],
             phase_9_constants["COLL_FLOOR"],

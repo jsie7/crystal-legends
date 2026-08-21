@@ -318,29 +318,34 @@ def test_phase_9_kanto_assets_change_only_the_staircase_and_safari_gate(
         (index, old, new)
         for index, (old, new) in enumerate(zip(stock_blocks, custom_blocks))
         if old != new
-    ] == [(scenario["blaines_log"]["staircase"]["block_offset"], 0x24, 0x00)]
-    assert [
+    ] == [
         (
-            path.name,
-            [index for index, block in enumerate(path.read_bytes()) if block == 0],
+            scenario["blaines_log"]["staircase"]["block_offset"],
+            0x24,
+            scenario["blaines_log"]["staircase"]["custom_block"],
         )
-        for path in sorted((repo_root / "maps").glob("*.blk"))
-        if 0 in path.read_bytes()
-    ] == [("CinnabarIslandCrystalLegends.blk", [23])]
+    ]
 
     stock_meta = (repo_root / "data/tilesets/kanto_metatiles.bin").read_bytes()
     custom_meta = (
         repo_root / "data/tilesets/kanto_metatiles_crystallegends.bin"
     ).read_bytes()
     assert len(stock_meta) == len(custom_meta) == 0x800
-    assert custom_meta[:16] == bytes([0x11] * 12 + [0x37, 0x34, 0x00, 0x0D])
+    staircase_block = scenario["blaines_log"]["staircase"]["custom_block"]
+    assert custom_meta[:16] == stock_meta[:16]
+    assert custom_meta[staircase_block * 16 : (staircase_block + 1) * 16] == bytes(
+        [0x11] * 12 + [0x37, 0x34, 0x00, 0x0D]
+    )
     changed_metatiles = [
         index
         for index in range(len(stock_meta) // 16)
         if stock_meta[index * 16 : (index + 1) * 16]
         != custom_meta[index * 16 : (index + 1) * 16]
     ]
-    assert changed_metatiles == [0x00, scenario["safari"]["fuchsia_gate"]["open_block"]]
+    assert changed_metatiles == [
+        scenario["safari"]["fuchsia_gate"]["open_block"],
+        staircase_block,
+    ]
     gate = scenario["safari"]["fuchsia_gate"]
     assert custom_meta[0x470:0x480] == bytes(gate["metatile"])
 
@@ -354,16 +359,22 @@ def test_phase_9_kanto_assets_change_only_the_staircase_and_safari_gate(
 
     collision_source = (repo_root / "data/tilesets/kanto_collision.asm").read_text()
     assert parse_collision_rows(collision_source)[0] == (
+        "CUT_TREE",
+        "CUT_TREE",
+        "CUT_TREE",
+        "CUT_TREE",
+    )
+    assert parse_collision_rows(collision_source)[staircase_block] == (
         "HOP_DOWN",
         "FLOOR",
         "WALL",
         "FLOOR",
     )
-    assert parse_collision_rows(collision_source, REFERENCE)[0] == (
-        "CUT_TREE",
-        "CUT_TREE",
-        "CUT_TREE",
-        "CUT_TREE",
+    assert parse_collision_rows(collision_source, REFERENCE)[staircase_block] == (
+        "HOP_DOWN_RIGHT",
+        "WALL",
+        "WALL",
+        "WALL",
     )
     assert parse_collision_rows(collision_source)[gate["open_block"]] == tuple(
         gate["open_collision"]
@@ -990,7 +1001,7 @@ def test_phase_9_starter_source_is_absent_from_reference_builds(repo_root: Path)
         assert all(not any(value in line for line in reference) for value in forbidden)
 
 
-def test_custom_block_zero_collision_guard_preserves_reference_lookup(
+def test_cinnabar_staircase_uses_a_renderable_nonzero_block(
     repo_root: Path,
 ) -> None:
     path = repo_root / "home/map.asm"
@@ -1002,45 +1013,13 @@ def test_custom_block_zero_collision_guard_preserves_reference_lookup(
             "GetCoordTileCollision::",
             "call GetBlockLocation",
             "ld a, [hl]",
-            "call CheckCurrentMapBlockZero",
-            "ld l, a",
-        ],
-    )
-    _assert_contiguous(
-        _active_code(repo_root / "home.asm", CRYSTAL_LEGENDS),
-        [
-            "CheckCurrentMapBlockZero:",
-            "and a",
-            "ret nz",
-            "ld a, [wMapWidth]",
-            "cp 4",
-            "jr c, .sentinel",
-            "ld a, d",
-            "and $fe",
-            "cp 3 * 2 + 4",
-            "jr nz, .sentinel",
-            "ld a, e",
-            "and $fe",
-            "cp 2 * 2 + 4",
-            "jr nz, .sentinel",
-            "xor a",
-            "ret",
-            ".sentinel:",
-            "pop hl",
-            "jp GetCoordTileCollision.nope",
-        ],
-    )
-    _assert_contiguous(
-        reference,
-        [
-            "GetCoordTileCollision::",
-            "call GetBlockLocation",
-            "ld a, [hl]",
             "and a",
             "jr z, .nope",
             "ld l, a",
         ],
     )
+    assert custom == reference
+    assert "CheckCurrentMapBlockZero" not in (repo_root / "home.asm").read_text()
 
 
 def test_facility_variant_reuses_only_the_locked_gate_tiles_and_appends_doors(

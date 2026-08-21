@@ -1712,12 +1712,8 @@ GetCoordTileCollision::
 ; Get the collision byte for tile d, e
 	call GetBlockLocation
 	ld a, [hl]
-	if DEF(_CRYSTALLEGENDS)
-	call CheckCurrentMapBlockZero
-	else
 	and a
 	jr z, .nope
-	endc
 	ld l, a
 	ld h, 0
 	add hl, hl

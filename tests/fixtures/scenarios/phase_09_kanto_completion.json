@@ -75,7 +75,7 @@
     "flavor_coordinates": [[15, 5], [19, 8]],
     "staircase": {
       "block_offset": 23,
-      "custom_block": 0,
+      "custom_block": 75,
       "source_tileset": "cave",
       "source_tiles": [54, 55],
       "destination_tiles": [0, 13],
