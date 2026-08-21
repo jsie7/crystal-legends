@@ -103,7 +103,7 @@ def scenario(repo_root: Path) -> dict:
 
 def test_phase_9_contract_locks_the_three_starter_rewards(scenario: dict) -> None:
     assert scenario["scenario_id"] == "phase-09-kanto-completion"
-    assert scenario["events"] == {"first": 2015, "last": 2033, "count": 19}
+    assert scenario["events"] == {"first": 2015, "last": 2034, "count": 20}
     assert [(gift["species"], gift["level"]) for gift in scenario["gifts"]] == [
         ("BULBASAUR", 28),
         ("SQUIRTLE", 28),
@@ -148,6 +148,7 @@ def test_phase_9_events_are_contiguous_and_reference_reserved(repo_root: Path) -
         "EVENT_ZAPDOS_NOT_AT_KANTO_LOCATION",
         "EVENT_MOLTRES_NOT_AT_KANTO_LOCATION",
         "EVENT_ERIKA_REQUESTED_CELADON_POND_HELP",
+        "EVENT_BLAINE_REQUESTED_CINNABAR_HELP",
     ]
     _assert_contiguous(
         crystal,
@@ -159,7 +160,7 @@ def test_phase_9_events_are_contiguous_and_reference_reserved(repo_root: Path) -
         ],
     )
     assert all(not any(event in line for line in reference) for event in events)
-    assert "const_skip 19" in reference
+    assert "const_skip 20" in reference
 
 
 def test_blaines_log_reuses_only_item_b0_in_the_custom_build(
@@ -262,6 +263,16 @@ def test_starter_scripts_keep_service_and_delivery_state_independent(
         [
             "checkevent EVENT_RETURNED_BLAINES_LOG",
             "checkitem BLAINES_LOG",
+            "writetext BlaineLogRequestText",
+            "waitbutton",
+            "setevent EVENT_BLAINE_REQUESTED_CINNABAR_HELP",
+        ],
+    )
+    _assert_in_order(
+        blaine,
+        [
+            "checkevent EVENT_RETURNED_BLAINES_LOG",
+            "checkitem BLAINES_LOG",
             "takeitem BLAINES_LOG",
             "setevent EVENT_RETURNED_BLAINES_LOG",
             "writetext BlaineCharmanderOfferText",
@@ -349,6 +360,24 @@ def test_erika_muk_and_blaine_log_retry_only_after_success(repo_root: Path) -> N
     )
     assert "bg_event 15,  5, BGEVENT_READ, CinnabarIslandOldGymRemains" in island
     assert "bg_event 19,  8, BGEVENT_READ, CinnabarIslandOldLabRemains" in island
+
+    pokecenter = _active_code(
+        repo_root / "maps/CinnabarPokecenter1F.asm", CRYSTAL_LEGENDS
+    )
+    cooltrainer = _section(
+        pokecenter,
+        "CinnabarPokecenter1FCooltrainerFScript:",
+        "CinnabarPokecenter1FFisherScript:",
+    )
+    fisherman = _section(
+        pokecenter,
+        "CinnabarPokecenter1FFisherScript:",
+        "CinnabarPokecenter1FCooltrainerFText:",
+    )
+    assert "checkevent EVENT_BLAINE_REQUESTED_CINNABAR_HELP" in cooltrainer
+    assert "checkevent EVENT_BLAINE_REQUESTED_CINNABAR_HELP" in fisherman
+    assert "checkflag ENGINE_VOLCANOBADGE" not in cooltrainer
+    assert "checkflag ENGINE_VOLCANOBADGE" not in fisherman
 
 
 def test_phase_9_kanto_assets_change_only_stairs_and_safari_gate(

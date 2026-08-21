@@ -85,6 +85,7 @@ def phase_9_constants(
         "EVENT_RECOVERED_BLAINES_LOG",
         "EVENT_RETURNED_BLAINES_LOG",
         "EVENT_ERIKA_REQUESTED_CELADON_POND_HELP",
+        "EVENT_BLAINE_REQUESTED_CINNABAR_HELP",
         "GROUP_CELADON_CITY",
         "MAP_CELADON_CITY",
         "GROUP_SAFARI_ZONE_WARDENS_HOME",
@@ -229,6 +230,11 @@ def test_kanto_gifts_require_service_and_declines_remain_retryable(
             assert event_is_set(
                 session,
                 phase_9_constants["EVENT_ERIKA_REQUESTED_CELADON_POND_HELP"],
+            )
+        if gift["giver"] == "BLAINE":
+            assert event_is_set(
+                session,
+                phase_9_constants["EVENT_BLAINE_REQUESTED_CINNABAR_HELP"],
             )
 
     with loaded_phase_9_gift_checkpoint(
@@ -438,13 +444,39 @@ def test_cinnabar_staircase_survivor_clue_and_log_capacity_are_runtime_safe(
 
     with loaded_phase_9_map_checkpoint(
         repo_root,
-        tmp_path / "fisher",
+        tmp_path / "fisher-before-request",
         constants,
         scenario,
         map_name="CINNABAR_POKECENTER_1F",
         x=2,
         y=5,
-        events={"EVENT_RECOVERED_BLAINES_LOG": False},
+        events={
+            "EVENT_BLAINE_REQUESTED_CINNABAR_HELP": False,
+            "EVENT_RECOVERED_BLAINES_LOG": False,
+        },
+        badges=("ENGINE_VOLCANOBADGE",),
+    ) as session:
+        session.enable_script_tracing()
+        session.tap("up", 2, 10)
+        session.tap("a", 2, 10)
+        session.wait_for_script("CinnabarPokecenter1FFisherScript", max_frames)
+        _finish_overworld_script(session, max_frames)
+        assert not event_is_set(
+            session, constants["EVENT_LEARNED_LOCATION_OF_BLAINES_LOG"]
+        )
+
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path / "fisher-after-request",
+        constants,
+        scenario,
+        map_name="CINNABAR_POKECENTER_1F",
+        x=2,
+        y=5,
+        events={
+            "EVENT_BLAINE_REQUESTED_CINNABAR_HELP": True,
+            "EVENT_RECOVERED_BLAINES_LOG": False,
+        },
         badges=("ENGINE_VOLCANOBADGE",),
     ) as session:
         session.enable_script_tracing()

@@ -10,8 +10,8 @@
   "delivery_contract": "stock_givepoke_0_party_1_box_2_full",
   "events": {
     "first": 2015,
-    "last": 2033,
-    "count": 19
+    "last": 2034,
+    "count": 20
   },
   "gifts": [
     {
@@ -77,6 +77,7 @@
     "reference_item": "ITEM_B0",
     "reference_name": "TERU-SAMA",
     "pocket": "KEY_ITEM",
+    "request_event": "EVENT_BLAINE_REQUESTED_CINNABAR_HELP",
     "clue_event": "EVENT_LEARNED_LOCATION_OF_BLAINES_LOG",
     "recovery_event": "EVENT_RECOVERED_BLAINES_LOG",
     "return_event": "EVENT_RETURNED_BLAINES_LOG",

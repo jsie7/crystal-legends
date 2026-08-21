@@ -53,6 +53,7 @@ SeafoamGymBlaineScript:
 	iftrue .ReturnLog
 	writetext BlaineLogRequestText
 	waitbutton
+	setevent EVENT_BLAINE_REQUESTED_CINNABAR_HELP
 	closetext
 	end
 

@@ -13,13 +13,13 @@ CinnabarPokecenter1FNurseScript:
 
 CinnabarPokecenter1FCooltrainerFScript:
 	if DEF(_CRYSTALLEGENDS)
-	checkflag ENGINE_VOLCANOBADGE
-	iftrue .AfterVolcanoBadge
+	checkevent EVENT_BLAINE_REQUESTED_CINNABAR_HELP
+	iftrue .AfterBlaineRequest
 	endc
 	jumptextfaceplayer CinnabarPokecenter1FCooltrainerFText
 	if DEF(_CRYSTALLEGENDS)
 
-.AfterVolcanoBadge:
+.AfterBlaineRequest:
 	jumptextfaceplayer CinnabarPokecenter1FCooltrainerFLogText
 	endc
 
@@ -27,7 +27,7 @@ CinnabarPokecenter1FFisherScript:
 	if DEF(_CRYSTALLEGENDS)
 	faceplayer
 	opentext
-	checkflag ENGINE_VOLCANOBADGE
+	checkevent EVENT_BLAINE_REQUESTED_CINNABAR_HELP
 	iffalse .StockText
 	checkevent EVENT_RECOVERED_BLAINES_LOG
 	iftrue .Recovered

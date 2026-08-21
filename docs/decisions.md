@@ -299,6 +299,8 @@ recovery and return of `BLAINE'S LOG`. All three rewards coexist on one save.
 Erika's request is recorded separately from task completion; after that
 conversation, entering any of the pond's three northern water tiles starts the
 Muk prompt. Entry remains silent before the request and after completion.
+Blaine's request is likewise recorded when he actually asks for help, so the
+Cinnabar survivors retain their stock dialogue until that conversation.
 
 Use the stock `givepoke` party/current-box transaction and ordinary generated
 moves, then assign the gifting leader's OT name and a deterministic OT ID based

@@ -444,7 +444,7 @@ The accepted automated boundary on 2026-08-20 is:
 - all six upstream reference artifacts reproduced by `make compare`;
 - ROM SHA-256
   `c136026e9693f025ff4e6919ad781e2942fd7aea05dd726db9519da76289b9de`;
-- event IDs 2015 through 2033 with `NUM_EVENTS`, WRAM, SRAM, and the save-layout
+- event IDs 2015 through 2034 with `NUM_EVENTS`, WRAM, SRAM, and the save-layout
   fingerprint unchanged;
 - reviewed Phase 9 bank reserves: ROMX `$06=$0202`, `$1c=$06b7`,
   `$1d=$0cce`, `$2c=$249a`, `$62=$0646`, `$65=$0653`, `$66=$052f`,
@@ -471,7 +471,8 @@ and pass/fail result. Manually confirm:
    and natural repeat dialogue.
    Confirm Erika's request makes Muk trigger when entering each of the pond's
    three northern water tiles, with run/loss retry; Misty's power hint works in
-   either order; and the survivor clue, complete gray Cinnabar staircase,
+   either order; and that both survivors retain stock dialogue until Blaine
+   asks for help. Then review the survivor clue, complete gray staircase,
    boulder-hidden cache, log recovery, and return form one coherent task without
    an HM requirement. Explicitly judge level-28 Charmander's Ember-to-level-34
    Flamethrower interval.

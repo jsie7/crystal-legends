@@ -52,6 +52,9 @@ def build_phase_9_gift_checkpoint(
     save.write_saved_u8("wYCoord", gift["start"]["y"])
     _set_kanto_badge(save, constants, gift["badge"], True)
     save.set_event(constants[gift["service_event"]], service_complete)
+    save.set_event(
+        constants[scenario["blaines_log"]["request_event"]], False
+    )
     for event in _GIFT_EVENTS:
         save.set_event(
             constants[event], event == gift["completion_event"] and gift_complete
