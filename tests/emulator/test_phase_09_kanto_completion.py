@@ -1373,16 +1373,18 @@ def test_route_20_seafoam_round_trip_and_forced_slide_are_runtime_safe(
             wait_for_idle(session, max_frames)
 
         walk_steps(session, "up", "wYCoord", -1, 3, max_frames)
-        walk_steps(session, "right", "wXCoord", 1, 3, max_frames)
+        walk_steps(session, "left", "wXCoord", -1, 4, max_frames)
         walk_steps(session, "up", "wYCoord", -1, 1, max_frames)
+        slide_until("up", "wYCoord", 9, "northbound western Seafoam ice slide")
+        walk_steps(session, "up", "wYCoord", -1, 3, max_frames)
+        walk_steps(session, "right", "wXCoord", 1, 1, max_frames)
         assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (
-            13,
-            12,
+            7,
+            6,
         )
 
-        slide_until("right", "wXCoord", 17, "eastbound Seafoam ice slide")
-        slide_until("up", "wYCoord", 9, "northbound eastern Seafoam ice slide")
-        walk_steps(session, "left", "wXCoord", -1, 5, max_frames)
+        slide_until("right", "wXCoord", 11, "eastbound upper Seafoam ice slide")
+        slide_until("down", "wYCoord", 9, "southbound divider Seafoam ice slide")
         slide_until("left", "wXCoord", 9, "westbound central Seafoam ice slide")
         slide_until("up", "wYCoord", 5, "northbound central Seafoam ice slide")
         walk_steps(session, "left", "wXCoord", -1, 1, max_frames)
@@ -1394,15 +1396,14 @@ def test_route_20_seafoam_round_trip_and_forced_slide_are_runtime_safe(
 
         walk_steps(session, "right", "wXCoord", 1, 1, max_frames)
         slide_until("down", "wYCoord", 9, "southbound central Seafoam ice slide")
-        slide_until("right", "wXCoord", 12, "eastbound central Seafoam ice slide")
-        walk_steps(session, "right", "wXCoord", 1, 5, max_frames)
-        slide_until("down", "wYCoord", 15, "southbound eastern Seafoam ice slide")
-        slide_until("left", "wXCoord", 15, "western return-pocket ice slide")
-        walk_steps(session, "up", "wYCoord", -1, 1, max_frames)
-        slide_until("up", "wYCoord", 12, "northbound return-pocket ice slide")
-        slide_until("left", "wXCoord", 13, "westbound lower Seafoam ice slide")
+        slide_until("right", "wXCoord", 11, "eastbound central Seafoam ice slide")
+        slide_until("up", "wYCoord", 6, "northbound divider Seafoam ice slide")
+        slide_until("left", "wXCoord", 7, "westbound upper Seafoam ice slide")
+        walk_steps(session, "left", "wXCoord", -1, 1, max_frames)
+        walk_steps(session, "down", "wYCoord", 1, 3, max_frames)
+        slide_until("down", "wYCoord", 12, "southbound western Seafoam ice slide")
         walk_steps(session, "down", "wYCoord", 1, 1, max_frames)
-        walk_steps(session, "left", "wXCoord", -1, 3, max_frames)
+        walk_steps(session, "right", "wXCoord", 1, 4, max_frames)
         walk_steps(session, "down", "wYCoord", 1, 3, max_frames)
         _walk_until_map(session, "down", constants, "ROUTE_20", max_frames)
         assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (
