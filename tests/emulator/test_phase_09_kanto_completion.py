@@ -289,6 +289,18 @@ def test_kanto_gifts_deliver_generated_level_28_moves_and_finalize_once(
         assert session.read_symbol_bytes(f"{prefix}Moves", 4) == bytes(
             phase_9_constants[move] for move in gift["generated_moves"]
         )
+        assert session.read_symbol_bytes(f"{prefix}ID", 2) == gift[
+            "ot_id"
+        ].to_bytes(2, "big")
+        symbols = SymbolTable.parse(
+            (repo_root / scenario["symbols"]).read_text()
+        )
+        rom = (repo_root / scenario["rom"]).read_bytes()
+        ot_symbol = symbols[f"{gift['giver'].title()}StarterOTName"]
+        expected_ot = rom[
+            ot_symbol.rom_offset : ot_symbol.rom_offset + len(gift["ot_name"]) + 1
+        ]
+        assert session.read_symbol_bytes(f"{prefix}OT", len(expected_ot)) == expected_ot
         yes_no_count = session.hook_history.count("_YesNoBox")
         before_repeat = read_progress(session)
         session.tap("a", 2, 30)

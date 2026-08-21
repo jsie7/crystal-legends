@@ -68,6 +68,7 @@ SeafoamGymBlaineScript:
 	iffalse .DeclinedCharmander
 	givepoke CHARMANDER, 28
 	ifequal 2, .CharmanderStorageFull
+	special SetBlaineStarterOT
 	setevent EVENT_GOT_CHARMANDER_FROM_BLAINE
 	writetext BlaineCharmanderReceivedText
 	playsound SFX_CAUGHT_MON

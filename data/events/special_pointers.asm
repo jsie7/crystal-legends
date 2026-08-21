@@ -185,4 +185,7 @@ SpecialsPointers::
 	add_special UnusedDummySpecial ; unused
 if DEF(_CRYSTALLEGENDS)
 	add_special CheckCaughtPokemon
+	add_special SetErikaStarterOT
+	add_special SetMistyStarterOT
+	add_special SetBlaineStarterOT
 endc

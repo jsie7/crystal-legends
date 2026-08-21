@@ -88,6 +88,7 @@ CeruleanGymMistyScript:
 	iffalse .DeclinedSquirtle
 	givepoke SQUIRTLE, 28
 	ifequal 2, .SquirtleStorageFull
+	special SetMistyStarterOT
 	setevent EVENT_GOT_SQUIRTLE_FROM_MISTY
 	writetext MistySquirtleReceivedText
 	playsound SFX_CAUGHT_MON

@@ -467,7 +467,8 @@ and pass/fail result. Manually confirm:
 
 1. For Erika, Misty, and Blaine, review the service request after the stock
    badge/TM flow; named dialogue and wrapping; confirmation, nickname, party
-   and box delivery; decline/full-storage retry; and natural repeat dialogue.
+   and box delivery with the leader shown as OT; decline/full-storage retry;
+   and natural repeat dialogue.
    Confirm the pond Muk is conspicuous and retryable, Misty's power hint works
    in either order, and the survivor clue, visible gray Cinnabar staircase,
    hidden rubble cache, log recovery, and return form one coherent task without

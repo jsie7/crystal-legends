@@ -367,6 +367,10 @@ def test_compiled_phase_9_starter_labels_are_custom_only(repo_root: Path) -> Non
         "BlaineCharmanderOfferText",
         "CeladonCityMukPond",
         "CinnabarIslandBlainesLogRubble",
+        "ErikaStarterOTName",
+        "MistyStarterOTName",
+        "BlaineStarterOTName",
+        "SetLatestStarterOT",
     }
     assert all(label in custom_symbols for label in labels)
     assert all(label not in reference_symbols for label in labels)

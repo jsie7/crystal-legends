@@ -230,6 +230,7 @@ def test_starter_scripts_keep_service_and_delivery_state_independent(
             "yesorno",
             "givepoke BULBASAUR, 28",
             "ifequal 2, .BulbasaurStorageFull",
+            "special SetErikaStarterOT",
             "setevent EVENT_GOT_BULBASAUR_FROM_ERIKA",
         ],
     )
@@ -241,6 +242,7 @@ def test_starter_scripts_keep_service_and_delivery_state_independent(
             "yesorno",
             "givepoke SQUIRTLE, 28",
             "ifequal 2, .SquirtleStorageFull",
+            "special SetMistyStarterOT",
             "setevent EVENT_GOT_SQUIRTLE_FROM_MISTY",
         ],
     )
@@ -255,11 +257,29 @@ def test_starter_scripts_keep_service_and_delivery_state_independent(
             "yesorno",
             "givepoke CHARMANDER, 28",
             "ifequal 2, .CharmanderStorageFull",
+            "special SetBlaineStarterOT",
             "setevent EVENT_GOT_CHARMANDER_FROM_BLAINE",
         ],
     )
     for lines, prefix in ((erika, "ERIKA:"), (misty, "MISTY:"), (blaine, "BLAINE:")):
         assert any(line.startswith(f'text "{prefix}') for line in lines)
+
+    move_mon = _active_code(
+        repo_root / "engine/pokemon/move_mon.asm", CRYSTAL_LEGENDS
+    )
+    _assert_in_order(
+        move_mon,
+        [
+            "SetErikaStarterOT:",
+            'db "ERIKA@"',
+            'db "MISTY@"',
+            'db "BLAINE@"',
+        ],
+    )
+    assert "SetLatestStarterOT:" in move_mon
+    assert "SetLatestStarterOT:" not in _active_code(
+        repo_root / "engine/pokemon/move_mon.asm", REFERENCE
+    )
 
 
 def test_erika_muk_and_blaine_log_retry_only_after_success(repo_root: Path) -> None:

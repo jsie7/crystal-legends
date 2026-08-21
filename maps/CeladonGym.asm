@@ -52,6 +52,7 @@ CeladonGymErikaScript:
 	iffalse .DeclinedBulbasaur
 	givepoke BULBASAUR, 28
 	ifequal 2, .BulbasaurStorageFull
+	special SetErikaStarterOT
 	setevent EVENT_GOT_BULBASAUR_FROM_ERIKA
 	writetext ErikaBulbasaurReceivedText
 	playsound SFX_CAUGHT_MON

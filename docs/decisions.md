@@ -298,7 +298,9 @@ Part and Power Plant arc, and Blaine requires the Cinnabar survivor trail plus
 recovery and return of `BLAINE'S LOG`. All three rewards coexist on one save.
 
 Use the stock `givepoke` party/current-box transaction and ordinary generated
-moves. Decline or full party plus full current box must not set the gift event
+moves, then assign the gifting leader's OT name and a deterministic OT ID based
+on their trainer class and party index. Decline or full party plus full current
+box must not set the gift event
 or repeat a completed service. The Blaine return fact is set before the gift
 attempt so storage failure never repeats the investigation. The hidden rubble
 cache and gray shelf staircase use Crystal Legends-only item, block, metatile,
