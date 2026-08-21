@@ -328,7 +328,7 @@ bait/rock commands, prize, or reopening ceremony. A 10-percent all-time grass
 table makes level-20 Mareep, level-24 Vulpix, and level-22 Mankey common; a
 6-percent water table puts Remoraid in both common slots. Two ordinary visible
 item balls reward exploration. The compact northern preserve uses denser grass,
-a six-by-six-tile pond framed by the National Park stone shore, and one
+an eight-by-six-tile pond framed by the National Park stone shore, and one
 additional tree barrier. A Crystal Legends-only Park graphic duplicates that
 shore into a gray-palette tile so it does not render with the orange roof
 palette. Its two notices flank the two-tile south exit, whose carpet is limited

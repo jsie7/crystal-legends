@@ -740,6 +740,7 @@ def test_safari_beta_maps_preserve_warps_and_add_only_approved_interactions(
         [0x00, 0x16, 0x00, 0x16, 0x06, 0x00, 0x06, 0x00,
          0x4F, 0x4F, 0x00, 0x16, 0x4F, 0x4F, 0x06, 0x00]
     )
+    assert metatile(0x4B) == bytes([0x04, 0x04, 0x01, 0x01] * 4)
     gfx = repo_root / "gfx/tilesets.asm"
     extra_incbin = f'INCBIN "{preserve["custom_metatile_path"]}"'
     assert extra_incbin in _active_code(gfx, CRYSTAL_LEGENDS)
@@ -788,6 +789,12 @@ def test_safari_beta_maps_preserve_warps_and_add_only_approved_interactions(
         "FLOOR",
         "FLOOR",
         "WARP_CARPET_DOWN",
+        "FLOOR",
+    )
+    assert custom_collisions[0x4B] == (
+        "TALL_GRASS",
+        "FLOOR",
+        "TALL_GRASS",
         "FLOOR",
     )
 
@@ -915,7 +922,7 @@ def test_safari_layout_is_reachable_without_surf_and_metadata_is_conditional(
         == "WALL"
         for coordinate in preserve["sign_coordinates"]
     )
-    assert all(
+    assert [
         collision_at(
             repo_root,
             "SAFARI_ZONE_BETA",
@@ -924,9 +931,8 @@ def test_safari_layout_is_reachable_without_surf_and_metadata_is_conditional(
             resolved,
             tilesets,
         )
-        == "FLOOR"
         for coordinate in preserve["old_sign_coordinates"]
-    )
+    ] == preserve["old_sign_collisions"]
 
     passable = {"FLOOR", "TALL_GRASS", "LONG_GRASS", "WARP_CARPET_DOWN"}
     start = (9, 22)

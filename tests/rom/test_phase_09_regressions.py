@@ -39,6 +39,7 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "COLL_HOP_DOWN",
             "COLL_ICE",
             "COLL_DOOR",
+            "COLL_TALL_GRASS",
             "COLL_WATER",
             "COLL_WATER_21",
             "COLL_WALL",
@@ -487,6 +488,10 @@ def test_compiled_safari_blocks_metadata_and_warps_are_variant_safe(
             constants["COLL_FLOOR"],
             constants["COLL_FLOOR"],
             constants["COLL_WARP_CARPET_DOWN"],
+            constants["COLL_FLOOR"],
+            constants["COLL_TALL_GRASS"],
+            constants["COLL_FLOOR"],
+            constants["COLL_TALL_GRASS"],
             constants["COLL_FLOOR"],
         ]
     )
