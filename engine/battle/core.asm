@@ -757,13 +757,14 @@ HandleEncore:
 	jp StdBattleTextbox
 
 TryEnemyFlee:
+	if DEF(_CRYSTALLEGENDS)
+		call CheckKantoBirdEnemyFlee
+		jr c, .Stay
+		nop
+	else
 	ld a, [wBattleMode]
 	dec a
 	jr nz, .Stay
-	if DEF(_CRYSTALLEGENDS)
-		ld a, [wBattleType]
-		cp BATTLETYPE_KANTO_BIRD
-		jr z, .Stay
 	endc
 
 	ld a, [wPlayerSubStatus5]

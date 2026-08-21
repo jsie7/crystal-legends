@@ -276,7 +276,7 @@ def test_starter_scripts_keep_service_and_delivery_state_independent(
         assert any(line.startswith(f'text "{prefix}') for line in lines)
 
     move_mon = _active_code(
-        repo_root / "engine/pokemon/move_mon.asm", CRYSTAL_LEGENDS
+        repo_root / "engine/events/kanto_starter_ot.asm", CRYSTAL_LEGENDS
     )
     _assert_in_order(
         move_mon,
@@ -288,9 +288,8 @@ def test_starter_scripts_keep_service_and_delivery_state_independent(
         ],
     )
     assert "SetLatestStarterOT:" in move_mon
-    assert "SetLatestStarterOT:" not in _active_code(
-        repo_root / "engine/pokemon/move_mon.asm", REFERENCE
-    )
+    reference_main = _active_code(repo_root / "main.asm", REFERENCE)
+    assert 'INCLUDE "engine/events/kanto_starter_ot.asm"' not in reference_main
 
 
 def test_erika_muk_and_blaine_log_retry_only_after_success(repo_root: Path) -> None:
@@ -1419,15 +1418,27 @@ def test_zapdos_moltres_and_oak_tracker_use_the_locked_branch_contract(
     _assert_in_order(
         _section(flee_logic, "TryEnemyFlee:", 'INCLUDE "data/wild/flee_mons.asm"'),
         [
-            "ld a, [wBattleMode]",
-            "ld a, [wBattleType]",
-            "cp BATTLETYPE_KANTO_BIRD",
-            "jr z, .Stay",
+            "call CheckKantoBirdEnemyFlee",
+            "jr c, .Stay",
+            "nop",
             "ld hl, OftenFleeMons",
         ],
     )
-    assert "BATTLETYPE_KANTO_BIRD" not in _active_code(
-        repo_root / "engine/battle/core.asm", REFERENCE
+    flee_guard = _active_code(
+        repo_root / "engine/battle/kanto_bird_flee.asm", CRYSTAL_LEGENDS
+    )
+    _assert_in_order(
+        flee_guard,
+        [
+            "CheckKantoBirdEnemyFlee:",
+            "ld a, [wBattleMode]",
+            "ld a, [wBattleType]",
+            "cp BATTLETYPE_KANTO_BIRD",
+            "scf",
+        ],
+    )
+    assert 'INCLUDE "engine/battle/kanto_bird_flee.asm"' not in _active_code(
+        repo_root / "main.asm", REFERENCE
     )
 
     oak = _active_code(repo_root / "maps/OaksLab.asm", CRYSTAL_LEGENDS)

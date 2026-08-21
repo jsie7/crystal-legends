@@ -40,6 +40,9 @@ INCLUDE "engine/events/bug_contest/caught_mon.asm"
 INCLUDE "engine/items/item_effects.asm"
 INCLUDE "engine/battle_anims/pokeball_wobble.asm"
 INCLUDE "engine/pokemon/knows_move.asm"
+if DEF(_CRYSTALLEGENDS)
+INCLUDE "engine/events/kanto_starter_ot.asm"
+endc
 
 
 SECTION "bank4", ROMX
@@ -159,6 +162,9 @@ SECTION "Battle Core", ROMX
 
 INCLUDE "engine/battle/core.asm"
 INCLUDE "data/battle/effect_command_pointers.asm"
+if DEF(_CRYSTALLEGENDS)
+INCLUDE "engine/battle/kanto_bird_flee.asm"
+endc
 
 
 SECTION "bank10", ROMX
