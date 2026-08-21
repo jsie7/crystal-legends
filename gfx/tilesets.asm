@@ -170,7 +170,11 @@ TilesetEliteFourRoomColl::
 INCLUDE "data/tilesets/elite_four_room_collision.asm"
 
 TilesetParkGFX::
+if DEF(_CRYSTALLEGENDS)
+INCBIN "gfx/tilesets/park_crystallegends.2bpp.lz"
+else
 INCBIN "gfx/tilesets/park.2bpp.lz"
+endc
 
 TilesetParkMeta::
 INCBIN "data/tilesets/park_metatiles.bin"

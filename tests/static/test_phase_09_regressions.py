@@ -711,15 +711,23 @@ def test_safari_beta_maps_preserve_warps_and_add_only_approved_interactions(
     def metatile(block_id: int) -> bytes:
         return combined_metatiles[block_id * 16 : (block_id + 1) * 16]
 
-    water, shore = 0x14, 0x15
-    assert metatile(0x40) == metatile(0x08)
-    assert metatile(0x41) == bytes([shore] * 4 + [water] * 12)
-    assert metatile(0x42) == metatile(0x09)
-    assert metatile(0x43) == bytes([shore, water, water, water] * 4)
-    assert metatile(0x44) == bytes([water, water, water, shore] * 4)
-    assert metatile(0x45) == metatile(0x0C)
-    assert metatile(0x46) == bytes([water] * 12 + [shore] * 4)
-    assert metatile(0x47) == metatile(0x0D)
+    water = 0x14
+    gray_shore = preserve["gray_shore_tile"]
+    stock_shore = preserve["stock_shore_tile"]
+
+    def with_gray_shore(block_id: int) -> bytes:
+        return metatile(block_id).replace(bytes([stock_shore]), bytes([gray_shore]))
+
+    assert gray_shore not in base_metatiles
+    assert stock_shore not in extra_metatiles[: 8 * 16]
+    assert metatile(0x40) == with_gray_shore(0x08)
+    assert metatile(0x41) == bytes([gray_shore] * 4 + [water] * 12)
+    assert metatile(0x42) == with_gray_shore(0x09)
+    assert metatile(0x43) == bytes([gray_shore, water, water, water] * 4)
+    assert metatile(0x44) == bytes([water, water, water, gray_shore] * 4)
+    assert metatile(0x45) == with_gray_shore(0x0C)
+    assert metatile(0x46) == bytes([water] * 12 + [gray_shore] * 4)
+    assert metatile(0x47) == with_gray_shore(0x0D)
     assert metatile(0x48) == bytes(
         [0x00, 0x16, 0x45, 0x46, 0x06, 0x00, 0x55, 0x56,
          0x00, 0x16, 0x00, 0x16, 0x06, 0x00, 0x06, 0x00]
@@ -736,6 +744,32 @@ def test_safari_beta_maps_preserve_warps_and_add_only_approved_interactions(
     extra_incbin = f'INCBIN "{preserve["custom_metatile_path"]}"'
     assert extra_incbin in _active_code(gfx, CRYSTAL_LEGENDS)
     assert extra_incbin not in _active_code(gfx, REFERENCE)
+    assert (
+        'INCBIN "gfx/tilesets/park_crystallegends.2bpp.lz"'
+        in _active_code(gfx, CRYSTAL_LEGENDS)
+    )
+    assert (
+        'INCBIN "gfx/tilesets/park_crystallegends.2bpp.lz"'
+        not in _active_code(gfx, REFERENCE)
+    )
+    assert (
+        'INCBIN "gfx/tilesets/park.2bpp.lz"'
+        in _active_code(gfx, REFERENCE)
+    )
+
+    stock_tiles = _png_tiles(
+        repo_root / "gfx/tilesets/park.png", expected_height=96
+    )
+    custom_tiles = _png_tiles(
+        repo_root / preserve["custom_gfx_path"], expected_height=96
+    )
+    changed_tiles = [
+        index
+        for index, (stock, custom) in enumerate(zip(stock_tiles, custom_tiles))
+        if stock != custom
+    ]
+    assert changed_tiles == [gray_shore]
+    assert custom_tiles[gray_shore] == stock_tiles[stock_shore]
 
     collision_source = (repo_root / "data/tilesets/park_collision.asm").read_text()
     custom_collisions = parse_collision_rows(collision_source)
