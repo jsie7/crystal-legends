@@ -130,7 +130,11 @@ CinnabarGroupSprites:
 	db SPRITE_SWIMMER_GIRL
 	db SPRITE_SWIMMER_GUY
 	db SPRITE_POKE_BALL
+	if DEF(_CRYSTALLEGENDS)
+	db SPRITE_BOULDER
+	else
 	db SPRITE_FRUIT_TREE
+	endc
 
 CeruleanGroupSprites:
 	db SPRITE_SUICUNE

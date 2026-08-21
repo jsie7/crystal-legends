@@ -471,8 +471,8 @@ and pass/fail result. Manually confirm:
    and natural repeat dialogue.
    Confirm Erika's request makes Muk trigger when entering each of the pond's
    three northern water tiles, with run/loss retry; Misty's power hint works in
-   either order; and the survivor clue, visible gray Cinnabar staircase,
-   hidden rubble cache, log recovery, and return form one coherent task without
+   either order; and the survivor clue, complete gray Cinnabar staircase,
+   boulder-hidden cache, log recovery, and return form one coherent task without
    an HM requirement. Explicitly judge level-28 Charmander's Ember-to-level-34
    Flamethrower interval.
 2. Before and after the two Safari prerequisites, confirm Fuchsia's north

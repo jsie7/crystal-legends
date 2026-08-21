@@ -113,6 +113,7 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "BGEVENT_READ",
             "BGEVENT_RIGHT",
             "HELD_NONE",
+            "SPRITE_BOULDER",
             "ITEMATTR_STRUCT_LENGTH",
             "ITEMMENU_NOUSE",
             "ITEM_NAME_LENGTH",
@@ -336,7 +337,19 @@ def test_compiled_cinnabar_case_and_flavor_events_match_the_locked_coordinates(
         constants["BG_EVENT_SIZE"],
         constants["OBJECT_EVENT_SIZE"],
     )
-    assert len(custom_objects) == len(reference_objects) == 1
+    assert len(custom_objects) == 2
+    assert len(reference_objects) == 1
+    boulder = custom_objects[-1]
+    assert (boulder.x, boulder.y) == (13, 6)
+    assert boulder.sprite == constants["SPRITE_BOULDER"]
+    assert boulder.movement == constants["SPRITEMOVEDATA_STILL"]
+    assert boulder.palette_and_type >> 4 == constants["PAL_NPC_BROWN"]
+    assert boulder.palette_and_type & 0xF == constants["OBJECTTYPE_SCRIPT"]
+    assert (
+        boulder.script_pointer
+        == custom_symbols["CinnabarIslandBlainesLogRubble"].address
+    )
+    assert boulder.event_flag == 0xFFFF
 
     backgrounds = decode_background_events(
         custom,
@@ -346,17 +359,10 @@ def test_compiled_cinnabar_case_and_flavor_events_match_the_locked_coordinates(
         constants["COORD_EVENT_SIZE"],
         constants["BG_EVENT_SIZE"],
     )
-    assert [(event.x, event.y) for event in backgrounds[-3:]] == [
-        (13, 6),
+    assert [(event.x, event.y) for event in backgrounds[-2:]] == [
         (15, 5),
         (19, 8),
     ]
-    hidden_case = backgrounds[-3]
-    assert hidden_case.event_type == constants["BGEVENT_READ"]
-    assert (
-        hidden_case.script_pointer
-        == custom_symbols["CinnabarIslandBlainesLogRubble"].address
-    )
 
 
 def test_compiled_phase_9_starter_labels_are_custom_only(repo_root: Path) -> None:

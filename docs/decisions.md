@@ -305,11 +305,12 @@ moves, then assign the gifting leader's OT name and a deterministic OT ID based
 on their trainer class and party index. Decline or full party plus full current
 box must not set the gift event
 or repeat a completed service. The Blaine return fact is set before the gift
-attempt so storage failure never repeats the investigation. The hidden rubble
-cache and gray shelf staircase use Crystal Legends-only item, block, metatile,
-collision, and graphics variants; reference assets remain exact. The
-staircase uses nonzero Kanto metatile `$4b` because block `$00` is a rendering
-and collision sentinel, not a usable map block.
+attempt so storage failure never repeats the investigation. The hidden cache
+uses the stock boulder graphic in the Crystal Legends-only Cinnabar object
+list. Its gray shelf staircase uses a custom block, metatile, collision, and
+one imported stair-tread tile; reference assets remain exact. The staircase
+uses nonzero Kanto metatile `$4b` because block `$00` is a rendering and
+collision sentinel, not a usable map block.
 
 ## 2026-08-20 — Open one unattended Safari preserve through existing Fuchsia state
 

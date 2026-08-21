@@ -340,16 +340,18 @@ def test_erika_muk_and_blaine_log_retry_only_after_success(repo_root: Path) -> N
             "setevent EVENT_RECOVERED_BLAINES_LOG",
         ],
     )
-    assert (
-        "bg_event 13,  6, BGEVENT_READ, CinnabarIslandBlainesLogRubble"
-        in island
+    assert not any(line.startswith("bg_event 13,  6") for line in island)
+    assert any(
+        line.startswith("object_event 13,  6, SPRITE_BOULDER, SPRITEMOVEDATA_STILL")
+        and "PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, "
+        "CinnabarIslandBlainesLogRubble, -1" in line
+        for line in island
     )
-    assert not any(line.startswith("object_event 13,  6") for line in island)
     assert "bg_event 15,  5, BGEVENT_READ, CinnabarIslandOldGymRemains" in island
     assert "bg_event 19,  8, BGEVENT_READ, CinnabarIslandOldLabRemains" in island
 
 
-def test_phase_9_kanto_assets_change_only_stairs_rubble_and_safari_gate(
+def test_phase_9_kanto_assets_change_only_stairs_and_safari_gate(
     repo_root: Path, scenario: dict
 ) -> None:
     blocks_source = (repo_root / "data/maps/blocks.asm").read_text()
@@ -373,11 +375,6 @@ def test_phase_9_kanto_assets_change_only_stairs_rubble_and_safari_gate(
             0x24,
             scenario["blaines_log"]["staircase"]["custom_block"],
         ),
-        (
-            scenario["blaines_log"]["rubble_block"]["block_offset"],
-            0x2C,
-            scenario["blaines_log"]["rubble_block"]["custom_block"],
-        ),
     ]
 
     stock_meta = (repo_root / "data/tilesets/kanto_metatiles.bin").read_bytes()
@@ -388,11 +385,9 @@ def test_phase_9_kanto_assets_change_only_stairs_rubble_and_safari_gate(
     staircase_block = scenario["blaines_log"]["staircase"]["custom_block"]
     assert custom_meta[:16] == stock_meta[:16]
     assert custom_meta[staircase_block * 16 : (staircase_block + 1) * 16] == bytes(
-        [0x11] * 12 + [0x37, 0x34, 0x00, 0x0D]
-    )
-    rubble_block = scenario["blaines_log"]["rubble_block"]["custom_block"]
-    assert custom_meta[rubble_block * 16 : (rubble_block + 1) * 16] == bytes(
-        [0x11, 0x11, 0x2A, 0x2B, 0x11, 0x11, 0x3A, 0x3B] + [0x11] * 8
+        [0x11] * 8
+        + [0x11, 0x11, 0x00, 0x00]
+        + [0x37, 0x34, 0x00, 0x00]
     )
     changed_metatiles = [
         index
@@ -403,7 +398,6 @@ def test_phase_9_kanto_assets_change_only_stairs_rubble_and_safari_gate(
     assert changed_metatiles == [
         scenario["safari"]["fuchsia_gate"]["open_block"],
         staircase_block,
-        rubble_block,
     ]
     gate = scenario["safari"]["fuchsia_gate"]
     assert custom_meta[0x470:0x480] == bytes(gate["metatile"])
@@ -412,9 +406,8 @@ def test_phase_9_kanto_assets_change_only_stairs_rubble_and_safari_gate(
     custom_tiles = _png_tiles(repo_root / "gfx/tilesets/kanto_crystallegends.png")
     cave_tiles = _png_tiles(repo_root / "gfx/tilesets/cave.png")
     changed = [index for index, pair in enumerate(zip(stock_tiles, custom_tiles)) if pair[0] != pair[1]]
-    assert changed == [0x00, 0x0D]
-    assert custom_tiles[0x00] == cave_tiles[0x36]
-    assert custom_tiles[0x0D] == cave_tiles[0x37]
+    assert changed == [0x00]
+    assert custom_tiles[0x00] == cave_tiles[0x37]
 
     collision_source = (repo_root / "data/tilesets/kanto_collision.asm").read_text()
     assert parse_collision_rows(collision_source)[0] == (
@@ -431,15 +424,6 @@ def test_phase_9_kanto_assets_change_only_stairs_rubble_and_safari_gate(
     )
     assert parse_collision_rows(collision_source, REFERENCE)[staircase_block] == (
         "HOP_DOWN_RIGHT",
-        "WALL",
-        "WALL",
-        "WALL",
-    )
-    assert parse_collision_rows(collision_source)[rubble_block] == tuple(
-        scenario["blaines_log"]["rubble_block"]["collision"]
-    )
-    assert parse_collision_rows(collision_source, REFERENCE)[rubble_block] == (
-        "WALL",
         "WALL",
         "WALL",
         "WALL",
@@ -463,9 +447,26 @@ def test_phase_9_kanto_assets_change_only_stairs_rubble_and_safari_gate(
     assert collision_at(
         repo_root, "CinnabarIsland", (7, 4), dimensions, resolved, tilesets
     ) == "FLOOR"
+
+    custom_sprites = _active_code(
+        repo_root / "data/maps/outdoor_sprites.asm", CRYSTAL_LEGENDS
+    )
+    reference_sprites = _active_code(
+        repo_root / "data/maps/outdoor_sprites.asm", REFERENCE
+    )
+    custom_group = _section(
+        custom_sprites, "CinnabarGroupSprites:", "CeruleanGroupSprites:"
+    )
+    reference_group = _section(
+        reference_sprites, "CinnabarGroupSprites:", "CeruleanGroupSprites:"
+    )
+    assert "db SPRITE_BOULDER" in custom_group
+    assert "db SPRITE_FRUIT_TREE" not in custom_group
+    assert "db SPRITE_BOULDER" not in reference_group
+    assert "db SPRITE_FRUIT_TREE" in reference_group
     assert collision_at(
         repo_root, "CinnabarIsland", (13, 6), dimensions, resolved, tilesets
-    ) == "WALL"
+    ) == "FLOOR"  # the visible boulder object owns this coordinate's collision
 
     reference_tilesets = parse_map_tilesets(
         (repo_root / "data/maps/maps.asm").read_text(), REFERENCE

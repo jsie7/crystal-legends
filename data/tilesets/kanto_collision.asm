@@ -128,11 +128,7 @@
 	tilecoll FLOOR, FLOOR, WALL, WALL ; 77
 	tilecoll WATER, WATER, WATER, WATER ; 78
 	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 79
-	if DEF(_CRYSTALLEGENDS)
-		tilecoll FLOOR, WALL, FLOOR, FLOOR ; 7a
-	else
-		tilecoll WALL, WALL, WALL, WALL ; 7a
-	endc
+	tilecoll WALL, WALL, WALL, WALL ; 7a
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 7b
 	tilecoll WALL, WALL, WALL, DOOR ; 7c
 	tilecoll WALL, WALL, WALL, WALL ; 7d

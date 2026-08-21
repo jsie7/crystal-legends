@@ -1,5 +1,8 @@
 	object_const_def
 	const CINNABARISLAND_BLUE
+	if DEF(_CRYSTALLEGENDS)
+	const CINNABARISLAND_BLAINES_LOG_BOULDER
+	endc
 
 CinnabarIsland_MapScripts:
 	def_scene_scripts
@@ -210,10 +213,12 @@ CinnabarIsland_MapEvents:
 	bg_event  7,  7, BGEVENT_READ, CinnabarIslandSign
 	bg_event  9,  1, BGEVENT_ITEM, CinnabarIslandHiddenRareCandy
 	if DEF(_CRYSTALLEGENDS)
-	bg_event 13,  6, BGEVENT_READ, CinnabarIslandBlainesLogRubble
 	bg_event 15,  5, BGEVENT_READ, CinnabarIslandOldGymRemains
 	bg_event 19,  8, BGEVENT_READ, CinnabarIslandOldLabRemains
 	endc
 
 	def_object_events
 	object_event  9,  6, SPRITE_BLUE, SPRITEMOVEDATA_SPINRANDOM_SLOW, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, CinnabarIslandBlue, EVENT_BLUE_IN_CINNABAR
+	if DEF(_CRYSTALLEGENDS)
+	object_event 13,  6, SPRITE_BOULDER, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, CinnabarIslandBlainesLogRubble, -1
+	endc
