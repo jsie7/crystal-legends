@@ -760,6 +760,11 @@ TryEnemyFlee:
 	ld a, [wBattleMode]
 	dec a
 	jr nz, .Stay
+	if DEF(_CRYSTALLEGENDS)
+		ld a, [wBattleType]
+		cp BATTLETYPE_KANTO_BIRD
+		jr z, .Stay
+	endc
 
 	ld a, [wPlayerSubStatus5]
 	bit SUBSTATUS_CANT_RUN, a

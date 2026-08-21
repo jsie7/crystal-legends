@@ -486,8 +486,10 @@ and pass/fail result. Manually confirm:
    one-console annex, and brown Zapdos icon; and the complete Victory Road
    higher-floor loop, Full Restore bypass, approach tile, south return hops,
    and red Moltres icon after Hall of Fame. Confirm cry, name, species, level,
-   palette, capture disappearance, knockout/escape/loss retry, save/reload, and
-   Oak's assistant hints all read naturally.
+   and palette; verify that none of the three birds flees on its own and that
+   the player's Run command still leaves a retryable encounter; then review
+   capture disappearance, knockout/escape/loss retry, save/reload, and Oak's
+   assistant hints.
 4. Keep balance review provisional: the three starter rewards should be useful
    without replacing leader teams, level-60 birds should be catchable with
    ordinary late-game resources, and Safari levels should fit Kanto. Phase 12,

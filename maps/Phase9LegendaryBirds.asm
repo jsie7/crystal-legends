@@ -92,6 +92,7 @@ Phase9ArticunoEncounter:
 	farwritetext Phase9ArticunoEncounterText
 	waitbutton
 	closetext
+	loadvar VAR_BATTLETYPE, BATTLETYPE_KANTO_BIRD
 	loadwildmon ARTICUNO, 60
 	startbattle
 	special CheckCaughtPokemon
@@ -110,6 +111,7 @@ Phase9ZapdosEncounter:
 	farwritetext Phase9ZapdosEncounterText
 	waitbutton
 	closetext
+	loadvar VAR_BATTLETYPE, BATTLETYPE_KANTO_BIRD
 	loadwildmon ZAPDOS, 60
 	startbattle
 	special CheckCaughtPokemon
@@ -128,6 +130,7 @@ Phase9MoltresEncounter:
 	farwritetext Phase9MoltresEncounterText
 	waitbutton
 	closetext
+	loadvar VAR_BATTLETYPE, BATTLETYPE_KANTO_BIRD
 	loadwildmon MOLTRES, 60
 	startbattle
 	special CheckCaughtPokemon

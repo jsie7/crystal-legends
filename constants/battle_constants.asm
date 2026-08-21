@@ -101,6 +101,9 @@ DEF SPDSPCDV_SHINY EQU $AA
 	const BATTLETYPE_FORCEITEM
 	const BATTLETYPE_CELEBI
 	const BATTLETYPE_SUICUNE
+	if DEF(_CRYSTALLEGENDS)
+		const BATTLETYPE_KANTO_BIRD
+	endc
 
 ; BattleVarPairs indexes (see home/battle_vars.asm)
 	const_def

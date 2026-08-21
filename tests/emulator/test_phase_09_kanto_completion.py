@@ -141,6 +141,7 @@ def phase_9_constants(
         "COLL_FLOOR",
         "COLL_ICE",
         "BATTLETYPE_NORMAL",
+        "BATTLETYPE_KANTO_BIRD",
         "WILD_BATTLE",
         "MANKEY",
         "MAREEP",
@@ -1335,6 +1336,43 @@ def _start_articuno_battle(session, constants: dict[str, int], max_frames: int, 
     )
     assert session.read_symbol("wEnemyMonSpecies") == constants["ARTICUNO"]
     assert session.read_symbol("wEnemyMonLevel") == 60
+    assert session.read_symbol("wBattleType") == constants["BATTLETYPE_KANTO_BIRD"]
+
+
+def test_kanto_bird_battle_type_reaches_the_nonflee_guard(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+) -> None:
+    constants = phase_9_constants
+    max_frames = scenario["max_frames_per_step"]
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        map_name="SEAFOAM_ISLANDS_CAVE",
+        x=9,
+        y=5,
+        events=_articuno_checkpoint_events("moltres", oak_handoff=True),
+    ) as session:
+        prepare_battle_party(session, constants, constants["MAREEP"], should_win=False)
+        _start_articuno_battle(session, constants, max_frames, 1)
+        session.write_symbol_bytes("wBattleMonHP", (999).to_bytes(2, "big"))
+        session.write_symbol_bytes("wBattleMonMaxHP", (999).to_bytes(2, "big"))
+        session.write_symbol_bytes("wBattleMonDefense", (999).to_bytes(2, "big"))
+        session.write_symbol_bytes("wBattleMonSpeed", (999).to_bytes(2, "big"))
+        for label in ("TryEnemyFlee", "TryEnemyFlee.Stay", "TryEnemyFlee.Flee"):
+            session.register_hook(label)
+        advance_with_a_until(
+            session,
+            lambda current: "TryEnemyFlee.Stay" in current.hook_history,
+            max_frames,
+            "Kanto bird nonflee guard",
+        )
+        assert "TryEnemyFlee" in session.hook_history
+        assert "TryEnemyFlee.Flee" not in session.hook_history
 
 
 @pytest.mark.parametrize("outcome", ["knockout", "escape"])
@@ -1799,6 +1837,7 @@ def _start_remaining_bird_battle(
     )
     assert session.read_symbol("wEnemyMonSpecies") == constants[contract["species"]]
     assert session.read_symbol("wEnemyMonLevel") == contract["level"]
+    assert session.read_symbol("wBattleType") == constants["BATTLETYPE_KANTO_BIRD"]
 
 
 @pytest.mark.parametrize(

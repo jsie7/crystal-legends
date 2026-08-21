@@ -901,6 +901,7 @@ def test_seafoam_warps_object_and_articuno_scripts_match_the_contract(
         [
             f'cry {articuno["species"]}',
             "farwritetext Phase9ArticunoEncounterText",
+            "loadvar VAR_BATTLETYPE, BATTLETYPE_KANTO_BIRD",
             f'loadwildmon {articuno["species"]}, {articuno["level"]}',
             "startbattle",
             "special CheckCaughtPokemon",
@@ -1372,6 +1373,7 @@ def test_zapdos_moltres_and_oak_tracker_use_the_locked_branch_contract(
             encounter,
             [
                 f'cry {bird["species"]}',
+                "loadvar VAR_BATTLETYPE, BATTLETYPE_KANTO_BIRD",
                 f'loadwildmon {bird["species"]}, {bird["level"]}',
                 "startbattle",
                 "special CheckCaughtPokemon",
@@ -1381,6 +1383,23 @@ def test_zapdos_moltres_and_oak_tracker_use_the_locked_branch_contract(
                 "reloadmapafterbattle",
             ],
         )
+
+    flee_logic = _active_code(
+        repo_root / "engine/battle/core.asm", CRYSTAL_LEGENDS
+    )
+    _assert_in_order(
+        _section(flee_logic, "TryEnemyFlee:", 'INCLUDE "data/wild/flee_mons.asm"'),
+        [
+            "ld a, [wBattleMode]",
+            "ld a, [wBattleType]",
+            "cp BATTLETYPE_KANTO_BIRD",
+            "jr z, .Stay",
+            "ld hl, OftenFleeMons",
+        ],
+    )
+    assert "BATTLETYPE_KANTO_BIRD" not in _active_code(
+        repo_root / "engine/battle/core.asm", REFERENCE
+    )
 
     oak = _active_code(repo_root / "maps/OaksLab.asm", CRYSTAL_LEGENDS)
     reference_oak = _active_code(repo_root / "maps/OaksLab.asm", REFERENCE)

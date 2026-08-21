@@ -1,6 +1,7 @@
 {
   "scenario_id": "phase-09-kanto-completion",
   "rom": "crystallegends.gbc",
+  "kanto_bird_battle_type": "BATTLETYPE_KANTO_BIRD",
   "symbols": "crystallegends.sym",
   "reference_rom": "pokecrystal11.gbc",
   "reference_symbols": "pokecrystal11.sym",

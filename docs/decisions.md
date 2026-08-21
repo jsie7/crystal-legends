@@ -330,8 +330,9 @@ location-gate, capture, and object-mask facts. The player's starter species
 never appears in the world; Oak's bird and Silver's bird unlock independently.
 Only `CheckCaughtPokemon` success sets capture and mask facts, so knockout,
 escape, and player loss remain retryable and native Continue cannot respawn a
-captured bird. Oak's second assistant reports only the remaining eligible
-targets.
+captured bird. A dedicated Kanto-bird battle type suppresses the species flee
+AI for all three encounters while leaving the player's Run command intact.
+Oak's second assistant reports only the remaining eligible targets.
 
 Articuno is level 60 in a compact Ice Path cave off Route 20 built from the
 unused `BetaUnionCave` backbone. Zapdos is level 60 in a 4-by-4 Power Plant
