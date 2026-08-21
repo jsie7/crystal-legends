@@ -359,4 +359,5 @@ northeast ice rock.
 
 Both tiles of the annex's two-tile generator console share one reading. It
 reports unsafe output while Zapdos is present and safe output after Zapdos is
-captured.
+captured. A visible Magnet in the southeast corner rewards annex exploration
+and gives Zapdos an immediately relevant held item.

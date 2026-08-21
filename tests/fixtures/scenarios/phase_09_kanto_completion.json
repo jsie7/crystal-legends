@@ -10,8 +10,8 @@
   "delivery_contract": "stock_givepoke_0_party_1_box_2_full",
   "events": {
     "first": 2015,
-    "last": 2036,
-    "count": 22
+    "last": 2037,
+    "count": 23
   },
   "gifts": [
     {
@@ -319,6 +319,15 @@
     "return_warps": [[0, 5, "POWER_PLANT", 3], [0, 6, "POWER_PLANT", 4]],
     "console_coordinates": [[2, 4], [3, 4]],
     "route": [[1, 5], [2, 5], [3, 5], [4, 5], [4, 4], [4, 3], [3, 3]],
+    "visible_pickup": {
+      "coordinate": [7, 6],
+      "item": "MAGNET",
+      "event": "EVENT_POWER_PLANT_GENERATOR_ANNEX_MAGNET",
+      "script": "PowerPlantGeneratorAnnexMagnet",
+      "object_id": 3,
+      "quantity": 1,
+      "pocket": "ITEM_POCKET"
+    },
     "zapdos": {
       "species": "ZAPDOS",
       "level": 60,

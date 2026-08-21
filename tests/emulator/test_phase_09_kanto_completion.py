@@ -75,6 +75,7 @@ def phase_9_constants(
         "POKE_BALL",
         "ULTRA_BALL",
         "NEVERMELTICE",
+        "MAGNET",
         "MAX_REVIVE",
         "EEVEE",
         "GROUP_CINNABAR_ISLAND",
@@ -116,6 +117,7 @@ def phase_9_constants(
         "EVENT_MOLTRES_NOT_AT_KANTO_LOCATION",
         "EVENT_SEAFOAM_ISLANDS_CAVE_ULTRA_BALL",
         "EVENT_SEAFOAM_ISLANDS_CAVE_HIDDEN_NEVERMELTICE",
+        "EVENT_POWER_PLANT_GENERATOR_ANNEX_MAGNET",
         "EVENT_POWER_PLANT_ANNEX_AUTHORIZED",
         "EVENT_OPENED_POWER_PLANT_ANNEX",
         "EVENT_RESTORED_POWER_TO_KANTO",
@@ -1755,6 +1757,80 @@ def test_both_generator_consoles_reflect_zapdos_capture(
         assert (
             "PowerPlantGeneratorAnnexConsole.Stable" in session.script_history
         ) is caught
+
+
+def test_generator_annex_magnet_retries_when_items_are_full_and_persists(
+    repo_root: Path,
+    tmp_path: Path,
+    scenario: dict,
+    phase_9_constants: dict[str, int],
+) -> None:
+    constants = phase_9_constants
+    pickup = scenario["power_plant_annex"]["visible_pickup"]
+    max_frames = scenario["max_frames_per_step"]
+    persisted = tmp_path / "generator-annex-magnet-collected.sav"
+    with loaded_phase_9_map_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        map_name="POWER_PLANT_GENERATOR_ANNEX",
+        x=6,
+        y=6,
+        events={
+            pickup["event"]: False,
+            "EVENT_ZAPDOS_NOT_AT_KANTO_LOCATION": True,
+        },
+    ) as session:
+        object_label = "wMap2ObjectStructID"
+        session.wait_until(
+            lambda current: current.read_symbol(object_label) != 0xFF,
+            max_frames,
+            "Magnet object to load",
+        )
+        capacity = constants["MAX_ITEMS"]
+        session.write_symbol("wNumItems", capacity)
+        session.write_symbol_bytes(
+            "wItems",
+            bytes([constants["POTION"], 1] * capacity + [0xFF]),
+        )
+        session.write_symbol("wPlayerDirection", constants["OW_RIGHT"])
+        session.tap("a", 2, 10)
+        _finish_overworld_script(session, max_frames)
+        assert not event_is_set(session, constants[pickup["event"]])
+        assert session.read_symbol(object_label) != 0xFF
+
+        session.write_symbol("wNumItems", capacity - 1)
+        session.write_symbol_bytes(
+            "wItems",
+            bytes([constants["POTION"], 1] * (capacity - 1) + [0xFF]),
+        )
+        session.tap("a", 2, 10)
+        _finish_overworld_script(session, max_frames)
+        assert event_is_set(session, constants[pickup["event"]])
+        assert session.read_symbol(object_label) == 0xFF
+        assert sum(
+            quantity
+            for item, quantity in read_progress(session).inventory.items
+            if item == constants[pickup["item"]]
+        ) == pickup["quantity"]
+        save_game_from_overworld(session, max_frames)
+        dump_battery_ram(session, persisted)
+
+    with loaded_phase_9_saved_game(
+        repo_root,
+        tmp_path / "reload",
+        constants,
+        scenario,
+        persisted,
+    ) as session:
+        assert event_is_set(session, constants[pickup["event"]])
+        assert session.read_symbol(object_label) == 0xFF
+        assert sum(
+            quantity
+            for item, quantity in read_progress(session).inventory.items
+            if item == constants[pickup["item"]]
+        ) == pickup["quantity"]
 
 
 def _interact_with_power_plant_shutter(

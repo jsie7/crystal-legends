@@ -59,6 +59,7 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "EVENT_BLAINE_REQUESTED_CINNABAR_HELP",
             "EVENT_SEAFOAM_ISLANDS_CAVE_ULTRA_BALL",
             "EVENT_SEAFOAM_ISLANDS_CAVE_HIDDEN_NEVERMELTICE",
+            "EVENT_POWER_PLANT_GENERATOR_ANNEX_MAGNET",
             "EVENT_GOT_ARTICUNO_FROM_ELM",
             "EVENT_GOT_MOLTRES_FROM_ELM",
             "EVENT_GOT_ZAPDOS_FROM_ELM",
@@ -143,6 +144,7 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "ARTICUNO",
             "ZAPDOS",
             "MOLTRES",
+            "MAGNET",
             "ULTRA_BALL",
             "NEVERMELTICE",
             "MANKEY",
@@ -191,6 +193,7 @@ def test_compiled_phase_9_ids_do_not_expand_the_save_layout(
     assert constants["EVENT_BLAINE_REQUESTED_CINNABAR_HELP"] == 2034
     assert constants["EVENT_SEAFOAM_ISLANDS_CAVE_ULTRA_BALL"] == 2035
     assert constants["EVENT_SEAFOAM_ISLANDS_CAVE_HIDDEN_NEVERMELTICE"] == 2036
+    assert constants["EVENT_POWER_PLANT_GENERATOR_ANNEX_MAGNET"] == 2037
     assert constants["NUM_EVENTS"] == 2048
 
     symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
@@ -1117,11 +1120,28 @@ def test_compiled_power_plant_annex_and_remaining_bird_objects_match_contract(
         constants["BG_EVENT_SIZE"],
         constants["OBJECT_EVENT_SIZE"],
     )
-    assert len(annex_objects) == 1
+    assert len(annex_objects) == 2
     assert len(victory_objects) == 7
     assert len(reference_victory_objects) == 6
+    zapdos_object = next(
+        obj
+        for obj in annex_objects
+        if obj.script_pointer == symbols["PowerPlantGeneratorAnnexZapdos"].address
+    )
+    pickup = annex["visible_pickup"]
+    pickup_object = next(
+        obj
+        for obj in annex_objects
+        if obj.script_pointer == symbols[pickup["script"]].address
+    )
+    assert (pickup_object.x, pickup_object.y) == tuple(pickup["coordinate"])
+    assert pickup_object.sprite == constants["SPRITE_POKE_BALL"]
+    assert pickup_object.movement == constants["SPRITEMOVEDATA_STILL"]
+    assert pickup_object.palette_and_type & 0xF == constants["OBJECTTYPE_ITEMBALL"]
+    assert pickup_object.event_flag == constants[pickup["event"]]
+
     for bird, obj, stub in (
-        (zapdos, annex_objects[0], "PowerPlantGeneratorAnnexZapdos"),
+        (zapdos, zapdos_object, "PowerPlantGeneratorAnnexZapdos"),
         (moltres, victory_objects[-1], "VictoryRoadMoltres"),
     ):
         assert (obj.x, obj.y) == tuple(bird["coordinate"])
@@ -1137,6 +1157,7 @@ def test_compiled_power_plant_annex_and_remaining_bird_objects_match_contract(
         "PowerPlantGeneratorAnnex_Blocks",
         "PowerPlantGeneratorAnnex_MapScripts",
         "PowerPlantGeneratorAnnex_MapEvents",
+        "PowerPlantGeneratorAnnexMagnet",
         "Phase9RefreshZapdosLocation",
         "Phase9RefreshMoltresLocation",
         "Phase9ZapdosEncounter",

@@ -1,5 +1,6 @@
 	object_const_def
 	const POWERPLANTGENERATORANNEX_ZAPDOS
+	const POWERPLANTGENERATORANNEX_MAGNET
 
 PowerPlantGeneratorAnnex_MapScripts:
 	def_scene_scripts
@@ -12,6 +13,9 @@ PowerPlantGeneratorAnnexZapdosCallback:
 
 PowerPlantGeneratorAnnexZapdos:
 	farsjump Phase9ZapdosEncounter
+
+PowerPlantGeneratorAnnexMagnet:
+	itemball MAGNET
 
 PowerPlantGeneratorAnnexConsole:
 	checkevent EVENT_CAUGHT_ZAPDOS_IN_KANTO
@@ -36,3 +40,4 @@ PowerPlantGeneratorAnnex_MapEvents:
 
 	def_object_events
 	object_event 3, 2, SPRITE_MOLTRES, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, PowerPlantGeneratorAnnexZapdos, EVENT_ZAPDOS_NOT_AT_KANTO_LOCATION
+	object_event 7, 6, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, PowerPlantGeneratorAnnexMagnet, EVENT_POWER_PLANT_GENERATOR_ANNEX_MAGNET

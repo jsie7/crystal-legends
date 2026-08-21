@@ -125,7 +125,7 @@ def scenario(repo_root: Path) -> dict:
 
 def test_phase_9_contract_locks_the_three_starter_rewards(scenario: dict) -> None:
     assert scenario["scenario_id"] == "phase-09-kanto-completion"
-    assert scenario["events"] == {"first": 2015, "last": 2036, "count": 22}
+    assert scenario["events"] == {"first": 2015, "last": 2037, "count": 23}
     assert [(gift["species"], gift["level"]) for gift in scenario["gifts"]] == [
         ("BULBASAUR", 28),
         ("SQUIRTLE", 28),
@@ -173,6 +173,7 @@ def test_phase_9_events_are_contiguous_and_reference_reserved(repo_root: Path) -
         "EVENT_BLAINE_REQUESTED_CINNABAR_HELP",
         "EVENT_SEAFOAM_ISLANDS_CAVE_ULTRA_BALL",
         "EVENT_SEAFOAM_ISLANDS_CAVE_HIDDEN_NEVERMELTICE",
+        "EVENT_POWER_PLANT_GENERATOR_ANNEX_MAGNET",
     ]
     _assert_contiguous(
         crystal,
@@ -184,7 +185,7 @@ def test_phase_9_events_are_contiguous_and_reference_reserved(repo_root: Path) -
         ],
     )
     assert all(not any(event in line for line in reference) for event in events)
-    assert "const_skip 22" in reference
+    assert "const_skip 23" in reference
 
 
 def test_blaines_log_reuses_only_item_b0_in_the_custom_build(
@@ -1564,7 +1565,27 @@ def test_zapdos_moltres_and_oak_tracker_use_the_locked_branch_contract(
         for event in parse_events(sources[annex["map"]])
         if event.event_type == "object_event"
     ]
-    assert len(annex_objects) == 1
+    assert len(annex_objects) == 2
+    zapdos_event = next(
+        event
+        for event in annex_objects
+        if event.args[11] == "PowerPlantGeneratorAnnexZapdos"
+    )
+    pickup = annex["visible_pickup"]
+    pickup_event = next(
+        event for event in annex_objects if event.args[11] == pickup["script"]
+    )
+    assert [pickup_event.x, pickup_event.y] == pickup["coordinate"]
+    assert pickup_event.args[2] == "SPRITE_POKE_BALL"
+    assert pickup_event.args[3] == "SPRITEMOVEDATA_STILL"
+    assert pickup_event.args[9] == "OBJECTTYPE_ITEMBALL"
+    assert pickup_event.args[12] == pickup["event"]
+    annex_source = _active_code(
+        repo_root / "maps/PowerPlantGeneratorAnnex.asm", CRYSTAL_LEGENDS
+    )
+    assert annex_source[annex_source.index(f'{pickup["script"]}:') + 1] == (
+        f'itemball {pickup["item"]}'
+    )
     victory_objects = [
         event
         for event in parse_events(sources[victory["map"]])
@@ -1594,6 +1615,15 @@ def test_zapdos_moltres_and_oak_tracker_use_the_locked_branch_contract(
         tuple(moltres["coordinate"]),
         dimensions,
         resolved,
+        tilesets,
+    ) == "FLOOR"
+    annex_dimensions = {annex["map"]: MapDimensions(annex["map"], 4, 4)}
+    assert collision_at(
+        repo_root,
+        annex["map"],
+        tuple(pickup["coordinate"]),
+        annex_dimensions,
+        {annex["map"]: annex["block_path"]},
         tilesets,
     ) == "FLOOR"
     assert collision_at(
@@ -1641,7 +1671,7 @@ def test_zapdos_moltres_and_oak_tracker_use_the_locked_branch_contract(
         ) == "HOP_DOWN"
 
     for bird, event, script_stub in (
-        (zapdos, annex_objects[0], "PowerPlantGeneratorAnnexZapdos"),
+        (zapdos, zapdos_event, "PowerPlantGeneratorAnnexZapdos"),
         (moltres, victory_objects[-1], "VictoryRoadMoltres"),
     ):
         assert [event.x, event.y] == bird["coordinate"]
