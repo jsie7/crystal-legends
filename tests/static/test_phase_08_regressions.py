@@ -136,7 +136,7 @@ def test_phase_8_event_slots_are_explicit_and_reference_reserved(repo_root: Path
             "const_skip 3",
             "const_skip 4",
             "const_skip 4",
-            "const_skip 20",
+            "const_skip 22",
             "const_next 2048",
             "DEF NUM_EVENTS EQU const_value",
         ],

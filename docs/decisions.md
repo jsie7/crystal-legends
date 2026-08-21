@@ -350,6 +350,11 @@ shelf and always waits for the first Hall of Fame. These maps reuse stock
 sprites and tiles wherever possible, change no save-layout dimensions, and
 remain wholly absent from reference builds.
 
+The Seafoam cave uses a visible south exit and several connected ice lanes.
+Rock stops turn the route to Articuno into a short sliding puzzle. An exposed
+Ultra Ball rewards the western branch, while a hidden NeverMeltIce sits in the
+northeast ice rock.
+
 Both tiles of the annex's two-tile generator console share one reading. It
 reports unsafe output while Zapdos is present and safe output after Zapdos is
 captured.

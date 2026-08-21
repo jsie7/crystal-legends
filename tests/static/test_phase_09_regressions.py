@@ -125,7 +125,7 @@ def scenario(repo_root: Path) -> dict:
 
 def test_phase_9_contract_locks_the_three_starter_rewards(scenario: dict) -> None:
     assert scenario["scenario_id"] == "phase-09-kanto-completion"
-    assert scenario["events"] == {"first": 2015, "last": 2034, "count": 20}
+    assert scenario["events"] == {"first": 2015, "last": 2036, "count": 22}
     assert [(gift["species"], gift["level"]) for gift in scenario["gifts"]] == [
         ("BULBASAUR", 28),
         ("SQUIRTLE", 28),
@@ -171,6 +171,8 @@ def test_phase_9_events_are_contiguous_and_reference_reserved(repo_root: Path) -
         "EVENT_MOLTRES_NOT_AT_KANTO_LOCATION",
         "EVENT_ERIKA_REQUESTED_CELADON_POND_HELP",
         "EVENT_BLAINE_REQUESTED_CINNABAR_HELP",
+        "EVENT_SEAFOAM_ISLANDS_CAVE_ULTRA_BALL",
+        "EVENT_SEAFOAM_ISLANDS_CAVE_HIDDEN_NEVERMELTICE",
     ]
     _assert_contiguous(
         crystal,
@@ -182,7 +184,7 @@ def test_phase_9_events_are_contiguous_and_reference_reserved(repo_root: Path) -
         ],
     )
     assert all(not any(event in line for line in reference) for event in events)
-    assert "const_skip 20" in reference
+    assert "const_skip 22" in reference
 
 
 def test_blaines_log_reuses_only_item_b0_in_the_custom_build(
@@ -958,6 +960,50 @@ def test_seafoam_reuses_the_beta_block_slot_and_changes_only_locked_blocks(
         if old != new
     ] == seafoam["layout_delta"]
 
+    tileset_source = repo_root / "gfx/tilesets.asm"
+    custom_tileset = _active_code(tileset_source, CRYSTAL_LEGENDS)
+    reference_tileset = _active_code(tileset_source, REFERENCE)
+    _assert_contiguous(
+        custom_tileset,
+        [
+            "TilesetIcePathMeta::",
+            'INCBIN "data/tilesets/ice_path_metatiles.bin"',
+            'INCLUDE "data/tilesets/ice_path_crystallegends_metatiles.asm"',
+            "TilesetIcePathColl::",
+        ],
+    )
+    assert (
+        'INCLUDE "data/tilesets/ice_path_crystallegends_metatiles.asm"'
+        not in reference_tileset
+    )
+    extra_metatiles = _active_code(
+        repo_root / "data/tilesets/ice_path_crystallegends_metatiles.asm",
+        CRYSTAL_LEGENDS,
+    )
+    assert extra_metatiles == [
+        "db $9a, $19, $19, $9a",
+        "db $19, $9b, $19, $19",
+        "db $19, $19, $19, $19",
+        "db $42, $43, $19, $9b",
+        "db $9a, $19, $9a, $9a",
+        "db $19, $9a, $19, $19",
+        "db $c6, $c7, $c6, $c7",
+        "db $d6, $d7, $d6, $d7",
+    ]
+    collision_source = (
+        repo_root / "data/tilesets/ice_path_collision.asm"
+    ).read_text()
+    custom_collisions = parse_collision_rows(collision_source, CRYSTAL_LEGENDS)
+    reference_collisions = parse_collision_rows(collision_source, REFERENCE)
+    assert len(custom_collisions) == 66
+    assert len(reference_collisions) == 64
+    assert list(custom_collisions[64]) == seafoam["custom_metatiles"][
+        "visible_exit"
+    ]["collision"]
+    assert list(custom_collisions[65]) == seafoam["custom_metatiles"][
+        "western_ice_start"
+    ]["collision"]
+
     stock_route = (repo_root / seafoam["route20_stock_block_path"]).read_bytes()
     active_route = (repo_root / seafoam["route20_active_block_path"]).read_bytes()
     assert len(stock_route) == len(active_route) == 270
@@ -1015,8 +1061,10 @@ def test_seafoam_warps_object_and_articuno_scripts_match_the_contract(
     ]
 
     objects = [event for event in cave_events if event.event_type == "object_event"]
-    assert len(objects) == 1
-    bird = objects[0]
+    assert len(objects) == 2
+    bird = next(
+        event for event in objects if event.args[11] == "SeafoamIslandsCaveArticuno"
+    )
     assert [bird.x, bird.y] == articuno["coordinate"]
     assert bird.args[2] == articuno["sprite"]
     assert bird.args[3] == articuno["movement"]
@@ -1024,7 +1072,21 @@ def test_seafoam_warps_object_and_articuno_scripts_match_the_contract(
     assert bird.args[9] == articuno["object_type"]
     assert bird.args[11] == "SeafoamIslandsCaveArticuno"
     assert bird.args[12] == articuno["mask_event"]
-    assert not [event for event in cave_events if event.event_type == "bg_event"]
+    pickup = seafoam["visible_pickup"]
+    item_ball = next(event for event in objects if event.args[11] == pickup["script"])
+    assert [item_ball.x, item_ball.y] == pickup["coordinate"]
+    assert item_ball.args[2] == "SPRITE_POKE_BALL"
+    assert item_ball.args[3] == "SPRITEMOVEDATA_STILL"
+    assert item_ball.args[9] == "OBJECTTYPE_ITEMBALL"
+    assert item_ball.args[12] == pickup["event"]
+
+    hidden = seafoam["hidden_pickup"]
+    backgrounds = [
+        event for event in cave_events if event.event_type == "bg_event"
+    ]
+    assert len(backgrounds) == 1
+    assert [backgrounds[0].x, backgrounds[0].y] == hidden["coordinate"]
+    assert backgrounds[0].args[2:] == ("BGEVENT_ITEM", hidden["script"])
     cave_source = _active_code(
         repo_root / "maps/SeafoamIslandsCave.asm", CRYSTAL_LEGENDS
     )
@@ -1033,6 +1095,12 @@ def test_seafoam_warps_object_and_articuno_scripts_match_the_contract(
         in cave_source
     )
     assert not any("MAPCALLBACK_OBJECTS" in line for line in cave_source)
+    assert cave_source[cave_source.index(f'{pickup["script"]}:') + 1] == (
+        f'itemball {pickup["item"]}'
+    )
+    assert cave_source[cave_source.index(f'{hidden["script"]}:') + 1] == (
+        f'hiddenitem {hidden["item"]}, {hidden["event"]}'
+    )
 
     shared = _active_code(
         repo_root / "maps/Phase9LegendaryBirds.asm", CRYSTAL_LEGENDS
@@ -1099,6 +1167,62 @@ def test_seafoam_route_and_forced_ice_slide_reach_the_articuno_approach(
         tilesets,
     ) == "FLOOR"
 
+    active_blocks = (repo_root / seafoam["active_block_path"]).read_bytes()
+    entry_x, entry_y = seafoam["return_warp"][:2]
+    entry_offset = (entry_y // 2) * seafoam["dimensions"][0] + entry_x // 2
+    assert active_blocks[entry_offset] == seafoam["custom_metatiles"][
+        "visible_exit"
+    ]["block"]
+
+    for coordinate in (
+        seafoam["pond_ice_coordinates"]
+        + seafoam["western_l_ice_coordinates"]
+        + seafoam["eastern_ice_coordinates"]
+    ):
+        assert collision_at(
+            repo_root,
+            seafoam["map"],
+            tuple(coordinate),
+            dimensions,
+            resolved,
+            tilesets,
+        ) == "ICE"
+    for coordinate in seafoam["ice_rock_coordinates"]:
+        assert collision_at(
+            repo_root,
+            seafoam["map"],
+            tuple(coordinate),
+            dimensions,
+            resolved,
+            tilesets,
+        ) == "WALL"
+    assert collision_at(
+        repo_root,
+        seafoam["map"],
+        tuple(seafoam["visible_pickup"]["coordinate"]),
+        dimensions,
+        resolved,
+        tilesets,
+    ) == "FLOOR"
+    for coordinate in ((2, 8), (3, 8)):
+        assert collision_at(
+            repo_root,
+            seafoam["map"],
+            coordinate,
+            dimensions,
+            resolved,
+            tilesets,
+        ) == "FLOOR"
+    for coordinate in seafoam["eastern_return_channel"]:
+        assert collision_at(
+            repo_root,
+            seafoam["map"],
+            tuple(coordinate),
+            dimensions,
+            resolved,
+            tilesets,
+        ) == "FLOOR"
+
     passable = {"FLOOR", "ICE", "WARP_CARPET_DOWN"}
     start = tuple(seafoam["return_warp"][:2])
     seen = {start}
@@ -1156,6 +1280,7 @@ def test_seafoam_route_and_forced_ice_slide_reach_the_articuno_approach(
             resolved,
             tilesets,
         ) == "ICE"
+        player_x, player_y = x, y
         while collision_at(
             repo_root,
             seafoam["map"],
@@ -1164,17 +1289,31 @@ def test_seafoam_route_and_forced_ice_slide_reach_the_articuno_approach(
             resolved,
             tilesets,
         ) == "ICE":
+            player_x, player_y = x, y
             x += dx
             y += dy
-        assert [x, y] == slide["stop"]
-        assert collision_at(
+        terminal_collision = collision_at(
             repo_root,
             seafoam["map"],
             (x, y),
             dimensions,
             resolved,
             tilesets,
-        ) == "FLOOR"
+        )
+        if terminal_collision == "FLOOR":
+            player_x, player_y = x, y
+        assert [player_x, player_y] == slide["stop"]
+        assert collision_at(
+            repo_root,
+            seafoam["map"],
+            (player_x, player_y),
+            dimensions,
+            resolved,
+            tilesets,
+        ) == slide["stop_collision"]
+        if "terminal" in slide:
+            assert [x, y] == slide["terminal"]
+            assert terminal_collision == slide["terminal_collision"]
 
 
 def test_phase_9_starter_source_is_absent_from_reference_builds(repo_root: Path) -> None:

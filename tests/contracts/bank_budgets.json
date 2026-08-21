@@ -2,7 +2,7 @@
   {"domain": "ROM0", "bank": 0, "minimum_free": 256, "reason": "Keep a small reviewed ROM0 reserve below the clean baseline of $0121 free."},
   {"domain": "ROMX", "bank": 3, "minimum_free": 1280, "reason": "Protect FastBallMultiplier and keep the Phase 6 correction below the reviewed baseline of $05f5 free."},
   {"domain": "ROMX", "bank": 5, "minimum_free": 2816, "reason": "Protect bank5 sprite data and the Phase 4 Pokemon-icon mappings below the reviewed baseline of $0b42 free."},
-  {"domain": "ROMX", "bank": 6, "minimum_free": 512, "reason": "Protect the Phase 9 Kanto and Facility tileset variants at the reviewed final reserve of $0202 free."},
+  {"domain": "ROMX", "bank": 6, "minimum_free": 448, "reason": "Protect the Phase 9 Kanto, Facility, and Seafoam Ice Path tileset variants below the reviewed reserve of $01da free."},
   {"domain": "ROMX", "bank": 22, "minimum_free": 1024, "reason": "Protect Map Scripts 2 and the Phase 5 Ruins chamber and hidden-room events below the reviewed baseline of $08ee free."},
   {"domain": "ROMX", "bank": 27, "minimum_free": 1280, "reason": "Protect the shared map-script bank below the Phase 7 Mahogany and Radio Tower baseline of $0593 free."},
   {"domain": "ROMX", "bank": 28, "minimum_free": 1536, "reason": "Protect Map Scripts 7 and the Phase 9 Erika gift flow below the reviewed final reserve of $06b7 free."},

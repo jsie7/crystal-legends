@@ -37,12 +37,14 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "CANT_TOSS",
             "COLL_FLOOR",
             "COLL_HOP_DOWN",
+            "COLL_ICE",
             "COLL_DOOR",
             "COLL_WATER",
             "COLL_WATER_21",
             "COLL_WALL",
             "COLL_WARP_CARPET_LEFT",
             "COLL_WARP_CARPET_RIGHT",
+            "COLL_WARP_CARPET_DOWN",
             "EVENT_BEAT_ELITE_FOUR",
             "EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION",
             "EVENT_ARTICUNO_AVAILABLE",
@@ -55,6 +57,8 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "EVENT_HELPED_ERIKA_CLEAN_CELADON_POND",
             "EVENT_ERIKA_REQUESTED_CELADON_POND_HELP",
             "EVENT_BLAINE_REQUESTED_CINNABAR_HELP",
+            "EVENT_SEAFOAM_ISLANDS_CAVE_ULTRA_BALL",
+            "EVENT_SEAFOAM_ISLANDS_CAVE_HIDDEN_NEVERMELTICE",
             "EVENT_GOT_ARTICUNO_FROM_ELM",
             "EVENT_GOT_MOLTRES_FROM_ELM",
             "EVENT_GOT_ZAPDOS_FROM_ELM",
@@ -113,6 +117,7 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "MAP_LENGTH",
             "BGEVENT_READ",
             "BGEVENT_RIGHT",
+            "BGEVENT_ITEM",
             "HELD_NONE",
             "SPRITE_BOULDER",
             "ITEMATTR_STRUCT_LENGTH",
@@ -138,6 +143,8 @@ def phase_9_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "ARTICUNO",
             "ZAPDOS",
             "MOLTRES",
+            "ULTRA_BALL",
+            "NEVERMELTICE",
             "MANKEY",
             "MAREEP",
             "VULPIX",
@@ -182,6 +189,8 @@ def test_compiled_phase_9_ids_do_not_expand_the_save_layout(
     assert constants["EVENT_MOLTRES_NOT_AT_KANTO_LOCATION"] == 2032
     assert constants["EVENT_ERIKA_REQUESTED_CELADON_POND_HELP"] == 2033
     assert constants["EVENT_BLAINE_REQUESTED_CINNABAR_HELP"] == 2034
+    assert constants["EVENT_SEAFOAM_ISLANDS_CAVE_ULTRA_BALL"] == 2035
+    assert constants["EVENT_SEAFOAM_ISLANDS_CAVE_HIDDEN_NEVERMELTICE"] == 2036
     assert constants["NUM_EVENTS"] == 2048
 
     symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
@@ -695,6 +704,53 @@ def test_compiled_seafoam_reuses_the_beta_slot_and_has_custom_only_metadata(
     assert map_record[7] & 0xF == constants["PALETTE_NITE"]
     assert map_record[8] == constants["FISHGROUP_OCEAN"]
 
+    stock_metatiles = (
+        repo_root / "data/tilesets/ice_path_metatiles.bin"
+    ).read_bytes()
+    extra_metatiles = bytes(
+        [
+            0x9A, 0x19, 0x19, 0x9A,
+            0x19, 0x9B, 0x19, 0x19,
+            0x19, 0x19, 0x19, 0x19,
+            0x42, 0x43, 0x19, 0x9B,
+            0x9A, 0x19, 0x9A, 0x9A,
+            0x19, 0x9A, 0x19, 0x19,
+            0xC6, 0xC7, 0xC6, 0xC7,
+            0xD6, 0xD7, 0xD6, 0xD7,
+        ]
+    )
+    assert custom.at(
+        custom_symbols["TilesetIcePathMeta"],
+        len(stock_metatiles) + len(extra_metatiles),
+    ) == stock_metatiles + extra_metatiles
+    assert reference.at(
+        reference_symbols["TilesetIcePathMeta"], len(stock_metatiles)
+    ) == stock_metatiles
+    custom_collision_size = (
+        custom_symbols["TilesetPlayersRoomGFX"].rom_offset
+        - custom_symbols["TilesetIcePathColl"].rom_offset
+    )
+    reference_collision_size = (
+        reference_symbols["TilesetPlayersRoomGFX"].rom_offset
+        - reference_symbols["TilesetIcePathColl"].rom_offset
+    )
+    assert custom_collision_size == 66 * 4
+    assert reference_collision_size == 64 * 4
+    assert custom.at(custom_symbols["TilesetIcePathColl"], custom_collision_size)[
+        -8:
+    ] == bytes(
+        [
+            constants["COLL_FLOOR"],
+            constants["COLL_FLOOR"],
+            constants["COLL_WARP_CARPET_DOWN"],
+            constants["COLL_FLOOR"],
+            constants["COLL_FLOOR"],
+            constants["COLL_FLOOR"],
+            constants["COLL_ICE"],
+            constants["COLL_ICE"],
+        ]
+    )
+
     attributes = custom.at(custom_symbols["SeafoamIslandsCave_MapAttributes"], 12)
     assert attributes[:3] == bytes(
         [seafoam["border_block"], seafoam["dimensions"][1], seafoam["dimensions"][0]]
@@ -710,6 +766,8 @@ def test_compiled_seafoam_reuses_the_beta_slot_and_has_custom_only_metadata(
         "SeafoamIslandsCave_Blocks",
         "SeafoamIslandsCave_MapScripts",
         "SeafoamIslandsCave_MapEvents",
+        "SeafoamIslandsCaveUltraBall",
+        "SeafoamIslandsCaveHiddenNevermeltice",
         "Phase9RefreshArticunoLocation",
         "Phase9ArticunoEncounter",
     }
@@ -778,8 +836,12 @@ def test_compiled_seafoam_warps_and_articuno_object_match_the_contract(
         constants["BG_EVENT_SIZE"],
         constants["OBJECT_EVENT_SIZE"],
     )
-    assert len(objects) == 1
-    bird = objects[0]
+    assert len(objects) == 2
+    bird = next(
+        event
+        for event in objects
+        if event.script_pointer == symbols["SeafoamIslandsCaveArticuno"].address
+    )
     assert (bird.x, bird.y) == tuple(articuno["coordinate"])
     assert bird.sprite == constants[articuno["sprite"]]
     assert bird.movement == constants[articuno["movement"]]
@@ -787,14 +849,32 @@ def test_compiled_seafoam_warps_and_articuno_object_match_the_contract(
     assert bird.palette_and_type & 0xF == constants[articuno["object_type"]]
     assert bird.script_pointer == symbols["SeafoamIslandsCaveArticuno"].address
     assert bird.event_flag == constants[articuno["mask_event"]]
-    assert decode_background_events(
+
+    pickup = seafoam["visible_pickup"]
+    item_ball = next(
+        event
+        for event in objects
+        if event.script_pointer == symbols[pickup["script"]].address
+    )
+    assert (item_ball.x, item_ball.y) == tuple(pickup["coordinate"])
+    assert item_ball.sprite == constants["SPRITE_POKE_BALL"]
+    assert item_ball.movement == constants["SPRITEMOVEDATA_STILL"]
+    assert item_ball.palette_and_type & 0xF == constants["OBJECTTYPE_ITEMBALL"]
+    assert item_ball.event_flag == constants[pickup["event"]]
+
+    hidden = seafoam["hidden_pickup"]
+    backgrounds = decode_background_events(
         custom,
         symbols,
         "SeafoamIslandsCave_MapEvents",
         constants["WARP_EVENT_SIZE"],
         constants["COORD_EVENT_SIZE"],
         constants["BG_EVENT_SIZE"],
-    ) == []
+    )
+    assert len(backgrounds) == 1
+    assert (backgrounds[0].x, backgrounds[0].y) == tuple(hidden["coordinate"])
+    assert backgrounds[0].event_type == constants["BGEVENT_ITEM"]
+    assert backgrounds[0].script_pointer == symbols[hidden["script"]].address
 
 
 def test_compiled_articuno_stubs_and_capture_sequence_are_species_exact(

@@ -1,5 +1,6 @@
 	object_const_def
 	const SEAFOAMISLANDSCAVE_ARTICUNO
+	const SEAFOAMISLANDSCAVE_ULTRA_BALL
 
 SeafoamIslandsCave_MapScripts:
 	def_scene_scripts
@@ -13,6 +14,12 @@ SeafoamIslandsCaveArticunoCallback:
 SeafoamIslandsCaveArticuno:
 	farsjump Phase9ArticunoEncounter
 
+SeafoamIslandsCaveUltraBall:
+	itemball ULTRA_BALL
+
+SeafoamIslandsCaveHiddenNevermeltice:
+	hiddenitem NEVERMELTICE, EVENT_SEAFOAM_ISLANDS_CAVE_HIDDEN_NEVERMELTICE
+
 SeafoamIslandsCave_MapEvents:
 	db 0, 0 ; filler
 
@@ -22,6 +29,8 @@ SeafoamIslandsCave_MapEvents:
 	def_coord_events
 
 	def_bg_events
+	bg_event 17,  2, BGEVENT_ITEM, SeafoamIslandsCaveHiddenNevermeltice
 
 	def_object_events
-	object_event 9, 4, SPRITE_MOLTRES, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, SeafoamIslandsCaveArticuno, EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION
+	object_event  8,  4, SPRITE_MOLTRES, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, SeafoamIslandsCaveArticuno, EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION
+	object_event  2, 15, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, SeafoamIslandsCaveUltraBall, EVENT_SEAFOAM_ISLANDS_CAVE_ULTRA_BALL

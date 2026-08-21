@@ -40,6 +40,9 @@ INCBIN "gfx/tilesets/ice_path.2bpp.lz"
 
 TilesetIcePathMeta::
 INCBIN "data/tilesets/ice_path_metatiles.bin"
+if DEF(_CRYSTALLEGENDS)
+INCLUDE "data/tilesets/ice_path_crystallegends_metatiles.asm"
+endc
 
 TilesetIcePathColl::
 INCLUDE "data/tilesets/ice_path_collision.asm"

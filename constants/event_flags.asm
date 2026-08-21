@@ -1512,15 +1512,17 @@ if DEF(_CRYSTALLEGENDS)
 	const EVENT_MOLTRES_NOT_AT_KANTO_LOCATION
 	const EVENT_ERIKA_REQUESTED_CELADON_POND_HELP
 	const EVENT_BLAINE_REQUESTED_CINNABAR_HELP
+	const EVENT_SEAFOAM_ISLANDS_CAVE_ULTRA_BALL
+	const EVENT_SEAFOAM_ISLANDS_CAVE_HIDDEN_NEVERMELTICE
 else
 	const_skip ; reserved for EVENT_OAK_MOVED_THIRD_BIRD
 	const_skip 3 ; reserved for Crystal Legends Johto starter gifts
 	const_skip 3 ; reserved for Crystal Legends Ruins ancient Pokemon gifts
 	const_skip 4 ; reserved for Crystal Legends Project Mew story facts
 	const_skip 4 ; reserved for Crystal Legends Silver bird release facts
-	const_skip 20 ; reserved for Crystal Legends Kanto completion facts
+	const_skip 22 ; reserved for Crystal Legends Kanto completion facts
 endc
-; Unused: next 15 events
+; Unused: next 13 events
 
 	const_next 2048
 DEF NUM_EVENTS EQU const_value ; 800

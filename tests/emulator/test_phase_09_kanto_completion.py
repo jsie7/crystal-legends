@@ -74,6 +74,7 @@ def phase_9_constants(
         "POTION",
         "POKE_BALL",
         "ULTRA_BALL",
+        "NEVERMELTICE",
         "MAX_REVIVE",
         "EEVEE",
         "GROUP_CINNABAR_ISLAND",
@@ -113,6 +114,8 @@ def phase_9_constants(
         "EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION",
         "EVENT_ZAPDOS_NOT_AT_KANTO_LOCATION",
         "EVENT_MOLTRES_NOT_AT_KANTO_LOCATION",
+        "EVENT_SEAFOAM_ISLANDS_CAVE_ULTRA_BALL",
+        "EVENT_SEAFOAM_ISLANDS_CAVE_HIDDEN_NEVERMELTICE",
         "EVENT_POWER_PLANT_ANNEX_AUTHORIZED",
         "EVENT_OPENED_POWER_PLANT_ANNEX",
         "EVENT_RESTORED_POWER_TO_KANTO",
@@ -1287,6 +1290,7 @@ def test_articuno_visibility_uses_only_the_locked_branch_source(
     visible: bool,
 ) -> None:
     constants = phase_9_constants
+    articuno = scenario["seafoam"]["articuno"]
     mask_event = constants["EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION"]
     with loaded_phase_9_map_checkpoint(
         repo_root,
@@ -1294,8 +1298,8 @@ def test_articuno_visibility_uses_only_the_locked_branch_source(
         constants,
         scenario,
         map_name="SEAFOAM_ISLANDS_CAVE",
-        x=9,
-        y=5,
+        x=articuno["approach"][0],
+        y=articuno["approach"][1],
         events=_articuno_checkpoint_events(
             branch,
             silver_available=silver_available,
@@ -1355,41 +1359,56 @@ def test_route_20_seafoam_round_trip_and_forced_slide_are_runtime_safe(
         y=16,
         events=events,
     ) as session:
+        def slide_until(
+            direction: str, symbol: str, target: int, description: str
+        ) -> None:
+            session.pyboy.button_press(direction)
+            session.wait_until(
+                lambda current: current.read_symbol(symbol) == target,
+                max_frames,
+                description,
+            )
+            session.pyboy.button_release(direction)
+            session.tick(1)
+            wait_for_idle(session, max_frames)
+
         walk_steps(session, "up", "wYCoord", -1, 3, max_frames)
-        walk_steps(session, "left", "wXCoord", -1, 1, max_frames)
-        walk_steps(session, "up", "wYCoord", -1, 3, max_frames)
+        walk_steps(session, "right", "wXCoord", 1, 3, max_frames)
+        walk_steps(session, "up", "wYCoord", -1, 1, max_frames)
         assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (
-            9,
-            10,
+            13,
+            12,
         )
 
-        session.pyboy.button_press("up")
-        session.tick(2)
-        session.pyboy.button_release("up")
-        session.tick(1)
-        session.pyboy.button_press("left")
-        session.wait_until(
-            lambda current: current.read_symbol("wYCoord") == 5,
-            max_frames,
-            "northbound Seafoam ice slide",
+        slide_until("right", "wXCoord", 17, "eastbound Seafoam ice slide")
+        slide_until("up", "wYCoord", 9, "northbound eastern Seafoam ice slide")
+        walk_steps(session, "left", "wXCoord", -1, 5, max_frames)
+        slide_until("left", "wXCoord", 9, "westbound central Seafoam ice slide")
+        slide_until("up", "wYCoord", 5, "northbound central Seafoam ice slide")
+        walk_steps(session, "left", "wXCoord", -1, 1, max_frames)
+        assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == tuple(
+            scenario["seafoam"]["articuno"]["approach"]
         )
-        session.pyboy.button_release("left")
-        session.tick(1)
-        wait_for_idle(session, max_frames)
-        assert session.read_symbol("wXCoord") == 9
         assert session.read_symbol("wPlayerTileCollision") == constants["COLL_FLOOR"]
         assert session.read_symbol("wBattleMode") == 0
 
-        session.tap("down", 2, 20)
-        if session.read_symbol("wYCoord") == 5:
-            session.tap("down", 2, 20)
-        session.wait_until(
-            lambda current: current.read_symbol("wYCoord") == 10,
-            max_frames,
-            "southbound Seafoam ice slide",
+        walk_steps(session, "right", "wXCoord", 1, 1, max_frames)
+        slide_until("down", "wYCoord", 9, "southbound central Seafoam ice slide")
+        slide_until("right", "wXCoord", 12, "eastbound central Seafoam ice slide")
+        walk_steps(session, "right", "wXCoord", 1, 5, max_frames)
+        slide_until("down", "wYCoord", 15, "southbound eastern Seafoam ice slide")
+        slide_until("left", "wXCoord", 15, "western return-pocket ice slide")
+        walk_steps(session, "up", "wYCoord", -1, 1, max_frames)
+        slide_until("up", "wYCoord", 12, "northbound return-pocket ice slide")
+        slide_until("left", "wXCoord", 13, "westbound lower Seafoam ice slide")
+        walk_steps(session, "down", "wYCoord", 1, 1, max_frames)
+        walk_steps(session, "left", "wXCoord", -1, 3, max_frames)
+        walk_steps(session, "down", "wYCoord", 1, 3, max_frames)
+        _walk_until_map(session, "down", constants, "ROUTE_20", max_frames)
+        assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (
+            32,
+            6,
         )
-        assert session.read_symbol("wXCoord") == 9
-        assert session.read_symbol("wPlayerTileCollision") == constants["COLL_FLOOR"]
 
 
 def _start_articuno_battle(session, constants: dict[str, int], max_frames: int, cursor: int) -> None:
@@ -1420,6 +1439,7 @@ def test_kanto_bird_battle_type_reaches_the_nonflee_guard(
     phase_9_constants: dict[str, int],
 ) -> None:
     constants = phase_9_constants
+    articuno = scenario["seafoam"]["articuno"]
     max_frames = scenario["max_frames_per_step"]
     with loaded_phase_9_map_checkpoint(
         repo_root,
@@ -1427,8 +1447,8 @@ def test_kanto_bird_battle_type_reaches_the_nonflee_guard(
         constants,
         scenario,
         map_name="SEAFOAM_ISLANDS_CAVE",
-        x=9,
-        y=5,
+        x=articuno["approach"][0],
+        y=articuno["approach"][1],
         events=_articuno_checkpoint_events("moltres", oak_handoff=True),
     ) as session:
         prepare_battle_party(session, constants, constants["MAREEP"], should_win=False)
@@ -1458,6 +1478,7 @@ def test_articuno_non_capture_results_restore_a_healthy_retry(
     outcome: str,
 ) -> None:
     constants = phase_9_constants
+    articuno = scenario["seafoam"]["articuno"]
     max_frames = scenario["max_frames_per_step"]
     capture_event = constants["EVENT_CAUGHT_ARTICUNO_IN_KANTO"]
     mask_event = constants["EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION"]
@@ -1467,8 +1488,8 @@ def test_articuno_non_capture_results_restore_a_healthy_retry(
         constants,
         scenario,
         map_name="SEAFOAM_ISLANDS_CAVE",
-        x=9,
-        y=5,
+        x=articuno["approach"][0],
+        y=articuno["approach"][1],
         events=_articuno_checkpoint_events("moltres", oak_handoff=True),
     ) as session:
         prepare_battle_party(session, constants, constants["MAREEP"], should_win=True)
@@ -1496,7 +1517,7 @@ def test_articuno_non_capture_results_restore_a_healthy_retry(
         assert not event_is_set(session, mask_event)
         assert session.read_symbol("wMap1ObjectStructID") != 0xFF
 
-        place_player(session, 9, 5)
+        place_player(session, *articuno["approach"])
         _start_articuno_battle(session, constants, max_frames, 1)
         assert session.read_symbol_bytes("wEnemyMonHP", 2) == session.read_symbol_bytes(
             "wEnemyMonMaxHP", 2
@@ -1511,6 +1532,7 @@ def test_articuno_capture_and_absence_survive_native_continue(
     phase_9_constants: dict[str, int],
 ) -> None:
     constants = phase_9_constants
+    articuno = scenario["seafoam"]["articuno"]
     max_frames = scenario["max_frames_per_step"]
     capture_event = constants["EVENT_CAUGHT_ARTICUNO_IN_KANTO"]
     mask_event = constants["EVENT_ARTICUNO_NOT_AT_KANTO_LOCATION"]
@@ -1521,8 +1543,8 @@ def test_articuno_capture_and_absence_survive_native_continue(
         constants,
         scenario,
         map_name="SEAFOAM_ISLANDS_CAVE",
-        x=9,
-        y=5,
+        x=articuno["approach"][0],
+        y=articuno["approach"][1],
         events=_articuno_checkpoint_events("moltres", oak_handoff=True),
     ) as session:
         prepare_battle_party(session, constants, constants["MAREEP"], should_win=True)
