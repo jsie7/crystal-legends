@@ -267,7 +267,7 @@ def test_project_mew_event_slots_are_explicit_and_reference_reserved(
             "const_skip 3",
             "const_skip 4",
             "const_skip 4",
-            "const_skip 22",
+            "const_skip 23",
             "const_next 2048",
             "DEF NUM_EVENTS EQU const_value",
         ],

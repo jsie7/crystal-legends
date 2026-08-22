@@ -1723,14 +1723,48 @@ def test_remaining_bird_visibility_uses_branch_source_and_location_gate(
         assert (session.read_symbol(object_symbol) != 0xFF) is visible
 
 
-@pytest.mark.parametrize("caught", [False, True], ids=["over-limit", "stable"])
+@pytest.mark.parametrize(
+    ("state", "events", "stable"),
+    [
+        (
+            "present",
+            {
+                "EVENT_GOT_MOLTRES_FROM_ELM": True,
+                "EVENT_ZAPDOS_AVAILABLE": True,
+                "EVENT_RESTORED_POWER_TO_KANTO": True,
+                "EVENT_CAUGHT_ZAPDOS_IN_KANTO": False,
+            },
+            False,
+        ),
+        (
+            "starter-absent",
+            {
+                "EVENT_GOT_ZAPDOS_FROM_ELM": True,
+                "EVENT_CAUGHT_ZAPDOS_IN_KANTO": False,
+            },
+            True,
+        ),
+        (
+            "caught",
+            {
+                "EVENT_GOT_MOLTRES_FROM_ELM": True,
+                "EVENT_ZAPDOS_AVAILABLE": True,
+                "EVENT_RESTORED_POWER_TO_KANTO": True,
+                "EVENT_CAUGHT_ZAPDOS_IN_KANTO": True,
+            },
+            True,
+        ),
+    ],
+)
 @pytest.mark.parametrize("console_x", [2, 3], ids=["left-console", "right-console"])
-def test_both_generator_consoles_reflect_zapdos_capture(
+def test_both_generator_consoles_reflect_zapdos_presence(
     repo_root: Path,
     tmp_path: Path,
     scenario: dict,
     phase_9_constants: dict[str, int],
-    caught: bool,
+    state: str,
+    events: dict[str, bool],
+    stable: bool,
     console_x: int,
 ) -> None:
     constants = phase_9_constants
@@ -1743,10 +1777,7 @@ def test_both_generator_consoles_reflect_zapdos_capture(
         map_name="POWER_PLANT_GENERATOR_ANNEX",
         x=console_x,
         y=5,
-        events={
-            "EVENT_CAUGHT_ZAPDOS_IN_KANTO": caught,
-            "EVENT_ZAPDOS_NOT_AT_KANTO_LOCATION": caught,
-        },
+        events=events,
     ) as session:
         place_player(session, console_x, 5)
         session.enable_script_tracing()
@@ -1756,7 +1787,7 @@ def test_both_generator_consoles_reflect_zapdos_capture(
         _finish_overworld_script(session, max_frames)
         assert (
             "PowerPlantGeneratorAnnexConsole.Stable" in session.script_history
-        ) is caught
+        ) is stable
 
 
 def test_generator_annex_magnet_retries_when_items_are_full_and_persists(
@@ -2415,7 +2446,7 @@ def test_single_save_collects_all_gifts_and_both_nonstarter_birds(
                 "EVENT_OAK_MOVED_THIRD_BIRD": True,
                 "EVENT_RESTORED_POWER_TO_KANTO": False,
             },
-            "Phase9OaksAssistantZapdosHint",
+            "Phase9OaksAssistant2Hints.CommonHint",
         ),
         (
             "zapdos-closed-shutter-hint",
@@ -2428,7 +2459,17 @@ def test_single_save_collects_all_gifts_and_both_nonstarter_birds(
                 "EVENT_POWER_PLANT_ANNEX_AUTHORIZED": True,
                 "EVENT_OPENED_POWER_PLANT_ANNEX": False,
             },
-            "Phase9OaksAssistantZapdosHint",
+            "Phase9OaksAssistant2Hints.CommonHint",
+        ),
+        (
+            "both-remaining-birds-outstanding",
+            {
+                "EVENT_GOT_ARTICUNO_FROM_ELM": True,
+                "EVENT_OAK_MOVED_THIRD_BIRD": True,
+                "EVENT_MOLTRES_AVAILABLE": True,
+                "EVENT_RESTORED_POWER_TO_KANTO": True,
+            },
+            "Phase9OaksAssistant2Hints.CommonHint",
         ),
         (
             "both-nonstarter-birds-caught",
@@ -2502,3 +2543,5 @@ def test_oaks_second_assistant_tracks_handoff_and_capture_state(
             )
             _finish_overworld_script(session, scenario["max_frames_per_step"])
             assert "Phase9OaksAssistant2Hints" in session.script_history
+            if expected_label == "Phase9OaksAssistant2Hints.CommonHint":
+                assert session.script_history.count(expected_label) == 1

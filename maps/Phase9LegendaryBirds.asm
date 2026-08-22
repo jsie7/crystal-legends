@@ -153,62 +153,32 @@ Phase9OaksAssistant2Hints:
 
 .ArticunoStarter:
 	checkevent EVENT_CAUGHT_ZAPDOS_IN_KANTO
-	iffalse .ArticunoOakUncaught
+	iffalse .CommonHint
 	checkevent EVENT_CAUGHT_MOLTRES_IN_KANTO
 	iftrue .BothCaught
 	checkevent EVENT_MOLTRES_AVAILABLE
 	iffalse .NoNewSighting
-	scall Phase9OaksAssistantMoltresHint
-	sjump .Finish
-
-.ArticunoOakUncaught:
-	scall Phase9OaksAssistantZapdosHint
-	checkevent EVENT_CAUGHT_MOLTRES_IN_KANTO
-	iftrue .Finish
-	checkevent EVENT_MOLTRES_AVAILABLE
-	iffalse .Finish
-	promptbutton
-	scall Phase9OaksAssistantMoltresHint
-	sjump .Finish
+	sjump .CommonHint
 
 .ZapdosStarter:
 	checkevent EVENT_CAUGHT_MOLTRES_IN_KANTO
-	iffalse .ZapdosOakUncaught
+	iffalse .CommonHint
 	checkevent EVENT_CAUGHT_ARTICUNO_IN_KANTO
 	iftrue .BothCaught
 	checkevent EVENT_ARTICUNO_AVAILABLE
 	iffalse .NoNewSighting
-	scall Phase9OaksAssistantArticunoHint
-	sjump .Finish
-
-.ZapdosOakUncaught:
-	scall Phase9OaksAssistantMoltresHint
-	checkevent EVENT_CAUGHT_ARTICUNO_IN_KANTO
-	iftrue .Finish
-	checkevent EVENT_ARTICUNO_AVAILABLE
-	iffalse .Finish
-	promptbutton
-	scall Phase9OaksAssistantArticunoHint
-	sjump .Finish
+	sjump .CommonHint
 
 .MoltresStarter:
 	checkevent EVENT_CAUGHT_ARTICUNO_IN_KANTO
-	iffalse .MoltresOakUncaught
+	iffalse .CommonHint
 	checkevent EVENT_CAUGHT_ZAPDOS_IN_KANTO
 	iftrue .BothCaught
 	checkevent EVENT_ZAPDOS_AVAILABLE
 	iffalse .NoNewSighting
-	scall Phase9OaksAssistantZapdosHint
-	sjump .Finish
 
-.MoltresOakUncaught:
-	scall Phase9OaksAssistantArticunoHint
-	checkevent EVENT_CAUGHT_ZAPDOS_IN_KANTO
-	iftrue .Finish
-	checkevent EVENT_ZAPDOS_AVAILABLE
-	iffalse .Finish
-	promptbutton
-	scall Phase9OaksAssistantZapdosHint
+.CommonHint:
+	writetext Phase9OaksAssistantLegendaryHabitatHintText
 	sjump .Finish
 
 .NoNewSighting:
@@ -222,18 +192,6 @@ Phase9OaksAssistant2Hints:
 	waitbutton
 	closetext
 	end
-
-Phase9OaksAssistantArticunoHint:
-	writetext Phase9OaksAssistantLegendaryHabitatHintText
-	return
-
-Phase9OaksAssistantZapdosHint:
-	writetext Phase9OaksAssistantLegendaryHabitatHintText
-	return
-
-Phase9OaksAssistantMoltresHint:
-	writetext Phase9OaksAssistantLegendaryHabitatHintText
-	return
 
 Phase9OaksAssistantLegendaryHabitatHintText:
 	text "AIDE: Legendary"

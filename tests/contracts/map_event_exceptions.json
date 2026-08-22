@@ -7,5 +7,23 @@
     "y": 8,
     "identity": "ObjectEvent",
     "reason": "The hidden receptionist is staged outside the map before the GS Ball scene moves her into view."
+  },
+  {
+    "exception_id": "power-plant-annex-upper-shutter-edge",
+    "map_name": "POWER_PLANT",
+    "event_type": "bg_event",
+    "x": 20,
+    "y": 10,
+    "identity": "PowerPlantAnnexShutter",
+    "reason": "The interaction sits one tile beyond the east edge so the player can examine the shutter while standing on the visible carpet at (19, 10) and facing right."
+  },
+  {
+    "exception_id": "power-plant-annex-lower-shutter-edge",
+    "map_name": "POWER_PLANT",
+    "event_type": "bg_event",
+    "x": 20,
+    "y": 11,
+    "identity": "PowerPlantAnnexShutter",
+    "reason": "The interaction sits one tile beyond the east edge so the player can examine the shutter while standing on the visible carpet at (19, 11) and facing right."
   }
 ]

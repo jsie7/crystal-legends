@@ -1653,7 +1653,7 @@ def test_power_plant_annex_layout_shutter_warps_and_route_match_the_contract(
     _assert_in_order(
         console_script,
         [
-            "checkevent EVENT_CAUGHT_ZAPDOS_IN_KANTO",
+            "checkevent EVENT_ZAPDOS_NOT_AT_KANTO_LOCATION",
             "iftrue .Stable",
             "farjumptext Phase9PowerPlantGeneratorAnnexConsoleText",
             ".Stable:",
@@ -1958,7 +1958,15 @@ def test_zapdos_moltres_and_oak_tracker_use_the_locked_branch_contract(
     assert not any("NOT_AT_KANTO_LOCATION" in line for line in tracker)
     assert tracker.count(
         "writetext Phase9OaksAssistantLegendaryHabitatHintText"
-    ) == 3
+    ) == 1
+    assert all(
+        retired not in tracker
+        for retired in (
+            "Phase9OaksAssistantArticunoHint:",
+            "Phase9OaksAssistantZapdosHint:",
+            "Phase9OaksAssistantMoltresHint:",
+        )
+    )
     assert "Phase9OaksAssistantLegendaryHabitatHintText:" in tracker
     assert 'text "AIDE: Legendary"' in tracker
     assert 'line "birds are drawn to"' in tracker

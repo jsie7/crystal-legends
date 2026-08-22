@@ -18,7 +18,7 @@ PowerPlantGeneratorAnnexMagnet:
 	itemball MAGNET
 
 PowerPlantGeneratorAnnexConsole:
-	checkevent EVENT_CAUGHT_ZAPDOS_IN_KANTO
+	checkevent EVENT_ZAPDOS_NOT_AT_KANTO_LOCATION
 	iftrue .Stable
 	farjumptext Phase9PowerPlantGeneratorAnnexConsoleText
 
