@@ -428,6 +428,7 @@ def test_cinnabar_staircase_survivor_clue_and_log_capacity_are_runtime_safe(
         "EVENT_BLUE_IN_CINNABAR": True,
         "EVENT_RECOVERED_BLAINES_LOG": False,
     }
+    case_x, case_y = scenario["blaines_log"]["case_coordinate"]
 
     with loaded_phase_9_map_checkpoint(
         repo_root,
@@ -499,8 +500,8 @@ def test_cinnabar_staircase_survivor_clue_and_log_capacity_are_runtime_safe(
         constants,
         scenario,
         map_name="CINNABAR_ISLAND",
-        x=13,
-        y=7,
+        x=case_x,
+        y=case_y + 1,
         events={
             **common_events,
             "EVENT_LEARNED_LOCATION_OF_BLAINES_LOG": False,
@@ -522,8 +523,8 @@ def test_cinnabar_staircase_survivor_clue_and_log_capacity_are_runtime_safe(
         constants,
         scenario,
         map_name="CINNABAR_ISLAND",
-        x=13,
-        y=7,
+        x=case_x,
+        y=case_y + 1,
         events={
             **common_events,
             "EVENT_LEARNED_LOCATION_OF_BLAINES_LOG": True,

@@ -78,7 +78,7 @@
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 49
 	tilecoll FLOOR, FLOOR, WARP_CARPET_DOWN, WALL ; 4a
 	if DEF(_CRYSTALLEGENDS)
-		tilecoll HOP_DOWN, FLOOR, WALL, FLOOR ; 4b
+		tilecoll WALL, FLOOR, WALL, FLOOR ; 4b
 	else
 		tilecoll HOP_DOWN_RIGHT, WALL, WALL, WALL ; 4b
 	endc

@@ -39,6 +39,9 @@ CinnabarIslandHiddenRareCandy:
 	hiddenitem RARE_CANDY, EVENT_CINNABAR_ISLAND_HIDDEN_RARE_CANDY
 
 if DEF(_CRYSTALLEGENDS)
+CinnabarIslandDecorativeBoulder:
+	end
+
 CinnabarIslandBlainesLogRubble:
 	opentext
 	checkevent EVENT_RECOVERED_BLAINES_LOG
@@ -198,5 +201,8 @@ CinnabarIsland_MapEvents:
 	def_object_events
 	object_event  9,  6, SPRITE_BLUE, SPRITEMOVEDATA_SPINRANDOM_SLOW, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, CinnabarIslandBlue, EVENT_BLUE_IN_CINNABAR
 	if DEF(_CRYSTALLEGENDS)
-	object_event 13,  6, SPRITE_BOULDER, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, CinnabarIslandBlainesLogRubble, -1
+	object_event 17, 12, SPRITE_BOULDER, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, CinnabarIslandBlainesLogRubble, -1
+	object_event 12,  6, SPRITE_BOULDER, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, CinnabarIslandDecorativeBoulder, -1
+	object_event 18,  0, SPRITE_BOULDER, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, CinnabarIslandDecorativeBoulder, -1
+	object_event 12,  2, SPRITE_BOULDER, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, CinnabarIslandDecorativeBoulder, -1
 	endc

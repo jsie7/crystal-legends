@@ -309,11 +309,13 @@ on their trainer class and party index. Decline or full party plus full current
 box must not set the gift event
 or repeat a completed service. The Blaine return fact is set before the gift
 attempt so storage failure never repeats the investigation. The hidden cache
-uses the stock boulder graphic in the Crystal Legends-only Cinnabar object
-list. Its gray shelf staircase uses a custom block, metatile, collision, and
-one imported stair-tread tile; reference assets remain exact. The staircase
-uses nonzero Kanto metatile `$4b` because block `$00` is a rendering and
-collision sentinel, not a usable map block.
+uses the stock boulder graphic at `(17, 12)` in the Crystal Legends-only
+Cinnabar object list; three noninteractive boulders at `(12, 6)`, `(18, 0)`,
+and `(12, 2)` make it part of the surrounding rubble. Its gray shelf staircase
+uses a custom block, metatile, collision, and one imported stair-tread tile;
+reference assets remain exact. The staircase uses nonzero Kanto metatile `$4b`
+because block `$00` is a rendering and collision sentinel, not a usable map
+block.
 
 ## 2026-08-20 — Open one unattended Safari preserve through existing Fuchsia state
 

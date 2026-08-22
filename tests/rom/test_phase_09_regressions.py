@@ -286,10 +286,8 @@ def test_compiled_cinnabar_assets_are_custom_replacements_only(
         4,
     ) == bytes(
         [
-            phase_9_constants["COLL_HOP_DOWN"],
-            phase_9_constants["COLL_FLOOR"],
-            phase_9_constants["COLL_WALL"],
-            phase_9_constants["COLL_FLOOR"],
+            phase_9_constants[f"COLL_{collision}"]
+            for collision in scenario["blaines_log"]["staircase"]["collision"]
         ]
     )
     assert reference.slice(
@@ -297,10 +295,8 @@ def test_compiled_cinnabar_assets_are_custom_replacements_only(
         4,
     ) != bytes(
         [
-            phase_9_constants["COLL_HOP_DOWN"],
-            phase_9_constants["COLL_FLOOR"],
-            phase_9_constants["COLL_WALL"],
-            phase_9_constants["COLL_FLOOR"],
+            phase_9_constants[f"COLL_{collision}"]
+            for collision in scenario["blaines_log"]["staircase"]["collision"]
         ]
     )
     gate = scenario["safari"]["fuchsia_gate"]
@@ -325,7 +321,7 @@ def test_compiled_cinnabar_assets_are_custom_replacements_only(
 
 
 def test_compiled_cinnabar_case_event_matches_the_locked_coordinate(
-    repo_root: Path, phase_9_constants: dict[str, int]
+    repo_root: Path, phase_9_constants: dict[str, int], scenario: dict
 ) -> None:
     constants = phase_9_constants
     custom = RomImage.load(repo_root / "crystallegends.gbc")
@@ -351,10 +347,12 @@ def test_compiled_cinnabar_case_event_matches_the_locked_coordinate(
         constants["BG_EVENT_SIZE"],
         constants["OBJECT_EVENT_SIZE"],
     )
-    assert len(custom_objects) == 2
+    assert len(custom_objects) == 5
     assert len(reference_objects) == 1
-    boulder = custom_objects[-1]
-    assert (boulder.x, boulder.y) == (13, 6)
+    boulder = custom_objects[1]
+    assert (boulder.x, boulder.y) == tuple(
+        scenario["blaines_log"]["case_coordinate"]
+    )
     assert boulder.sprite == constants["SPRITE_BOULDER"]
     assert boulder.movement == constants["SPRITEMOVEDATA_STILL"]
     assert boulder.palette_and_type >> 4 == constants["PAL_NPC_BROWN"]
@@ -364,6 +362,22 @@ def test_compiled_cinnabar_case_event_matches_the_locked_coordinate(
         == custom_symbols["CinnabarIslandBlainesLogRubble"].address
     )
     assert boulder.event_flag == 0xFFFF
+
+    decorative_boulders = custom_objects[2:]
+    assert [(rock.x, rock.y) for rock in decorative_boulders] == [
+        tuple(coordinate)
+        for coordinate in scenario["blaines_log"]["decorative_rock_coordinates"]
+    ]
+    for rock in decorative_boulders:
+        assert rock.sprite == constants["SPRITE_BOULDER"]
+        assert rock.movement == constants["SPRITEMOVEDATA_STILL"]
+        assert rock.palette_and_type >> 4 == constants["PAL_NPC_BROWN"]
+        assert rock.palette_and_type & 0xF == constants["OBJECTTYPE_SCRIPT"]
+        assert (
+            rock.script_pointer
+            == custom_symbols["CinnabarIslandDecorativeBoulder"].address
+        )
+        assert rock.event_flag == 0xFFFF
 
     backgrounds = decode_background_events(
         custom,
@@ -398,6 +412,7 @@ def test_compiled_phase_9_starter_labels_are_custom_only(repo_root: Path) -> Non
         "BlaineCharmanderOfferText",
         "CeladonCityMukPondEntry",
         "CeladonCityMukPondEncounter",
+        "CinnabarIslandDecorativeBoulder",
         "CinnabarIslandBlainesLogRubble",
         "ErikaStarterOTName",
         "MistyStarterOTName",

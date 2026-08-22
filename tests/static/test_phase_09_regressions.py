@@ -404,7 +404,9 @@ def test_phase_9_review_dialogue_matches_the_approved_copy(repo_root: Path) -> N
     )
 
 
-def test_erika_muk_and_blaine_log_retry_only_after_success(repo_root: Path) -> None:
+def test_erika_muk_and_blaine_log_retry_only_after_success(
+    repo_root: Path, scenario: dict
+) -> None:
     celadon = _active_code(repo_root / "maps/CeladonCity.asm", CRYSTAL_LEGENDS)
     entry = _section(
         celadon, "CeladonCityMukPondEntry:", "CeladonCityMukPondEncounter:"
@@ -452,13 +454,37 @@ def test_erika_muk_and_blaine_log_retry_only_after_success(repo_root: Path) -> N
             "setevent EVENT_RECOVERED_BLAINES_LOG",
         ],
     )
-    assert not any(line.startswith("bg_event 13,  6") for line in island)
+    case_x, case_y = scenario["blaines_log"]["case_coordinate"]
+    assert not any(
+        line.startswith(f"bg_event {case_x:2}, {case_y:2}") for line in island
+    )
     assert any(
-        line.startswith("object_event 13,  6, SPRITE_BOULDER, SPRITEMOVEDATA_STILL")
+        line.startswith(
+            f"object_event {case_x:2}, {case_y:2}, "
+            "SPRITE_BOULDER, SPRITEMOVEDATA_STILL"
+        )
         and "PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, "
         "CinnabarIslandBlainesLogRubble, -1" in line
         for line in island
     )
+    decorative = _section(
+        island,
+        "CinnabarIslandDecorativeBoulder:",
+        "CinnabarIslandBlainesLogRubble:",
+    )
+    assert decorative == ["CinnabarIslandDecorativeBoulder:", "end"]
+    for rock_x, rock_y in scenario["blaines_log"][
+        "decorative_rock_coordinates"
+    ]:
+        assert any(
+            line.startswith(
+                f"object_event {rock_x:2}, {rock_y:2}, "
+                "SPRITE_BOULDER, SPRITEMOVEDATA_STILL"
+            )
+            and "PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, "
+            "CinnabarIslandDecorativeBoulder, -1" in line
+            for line in island
+        )
     assert not any("CinnabarIslandOldGymRemains" in line for line in island)
     assert not any("CinnabarIslandOldLabRemains" in line for line in island)
 
@@ -515,9 +541,10 @@ def test_phase_9_kanto_assets_change_only_stairs_and_safari_gate(
     staircase_block = scenario["blaines_log"]["staircase"]["custom_block"]
     assert custom_meta[:16] == stock_meta[:16]
     assert custom_meta[staircase_block * 16 : (staircase_block + 1) * 16] == bytes(
-        [0x11] * 8
-        + [0x11, 0x11, 0x00, 0x00]
-        + [0x37, 0x34, 0x00, 0x00]
+        [0x27, 0x27, 0x11, 0x11]
+        + [0x27, 0x27, 0x11, 0x11]
+        + [0x27, 0x36, 0x00, 0x00]
+        + [0x36, 0x37, 0x00, 0x00]
     )
     changed_metatiles = [
         index
@@ -546,11 +573,8 @@ def test_phase_9_kanto_assets_change_only_stairs_and_safari_gate(
         "CUT_TREE",
         "CUT_TREE",
     )
-    assert parse_collision_rows(collision_source)[staircase_block] == (
-        "HOP_DOWN",
-        "FLOOR",
-        "WALL",
-        "FLOOR",
+    assert parse_collision_rows(collision_source)[staircase_block] == tuple(
+        scenario["blaines_log"]["staircase"]["collision"]
     )
     assert parse_collision_rows(collision_source, REFERENCE)[staircase_block] == (
         "HOP_DOWN_RIGHT",
@@ -577,6 +601,29 @@ def test_phase_9_kanto_assets_change_only_stairs_and_safari_gate(
     assert collision_at(
         repo_root, "CinnabarIsland", (7, 4), dimensions, resolved, tilesets
     ) == "FLOOR"
+    assert collision_at(
+        repo_root, "CinnabarIsland", (6, 4), dimensions, resolved, tilesets
+    ) == "WALL"
+
+    def walk_tile_graphics(coordinate: tuple[int, int]) -> bytes:
+        x, y = coordinate
+        block = custom_blocks[(y // 2) * 10 + (x // 2)]
+        metatile = custom_meta[block * 16 : (block + 1) * 16]
+        row = (y % 2) * 2
+        column = (x % 2) * 2
+        return bytes(
+            (
+                metatile[row * 4 + column],
+                metatile[row * 4 + column + 1],
+                metatile[(row + 1) * 4 + column],
+                metatile[(row + 1) * 4 + column + 1],
+            )
+        )
+
+    for target, source in scenario["blaines_log"]["staircase"][
+        "appearance_matches"
+    ]:
+        assert walk_tile_graphics(tuple(target)) == walk_tile_graphics(tuple(source))
 
     custom_sprites = _active_code(
         repo_root / "data/maps/outdoor_sprites.asm", CRYSTAL_LEGENDS
@@ -594,8 +641,9 @@ def test_phase_9_kanto_assets_change_only_stairs_and_safari_gate(
     assert "db SPRITE_FRUIT_TREE" not in custom_group
     assert "db SPRITE_BOULDER" not in reference_group
     assert "db SPRITE_FRUIT_TREE" in reference_group
+    case_coordinate = tuple(scenario["blaines_log"]["case_coordinate"])
     assert collision_at(
-        repo_root, "CinnabarIsland", (13, 6), dimensions, resolved, tilesets
+        repo_root, "CinnabarIsland", case_coordinate, dimensions, resolved, tilesets
     ) == "FLOOR"  # the visible boulder object owns this coordinate's collision
 
     reference_tilesets = parse_map_tilesets(

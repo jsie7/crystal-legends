@@ -475,8 +475,9 @@ and pass/fail result. Manually confirm:
    three northern water tiles, with run/loss retry; Misty's power hint works in
    either order; and that both survivors retain stock dialogue until Blaine
    asks for help. Then review the survivor clue, complete gray staircase,
-   boulder-hidden cache, log recovery, and return form one coherent task without
-   an HM requirement. Explicitly judge level-28 Charmander's Ember-to-level-34
+   southeast boulder-hidden cache at `(17, 12)`, surrounding noninteractive
+   rubble, log recovery, and return form one coherent task without an HM
+   requirement. Explicitly judge level-28 Charmander's Ember-to-level-34
    Flamethrower interval.
 2. Before and after the two Safari prerequisites, confirm Fuchsia's north
    opening looks closed/open rather than relying on an invisible wall. Review
