@@ -344,13 +344,18 @@ Only `CheckCaughtPokemon` success sets capture and mask facts, so knockout,
 escape, and player loss remain retryable and native Continue cannot respawn a
 captured bird. A dedicated Kanto-bird battle type suppresses the species flee
 AI for all three encounters while leaving the player's Run command intact.
-Oak's second assistant reports only the remaining eligible targets.
+Oak's second assistant gives the shared habitat hint at most once per
+conversation, reports no new sightings when the remaining released bird is
+still gated, and confirms when both non-starter birds have been found.
 
 Articuno is level 60 in a compact Ice Path cave off Route 20 built from the
 unused `BetaUnionCave` backbone. Zapdos is level 60 in a 4-by-4 Power Plant
 Generator Annex after restored power and a later Manager authorization. The
 east-edge carpet stays visible while closed, reports the shutter state when
-examined, and becomes a permanent directional warp after authorization.
+examined, and becomes a permanent directional warp after authorization. The
+two shutter interactions deliberately sit one tile beyond the map's east edge
+so pressing A while facing right from either visible carpet tile works; the
+map-event validator records these as two exact reviewed exceptions.
 Moltres is level 60 on Victory Road's existing isolated eastern
 shelf and always waits for the first Hall of Fame. These maps reuse stock
 sprites and tiles wherever possible, change no save-layout dimensions, and
@@ -363,6 +368,7 @@ Ball rewards the western branch, while a hidden NeverMeltIce sits in the
 northeast ice rock.
 
 Both tiles of the annex's two-tile generator console share one reading. It
-reports unsafe output while Zapdos is present and safe output after Zapdos is
-captured. A visible Magnet in the southeast corner rewards annex exploration
-and gives Zapdos an immediately relevant held item.
+reports unsafe output only while Zapdos is physically present and safe output
+whenever the location selector hides it, including capture and the
+Zapdos-starter branch. A visible Magnet in the southeast corner rewards annex
+exploration and gives Zapdos an immediately relevant held item.

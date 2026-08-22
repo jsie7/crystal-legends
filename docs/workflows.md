@@ -434,21 +434,21 @@ git status --short
 shasum -a 256 crystallegends.gbc
 ```
 
-The accepted automated boundary on 2026-08-20 is:
+The accepted automated boundary on 2026-08-22 is:
 
-- implementation commits `22a79cb05`, `561e1e8d4`, `0cabf0395`, and
-  `dca936fe9`, followed by hardening commit `4723464c0`;
-- 106 focused Phase 9 tests: 19 static, 16 compiled-ROM, and 71
+- Phase 9 implementation and presentation commits from `22a79cb05` through
+  state-contract fix `007b8efd1`;
+- 122 focused Phase 9 tests: 20 static, 16 compiled-ROM, and 86
   production-ROM emulator cases;
-- 409 complete-gate tests: 108 static, 64 compiled-ROM, and 237 emulator cases;
+- 425 complete-gate tests: 109 static, 64 compiled-ROM, and 252 emulator cases;
 - all six upstream reference artifacts reproduced by `make compare`;
 - ROM SHA-256
-  `c136026e9693f025ff4e6919ad781e2942fd7aea05dd726db9519da76289b9de`;
-- event IDs 2015 through 2034 with `NUM_EVENTS`, WRAM, SRAM, and the save-layout
+  `76c64b48cf697c6a062575ae9efb2ecb2d75bd5dca2574e4ae127e2ee97b3960`;
+- event IDs 2015 through 2037 with `NUM_EVENTS`, WRAM, SRAM, and the save-layout
   fingerprint unchanged;
-- reviewed Phase 9 bank reserves: ROMX `$06=$0202`, `$1c=$06b7`,
-  `$1d=$0cce`, `$2c=$249a`, `$62=$0646`, `$65=$0653`, `$66=$052f`,
-  `$6a=$01fa`, `$6b=$1310`, and `$6c=$1640`.
+- reviewed Phase 9 bank reserves: ROMX `$06=$01da`, `$1c=$06b1`,
+  `$1d=$0cce`, `$2c=$249a`, `$62=$0649`, `$65=$0780`, `$66=$052f`,
+  `$6a=$02be`, `$6b=$158d`, and `$6c=$160b`.
 
 Automation owns exact gift prerequisites and level-28 delivery, decline/full
 storage retry, service isolation, the Cinnabar log and staircase, both Safari
@@ -459,7 +459,9 @@ power gates, capture-only completion, non-capture retry, native Continue,
 Oak-assistant hints, invalid no-choice states, and one evolving save that
 collects all three gifts plus both non-starter birds. Static and compiled-ROM
 contracts also own conditional asset bytes, geometry, bank floors, save layout,
-and reference isolation.
+and reference isolation. The annex console matrix additionally owns Zapdos
+present, captured, and starter-absent readings on both console tiles, while the
+Oak-assistant matrix owns one generic hint when both targets remain.
 
 For playtest certification, use SameBoy with a backed-up or disposable save and
 record the exact version, ROM commit/hash, date, save boundary, starter branch,

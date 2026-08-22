@@ -149,8 +149,8 @@ UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/emulator/test_p
 UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest -m phase9
 ```
 
-Phase 9 has 106 focused tests: 19 source contracts, 16 compiled-ROM contracts,
-and 71 production-ROM scenarios. They own the three level-28 service gifts,
+Phase 9 has 122 focused tests: 20 source contracts, 16 compiled-ROM contracts,
+and 86 production-ROM scenarios. They own the three level-28 service gifts,
 Cinnabar log flow and asset variants, both Safari access orders, exact wild
 tables and normal battles, Seafoam/Power Plant/Victory Road geometry, the full
 three-branch bird matrix, retry and native Continue behavior, Oak's tracker,
