@@ -203,6 +203,6 @@ CinnabarIsland_MapEvents:
 	if DEF(_CRYSTALLEGENDS)
 	object_event 17, 12, SPRITE_BOULDER, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, CinnabarIslandBlainesLogRubble, -1
 	object_event 12,  6, SPRITE_BOULDER, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, CinnabarIslandDecorativeBoulder, -1
-	object_event 18,  0, SPRITE_BOULDER, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, CinnabarIslandDecorativeBoulder, -1
+	object_event 17,  1, SPRITE_BOULDER, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, CinnabarIslandDecorativeBoulder, -1
 	object_event 12,  2, SPRITE_BOULDER, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, CinnabarIslandDecorativeBoulder, -1
 	endc

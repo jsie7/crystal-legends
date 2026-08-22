@@ -82,7 +82,7 @@
     "recovery_event": "EVENT_RECOVERED_BLAINES_LOG",
     "return_event": "EVENT_RETURNED_BLAINES_LOG",
     "case_coordinate": [17, 12],
-    "decorative_rock_coordinates": [[12, 6], [18, 0], [12, 2]],
+    "decorative_rock_coordinates": [[12, 6], [17, 1], [12, 2]],
     "rubble_object": {
       "sprite": "SPRITE_BOULDER",
       "movement": "SPRITEMOVEDATA_STILL",
