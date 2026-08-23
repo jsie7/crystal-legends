@@ -360,6 +360,22 @@ def test_phase_9_review_dialogue_matches_the_approved_copy(repo_root: Path) -> N
     )
 
     misty = _active_code(repo_root / "maps/CeruleanGym.asm", CRYSTAL_LEGENDS)
+    misty_script = _section(
+        misty, "CeruleanGymMistyScript:", "TrainerSwimmerfDiana:"
+    )
+    _assert_in_order(
+        misty_script,
+        [
+            "setflag ENGINE_CASCADEBADGE",
+            "writetext MistyVictoryBridgeText",
+            "promptbutton",
+            ".FightDone:",
+        ],
+    )
+    assert _dialogue(misty, "MistyVictoryBridgeText:") == (
+        "MISTY: Nice work! ¶ Before you go, there's one more thing."
+    )
+    _assert_dialogue_line_width(misty, "MistyVictoryBridgeText:")
     assert _dialogue(misty, "MistySquirtleOfferText:") == (
         "MISTY: You brought back the power to KANTO. ¶ CERULEAN owes you. ¶ "
         "I want to entrust SQUIRTLE to you. ¶ Will you take it?"

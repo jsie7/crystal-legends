@@ -77,6 +77,10 @@ CeruleanGymMistyScript:
 	playsound SFX_GET_BADGE
 	waitsfx
 	setflag ENGINE_CASCADEBADGE
+	if DEF(_CRYSTALLEGENDS)
+	writetext MistyVictoryBridgeText
+	promptbutton
+	endc
 .FightDone:
 	if DEF(_CRYSTALLEGENDS)
 	checkevent EVENT_GOT_SQUIRTLE_FROM_MISTY
@@ -323,6 +327,14 @@ MistyFightDoneText:
 	done
 
 if DEF(_CRYSTALLEGENDS)
+MistyVictoryBridgeText:
+	text "MISTY: Nice work!"
+
+	para "Before you go,"
+	line "there's one more"
+	cont "thing."
+	done
+
 MistyPowerStillOutText:
 	text "MISTY: You won the"
 	line "battle, but KANTO"
