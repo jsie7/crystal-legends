@@ -225,12 +225,12 @@ PowerPlantBookshelf:
 if DEF(_CRYSTALLEGENDS)
 PowerPlantAnnexShutter:
 	opentext
+	checkevent EVENT_OPENED_POWER_PLANT_ANNEX
+	iftrue .AlreadyOpen
 	checkevent EVENT_RESTORED_POWER_TO_KANTO
 	iffalse .NoPower
 	checkevent EVENT_POWER_PLANT_ANNEX_AUTHORIZED
 	iffalse .NeedsAuthorization
-	checkevent EVENT_OPENED_POWER_PLANT_ANNEX
-	iftrue .AlreadyOpen
 	farwritetext Phase9PowerPlantAnnexShutterOpensText
 	waitbutton
 	playsound SFX_ENTER_DOOR

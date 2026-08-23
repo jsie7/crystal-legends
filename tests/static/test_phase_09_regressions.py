@@ -1692,6 +1692,25 @@ def test_power_plant_annex_layout_shutter_warps_and_route_match_the_contract(
     declaration = "map PowerPlantGeneratorAnnex, " + ", ".join(annex["metadata"])
     assert declaration in _active_code(repo_root / "data/maps/maps.asm", CRYSTAL_LEGENDS)
     assert declaration not in _active_code(repo_root / "data/maps/maps.asm", REFERENCE)
+
+    plant = _active_code(repo_root / "maps/PowerPlant.asm", CRYSTAL_LEGENDS)
+    shutter_script = _section(
+        plant,
+        "PowerPlantAnnexShutter:",
+        "PowerPlantOfficer1ApproachGymGuide2Movement:",
+    )
+    _assert_in_order(
+        shutter_script,
+        [
+            "checkevent EVENT_OPENED_POWER_PLANT_ANNEX",
+            "iftrue .AlreadyOpen",
+            "checkevent EVENT_RESTORED_POWER_TO_KANTO",
+            "iffalse .NoPower",
+            "checkevent EVENT_POWER_PLANT_ANNEX_AUTHORIZED",
+            "iffalse .NeedsAuthorization",
+        ],
+    )
+
     assert (
         f'map_attributes PowerPlantGeneratorAnnex, {annex["map"]}, '
         f'${annex["border_block"]:02x}'
@@ -1782,13 +1801,12 @@ def test_power_plant_annex_layout_shutter_warps_and_route_match_the_contract(
             tilesets,
         ) == "FLOOR"
 
-    plant_source = _active_code(repo_root / "maps/PowerPlant.asm", CRYSTAL_LEGENDS)
     _assert_in_order(
-        plant_source,
+        shutter_script,
         [
+            f'checkevent {annex["shutter"]["open_event"]}',
             f'checkevent {annex["shutter"]["power_event"]}',
             f'checkevent {annex["shutter"]["authorization_event"]}',
-            f'checkevent {annex["shutter"]["open_event"]}',
             "playsound SFX_ENTER_DOOR",
             f'changeblock {annex["shutter"]["block_origin"][0]}, {annex["shutter"]["block_origin"][1]}, ${annex["shutter"]["open_block"]:02x}',
             "refreshmap",
