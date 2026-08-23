@@ -381,7 +381,7 @@
       "coordinate": [17, 31],
       "approach": [17, 32],
       "arrival_ladder": [17, 33],
-      "object_id": 8,
+      "object_id": 7,
       "sprite": "SPRITE_MOLTRES",
       "movement": "SPRITEMOVEDATA_POKEMON",
       "palette": "PAL_NPC_RED",
@@ -397,7 +397,13 @@
       "callback": "Phase9RefreshMoltresLocation",
       "script": "Phase9MoltresEncounter"
     },
-    "full_restore": [18, 29],
+    "hidden_full_restore": {
+      "coordinate": [9, 58],
+      "collision": "WALL",
+      "script": "VictoryRoadHiddenFullRestore",
+      "item": "FULL_RESTORE",
+      "event": "EVENT_VICTORY_ROAD_FULL_RESTORE"
+    },
     "south_hops": [[16, 34], [17, 34], [18, 34], [19, 34]],
     "route_warps": [[13, 31], [13, 17], [17, 19], [17, 33]],
     "east_hops": [[8, 20], [8, 21]]

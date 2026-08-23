@@ -359,9 +359,10 @@ two shutter interactions deliberately sit one tile beyond the map's east edge
 so pressing A while facing right from either visible carpet tile works; the
 map-event validator records these as two exact reviewed exceptions.
 Moltres is level 60 on Victory Road's existing isolated eastern
-shelf and always waits for the first Hall of Fame. These maps reuse stock
-sprites and tiles wherever possible, change no save-layout dimensions, and
-remain wholly absent from reference builds.
+shelf and always waits for the first Hall of Fame. The shelf's former visible
+Full Restore is instead a hidden pickup at `(9, 58)`, leaving the Moltres shelf
+uncluttered. These maps reuse stock sprites and tiles wherever possible, change
+no save-layout dimensions, and remain wholly absent from reference builds.
 
 The Seafoam cave uses a visible south exit and several connected ice lanes.
 Rock stops frame the entrance, separate the eastern ice field from Articuno,

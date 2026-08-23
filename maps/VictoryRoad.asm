@@ -4,9 +4,10 @@
 	const VICTORYROAD_POKE_BALL2
 	const VICTORYROAD_POKE_BALL3
 	const VICTORYROAD_POKE_BALL4
-	const VICTORYROAD_POKE_BALL5
 if DEF(_CRYSTALLEGENDS)
 	const VICTORYROAD_MOLTRES
+else
+	const VICTORYROAD_POKE_BALL5
 endc
 
 if DEF(_CRYSTALLEGENDS)
@@ -128,8 +129,10 @@ VictoryRoadTMEarthquake:
 VictoryRoadMaxRevive:
 	itemball MAX_REVIVE
 
+if !DEF(_CRYSTALLEGENDS)
 VictoryRoadFullRestore:
 	itemball FULL_RESTORE
+endc
 
 VictoryRoadFullHeal:
 	itemball FULL_HEAL
@@ -142,6 +145,11 @@ VictoryRoadHiddenMaxPotion:
 
 VictoryRoadHiddenFullHeal:
 	hiddenitem FULL_HEAL, EVENT_VICTORY_ROAD_HIDDEN_FULL_HEAL
+
+if DEF(_CRYSTALLEGENDS)
+VictoryRoadHiddenFullRestore:
+	hiddenitem FULL_RESTORE, EVENT_VICTORY_ROAD_FULL_RESTORE
+endc
 
 VictoryRoadRivalBattleApproachMovement1:
 	step LEFT
@@ -285,13 +293,18 @@ VictoryRoad_MapEvents:
 
 	def_bg_events
 	bg_event  3, 29, BGEVENT_ITEM, VictoryRoadHiddenMaxPotion
+if DEF(_CRYSTALLEGENDS)
+	bg_event  9, 58, BGEVENT_ITEM, VictoryRoadHiddenFullRestore
+endc
 	bg_event  3, 65, BGEVENT_ITEM, VictoryRoadHiddenFullHeal
 
 	def_object_events
 	object_event 18, 13, SPRITE_RIVAL, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_RIVAL_VICTORY_ROAD
 	object_event  3, 28, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, VictoryRoadTMEarthquake, EVENT_VICTORY_ROAD_TM_EARTHQUAKE
 	object_event 12, 48, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, VictoryRoadMaxRevive, EVENT_VICTORY_ROAD_MAX_REVIVE
+if !DEF(_CRYSTALLEGENDS)
 	object_event 18, 29, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, VictoryRoadFullRestore, EVENT_VICTORY_ROAD_FULL_RESTORE
+endc
 	object_event 15, 48, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, VictoryRoadFullHeal, EVENT_VICTORY_ROAD_FULL_HEAL
 	object_event  7, 38, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, VictoryRoadHPUp, EVENT_VICTORY_ROAD_HP_UP
 if DEF(_CRYSTALLEGENDS)

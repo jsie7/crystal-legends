@@ -1168,8 +1168,30 @@ def test_compiled_power_plant_annex_and_remaining_bird_objects_match_contract(
         constants["OBJECT_EVENT_SIZE"],
     )
     assert len(annex_objects) == 2
-    assert len(victory_objects) == 7
+    assert len(victory_objects) == 6
     assert len(reference_victory_objects) == 6
+    hidden_full_restore = victory["hidden_full_restore"]
+    victory_backgrounds = decode_background_events(
+        custom,
+        symbols,
+        "VictoryRoad_MapEvents",
+        constants["WARP_EVENT_SIZE"],
+        constants["COORD_EVENT_SIZE"],
+        constants["BG_EVENT_SIZE"],
+    )
+    hidden_full_restore_event = next(
+        event
+        for event in victory_backgrounds
+        if event.script_pointer == symbols[hidden_full_restore["script"]].address
+    )
+    assert (
+        hidden_full_restore_event.x,
+        hidden_full_restore_event.y,
+        hidden_full_restore_event.event_type,
+    ) == (
+        *hidden_full_restore["coordinate"],
+        constants["BGEVENT_ITEM"],
+    )
     zapdos_object = next(
         obj
         for obj in annex_objects
@@ -1211,6 +1233,7 @@ def test_compiled_power_plant_annex_and_remaining_bird_objects_match_contract(
         "Phase9MoltresEncounter",
         "Phase9OaksAssistant2Hints",
         "VictoryRoadMoltres",
+        "VictoryRoadHiddenFullRestore",
     }
     assert all(label in symbols for label in custom_only)
     assert all(label not in reference_symbols for label in custom_only)

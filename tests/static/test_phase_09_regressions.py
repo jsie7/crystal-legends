@@ -1808,8 +1808,28 @@ def test_zapdos_moltres_and_oak_tracker_use_the_locked_branch_contract(
         for event in parse_events(sources[victory["map"]], REFERENCE)
         if event.event_type == "object_event"
     ]
-    assert len(victory_objects) == 7
+    assert len(victory_objects) == 6
     assert len(reference_victory_objects) == 6
+    hidden_full_restore = victory["hidden_full_restore"]
+    hidden_full_restore_event = next(
+        event
+        for event in parse_events(sources[victory["map"]])
+        if event.event_type == "bg_event"
+        and event.args[3] == hidden_full_restore["script"]
+    )
+    assert [hidden_full_restore_event.x, hidden_full_restore_event.y] == (
+        hidden_full_restore["coordinate"]
+    )
+    assert hidden_full_restore_event.args[2] == "BGEVENT_ITEM"
+    victory_source = _active_code(
+        repo_root / "maps/VictoryRoad.asm", CRYSTAL_LEGENDS
+    )
+    assert victory_source[
+        victory_source.index(f'{hidden_full_restore["script"]}:') + 1
+    ] == (
+        f'hiddenitem {hidden_full_restore["item"]}, '
+        f'{hidden_full_restore["event"]}'
+    )
     victory_warps = [
         [event.x, event.y]
         for event in parse_events(sources[victory["map"]])
@@ -1849,11 +1869,11 @@ def test_zapdos_moltres_and_oak_tracker_use_the_locked_branch_contract(
     assert collision_at(
         repo_root,
         victory["map"],
-        tuple(victory["full_restore"]),
+        tuple(hidden_full_restore["coordinate"]),
         dimensions,
         resolved,
         tilesets,
-    ) == "FLOOR"
+    ) == hidden_full_restore["collision"]
     for coordinate in victory["route_warps"]:
         assert collision_at(
             repo_root,

@@ -1700,7 +1700,7 @@ def test_remaining_bird_visibility_uses_branch_source_and_location_gate(
         if bird == "zapdos"
         else scenario["victory_road_bird"]["map"]
     )
-    object_symbol = "wMap1ObjectStructID" if bird == "zapdos" else "wMap7ObjectStructID"
+    object_symbol = "wMap1ObjectStructID" if bird == "zapdos" else "wMap6ObjectStructID"
     mask_event = constants[contract["mask_event"]]
     with loaded_phase_9_map_checkpoint(
         repo_root,
@@ -2061,7 +2061,7 @@ def _remaining_bird_runtime_contract(scenario: dict, bird: str) -> tuple[dict, s
         scenario["victory_road_bird"]["moltres"],
         scenario["victory_road_bird"]["map"],
         "zapdos",
-        "wMap7ObjectStructID",
+        "wMap6ObjectStructID",
     )
 
 
