@@ -377,3 +377,14 @@ reports unsafe output only while Zapdos is physically present and safe output
 whenever the location selector hides it, including capture and the
 Zapdos-starter branch. A visible Magnet in the southeast corner rewards annex
 exploration and gives Zapdos an immediately relevant held item.
+
+## 2026-08-23 — Align Kanto starter-gifting leaders in the Phase 12 balance pass
+
+Phase 12 must add the final evolution of each gifted Kanto starter to the
+corresponding leader's battle party: Venusaur for Erika, Blastoise for Misty,
+and Charizard for Blaine. This makes each Phase 9 gift read as a Pokémon line
+the leader personally trains rather than an unrelated reward. Phase 12 owns
+the exact level, moves, party position, and which existing party member—if
+any—is replaced; it must evaluate those choices with the complete Kanto
+difficulty curve. Do not change the Phase 9 service prerequisites, gift level,
+leader OT assignment, or retry behavior as part of that roster work.
