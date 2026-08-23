@@ -172,7 +172,7 @@
       "night": [[24, "VULPIX"], [22, "MANKEY"], [20, "MAREEP"], [24, "EXEGGCUTE"], [26, "PINSIR"], [28, "CHANSEY"], [28, "KANGASKHAN"]]
     },
     "water": {
-      "rate": 6,
+      "rate": 10,
       "slots": [[22, "REMORAID"], [24, "REMORAID"], [28, "OCTILLERY"]]
     }
   },
