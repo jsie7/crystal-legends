@@ -330,6 +330,23 @@ def test_starter_scripts_keep_service_and_delivery_state_independent(
 
 
 def test_phase_9_review_dialogue_matches_the_approved_copy(repo_root: Path) -> None:
+    oaks_lab = _active_code(repo_root / "maps/OaksLab.asm", CRYSTAL_LEGENDS)
+    _assert_in_order(
+        oaks_lab,
+        [
+            "OaksAssistant1Script:",
+            "checkevent EVENT_TALKED_TO_OAK_IN_KANTO",
+            "iftrue .KantoStarterHint",
+            "jumptextfaceplayer OaksAssistant1Text",
+            ".KantoStarterHint:",
+            "jumptextfaceplayer OaksAssistant1KantoStarterHintText",
+        ],
+    )
+    assert _dialogue(oaks_lab, "OaksAssistant1KantoStarterHintText:") == (
+        "KANTO's GYM LEADERS sometimes entrust #MON to ¶ "
+        "TRAINERS who help their cities."
+    )
+
     misty = _active_code(repo_root / "maps/CeruleanGym.asm", CRYSTAL_LEGENDS)
     assert _dialogue(misty, "MistySquirtleOfferText:") == (
         "MISTY: You brought back the power to KANTO. ¶ CERULEAN owes you. ¶ "

@@ -54,7 +54,16 @@ Oak:
 	sjump .CheckPokedex
 
 OaksAssistant1Script:
+	if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_TALKED_TO_OAK_IN_KANTO
+	iftrue .KantoStarterHint
+	endc
 	jumptextfaceplayer OaksAssistant1Text
+
+	if DEF(_CRYSTALLEGENDS)
+.KantoStarterHint:
+	jumptextfaceplayer OaksAssistant1KantoStarterHintText
+	endc
 
 OaksAssistant2Script:
 if DEF(_CRYSTALLEGENDS)
@@ -201,6 +210,17 @@ OaksAssistant1Text:
 	para "It's a shame--I'd"
 	line "like to hear it."
 	done
+
+	if DEF(_CRYSTALLEGENDS)
+OaksAssistant1KantoStarterHintText:
+	text "KANTO's GYM"
+	line "LEADERS sometimes"
+	cont "entrust #MON to"
+
+	para "TRAINERS who help"
+	line "their cities."
+	done
+	endc
 
 OaksAssistant2Text:
 	text "Thanks to your"
