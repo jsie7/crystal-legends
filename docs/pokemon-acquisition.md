@@ -280,7 +280,8 @@ data, an external distribution, or the optional cheat menu.
 SafariZoneBeta becomes accessible only after speaking with the Warden's
 granddaughter and owning the Soul Badge. It is an unattended ordinary-battle
 area: no fee, timer, Safari Balls, bait, rocks, or Safari battle menu. Grass
-uses rate 10 at every time; water uses rate 6. The exact renewable slots are:
+uses rate 10 at every time; water also uses rate 10. The exact renewable slots
+are:
 
 | Slot | Morning | Day | Night |
 | ---: | --- | --- | --- |

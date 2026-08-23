@@ -302,6 +302,9 @@ Muk encounter directly. Entry remains silent before the request and after
 completion.
 Blaine's request is likewise recorded when he actually asks for help, so the
 Cinnabar survivors retain their stock dialogue until that conversation.
+After the player first speaks with Oak in Kanto, Oak's first assistant gives a
+repeatable generic hint that Kanto Gym Leaders may entrust Pokémon to trainers
+who help their cities. The second assistant remains dedicated to bird tracking.
 
 Use the stock `givepoke` party/current-box transaction and ordinary generated
 moves, then assign the gifting leader's OT name and a deterministic OT ID based
@@ -322,13 +325,15 @@ block.
 Phase 9 reworks `SafariZoneBeta` as one outdoor Park-tileset preserve. The
 existing Warden's granddaughter releases the north maintenance gate only after
 the player has spoken with her and owns the Soul Badge; both prerequisite
-orders converge in her conversation. The access event is permanent.
+orders converge in her conversation. Her Crystal Legends first-contact text
+states the badge requirement directly instead of chaining the long stock
+introduction into a second speech. The access event is permanent.
 
 The preserve uses normal wild battles, the Bag, ordinary Poké Balls, experience,
 and escape rules. It has no clerk, fee, timer, step counter, Safari Balls,
 bait/rock commands, prize, or reopening ceremony. A 10-percent all-time grass
 table makes level-20 Mareep, level-24 Vulpix, and level-22 Mankey common; a
-6-percent water table puts Remoraid in both common slots. Two ordinary visible
+10-percent water table puts Remoraid in both common slots. Two ordinary visible
 item balls reward exploration. The compact northern preserve uses denser grass,
 an eight-by-six-tile pond framed by the National Park stone shore, and one
 additional tree barrier. A Crystal Legends-only Park graphic duplicates that
@@ -354,8 +359,11 @@ Articuno is level 60 in a compact Ice Path cave off Route 20 built from the
 unused `BetaUnionCave` backbone. Zapdos is level 60 in a 4-by-4 Power Plant
 Generator Annex after restored power and a later Manager authorization. The
 east-edge carpet stays visible while closed, reports the shutter state when
-examined, and becomes a permanent directional warp after authorization. The
-two shutter interactions deliberately sit one tile beyond the map's east edge
+examined, and becomes a permanent directional warp after authorization. Once
+open, that permanent fact is authoritative before the power and authorization
+checks so legacy or constructed saves cannot report a closed-state message at
+an accessible entrance. The two shutter interactions deliberately sit one tile
+beyond the map's east edge
 so pressing A while facing right from either visible carpet tile works; the
 map-event validator records these as two exact reviewed exceptions.
 Moltres is level 60 on Victory Road's existing isolated eastern
