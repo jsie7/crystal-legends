@@ -77,6 +77,18 @@ def _dialogue(lines: list[str], label: str) -> str:
     return " ¶ ".join(join_wrapped_text(paragraph) for paragraph in paragraphs)
 
 
+def _assert_dialogue_line_width(
+    lines: list[str], label: str, *, maximum: int = 18
+) -> None:
+    for line in lines[lines.index(label) + 1 :]:
+        if line in {"done", "prompt"}:
+            return
+        match = re.fullmatch(r'(text|line|cont|para) "(.*)"', line)
+        if match is not None:
+            assert len(match.group(2)) <= maximum, (label, line)
+    raise AssertionError(f"unterminated dialogue: {label}")
+
+
 def _png_tiles(path: Path, *, expected_height: int = 48) -> tuple[tuple[int, ...], ...]:
     raw = path.read_bytes()
     assert raw.startswith(b"\x89PNG\r\n\x1a\n")
@@ -373,6 +385,12 @@ def test_phase_9_review_dialogue_matches_the_approved_copy(repo_root: Path) -> N
     assert _dialogue(pokecenter, "CinnabarPokecenter1FFisherRecoveredText:") == (
         "You got the old case! ¶ BLAINE will want that log back."
     )
+    for label in (
+        "CinnabarPokecenter1FFisherLogClueText:",
+        "CinnabarPokecenter1FFisherRepeatClueText:",
+        "CinnabarPokecenter1FFisherRecoveredText:",
+    ):
+        _assert_dialogue_line_width(pokecenter, label)
     assert not any("FISHERMAN:" in line for line in pokecenter)
 
     wardens_home = _active_code(

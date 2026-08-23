@@ -77,10 +77,9 @@ CinnabarPokecenter1FCooltrainerFLogText:
 	done
 
 CinnabarPokecenter1FFisherLogClueText:
-	text "I saw"
-	line "a flame-crested"
-	cont "case after the"
-	cont "volcano."
+	text "I saw a flame-"
+	line "crested case after"
+	cont "the volcano."
 
 	para "It lies somewhere"
 	line "in the rubble."
@@ -89,14 +88,14 @@ CinnabarPokecenter1FFisherLogClueText:
 	line "secret mechanism."
 
 	para "Press the crest in"
-	cont "and pull the latch"
+	line "and pull the latch"
 	cont "sideways."
 	done
 
 CinnabarPokecenter1FFisherRepeatClueText:
-	text "The"
-	line "case rests high,"
-	cont "south of the pool."
+	text "The case rests"
+	line "high, south of the"
+	cont "pool."
 
 	para "Press the crest in"
 	line "and pull its"
