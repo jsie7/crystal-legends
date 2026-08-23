@@ -490,8 +490,9 @@ and pass/fail result. Manually confirm:
    the Power Plant's red east carpet, closed-state interaction, permanent
    opening, industrial one-console annex, southeast Magnet pickup, and brown
    Zapdos icon; and the complete Victory Road higher-floor loop, hidden Full
-   Restore at `(9, 58)`, approach tile, south return hops, and red Moltres icon
-   after the Hall of Fame. Confirm cry, name, species, level,
+   Restore at `(9, 58)`, visible Charcoal at `(17, 31)`, Moltres at `(18, 29)`,
+   approach tile `(18, 30)`, south return hops, and red Moltres icon after the
+   Hall of Fame. Confirm cry, name, species, level,
    and palette; verify that none of the three birds flees on its own and that
    the player's Run command still leaves a retryable encounter; then review
    capture disappearance, knockout/escape/loss retry, save/reload, and Oak's

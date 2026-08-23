@@ -1515,15 +1515,16 @@ if DEF(_CRYSTALLEGENDS)
 	const EVENT_SEAFOAM_ISLANDS_CAVE_ULTRA_BALL
 	const EVENT_SEAFOAM_ISLANDS_CAVE_HIDDEN_NEVERMELTICE
 	const EVENT_POWER_PLANT_GENERATOR_ANNEX_MAGNET
+	const EVENT_VICTORY_ROAD_CHARCOAL
 else
 	const_skip ; reserved for EVENT_OAK_MOVED_THIRD_BIRD
 	const_skip 3 ; reserved for Crystal Legends Johto starter gifts
 	const_skip 3 ; reserved for Crystal Legends Ruins ancient Pokemon gifts
 	const_skip 4 ; reserved for Crystal Legends Project Mew story facts
 	const_skip 4 ; reserved for Crystal Legends Silver bird release facts
-	const_skip 23 ; reserved for Crystal Legends Kanto completion facts
+	const_skip 24 ; reserved for Crystal Legends Kanto completion facts
 endc
-; Unused: next 12 events
+; Unused: next 11 events
 
 	const_next 2048
 DEF NUM_EVENTS EQU const_value ; 800

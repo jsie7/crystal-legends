@@ -360,9 +360,11 @@ so pressing A while facing right from either visible carpet tile works; the
 map-event validator records these as two exact reviewed exceptions.
 Moltres is level 60 on Victory Road's existing isolated eastern
 shelf and always waits for the first Hall of Fame. The shelf's former visible
-Full Restore is instead a hidden pickup at `(9, 58)`, leaving the Moltres shelf
-uncluttered. These maps reuse stock sprites and tiles wherever possible, change
-no save-layout dimensions, and remain wholly absent from reference builds.
+Full Restore is instead a hidden pickup at `(9, 58)`, while a visible Charcoal
+at `(17, 31)` gives Moltres the same type-specific reward treatment as Articuno
+and Zapdos. Moltres occupies `(18, 29)` and is approached from `(18, 30)`.
+These maps reuse stock sprites and tiles wherever possible. They change no
+save-layout dimensions and remain wholly absent from reference builds.
 
 The Seafoam cave uses a visible south exit and several connected ice lanes.
 Rock stops frame the entrance, separate the eastern ice field from Articuno,

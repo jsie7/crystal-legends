@@ -378,10 +378,10 @@
     "moltres": {
       "species": "MOLTRES",
       "level": 60,
-      "coordinate": [17, 31],
-      "approach": [17, 32],
+      "coordinate": [18, 29],
+      "approach": [18, 30],
       "arrival_ladder": [17, 33],
-      "object_id": 7,
+      "object_id": 8,
       "sprite": "SPRITE_MOLTRES",
       "movement": "SPRITEMOVEDATA_POKEMON",
       "palette": "PAL_NPC_RED",
@@ -403,6 +403,12 @@
       "script": "VictoryRoadHiddenFullRestore",
       "item": "FULL_RESTORE",
       "event": "EVENT_VICTORY_ROAD_FULL_RESTORE"
+    },
+    "visible_charcoal": {
+      "coordinate": [17, 31],
+      "script": "VictoryRoadCharcoal",
+      "item": "CHARCOAL",
+      "event": "EVENT_VICTORY_ROAD_CHARCOAL"
     },
     "south_hops": [[16, 34], [17, 34], [18, 34], [19, 34]],
     "route_warps": [[13, 31], [13, 17], [17, 19], [17, 33]],

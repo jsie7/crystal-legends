@@ -174,6 +174,7 @@ def test_phase_9_events_are_contiguous_and_reference_reserved(repo_root: Path) -
         "EVENT_SEAFOAM_ISLANDS_CAVE_ULTRA_BALL",
         "EVENT_SEAFOAM_ISLANDS_CAVE_HIDDEN_NEVERMELTICE",
         "EVENT_POWER_PLANT_GENERATOR_ANNEX_MAGNET",
+        "EVENT_VICTORY_ROAD_CHARCOAL",
     ]
     _assert_contiguous(
         crystal,
@@ -185,7 +186,7 @@ def test_phase_9_events_are_contiguous_and_reference_reserved(repo_root: Path) -
         ],
     )
     assert all(not any(event in line for line in reference) for event in events)
-    assert "const_skip 23" in reference
+    assert "const_skip 24" in reference
 
 
 def test_blaines_log_reuses_only_item_b0_in_the_custom_build(
@@ -1808,7 +1809,7 @@ def test_zapdos_moltres_and_oak_tracker_use_the_locked_branch_contract(
         for event in parse_events(sources[victory["map"]], REFERENCE)
         if event.event_type == "object_event"
     ]
-    assert len(victory_objects) == 6
+    assert len(victory_objects) == 7
     assert len(reference_victory_objects) == 6
     hidden_full_restore = victory["hidden_full_restore"]
     hidden_full_restore_event = next(
@@ -1830,6 +1831,22 @@ def test_zapdos_moltres_and_oak_tracker_use_the_locked_branch_contract(
         f'hiddenitem {hidden_full_restore["item"]}, '
         f'{hidden_full_restore["event"]}'
     )
+    visible_charcoal = victory["visible_charcoal"]
+    visible_charcoal_event = next(
+        event
+        for event in victory_objects
+        if event.args[11] == visible_charcoal["script"]
+    )
+    assert [visible_charcoal_event.x, visible_charcoal_event.y] == (
+        visible_charcoal["coordinate"]
+    )
+    assert visible_charcoal_event.args[2] == "SPRITE_POKE_BALL"
+    assert visible_charcoal_event.args[3] == "SPRITEMOVEDATA_STILL"
+    assert visible_charcoal_event.args[9] == "OBJECTTYPE_ITEMBALL"
+    assert visible_charcoal_event.args[12] == visible_charcoal["event"]
+    assert victory_source[
+        victory_source.index(f'{visible_charcoal["script"]}:') + 1
+    ] == f'itemball {visible_charcoal["item"]}'
     victory_warps = [
         [event.x, event.y]
         for event in parse_events(sources[victory["map"]])
@@ -1874,6 +1891,14 @@ def test_zapdos_moltres_and_oak_tracker_use_the_locked_branch_contract(
         resolved,
         tilesets,
     ) == hidden_full_restore["collision"]
+    assert collision_at(
+        repo_root,
+        victory["map"],
+        tuple(visible_charcoal["coordinate"]),
+        dimensions,
+        resolved,
+        tilesets,
+    ) == "FLOOR"
     for coordinate in victory["route_warps"]:
         assert collision_at(
             repo_root,
