@@ -1537,7 +1537,7 @@ SafariZoneFuchsiaGateBetaSouthNoticeText::
 SafariZoneFuchsiaGateBetaNorthNoticeText::
 	text "WARNING!"
 
-	para "Grounds unattended."
+	para "No staff on site."
 
 	para "Wild #MON use"
 	line "normal battles."

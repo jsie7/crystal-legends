@@ -14,8 +14,6 @@ WardensGranddaughter:
 	iftrue .Unattended
 	checkevent EVENT_TALKED_TO_WARDENS_GRANDDAUGHTER
 	iftrue .CheckBadge
-	writetext WardensGranddaughterText1
-	promptbutton
 	setevent EVENT_TALKED_TO_WARDENS_GRANDDAUGHTER
 .CheckBadge:
 	checkflag ENGINE_SOULBADGE
@@ -90,15 +88,12 @@ WardensGranddaughterText2:
 
 if DEF(_CRYSTALLEGENDS)
 WardensGranddaughterSoulBadgeText:
-	text "JANINE asked me to"
-
-	para "admit only proven"
-	line "TRAINERS to the"
-	cont "unattended grounds."
+	text "JANINE permits"
+	line "only proven"
+	cont "TRAINERS to enter."
 
 	para "Earn the SOULBADGE"
-	line "at FUCHSIA GYM,"
-	cont "then come see me."
+	line "and come back."
 	done
 
 WardensGranddaughterReleaseGateText:
@@ -116,9 +111,11 @@ WardensGranddaughterUnattendedText:
 	line "open at your own"
 	cont "risk."
 
-	para "There are no staff,"
-	line "rescue service or"
-	cont "official SAFARI GAME."
+	para "There are no staff"
+	line "or rescue service."
+
+	para "No official"
+	line "SAFARI GAME."
 	done
 endc
 

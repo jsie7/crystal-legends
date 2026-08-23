@@ -396,14 +396,38 @@ def test_phase_9_review_dialogue_matches_the_approved_copy(repo_root: Path) -> N
     wardens_home = _active_code(
         repo_root / "maps/SafariZoneWardensHome.asm", CRYSTAL_LEGENDS
     )
+    granddaughter_script = _section(
+        wardens_home, "WardensGranddaughter:", "WardenPhoto:"
+    )
+    assert "writetext WardensGranddaughterText1" not in granddaughter_script
+    _assert_in_order(
+        granddaughter_script,
+        [
+            "checkevent EVENT_TALKED_TO_WARDENS_GRANDDAUGHTER",
+            "iftrue .CheckBadge",
+            "setevent EVENT_TALKED_TO_WARDENS_GRANDDAUGHTER",
+            ".CheckBadge:",
+            "checkflag ENGINE_SOULBADGE",
+        ],
+    )
+    assert _dialogue(wardens_home, "WardensGranddaughterSoulBadgeText:") == (
+        "JANINE permits only proven TRAINERS to enter. ¶ "
+        "Earn the SOULBADGE and come back."
+    )
     assert _dialogue(wardens_home, "WardensGranddaughterReleaseGateText:") == (
         "That SOULBADGE proves you're capable. ¶ "
         "Feel free to explore the SAFARI ZONE."
     )
     assert _dialogue(wardens_home, "WardensGranddaughterUnattendedText:") == (
-        "The north gate is open at your own risk. ¶ There are no staff, "
-        "rescue service or official SAFARI GAME."
+        "The north gate is open at your own risk. ¶ "
+        "There are no staff or rescue service. ¶ No official SAFARI GAME."
     )
+    for label in (
+        "WardensGranddaughterSoulBadgeText:",
+        "WardensGranddaughterReleaseGateText:",
+        "WardensGranddaughterUnattendedText:",
+    ):
+        _assert_dialogue_line_width(wardens_home, label)
     assert not any("GRANDDAUGHTER:" in line for line in wardens_home)
 
     fuchsia = _active_code(repo_root / "maps/FuchsiaCity.asm", CRYSTAL_LEGENDS)
@@ -411,6 +435,22 @@ def test_phase_9_review_dialogue_matches_the_approved_copy(repo_root: Path) -> N
         "The SAFARI ZONE is still closed. ¶ The WARDEN'S granddaughter may "
         "know about the old gate."
     )
+    assert _dialogue(fuchsia, "SafariZoneGranddaughterSignText:") == (
+        "SAFARI ZONE BUSINESS CLOSED ¶ Ask at WARDEN'S home for access."
+    )
+    assert _dialogue(fuchsia, "SafariZoneGymHintSignText:") == (
+        "SAFARI ZONE BUSINESS CLOSED ¶ Proven TRAINERS may use the north gate."
+    )
+    assert _dialogue(fuchsia, "SafariZoneMaintenanceGateSignText:") == (
+        "SAFARI ZONE NORTH GATE OPEN ¶ No staff on site."
+    )
+    for label in (
+        "FuchsiaCityTeacherGranddaughterText:",
+        "SafariZoneGranddaughterSignText:",
+        "SafariZoneGymHintSignText:",
+        "SafariZoneMaintenanceGateSignText:",
+    ):
+        _assert_dialogue_line_width(fuchsia, label)
 
     celadon = _active_code(repo_root / "maps/CeladonCity.asm", CRYSTAL_LEGENDS)
     assert _dialogue(celadon, "CeladonCityMukPondBattleText:") == (
@@ -433,6 +473,12 @@ def test_phase_9_review_dialogue_matches_the_approved_copy(repo_root: Path) -> N
     )
     assert _dialogue(common, "SafariZoneBetaNormalBattleSignText::") == (
         "TRAINER NOTICE ¶ Wild #MON use ordinary battles ¶ and capture rules."
+    )
+    assert _dialogue(common, "SafariZoneFuchsiaGateBetaNorthNoticeText::") == (
+        "WARNING! ¶ No staff on site. ¶ Wild #MON use normal battles."
+    )
+    _assert_dialogue_line_width(
+        common, "SafariZoneFuchsiaGateBetaNorthNoticeText::"
     )
     assert _dialogue(common, "Phase9PowerPlantManagerAnnexAuthorizationText::") == (
         "MANAGER: Hey! The auxiliary generator voltage is way too high! ¶ "

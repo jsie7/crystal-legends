@@ -160,26 +160,24 @@ SafariZoneGranddaughterSignText:
 	text "SAFARI ZONE"
 	line "BUSINESS CLOSED"
 
-	para "Ask at the WARDEN'S"
-	line "home about access."
+	para "Ask at WARDEN'S"
+	line "home for access."
 	done
 
 SafariZoneGymHintSignText:
 	text "SAFARI ZONE"
 	line "BUSINESS CLOSED"
 
-	para "Proven TRAINERS may"
-	line "ask about the north"
-	cont "maintenance gate."
+	para "Proven TRAINERS"
+	line "may use the north"
+	cont "gate."
 	done
 
 SafariZoneMaintenanceGateSignText:
 	text "SAFARI ZONE"
-	line "BUSINESS CLOSED"
+	line "NORTH GATE OPEN"
 
-	para "Unattended grounds:"
-	line "use the north"
-	cont "maintenance gate."
+	para "No staff on site."
 	done
 endc
 
