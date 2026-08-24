@@ -1990,6 +1990,7 @@ def test_power_plant_annex_round_trip_and_open_block_survive_native_continue(
             session, constants, scenario["max_frames_per_step"], y=door_y
         )
         assert event_is_set(session, constants[shutter["open_event"]])
+        assert "PowerPlantAnnexShutter.NoPower" not in session.script_trace
 
         _walk_until_map(
             session,

@@ -241,6 +241,7 @@ PowerPlantAnnexShutter:
 	closetext
 	warpcheck
 	newloadmap MAPSETUP_DOOR
+	end
 
 .NoPower:
 	farwritetext Phase9PowerPlantAnnexShutterNoPowerText

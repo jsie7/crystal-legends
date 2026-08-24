@@ -1875,6 +1875,8 @@ def test_power_plant_annex_layout_shutter_warps_and_route_match_the_contract(
             f'setevent {annex["shutter"]["open_event"]}',
             "warpcheck",
             "newloadmap MAPSETUP_DOOR",
+            "end",
+            ".NoPower:",
         ],
     )
 
