@@ -1,7 +1,11 @@
 	tilecoll WALL, WALL, WALL, WALL ; 00
 	tilecoll WALL, WALL, WALL, WALL ; 01
 	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 02
+if DEF(_CRYSTALLEGENDS)
+	tilecoll WALL, WALL, FLOOR, FLOOR ; 03: empty table, approach from south
+else
 	tilecoll TALL_GRASS, TALL_GRASS, TALL_GRASS, TALL_GRASS ; 03
+endc
 	tilecoll WALL, UP_WALL, WALL, FLOOR ; 04
 	tilecoll UP_WALL, UP_WALL, FLOOR, FLOOR ; 05
 	tilecoll UP_WALL, WALL, FLOOR, WALL ; 06
@@ -20,8 +24,13 @@
 	tilecoll FLOOR, FLOOR, WALL, CAVE ; 13
 	tilecoll UP_WALL, UP_WALL, FLOOR, LADDER ; 14
 	tilecoll UP_WALL, UP_WALL, FLOOR, LADDER ; 15
+if DEF(_CRYSTALLEGENDS)
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 16: computer workbench, approach from north
+	tilecoll WALL, WALL, FLOOR, FLOOR ; 17: control terminal, approach from south
+else
 	tilecoll WALL, FLOOR, WALL, WARP_CARPET_DOWN ; 16
 	tilecoll FLOOR, WALL, FLOOR, FLOOR ; 17
+endc
 	tilecoll WALL, WALL, WALL, FLOOR ; 18
 	tilecoll WALL, WALL, FLOOR, FLOOR ; 19
 	tilecoll WALL, WALL, FLOOR, WALL ; 1a

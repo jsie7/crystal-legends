@@ -59,7 +59,11 @@ INCLUDE "gfx/tilesets/tower_palette_map.asm"
 
 TilesetCavePalMap:
 TilesetDarkCavePalMap:
+if DEF(_CRYSTALLEGENDS)
+INCLUDE "gfx/tilesets/cave_crystallegends_palette_map.asm"
+else
 INCLUDE "gfx/tilesets/cave_palette_map.asm"
+endc
 
 TilesetParkPalMap:
 INCLUDE "gfx/tilesets/park_palette_map.asm"

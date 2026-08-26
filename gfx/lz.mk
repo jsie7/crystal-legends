@@ -50,6 +50,9 @@ gfx/slots/slots_3.2bpp.lz: LZFLAGS += --align 4
 gfx/splash/ditto.2bpp.lz: LZFLAGS += --odd-alternate --align 4
 
 gfx/tilesets/%.lz: LZFLAGS += --align 4
+# Custom Cave furniture needs optimized compression to retain bank $07's reserve.
+# Reference Cave/Dark Cave assets continue using their original matching rules.
+gfx/tilesets/cave_crystallegends.2bpp.lz: LZFLAGS = --align 4
 gfx/tilesets/aerodactyl_word_room.2bpp.lz: LZFLAGS += --literal-only --align 1
 gfx/tilesets/battle_tower_outside.2bpp.lz: LZFLAGS += --literal-only --align 1
 gfx/tilesets/beta_word_room.2bpp.lz: LZFLAGS += --literal-only --align 1

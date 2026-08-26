@@ -106,3 +106,15 @@ SuicuneSpriteGFX::             INCBIN "gfx/sprites/suicune.2bpp"
 EnteiSpriteGFX::               INCBIN "gfx/sprites/entei.2bpp"
 RaikouSpriteGFX::              INCBIN "gfx/sprites/raikou.2bpp"
 StandingYoungsterSpriteGFX::   INCBIN "gfx/sprites/standing_youngster.2bpp"
+
+
+SECTION "Crystal Legends Sprites", ROMX
+
+if DEF(_CRYSTALLEGENDS)
+; Red's standing down/up/left frames; right is mirrored by the engine.
+; This sprite may turn, but must never use walking movement.
+; Source and import procedure: docs/workflows.md#giovanni-standing-sprite
+GiovanniSpriteGFX::            INCBIN "gfx/sprites/giovanni.2bpp"
+GiovanniSpriteGFXEnd::
+	assert GiovanniSpriteGFXEnd - GiovanniSpriteGFX == 12 tiles
+endc

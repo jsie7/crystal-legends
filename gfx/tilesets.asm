@@ -96,11 +96,19 @@ TilesetMansionColl::
 INCLUDE "data/tilesets/mansion_collision.asm"
 
 TilesetCaveGFX::
+if DEF(_CRYSTALLEGENDS)
+INCBIN "gfx/tilesets/cave_crystallegends.2bpp.lz"
+else
 INCBIN "gfx/tilesets/cave.2bpp.lz"
+endc
 
 TilesetCaveMeta::
 TilesetDarkCaveMeta::
+if DEF(_CRYSTALLEGENDS)
+INCBIN "data/tilesets/cave_metatiles_crystallegends.bin"
+else
 INCBIN "data/tilesets/cave_metatiles.bin"
+endc
 
 TilesetCaveColl::
 TilesetDarkCaveColl::

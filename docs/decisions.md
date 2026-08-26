@@ -396,3 +396,64 @@ the exact level, moves, party position, and which existing party member—if
 any—is replaced; it must evaluate those choices with the complete Kanto
 difficulty curve. Do not change the Phase 9 service prerequisites, gift level,
 leader OT assignment, or retry behavior as part of that roster work.
+
+## 2026-08-26 — Reuse unused Cave blocks for three lab fixtures
+
+Crystal Legends reserves Cave block `$03` for an empty Facility-style table,
+`$16` for the computer workbench from Lab block `$21`, and `$17` for the
+Facility `$08` control terminal. The empty table uses Facility `$29` with its
+two paper tiles replaced by the plain tabletop graphic `$51`. Approach from
+the north for the bench, and from the south for the table and terminal.
+Exposed floor tiles use the raised cave ground. The fixtures are scenery only
+until map placement and background-event scripts are
+approved; this asset preparation does not implement the Phase 10 story or
+register Cerulean Cave as a playable map.
+
+Reuse 32 8-by-8 graphic slots without increasing the 96-tile graphics sheet or
+64-block table. Of these, 31 were unreferenced by every original block; graphic
+`$04` is reclaimed from the retired grass block `$03`. The other blocks, their
+graphics, collision, and palettes remain unchanged. Cave and Dark Cave share
+block/collision/palette tables, so tests prohibit all three reserved blocks in
+their existing maps; the new furniture is intended for Cave graphics, not Dark
+Cave. Reference
+builds continue to use all original assets and collision rows.
+
+The terminal's whole bottom tile row uses cave ground, replacing both the
+Facility patterned-floor tile `$01` and its blank-floor tile `$26`.
+
+Keep the first two fixtures' graphic allocations stable when adding the table.
+Reclaiming the grass graphic and selecting the existing compressor's optimized
+mode only for `cave_crystallegends.2bpp.lz` keeps the three-fixture graphics at
+the same 1008 bytes as the two-fixture version. Original assets retain matching
+compression. Do not delete block `$3f`: it is Victory Road's pit block and has
+no unique graphics to reclaim.
+
+The custom compressed graphics occupy 1008 bytes versus the original 912,
+leaving `$0034` (52) bytes free in ROMX bank `$07`. Keep a reviewed `$0030`
+floor there; further growth requires a separate capacity review. No bank
+relocation, new tileset ID, map size, object slot, event flag, or save-layout
+field is needed.
+Reproduction and verification are documented in
+[workflows.md](workflows.md#regenerate-and-validate-the-cave-lab-fixtures).
+
+## 2026-08-26 — Import standing-only Giovanni artwork from Pokémon Red
+
+Crystal Legends appends `SPRITE_GIOVANNI` at ordinary sprite ID `$67`, leaving
+all existing IDs and the `$80` Pokémon-icon range unchanged. Import Red's three
+standing 16-by-16 poses without redrawing pixels: down, up, and left, with the
+engine mirroring left for right. The source PNG is 16-by-48; its 12 native 2bpp
+tiles occupy 192 bytes. Use `STANDING_SPRITE` and `PAL_OW_BROWN`.
+
+Giovanni may turn but must not walk or use the automatic trainer-approach
+sequence. The planned post-victory blackout removes the cave crew without
+walking choreography. This asset slice does not implement that scene, his
+trainer portrait/class/battle, map registration, or any event flags.
+
+Place the custom-only bytes in `Crystal Legends Sprites`, after `Map Blocks 3`
+in bank `$2c`. The section is empty in reference builds. Both original sprite
+banks remain unchanged; the custom bank retains `$23da` (9178) free bytes and
+its existing `$2000` minimum reserve. No bank relocation, ROM expansion, engine
+change, or save-layout change is required. The draft now previews the real
+sprite at player coordinate `(06,04)`, facing down. Source provenance and the
+repeatable import/check procedure are in
+[workflows.md](workflows.md#giovanni-standing-sprite).
