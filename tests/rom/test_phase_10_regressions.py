@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import re
+import subprocess
 
 import pytest
 
 from tests.support.constant_resolver import resolve_constants
+from tests.support.linker_map import parse_linker_map
 from tests.support.rom_image import RomImage
 from tests.support.symbol_table import SymbolTable
 
@@ -66,3 +69,85 @@ def test_compiled_cave_attributes_match_the_registered_map(
     assert attributes[:3] == bytes([scenario["map"]["border_block"], 18, 15])
     assert attributes[3] == symbols["CeruleanCave_Blocks"].bank
     assert int.from_bytes(attributes[4:6], "little") == symbols["CeruleanCave_Blocks"].address
+
+
+def test_compiled_giovanni_class_tables_and_portrait(repo_root: Path, tmp_path: Path) -> None:
+    constants = resolve_constants(
+        repo_root,
+        tmp_path,
+        [
+            "GIOVANNI", "GIOVANNI1", "MYSTICALMAN", "NUM_TRAINER_CLASSES",
+            "NUM_TRAINER_ATTRIBUTES", "FULL_HEAL", "FULL_RESTORE",
+            "MUSIC_ROCKET_ENCOUNTER", "COLOR_SIZE",
+        ],
+    )
+    assert constants["GIOVANNI"] == constants["MYSTICALMAN"] + 1
+    assert constants["NUM_TRAINER_CLASSES"] == constants["GIOVANNI"]
+    assert constants["GIOVANNI1"] == 1
+
+    rom = RomImage.load(repo_root / "crystallegends.gbc")
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    class_index = constants["GIOVANNI"] - 1
+
+    group_pointer = rom.u16le(symbols["TrainerGroups"].rom_offset + class_index * 2)
+    assert group_pointer == symbols["GiovanniGroup"].address
+
+    pic_row = rom.slice(symbols["TrainerPicPointers"].rom_offset + class_index * 3, 3)
+    loader = (repo_root / "engine/gfx/load_pics.asm").read_text()
+    pics_fix = int(re.search(r"PICS_FIX EQU \$([0-9a-fA-F]+)", loader).group(1), 16)
+    assert pic_row == bytes([symbols["GiovanniPic"].bank - pics_fix]) + symbols["GiovanniPic"].address.to_bytes(2, "little")
+
+    width = constants["NUM_TRAINER_ATTRIBUTES"]
+    attributes = rom.slice(symbols["TrainerClassAttributes"].rom_offset + class_index * width, width)
+    assert attributes[:3] == bytes([constants["FULL_HEAL"], constants["FULL_RESTORE"], 25])
+
+    encounter = rom.u8(symbols["TrainerEncounterMusic"].rom_offset + constants["GIOVANNI"])
+    assert encounter == constants["MUSIC_ROCKET_ENCOUNTER"]
+
+    palette_width = constants["COLOR_SIZE"] * 2
+    generated_palette = (repo_root / "gfx/trainers/giovanni.gbcpal").read_bytes()
+    assert rom.slice(symbols["TrainerPalettes"].rom_offset + constants["GIOVANNI"] * palette_width, palette_width) == generated_palette[2:6]
+
+    packed = (repo_root / "gfx/trainers/giovanni.2bpp.lz").read_bytes()
+    assert rom.at(symbols["GiovanniPic"], len(packed)) == packed
+    unpacked = subprocess.run(
+        [str(repo_root / "tools/lzcompress"), "--uncompress", "--", "-", "-"],
+        input=packed,
+        capture_output=True,
+        check=True,
+    ).stdout
+    assert unpacked == (repo_root / "gfx/trainers/giovanni.2bpp").read_bytes()
+    assert len(unpacked) == 784
+    assert symbols["GiovanniPic"].bank == 0x59
+
+
+def test_compiled_omastar_recompression_preserves_pixels_and_picture_bank_budget(
+    repo_root: Path,
+) -> None:
+    custom_rom = RomImage.load(repo_root / "crystallegends.gbc")
+    custom_symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    reference_rom = RomImage.load(repo_root / "pokecrystal11.gbc")
+    reference_symbols = SymbolTable.parse((repo_root / "pokecrystal11.sym").read_text())
+
+    custom_packed = (repo_root / "gfx/pokemon/omastar/back_crystallegends.lz").read_bytes()
+    reference_packed = (repo_root / "gfx/pokemon/omastar/back.2bpp.lz").read_bytes()
+    assert len(custom_packed) == 424
+    assert len(reference_packed) == 429
+    assert custom_rom.at(custom_symbols["OmastarBackpic"], len(custom_packed)) == custom_packed
+    assert reference_rom.at(reference_symbols["OmastarBackpic"], len(reference_packed)) == reference_packed
+
+    decoded = []
+    for packed in (custom_packed, reference_packed):
+        decoded.append(
+            subprocess.run(
+                [str(repo_root / "tools/lzcompress"), "--uncompress", "--", "-", "-"],
+                input=packed,
+                capture_output=True,
+                check=True,
+            ).stdout
+        )
+    assert decoded[0] == decoded[1] == (repo_root / "gfx/pokemon/omastar/back.2bpp").read_bytes()
+    assert custom_symbols["OmastarBackpic"].bank == reference_symbols["OmastarBackpic"].bank == 0x4A
+
+    usage = parse_linker_map((repo_root / "crystallegends.map").read_text())
+    assert usage[("ROMX", 0x4A)].free == 4

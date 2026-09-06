@@ -1094,7 +1094,7 @@ PeoplePlaces4: ; People
 	call Random
 	maskbits NUM_TRAINER_CLASSES
 	inc a
-	cp NUM_TRAINER_CLASSES ; exclude MYSTICALMAN
+	cp MYSTICALMAN ; exclude MYSTICALMAN and later classes
 	jr nc, PeoplePlaces4
 	push af
 	ld hl, PnP_HiddenPeople

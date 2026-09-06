@@ -122,3 +122,63 @@ def test_route_4_guard_derives_access_without_a_saved_open_flag(repo_root: Path)
         "object_event 38,  4, SPRITE_ROCKET, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, Route4CeruleanCaveGuardScript, -1"
         in route
     )
+
+
+def test_giovanni_trainer_class_art_and_party_are_custom_only(repo_root: Path) -> None:
+    portrait = repo_root / "gfx/trainers/giovanni.png"
+    assert sha256(portrait.read_bytes()).hexdigest() == (
+        "4cf1d940ceeb00e530b361b1a95ea8c31492faf86bb5c20f0ac45c70768b2034"
+    )
+
+    constants = _active_code(repo_root / "constants/trainer_constants.asm", CRYSTAL_LEGENDS)
+    reference = _active_code(repo_root / "constants/trainer_constants.asm", REFERENCE)
+    assert constants[-3:] == ["trainerclass GIOVANNI", "const GIOVANNI1", "DEF NUM_TRAINER_CLASSES EQU __trainer_class__ - 1"]
+    assert not any("GIOVANNI" in line for line in reference)
+
+    parties = _active_code(repo_root / "data/trainers/parties.asm", CRYSTAL_LEGENDS)
+    start = parties.index("GiovanniGroup:")
+    assert parties[start : start + 9] == [
+        "GiovanniGroup:",
+        'db "GIOVANNI@", TRAINERTYPE_MOVES',
+        "db 70, PERSIAN,    SLASH, FAINT_ATTACK, SCREECH, THUNDER",
+        "db 71, DUGTRIO,    EARTHQUAKE, SLASH, SANDSTORM, MUD_SLAP",
+        "db 72, KANGASKHAN, RETURN, EARTHQUAKE, SHADOW_BALL, REST",
+        "db 73, NIDOQUEEN,  EARTHQUAKE, ICE_BEAM, THUNDER, BODY_SLAM",
+        "db 74, NIDOKING,   EARTHQUAKE, THUNDER, FIRE_BLAST, SURF",
+        "db 75, RHYDON,     EARTHQUAKE, ROCK_SLIDE, MEGAHORN, REST",
+        "db -1",
+    ]
+    assert not any("GiovanniGroup" in line for line in _active_code(repo_root / "data/trainers/parties.asm", REFERENCE))
+
+
+def test_giovanni_extends_every_applicable_trainer_table(repo_root: Path) -> None:
+    expected = {
+        "data/trainers/party_pointers.asm": "dw GiovanniGroup",
+        "data/trainers/class_names.asm": 'li "ROCKET BOSS"',
+        "data/trainers/dvs.asm": "dn 15, 13, 13, 14",
+        "data/trainers/encounter_music.asm": "db MUSIC_ROCKET_ENCOUNTER",
+        "data/trainers/pic_pointers.asm": "dba_pic GiovanniPic",
+        "data/trainers/palettes.asm": 'INCBIN "gfx/trainers/giovanni.gbcpal", middle_colors',
+    }
+    for relative, row in expected.items():
+        custom = _active_code(repo_root / relative, CRYSTAL_LEGENDS)
+        reference = _active_code(repo_root / relative, REFERENCE)
+        assert any(line.startswith(row) for line in custom)
+        assert not any("Giovanni" in line or "GIOVANNI" in line for line in reference)
+
+    attributes = _active_code(repo_root / "data/trainers/attributes.asm", CRYSTAL_LEGENDS)
+    giovanni = attributes[attributes.index("db FULL_HEAL, FULL_RESTORE", -12) :]
+    assert "dw AI_BASIC | AI_SETUP | AI_SMART | AI_AGGRESSIVE | AI_CAUTIOUS | AI_STATUS | AI_RISKY" in giovanni
+    assert "dw CONTEXT_USE | SWITCH_SOMETIMES" in giovanni
+
+    battle = _active_code(repo_root / "engine/battle/start_battle.asm", CRYSTAL_LEGENDS)
+    music = battle.index("ld de, MUSIC_KANTO_GYM_LEADER_BATTLE")
+    assert battle[music + 1 : music + 3] == ["cp GIOVANNI", "jr z, .done"]
+
+
+def test_custom_omastar_compression_is_lossless_and_saves_five_bytes(repo_root: Path) -> None:
+    original = repo_root / "gfx/pokemon/omastar/back.2bpp.lz"
+    custom = repo_root / "gfx/pokemon/omastar/back_crystallegends.lz"
+    if custom.exists():
+        assert len(original.read_bytes()) == 429
+        assert len(custom.read_bytes()) == 424

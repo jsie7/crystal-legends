@@ -228,6 +228,9 @@ include gfx/lz.mk
 %.lz: %
 	tools/lzcompress $(LZFLAGS) -- $< $@
 
+gfx/pokemon/omastar/back_crystallegends.lz: gfx/pokemon/omastar/back.2bpp
+	tools/lzcompress -- $< $@
+
 
 ### Pokemon pic animation rules
 

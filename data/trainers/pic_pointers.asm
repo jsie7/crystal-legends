@@ -70,4 +70,7 @@ TrainerPicPointers::
 	dba_pic OfficerPic
 	dba_pic GruntfPic
 	dba_pic MysticalmanPic
+if DEF(_CRYSTALLEGENDS)
+	dba_pic GiovanniPic
+endc
 	assert_table_length NUM_TRAINER_CLASSES

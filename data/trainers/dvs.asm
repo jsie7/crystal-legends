@@ -70,4 +70,7 @@ TrainerClassDVs:
 	dn  9,  8,  8,  8 ; OFFICER
 	dn  7, 14, 10,  8 ; GRUNTF
 	dn  9,  8,  8,  8 ; MYSTICALMAN
+if DEF(_CRYSTALLEGENDS)
+	dn 15, 13, 13, 14 ; GIOVANNI
+endc
 	assert_table_length NUM_TRAINER_CLASSES

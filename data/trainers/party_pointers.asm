@@ -70,4 +70,7 @@ TrainerGroups:
 	dw OfficerGroup
 	dw GruntFGroup
 	dw MysticalmanGroup
+if DEF(_CRYSTALLEGENDS)
+	dw GiovanniGroup
+endc
 	assert_table_length NUM_TRAINER_CLASSES

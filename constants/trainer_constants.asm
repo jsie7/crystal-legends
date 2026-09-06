@@ -730,4 +730,9 @@ endc
 	trainerclass MYSTICALMAN ; 43
 	const EUSINE
 
+if DEF(_CRYSTALLEGENDS)
+	trainerclass GIOVANNI ; 44
+	const GIOVANNI1
+endc
+
 DEF NUM_TRAINER_CLASSES EQU __trainer_class__ - 1

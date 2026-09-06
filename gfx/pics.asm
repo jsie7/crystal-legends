@@ -73,7 +73,12 @@ DewgongFrontpic:     INCBIN "gfx/pokemon/dewgong/front.animated.2bpp.lz"
 VictreebelFrontpic:  INCBIN "gfx/pokemon/victreebel/front.animated.2bpp.lz"
 RaichuFrontpic:      INCBIN "gfx/pokemon/raichu/front.animated.2bpp.lz"
 PrimeapeFrontpic:    INCBIN "gfx/pokemon/primeape/front.animated.2bpp.lz"
-OmastarBackpic:      INCBIN "gfx/pokemon/omastar/back.2bpp.lz"
+OmastarBackpic:
+if DEF(_CRYSTALLEGENDS)
+	INCBIN "gfx/pokemon/omastar/back_crystallegends.lz"
+else
+	INCBIN "gfx/pokemon/omastar/back.2bpp.lz"
+endc
 
 
 SECTION "Pics 4", ROMX
@@ -707,6 +712,9 @@ UnownYBackpic:       INCBIN "gfx/pokemon/unown_y/back.2bpp.lz"
 UnownPBackpic:       INCBIN "gfx/pokemon/unown_p/back.2bpp.lz"
 UnownIBackpic:       INCBIN "gfx/pokemon/unown_i/back.2bpp.lz"
 UnownRBackpic:       INCBIN "gfx/pokemon/unown_r/back.2bpp.lz"
+if DEF(_CRYSTALLEGENDS)
+GiovanniPic:         INCBIN "gfx/trainers/giovanni.2bpp.lz"
+endc
 
 
 SECTION "Pics 19", ROMX

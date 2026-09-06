@@ -101,6 +101,10 @@ PlayBattleMusic:
 	jr z, .done
 
 	ld de, MUSIC_KANTO_GYM_LEADER_BATTLE
+if DEF(_CRYSTALLEGENDS)
+	cp GIOVANNI
+	jr z, .done
+endc
 	farcall IsKantoGymLeader
 	jr c, .done
 
