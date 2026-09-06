@@ -127,12 +127,12 @@
     }
   ],
   "pickups": [
-    {"item": "TWISTEDSPOON", "coordinate": [24, 2], "event": "EVENT_CERULEAN_CAVE_TWISTEDSPOON", "script": "CeruleanCaveTwistedSpoon"},
-    {"item": "LUCKY_EGG", "coordinate": [20, 13], "event": "EVENT_CERULEAN_CAVE_LUCKY_EGG", "script": "CeruleanCaveLuckyEgg"},
-    {"item": "SACRED_ASH", "coordinate": [13, 18], "event": "EVENT_CERULEAN_CAVE_SACRED_ASH", "script": "CeruleanCaveSacredAsh"},
-    {"item": "MASTER_BALL", "coordinate": [13, 31], "event": "EVENT_CERULEAN_CAVE_MASTER_BALL", "script": "CeruleanCaveMasterBall"}
+    {"item": "TWISTEDSPOON", "coordinate": [24, 2], "event": "EVENT_CERULEAN_CAVE_TWISTEDSPOON", "script": "CeruleanCaveTwistedSpoon", "pocket": "ITEM_POCKET"},
+    {"item": "LUCKY_EGG", "coordinate": [20, 13], "event": "EVENT_CERULEAN_CAVE_LUCKY_EGG", "script": "CeruleanCaveLuckyEgg", "pocket": "ITEM_POCKET"},
+    {"item": "SACRED_ASH", "coordinate": [13, 18], "event": "EVENT_CERULEAN_CAVE_SACRED_ASH", "script": "CeruleanCaveSacredAsh", "pocket": "ITEM_POCKET"},
+    {"item": "MASTER_BALL", "coordinate": [13, 31], "event": "EVENT_CERULEAN_CAVE_MASTER_BALL", "script": "CeruleanCaveMasterBall", "pocket": "BALL_POCKET"}
   ],
-  "hidden_pickup": {"item": "BRIGHTPOWDER", "coordinate": [2, 30], "event": "EVENT_CERULEAN_CAVE_HIDDEN_BRIGHTPOWDER", "script": "CeruleanCaveHiddenBrightPowder"},
+  "hidden_pickup": {"item": "BRIGHTPOWDER", "coordinate": [2, 30], "event": "EVENT_CERULEAN_CAVE_HIDDEN_BRIGHTPOWDER", "script": "CeruleanCaveHiddenBrightPowder", "pocket": "ITEM_POCKET"},
   "lab_records": [
     {"script": "CeruleanCaveContainmentTerminal", "coordinates": [[4, 4], [5, 4]], "terminal": true},
     {"script": "CeruleanCaveEmptyTable", "coordinates": [[4, 8], [5, 8]], "terminal": false},
