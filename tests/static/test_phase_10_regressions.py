@@ -129,7 +129,7 @@ def test_route_4_guard_derives_access_without_a_saved_open_flag(repo_root: Path)
         "iffalse .ShowGuard",
         "readvar VAR_BADGES",
         "ifless 14, .ShowGuard",
-        "disappear ROUTE4_CERULEAN_CAVE_GUARD",
+        "loadmem wMap1ObjectSprite + (ROUTE4_CERULEAN_CAVE_GUARD - 2) * MAPOBJECT_LENGTH, 0",
     ]
     start = route.index("Route4CeruleanCaveGuardCallback:")
     callback = route[start : route.index("Route4CeruleanCaveGuardScript:")]
@@ -137,6 +137,10 @@ def test_route_4_guard_derives_access_without_a_saved_open_flag(repo_root: Path)
     for line in expected:
         position = callback.index(line, position + 1)
     assert not any(line.startswith(("setevent ", "clearevent ")) for line in callback)
+    assert (
+        "loadmem wMap1ObjectSprite + (ROUTE4_CERULEAN_CAVE_GUARD - 2) * MAPOBJECT_LENGTH, SPRITE_ROCKET"
+        in callback
+    )
     assert not any("CERULEAN_CAVE_OPEN" in line for line in route)
     assert (
         "object_event 38,  4, SPRITE_ROCKET, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, Route4CeruleanCaveGuardScript, -1"

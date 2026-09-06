@@ -23,11 +23,11 @@ Route4CeruleanCaveGuardCallback:
 	iffalse .ShowGuard
 	readvar VAR_BADGES
 	ifless 14, .ShowGuard
-	disappear ROUTE4_CERULEAN_CAVE_GUARD
+	loadmem wMap1ObjectSprite + (ROUTE4_CERULEAN_CAVE_GUARD - 2) * MAPOBJECT_LENGTH, 0
 	endcallback
 
 .ShowGuard:
-	appear ROUTE4_CERULEAN_CAVE_GUARD
+	loadmem wMap1ObjectSprite + (ROUTE4_CERULEAN_CAVE_GUARD - 2) * MAPOBJECT_LENGTH, SPRITE_ROCKET
 	endcallback
 
 Route4CeruleanCaveGuardScript:
