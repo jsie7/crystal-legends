@@ -52,6 +52,105 @@
       ["EVENT_BEAT_CERULEAN_CAVE_GRUNT_F_2", 1490]
     ]
   },
+  "remnants": [
+    {
+      "id": "R1",
+      "class": "GRUNTM",
+      "trainer": "GRUNTM_32",
+      "event": "EVENT_BEAT_CERULEAN_CAVE_GRUNT_M_1",
+      "coordinate": [18, 29],
+      "sprite": "SPRITE_ROCKET",
+      "movement": "SPRITEMOVEDATA_STANDING_UP",
+      "palette": "PAL_NPC_BROWN",
+      "sight": 3,
+      "party": [[57, "RATICATE", ["SUPER_FANG", "HYPER_FANG", "QUICK_ATTACK", "PURSUIT"]], [58, "GOLBAT", ["WING_ATTACK", "BITE", "CONFUSE_RAY", "TOXIC"]], [59, "SANDSLASH", ["EARTHQUAKE", "SLASH", "SANDSTORM", "SWIFT"]], [60, "WEEZING", ["SLUDGE_BOMB", "SMOKESCREEN", "EXPLOSION", "HAZE"]]]
+    },
+    {
+      "id": "S2",
+      "class": "SCIENTIST",
+      "trainer": "ROSS2",
+      "event": "EVENT_BEAT_CERULEAN_CAVE_SCIENTIST_2",
+      "coordinate": [6, 28],
+      "sprite": "SPRITE_SCIENTIST",
+      "movement": "SPRITEMOVEDATA_STANDING_LEFT",
+      "palette": "PAL_NPC_BLUE",
+      "sight": 2,
+      "party": [[58, "MAGNETON", ["THUNDERBOLT", "TRI_ATTACK", "THUNDER_WAVE", "LOCK_ON"]], [59, "ELECTRODE", ["THUNDER", "EXPLOSION", "LIGHT_SCREEN", "SCREECH"]], [60, "ELECTABUZZ", ["THUNDERPUNCH", "ICE_PUNCH", "PSYCHIC_M", "LIGHT_SCREEN"]], [61, "PORYGON2", ["TRI_ATTACK", "RECOVER", "CONVERSION2", "ZAP_CANNON"]]]
+    },
+    {
+      "id": "S1",
+      "class": "SCIENTIST",
+      "trainer": "MITCH2",
+      "event": "EVENT_BEAT_CERULEAN_CAVE_SCIENTIST_1",
+      "coordinate": [5, 21],
+      "sprite": "SPRITE_SCIENTIST",
+      "movement": "SPRITEMOVEDATA_STANDING_UP",
+      "palette": "PAL_NPC_BLUE",
+      "sight": 0,
+      "party": [[59, "DITTO", ["TRANSFORM", "NO_MOVE", "NO_MOVE", "NO_MOVE"]], [60, "HYPNO", ["PSYCHIC_M", "HYPNOSIS", "DREAM_EATER", "REFLECT"]], [61, "SLOWBRO", ["SURF", "PSYCHIC_M", "AMNESIA", "REST"]], [62, "MUK", ["SLUDGE_BOMB", "MINIMIZE", "ACID_ARMOR", "EXPLOSION"]]]
+    },
+    {
+      "id": "R2",
+      "class": "GRUNTF",
+      "trainer": "GRUNTF_6",
+      "event": "EVENT_BEAT_CERULEAN_CAVE_GRUNT_F_1",
+      "coordinate": [24, 19],
+      "sprite": "SPRITE_ROCKET_GIRL",
+      "movement": "SPRITEMOVEDATA_STANDING_DOWN",
+      "palette": "PAL_NPC_RED",
+      "sight": 3,
+      "party": [[60, "ARBOK", ["SLUDGE_BOMB", "GLARE", "SCREECH", "EARTHQUAKE"]], [61, "VILEPLUME", ["GIGA_DRAIN", "SLEEP_POWDER", "SLUDGE_BOMB", "MOONLIGHT"]], [62, "MURKROW", ["FAINT_ATTACK", "FLY", "CONFUSE_RAY", "SHADOW_BALL"]], [63, "TENTACRUEL", ["SURF", "ICE_BEAM", "BARRIER", "TOXIC"]]]
+    },
+    {
+      "id": "R4",
+      "class": "GRUNTF",
+      "trainer": "GRUNTF_7",
+      "event": "EVENT_BEAT_CERULEAN_CAVE_GRUNT_F_2",
+      "coordinate": [5, 16],
+      "sprite": "SPRITE_ROCKET_GIRL",
+      "movement": "SPRITEMOVEDATA_STANDING_RIGHT",
+      "palette": "PAL_NPC_RED",
+      "sight": 1,
+      "party": [[61, "SNEASEL", ["SLASH", "FAINT_ATTACK", "ICE_PUNCH", "QUICK_ATTACK"]], [62, "ARIADOS", ["SLUDGE_BOMB", "SPIDER_WEB", "NIGHT_SHADE", "GIGA_DRAIN"]], [63, "VENOMOTH", ["PSYCHIC_M", "SLEEP_POWDER", "GIGA_DRAIN", "TOXIC"]], [64, "HOUNDOOM", ["FLAMETHROWER", "CRUNCH", "SUNNY_DAY", "SOLARBEAM"]]]
+    },
+    {
+      "id": "R3",
+      "class": "GRUNTM",
+      "trainer": "GRUNTM_33",
+      "event": "EVENT_BEAT_CERULEAN_CAVE_GRUNT_M_2",
+      "coordinate": [18, 12],
+      "sprite": "SPRITE_ROCKET",
+      "movement": "SPRITEMOVEDATA_STANDING_DOWN",
+      "palette": "PAL_NPC_BROWN",
+      "sight": 2,
+      "party": [[62, "CROBAT", ["WING_ATTACK", "SLUDGE_BOMB", "CONFUSE_RAY", "TOXIC"]], [63, "GENGAR", ["SHADOW_BALL", "PSYCHIC_M", "HYPNOSIS", "THUNDERBOLT"]], [64, "UMBREON", ["FAINT_ATTACK", "TOXIC", "MOONLIGHT", "CONFUSE_RAY"]], [65, "HOUNDOOM", ["FLAMETHROWER", "CRUNCH", "SOLARBEAM", "SUNNY_DAY"]]]
+    }
+  ],
+  "pickups": [
+    {"item": "TWISTEDSPOON", "coordinate": [24, 2], "event": "EVENT_CERULEAN_CAVE_TWISTEDSPOON", "script": "CeruleanCaveTwistedSpoon"},
+    {"item": "LUCKY_EGG", "coordinate": [20, 13], "event": "EVENT_CERULEAN_CAVE_LUCKY_EGG", "script": "CeruleanCaveLuckyEgg"},
+    {"item": "SACRED_ASH", "coordinate": [13, 18], "event": "EVENT_CERULEAN_CAVE_SACRED_ASH", "script": "CeruleanCaveSacredAsh"},
+    {"item": "MASTER_BALL", "coordinate": [13, 31], "event": "EVENT_CERULEAN_CAVE_MASTER_BALL", "script": "CeruleanCaveMasterBall"}
+  ],
+  "hidden_pickup": {"item": "BRIGHTPOWDER", "coordinate": [2, 30], "event": "EVENT_CERULEAN_CAVE_HIDDEN_BRIGHTPOWDER", "script": "CeruleanCaveHiddenBrightPowder"},
+  "lab_records": [
+    {"script": "CeruleanCaveContainmentTerminal", "coordinates": [[4, 4], [5, 4]], "terminal": true},
+    {"script": "CeruleanCaveEmptyTable", "coordinates": [[4, 8], [5, 8]], "terminal": false},
+    {"script": "CeruleanCaveWestTerminal", "coordinates": [[4, 20], [5, 20]], "terminal": true},
+    {"script": "CeruleanCaveBrokenSamples", "coordinates": [[6, 24], [7, 24]], "terminal": false},
+    {"script": "CeruleanCaveEastTerminal", "coordinates": [[8, 24], [9, 24]], "terminal": true},
+    {"script": "CeruleanCaveWorkbench", "coordinates": [[8, 29], [9, 29]], "terminal": true}
+  ],
+  "encounters": {
+    "grass": {"rates": [6, 6, 6], "slots": [[52, "GOLBAT"], [52, "GRAVELER"], [54, "KADABRA"], [55, "MAGNETON"], [56, "RHYDON"], [58, "DITTO"], [60, "CHANSEY"]]},
+    "water": {"rate": 4, "slots": [[50, "SLOWPOKE"], [54, "GOLDUCK"], [58, "SLOWBRO"]]},
+    "fishing": {
+      "bite_rate": "50 percent + 1",
+      "old": [["70 percent + 1", "MAGIKARP", 20], ["85 percent + 1", "GOLDEEN", 25], ["100 percent", "SLOWPOKE", 25]],
+      "good": [["35 percent", "GOLDEEN", 35], ["70 percent", "SLOWPOKE", 35], ["90 percent + 1", "POLIWHIRL", 40], ["100 percent", "GOLDUCK", 42]],
+      "super": [["40 percent", "SEAKING", 48], ["70 percent", "GOLDUCK", 50], ["90 percent + 1", "SLOWBRO", 52], ["100 percent", "STARMIE", 55]]
+    }
+  },
   "counterpart": {
     "selector": "EVENT_PROJECT_MEW_TRANSFORMED",
     "transformed_species": "MEW",

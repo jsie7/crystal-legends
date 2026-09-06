@@ -177,6 +177,13 @@ KantoWaterWildMons:
 	db 24, REMORAID
 	db 28, OCTILLERY
 	end_water_wildmons
+
+	def_water_wildmons CERULEAN_CAVE
+	db 4 percent ; encounter rate
+	db 50, SLOWPOKE
+	db 54, GOLDUCK
+	db 58, SLOWBRO
+	end_water_wildmons
 	endc
 
 	db -1 ; end

@@ -870,6 +870,34 @@ KantoGrassWildMons:
 	db 28, CHANSEY
 	db 28, KANGASKHAN
 	end_grass_wildmons
+
+	def_grass_wildmons CERULEAN_CAVE
+	db 6 percent, 6 percent, 6 percent ; encounter rates: morn/day/nite
+	; morn
+	db 52, GOLBAT
+	db 52, GRAVELER
+	db 54, KADABRA
+	db 55, MAGNETON
+	db 56, RHYDON
+	db 58, DITTO
+	db 60, CHANSEY
+	; day
+	db 52, GOLBAT
+	db 52, GRAVELER
+	db 54, KADABRA
+	db 55, MAGNETON
+	db 56, RHYDON
+	db 58, DITTO
+	db 60, CHANSEY
+	; nite
+	db 52, GOLBAT
+	db 52, GRAVELER
+	db 54, KADABRA
+	db 55, MAGNETON
+	db 56, RHYDON
+	db 58, DITTO
+	db 60, CHANSEY
+	end_grass_wildmons
 	endc
 
 	db -1 ; end

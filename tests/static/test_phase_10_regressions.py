@@ -38,6 +38,20 @@ def _changed_offsets(stock: bytes, custom: bytes) -> list[list[int]]:
     ]
 
 
+def _section(lines: list[str], start: str, end: str) -> list[str]:
+    first = lines.index(start)
+    return lines[first : lines.index(end, first) + 1]
+
+
+def _contains_sequence(lines: list[str], expected: list[str]) -> bool:
+    normalized = [" ".join(line.split()) for line in lines]
+    wanted = [" ".join(line.split()) for line in expected]
+    return any(
+        normalized[index : index + len(wanted)] == wanted
+        for index in range(len(normalized))
+    )
+
+
 def test_phase_10_event_reservations_are_internal_and_reference_safe(
     repo_root: Path, scenario: dict
 ) -> None:
@@ -182,3 +196,110 @@ def test_custom_omastar_compression_is_lossless_and_saves_five_bytes(repo_root: 
     if custom.exists():
         assert len(original.read_bytes()) == 429
         assert len(custom.read_bytes()) == 424
+
+
+def test_cerulean_cave_remnant_parties_are_exact_and_custom_only(
+    repo_root: Path, scenario: dict
+) -> None:
+    constants = _active_code(repo_root / "constants/trainer_constants.asm", CRYSTAL_LEGENDS)
+    reference_constants = _active_code(repo_root / "constants/trainer_constants.asm", REFERENCE)
+    parties = _active_code(repo_root / "data/trainers/parties.asm", CRYSTAL_LEGENDS)
+    reference_parties = _active_code(repo_root / "data/trainers/parties.asm", REFERENCE)
+
+    for remnant in scenario["remnants"]:
+        assert f'const {remnant["trainer"]}' in constants
+        assert f'const {remnant["trainer"]}' not in reference_constants
+        expected = [
+            f'db "{("ROSS" if remnant["trainer"] == "ROSS2" else "MITCH" if remnant["trainer"] == "MITCH2" else "GRUNT")}@", TRAINERTYPE_MOVES',
+            *(
+                f'db {level}, {species}, ' + ", ".join(moves)
+                for level, species, moves in remnant["party"]
+            ),
+            "db -1",
+        ]
+        assert _contains_sequence(parties, expected)
+        assert not any(remnant["trainer"] in line for line in reference_constants)
+    assert "db 57, RATICATE,   SUPER_FANG, HYPER_FANG, QUICK_ATTACK, PURSUIT" not in reference_parties
+
+
+def test_cerulean_cave_population_items_and_records_match_contract(
+    repo_root: Path, scenario: dict
+) -> None:
+    cave = _active_code(repo_root / "maps/CeruleanCave.asm", CRYSTAL_LEGENDS)
+    for remnant in scenario["remnants"]:
+        object_rows = [line for line in cave if line.startswith("object_event ")]
+        matching = [
+            line
+            for line in object_rows
+            if f'object_event {remnant["coordinate"][0]:2}, {remnant["coordinate"][1]:2}, {remnant["sprite"]}, {remnant["movement"]}' in line
+        ]
+        assert len(matching) == 1
+        row = matching[0]
+        assert f', {remnant["palette"]}, OBJECTTYPE_TRAINER, {remnant["sight"]}, ' in row
+        assert row.endswith(", EVENT_BEAT_GIOVANNI")
+        assert any(
+            line.startswith(f'trainer {remnant["class"]}, {remnant["trainer"]}, {remnant["event"]},')
+            for line in cave
+        )
+
+    for pickup in scenario["pickups"]:
+        script = cave.index(f'{pickup["script"]}:')
+        assert cave[script + 1] == f'itemball {pickup["item"]}'
+        assert any(
+            line.startswith(f'object_event {pickup["coordinate"][0]:2}, {pickup["coordinate"][1]:2}, SPRITE_POKE_BALL')
+            and line.endswith(f', {pickup["event"]}')
+            for line in cave
+        )
+    hidden = scenario["hidden_pickup"]
+    script = cave.index(f'{hidden["script"]}:')
+    assert cave[script + 1] == f'hiddenitem {hidden["item"]}, {hidden["event"]}'
+    assert f'bg_event {hidden["coordinate"][0]:2}, {hidden["coordinate"][1]:2}, BGEVENT_ITEM, {hidden["script"]}' in cave
+
+    for record in scenario["lab_records"]:
+        for x, y in record["coordinates"]:
+            assert f'bg_event {x:2}, {y:2}, BGEVENT_READ, {record["script"]}' in cave
+        start = cave.index(f'{record["script"]}:')
+        body = cave[start : start + 4]
+        assert ("playsound SFX_BOOT_PC" in body) is record["terminal"]
+
+
+def test_cerulean_cave_wild_and_fishing_tables_match_contract(
+    repo_root: Path, scenario: dict
+) -> None:
+    encounters = scenario["encounters"]
+    grass_lines = _active_code(repo_root / "data/wild/kanto_grass.asm", CRYSTAL_LEGENDS)
+    grass = _section(grass_lines, "def_grass_wildmons CERULEAN_CAVE", "end_grass_wildmons")
+    expected_slots = [
+        f"db {level}, {species}" for _ in range(3) for level, species in encounters["grass"]["slots"]
+    ]
+    assert grass == [
+        "def_grass_wildmons CERULEAN_CAVE",
+        "db 6 percent, 6 percent, 6 percent",
+        *expected_slots,
+        "end_grass_wildmons",
+    ]
+
+    water_lines = _active_code(repo_root / "data/wild/kanto_water.asm", CRYSTAL_LEGENDS)
+    water = _section(water_lines, "def_water_wildmons CERULEAN_CAVE", "end_water_wildmons")
+    assert water == [
+        "def_water_wildmons CERULEAN_CAVE",
+        "db 4 percent",
+        *(f"db {level}, {species}" for level, species in encounters["water"]["slots"]),
+        "end_water_wildmons",
+    ]
+
+    fish = _active_code(repo_root / "data/wild/fish.asm", CRYSTAL_LEGENDS)
+    assert "fishgroup 50 percent + 1, .CeruleanCave_Old,     .CeruleanCave_Good,     .CeruleanCave_Super" in fish
+    for rod in ("old", "good", "super"):
+        label = f'.CeruleanCave_{rod.title()}:'
+        start = fish.index(label)
+        expected = [
+            f"db {chance}, {species}, {level}"
+            for chance, species, level in encounters["fishing"][rod]
+        ]
+        assert [" ".join(line.split()) for line in fish[start + 1 : start + 1 + len(expected)]] == [
+            " ".join(line.split()) for line in expected
+        ]
+
+    for relative in ("data/wild/kanto_grass.asm", "data/wild/kanto_water.asm", "data/wild/fish.asm"):
+        assert not any("CERULEAN_CAVE" in line or "CeruleanCave" in line for line in _active_code(repo_root / relative, REFERENCE))

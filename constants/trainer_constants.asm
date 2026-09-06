@@ -124,6 +124,10 @@ endc
 	const JED
 	const MARC
 	const RICH
+if DEF(_CRYSTALLEGENDS)
+	const ROSS2
+	const MITCH2
+endc
 
 	trainerclass ERIKA ; 15
 	const ERIKA1
@@ -326,6 +330,10 @@ endc
 	const GRUNTM_29
 	const GRUNTM_30 ; unused
 	const GRUNTM_31
+if DEF(_CRYSTALLEGENDS)
+	const GRUNTM_32
+	const GRUNTM_33
+endc
 
 	trainerclass GENTLEMAN ; 20
 	const PRESTON
@@ -726,6 +734,10 @@ endc
 	const GRUNTF_3
 	const GRUNTF_4
 	const GRUNTF_5
+if DEF(_CRYSTALLEGENDS)
+	const GRUNTF_6
+	const GRUNTF_7
+endc
 
 	trainerclass MYSTICALMAN ; 43
 	const EUSINE

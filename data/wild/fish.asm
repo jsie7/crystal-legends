@@ -22,6 +22,9 @@ FishGroups:
 	fishgroup 50 percent + 1, .Qwilfish_Old,         .Qwilfish_Good,         .Qwilfish_Super
 	fishgroup 50 percent + 1, .Remoraid_Old,         .Remoraid_Good,         .Remoraid_Super
 	fishgroup 50 percent + 1, .Qwilfish_NoSwarm_Old, .Qwilfish_NoSwarm_Good, .Qwilfish_NoSwarm_Super
+if DEF(_CRYSTALLEGENDS)
+	fishgroup 50 percent + 1, .CeruleanCave_Old,     .CeruleanCave_Good,     .CeruleanCave_Super
+endc
 	assert_table_length NUM_FISHGROUPS
 
 .Shore_Old:
@@ -206,6 +209,23 @@ FishGroups:
 	db  70 percent,     time_group 7
 	db  90 percent + 1, MAGIKARP,   40
 	db 100 percent,     REMORAID,   40
+
+if DEF(_CRYSTALLEGENDS)
+.CeruleanCave_Old:
+	db  70 percent + 1, MAGIKARP,   20
+	db  85 percent + 1, GOLDEEN,    25
+	db 100 percent,     SLOWPOKE,   25
+.CeruleanCave_Good:
+	db  35 percent,     GOLDEEN,    35
+	db  70 percent,     SLOWPOKE,   35
+	db  90 percent + 1, POLIWHIRL,  40
+	db 100 percent,     GOLDUCK,    42
+.CeruleanCave_Super:
+	db  40 percent,     SEAKING,    48
+	db  70 percent,     GOLDUCK,    50
+	db  90 percent + 1, SLOWBRO,    52
+	db 100 percent,     STARMIE,    55
+endc
 
 TimeFishGroups:
 	;  day              nite
