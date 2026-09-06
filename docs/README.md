@@ -8,8 +8,9 @@ guide.
 
 Crystal Legends v0.1, the Phase 2 completion foundation, Phase 3 CHEAT MODE,
 the Phase 4 Johto starter events, the Phase 5 Ruins gifts, Phase 6 roamer
-quality-of-life, Phase 7 Project Mew, Phase 8 Silver arc, and Phase 9 Kanto
-completion are source-complete. Chikorita is a
+quality-of-life, Phase 7 Project Mew, Phase 8 Silver arc, Phase 9 Kanto
+completion, and Phase 10 Giovanni/Cerulean Cave finale are source-complete.
+Chikorita is a
 level-14 gift at the Ilex Forest shrine after Cut, Cyndaquil is a level-19 gift
 in Burned Tower after the legendary beasts awaken, and Totodile is a level-24
 rescue on Cianwood's east shore after SecretPotion receipt. Their independent,
@@ -44,8 +45,14 @@ Phase 9 makes Bulbasaur, Squirtle, and Charmander independent level-28 service
 rewards; opens one Soul Badge-gated unattended Safari preserve with renewable
 Mareep, Vulpix, Mankey, and Remoraid; and places the two non-starter legendary
 birds in Seafoam, the Power Plant Generator Annex, and Victory Road according
-to the existing branch. Only capture finalizes a bird. The remaining main-story
-acquisition gap is Phase 10's opposite Project Mew species.
+to the existing branch. Only capture finalizes a bird. Phase 10 closes the
+remaining main-story acquisition gap. Its Route 4 entrance derives access from
+Project Mew resolution, Silver's released bird, and 14 badges without a saved
+open flag. The single-floor cave contains six independent Rocket remnants,
+five one-time rewards, repeatable lab records, custom encounters, and
+Giovanni's six-Pokémon final team. Defeating Giovanni removes the cave crew and
+reveals the opposite level-70 Project Mew species; only capture removes that
+counterpart, so knockout, escape, player loss, and full storage remain retryable.
 
 The earlier manual pass confirmed the title screen, all three legendary-bird
 starter branches, the first Silver battle, the Elm/Oak handoff, player-bird
@@ -64,7 +71,10 @@ the other listed manual gates remain open. Phase 9 passes its static,
 compiled-ROM, production-ROM, persistence, and reference-isolation gates but is
 not yet playtest-certified: starter presentation, Safari exploration, bird
 routes, dialogue, palettes, and provisional balance still require user review
-in SameBoy.
+in SameBoy. Phase 10 likewise passes its complete automated and reference
+gates, but its entrance, cave presentation, trainer flow, Giovanni battle,
+blackout, and both counterpart branches still require user review in SameBoy.
+Phase 11 endgame implementation is the next roadmap phase.
 See
 [workflows.md](workflows.md) for the validation boundary and
 [decisions.md](decisions.md) for the sequencing decision.

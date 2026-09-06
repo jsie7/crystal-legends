@@ -457,3 +457,51 @@ change, or save-layout change is required. The draft now previews the real
 sprite at player coordinate `(06,04)`, facing down. Source provenance and the
 repeatable import/check procedure are in
 [workflows.md](workflows.md#giovanni-standing-sprite).
+
+## 2026-09-06 — Finish Project Mew in one derived-access Cerulean Cave
+
+Crystal Legends restores Cerulean Cave as custom map group 7, map 19: one
+15-by-18-block Cave-tileset floor entered from the ordinary Route 4 warp at
+`(38, 3)` and exited at `(21, 33)`. The accepted terrain replaces the unused
+beta-cave payload at the same size. Route 4 and Cerulean City use same-size
+custom block variants, retain their stock connection, and preserve the hidden
+Berserk Gene.
+
+Access requires `EVENT_PROJECT_MEW_RESOLVED`, `EVENT_SILVER_BIRD_RELEASED`, and
+at least 14 badges. Do not store a separate cave-open fact. Route 4's object
+callback writes the guard map object's sprite to `SPRITE_ROCKET` or zero before
+visible object structs are initialized; `appear`/`disappear` cannot correctly
+derive an eventless object's initial visibility at that callback boundary.
+This keeps eligibility order-independent and reconstructs it on map load and
+native Continue.
+
+The cave holds six Rocket remnant trainers with independent defeat flags, but
+all six object masks and Giovanni's object mask use `EVENT_BEAT_GIOVANNI` so the
+post-boss blackout removes the complete crew even when a remnant was skipped.
+Giovanni is a stationary script object and a dedicated custom-only `ROCKET
+BOSS` class with a six-Pokémon party. Set `EVENT_GIOVANNI_RETURNED` before the
+first battle; set `EVENT_BEAT_GIOVANNI` only after victory and the reload, then
+remove all seven Rocket objects without walking choreography. A loss therefore
+preserves a truthful retry state.
+
+After Giovanni, the same variable-sprite object exposes the Project Mew
+counterpart: the transformed Johto branch gets level-70 Mew, and the restored
+branch gets level-70 Mewtwo. Determine this solely from
+`EVENT_PROJECT_MEW_TRANSFORMED`, not current ownership. Knockout, escape,
+player loss, or full storage leaves a fresh encounter; only
+`CheckCaughtPokemon` success sets `EVENT_CAUGHT_CERULEAN_CAVE_COUNTERPART` and
+removes the object.
+
+Persistent Kanto event IDs 261–267 store Giovanni returned, counterpart caught,
+and the five cave pickups. Trainer IDs 1484–1490 store Giovanni and remnant
+victories. The 12 paired lab-record quadrants are repeatable and stateless.
+The walking, Surf, and fishing tables are custom-only, as are the map, scripts,
+events, trainer data, portrait, and overworld object. `NUM_EVENTS`, WRAM/SRAM,
+the save fingerprint, and every reference-build byte remain unchanged.
+
+Giovanni's 56-by-56 portrait adapts the Pokémon Red source linked in
+[workflows.md](workflows.md#validate-phase-10-giovanni-and-cerulean-cave). It
+occupies Pics 18 in bank `$59`; lossless custom-only Omastar back-picture
+compression creates the three pointer bytes while keeping the picture in its
+original bank. The finalized bank floors and reproduction commands are owned by
+the same workflow.

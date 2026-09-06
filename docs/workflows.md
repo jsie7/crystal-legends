@@ -63,6 +63,11 @@ Soul Badge-gated unattended Safari preserve, and both branch-correct
 non-starter birds pass every automated layer and the combined single-save
 flow. Its user-owned starter, Safari, bird-route, dialogue, palette, and
 provisional-balance review remains pending.
+Phase 10 is source-complete: derived Route 4 access, the single-floor Cerulean
+Cave, Rocket remnants and rewards, Giovanni's finale, and both branch-correct
+counterpart encounters pass every automated layer. Its user-owned cave,
+dialogue, encounter, presentation, and provisional-balance review remains
+pending; Phase 11 is next.
 
 ## Validate the Crystal Legends build
 
@@ -88,10 +93,11 @@ Phase 2 evolution/item/Celebi behavior, Phase 3 CHEAT MODE, Phase 4's three
 production-map gifts, Phase 5's three Ruins gifts and Route 14 Girafarig trade,
 Phase 6's roamer/Fast Ball contracts, and Phase 7's Project Mew story and
 branching encounter, Phase 8's Silver release and post-release chronology, and
-Phase 9's Kanto gifts, Safari preserve, and world birds. Rerun the narrower
-owning profile after a focused change and `make test-all` at a milestone
-handoff. Phase 5 keeps Kim's Route 14 trade as Girafarig's canonical source;
-Phase 9 deliberately adds no wild Girafarig.
+Phase 9's Kanto gifts, Safari preserve, and world birds, and Phase 10's
+Giovanni/Cerulean Cave finale. Rerun the narrower owning profile after a focused
+change and `make test-all` at a milestone handoff. Phase 5 keeps Kim's Route 14
+trade as Girafarig's canonical source; Phase 9 deliberately adds no wild
+Girafarig.
 
 ## Regenerate and validate the cave lab fixtures
 
@@ -100,7 +106,8 @@ south-side approach), `$16` (computer workbench, north-side approach), and `$17`
 (control terminal, south-side approach). Their source-art reuse and
 shared-tileset boundaries are recorded in
 [decisions.md](decisions.md#2026-08-26--reuse-unused-cave-blocks-for-three-lab-fixtures).
-They are not placed in a production map yet.
+Phase 10 places them only in Cerulean Cave as paired background records; do not
+reuse them on a map that loads Dark Cave graphics.
 
 Regenerate the PNG, metatiles, and palette map deterministically from checked-in
 source assets; no Python image library or prebuilt graphics are needed:
@@ -165,7 +172,8 @@ walking. `faceplayer` may turn him. This follows stock Will/Karen standing
 sprites; the stock graphics loader still copies an unused second graphics
 region for standing sprites, so changing the movement to walking would display
 unrelated data. Do not add a loader change as part of this asset import.
-The cave preview is draft-only; no production object uses Giovanni yet.
+Cerulean Cave now uses the sprite for Giovanni's stationary script object at
+`(6, 4)`; his victory blackout removes him without walking choreography.
 
 ## Run the local automated test harness
 
@@ -579,6 +587,84 @@ and pass/fail result. Manually confirm:
 Phase 9 is source-complete but not playtest-certified until this SameBoy matrix
 is reported and any presentation failure is fixed or explicitly assigned. The
 automated evidence does not claim all 251 species, Phase 10 completion, a
+full-game playthrough, or release readiness.
+
+### Validate Phase 10 Giovanni and Cerulean Cave
+
+Run the focused Phase 10 layers while editing, then the complete handoff gate:
+
+```bash
+make crystallegends
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/static/test_phase_10_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/rom/test_phase_10_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/emulator/test_phase_10_giovanni_cerulean_cave.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest -m phase10
+make test-all
+rgbfix -v crystallegends.gbc
+git diff --check
+git status --short
+shasum -a 256 crystallegends.gbc
+```
+
+The accepted automated boundary on 2026-09-06 is:
+
+- implementation and hardening commits `457379c48` through `efd589c6c`;
+- 73 focused Phase 10 tests: 26 static, 16 compiled-ROM, and 31
+  production-ROM emulator cases;
+- 498 complete-gate tests: 135 static, 80 compiled-ROM, and 283 emulator cases;
+- all six upstream reference artifacts reproduced by `make compare`;
+- ROM SHA-256
+  `e6485ac763c5c88a767f17df359b4c4e08b9e2ccd77fd79ebe0deeeaae090b64`;
+- event IDs 261–267 and 1484–1490 with `NUM_EVENTS`, WRAM, SRAM, and the
+  save-layout fingerprint unchanged;
+- reviewed Phase 10 bank reserves: ROMX `$05=$0b34`, `$07=$0034`,
+  `$0a=$02a6`, `$0e=$04b4`, `$24=$059b`, `$2a=$0055`, `$2b=$00a6`,
+  `$2c=$23da`, `$4a=$0004`, `$59=$154a`, `$61=$18d5`, `$66=$04d8`,
+  `$6b=$143f`, and `$6c=$0a81`.
+
+Automation owns exact map registration and blocks, Route 4/Cerulean alignment,
+all access and badge boundaries, physical guard blocking, the native cave
+round trip, object masks after load and Continue, remnant parties/ranges,
+paired lab records, every item and capacity retry, wild/fishing tables,
+Giovanni's complete trainer package, loss/victory state order and blackout, and
+both counterpart species across knockout, escape, player loss, full storage,
+capture, retry, and native Continue. The guard is deliberately derived by
+writing its map-object sprite before visible object structs initialize; do not
+replace that with `appear`/`disappear` on the eventless object.
+
+The trainer portrait comes from
+[pret/pokered's Giovanni portrait](https://github.com/pret/pokered/blob/master/gfx/trainers/giovanni.png).
+The adapted 56-by-56 source PNG has SHA-256
+`4cf1d940ceeb00e530b361b1a95ea8c31492faf86bb5c20f0ac45c70768b2034`;
+its 784-byte column-major 2bpp output has SHA-256
+`adbe7da4cb2f5464b425f85def53164dec8f7ba077d7d11e24114dabbb96dfd2`.
+The custom LZ stream is 227 bytes. It lives in Pics 18, while Omastar's
+custom-only lossless recompression remains 424 bytes and leaves four bytes in
+the original trainer-pointer/Pics 3 bank. Source and compiled-ROM tests decode
+both assets and compare their pixels.
+
+For playtest certification, use SameBoy with a backed-up or disposable save and
+record the exact version, ROM commit/hash, date, save boundary, Project Mew
+branch, badge count, and pass/fail result. Manually confirm:
+
+1. At 13 and 14 badges, review the Route 4 guard, all three refusal lines,
+   Cerulean City's changing hint, exterior block alignment, ordinary entry and
+   return, Dig/Escape Rope behavior, and the preserved Berserk Gene.
+2. Traverse the entire cave in both directions. Review collision, Surf routes,
+   ledges, fixture art, record text/sound, item presentation, encounters,
+   trainer sight behavior, palettes, dialogue wrapping, and whether the six
+   remnant teams fit late Kanto.
+3. Lose to and then defeat Giovanni. Review his portrait, class name, music,
+   party and AI feel, retry dialogue, blackout, cave-music restoration, crew
+   removal, and the newly open route to the counterpart.
+4. On both Project Mew branches, verify the opposite Mew/Mewtwo sprite, cry,
+   level, dialogue, capture difficulty, knockout/escape/loss retry, full-storage
+   behavior, disappearance after capture, containment-terminal reaction, and
+   the narrative handoff toward Phase 11.
+
+Phase 10 is source-complete but not playtest-certified until this SameBoy matrix
+is reported and any presentation failure is fixed or explicitly assigned. Its
+automated evidence does not certify visual polish, story feel, final balance, a
 full-game playthrough, or release readiness.
 
 ### Battery-save and scenario fixtures
