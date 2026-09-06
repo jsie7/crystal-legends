@@ -52,6 +52,12 @@ def _contains_sequence(lines: list[str], expected: list[str]) -> bool:
     )
 
 
+def _assert_ordered(lines: list[str], expected: list[str]) -> None:
+    position = -1
+    for line in expected:
+        position = lines.index(line, position + 1)
+
+
 def test_phase_10_event_reservations_are_internal_and_reference_safe(
     repo_root: Path, scenario: dict
 ) -> None:
@@ -303,3 +309,131 @@ def test_cerulean_cave_wild_and_fishing_tables_match_contract(
 
     for relative in ("data/wild/kanto_grass.asm", "data/wild/kanto_water.asm", "data/wild/fish.asm"):
         assert not any("CERULEAN_CAVE" in line or "CeruleanCave" in line for line in _active_code(repo_root / relative, REFERENCE))
+
+
+def test_giovanni_victory_sets_state_and_clears_exactly_the_cave_crew(
+    repo_root: Path,
+) -> None:
+    cave = _active_code(repo_root / "maps/CeruleanCave.asm", CRYSTAL_LEGENDS)
+    script = _section(cave, "CeruleanCaveGiovanniScript:", "CeruleanCaveCounterpartScript:")
+    _assert_ordered(
+        script,
+        [
+            "faceplayer",
+            "playmusic MUSIC_ROCKET_ENCOUNTER",
+            "checkevent EVENT_GIOVANNI_RETURNED",
+            "setevent EVENT_GIOVANNI_RETURNED",
+            "loadtrainer GIOVANNI, GIOVANNI1",
+            "startbattle",
+            "reloadmapafterbattle",
+            "special FadeOutToBlack",
+            "special ReloadSpritesNoPalettes",
+            "setevent EVENT_BEAT_GIOVANNI",
+            "disappear CERULEANCAVE_GIOVANNI",
+            "disappear CERULEANCAVE_SCIENTIST_MITCH",
+            "disappear CERULEANCAVE_SCIENTIST_ROSS",
+            "disappear CERULEANCAVE_GRUNT_M_1",
+            "disappear CERULEANCAVE_GRUNT_F_1",
+            "disappear CERULEANCAVE_GRUNT_M_2",
+            "disappear CERULEANCAVE_GRUNT_F_2",
+            "pause 25",
+            "special FadeInFromBlack",
+            "playmapmusic",
+        ],
+    )
+    assert script.index("setevent EVENT_GIOVANNI_RETURNED") < script.index("startbattle")
+    assert script.index("reloadmapafterbattle") < script.index("setevent EVENT_BEAT_GIOVANNI")
+    assert not any(line.startswith("applymovement") for line in script)
+    assert not any(
+        line.startswith("setevent EVENT_BEAT_CERULEAN_CAVE_") for line in script
+    )
+
+    object_rows = [line for line in cave if line.startswith("object_event ")]
+    assert len(object_rows) == 12
+    rocket_rows = [line for line in object_rows if line.endswith(", EVENT_BEAT_GIOVANNI")]
+    assert len(rocket_rows) == 7
+    assert any(
+        line.startswith("object_event  6,  4, SPRITE_GIOVANNI, SPRITEMOVEDATA_STANDING_DOWN")
+        and ", PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, CeruleanCaveGiovanniScript," in line
+        for line in rocket_rows
+    )
+
+
+def test_counterpart_selection_is_opposite_capture_only_and_ownership_independent(
+    repo_root: Path, scenario: dict
+) -> None:
+    cave = _active_code(repo_root / "maps/CeruleanCave.asm", CRYSTAL_LEGENDS)
+    callback = _section(
+        cave,
+        "CeruleanCaveCounterpartSpriteCallback:",
+        "CeruleanCaveGiovanniScript:",
+    )
+    assert callback[:6] == [
+        "CeruleanCaveCounterpartSpriteCallback:",
+        "checkevent EVENT_PROJECT_MEW_TRANSFORMED",
+        "iftrue .Mew",
+        "variablesprite SPRITE_PROJECT_MEW_SUBJECT, SPRITE_MEWTWO",
+        "endcallback",
+        ".Mew:",
+    ]
+    assert "variablesprite SPRITE_PROJECT_MEW_SUBJECT, SPRITE_MEW" in callback
+    assert "callback MAPCALLBACK_SPRITES, CeruleanCaveCounterpartSpriteCallback" in cave
+
+    script = _section(
+        cave,
+        "CeruleanCaveCounterpartScript:",
+        "TrainerCeruleanCaveScientistMitch:",
+    )
+    _assert_ordered(
+        script,
+        [
+            "checkevent EVENT_BEAT_GIOVANNI",
+            "iffalse .GiovanniRemains",
+            "checkevent EVENT_PROJECT_MEW_TRANSFORMED",
+            "iftrue .Mew",
+            "loadwildmon MEWTWO, 70",
+            ".Mew:",
+            "loadwildmon MEW, 70",
+            ".Battle:",
+            "startbattle",
+            "special CheckCaughtPokemon",
+            "iffalse .NotCaught",
+            "setevent EVENT_CAUGHT_CERULEAN_CAVE_COUNTERPART",
+            "disappear CERULEANCAVE_COUNTERPART",
+            ".NotCaught:",
+            "reloadmapafterbattle",
+        ],
+    )
+    assert not any("EVENT_CAUGHT_PROJECT_MEW_SUBJECT" in line for line in script)
+    assert not any("POKEDEX" in line or "PARTY" in line or "BOX" in line for line in script)
+    counterpart = scenario["counterpart"]
+    assert sum(
+        line.startswith(
+            f'object_event {counterpart["coordinate"][0]:2}, {counterpart["coordinate"][1]:2}, '
+            f'{counterpart["sprite"]}, {counterpart["movement"]}'
+        )
+        and f', {counterpart["palette"]}, OBJECTTYPE_SCRIPT, 0, CeruleanCaveCounterpartScript, ' in line
+        and line.endswith(f', {counterpart["completion_event"]}')
+        for line in cave
+    ) == 1
+
+
+def test_containment_record_uses_boss_and_capture_facts_without_new_state(
+    repo_root: Path,
+) -> None:
+    cave = _active_code(repo_root / "maps/CeruleanCave.asm", CRYSTAL_LEGENDS)
+    script = _section(cave, "CeruleanCaveContainmentTerminal:", "CeruleanCaveEmptyTable:")
+    _assert_ordered(
+        script,
+        [
+            "playsound SFX_BOOT_PC",
+            "checkevent EVENT_CAUGHT_CERULEAN_CAVE_COUNTERPART",
+            "iftrue .Caught",
+            "checkevent EVENT_BEAT_GIOVANNI",
+            "iftrue .Released",
+        ],
+    )
+    assert not any(line.startswith(("setevent ", "clearevent ")) for line in script)
+    assert 'line "LOCKED"' in cave
+    assert 'line "ACTIVE"' in cave
+    assert 'line "ABSENT"' in cave

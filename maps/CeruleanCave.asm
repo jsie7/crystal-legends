@@ -1,4 +1,6 @@
 	object_const_def
+	const CERULEANCAVE_COUNTERPART
+	const CERULEANCAVE_GIOVANNI
 	const CERULEANCAVE_SCIENTIST_MITCH
 	const CERULEANCAVE_SCIENTIST_ROSS
 	const CERULEANCAVE_GRUNT_M_1
@@ -14,6 +16,98 @@ CeruleanCave_MapScripts:
 	def_scene_scripts
 
 	def_callbacks
+	callback MAPCALLBACK_SPRITES, CeruleanCaveCounterpartSpriteCallback
+
+CeruleanCaveCounterpartSpriteCallback:
+	checkevent EVENT_PROJECT_MEW_TRANSFORMED
+	iftrue .Mew
+	variablesprite SPRITE_PROJECT_MEW_SUBJECT, SPRITE_MEWTWO
+	endcallback
+
+.Mew:
+	variablesprite SPRITE_PROJECT_MEW_SUBJECT, SPRITE_MEW
+	endcallback
+
+CeruleanCaveGiovanniScript:
+	faceplayer
+	playmusic MUSIC_ROCKET_ENCOUNTER
+	opentext
+	checkevent EVENT_GIOVANNI_RETURNED
+	iftrue .Retry
+	writetext CeruleanCaveGiovanniIntroText
+	sjump .Battle
+
+.Retry:
+	writetext CeruleanCaveGiovanniRetryText
+
+.Battle:
+	waitbutton
+	setevent EVENT_GIOVANNI_RETURNED
+	closetext
+	winlosstext CeruleanCaveGiovanniBeatenText, CeruleanCaveGiovanniWinText
+	loadtrainer GIOVANNI, GIOVANNI1
+	startbattle
+	dontrestartmapmusic
+	reloadmapafterbattle
+	playmusic MUSIC_ROCKET_ENCOUNTER
+	opentext
+	writetext CeruleanCaveGiovanniDisbandsText
+	waitbutton
+	closetext
+	special FadeOutToBlack
+	special ReloadSpritesNoPalettes
+	setevent EVENT_BEAT_GIOVANNI
+	disappear CERULEANCAVE_GIOVANNI
+	disappear CERULEANCAVE_SCIENTIST_MITCH
+	disappear CERULEANCAVE_SCIENTIST_ROSS
+	disappear CERULEANCAVE_GRUNT_M_1
+	disappear CERULEANCAVE_GRUNT_F_1
+	disappear CERULEANCAVE_GRUNT_M_2
+	disappear CERULEANCAVE_GRUNT_F_2
+	pause 25
+	special FadeInFromBlack
+	playmapmusic
+	end
+
+CeruleanCaveCounterpartScript:
+	faceplayer
+	checkevent EVENT_BEAT_GIOVANNI
+	iffalse .GiovanniRemains
+	checkevent EVENT_PROJECT_MEW_TRANSFORMED
+	iftrue .Mew
+	cry MEWTWO
+	opentext
+	writetext CeruleanCaveMewtwoBattleText
+	waitbutton
+	closetext
+	loadwildmon MEWTWO, 70
+	sjump .Battle
+
+.Mew:
+	cry MEW
+	opentext
+	writetext CeruleanCaveMewBattleText
+	waitbutton
+	closetext
+	loadwildmon MEW, 70
+
+.Battle:
+	startbattle
+	special CheckCaughtPokemon
+	iffalse .NotCaught
+	setevent EVENT_CAUGHT_CERULEAN_CAVE_COUNTERPART
+	disappear CERULEANCAVE_COUNTERPART
+
+.NotCaught:
+	reloadmapafterbattle
+	end
+
+.GiovanniRemains:
+	opentext
+	writetext CeruleanCaveCounterpartBlockedText
+	waitbutton
+	closetext
+	end
 
 TrainerCeruleanCaveScientistMitch:
 	trainer SCIENTIST, MITCH2, EVENT_BEAT_CERULEAN_CAVE_SCIENTIST_1, CeruleanCaveScientistMitchSeenText, CeruleanCaveScientistMitchBeatenText, 0, .Script
@@ -147,6 +241,106 @@ CeruleanCaveWorkbench:
 	closetext
 	end
 
+CeruleanCaveGiovanniIntroText:
+	text "So, you are the"
+	line "trainer who broke"
+	cont "my organization."
+
+	para "Its collapse in"
+	line "JOHTO should have"
+	cont "ended TEAM ROCKET."
+
+	para "Then we seized the"
+	line "GOLDENROD signal:"
+	cont "PROJECT MEW data."
+
+	para "My people restored"
+	line "this old facility"
+	cont "to exploit it."
+
+	para "The subject beyond"
+	line "will anchor a new,"
+	cont "stronger order."
+
+	para "I am GIOVANNI."
+	line "Prove your victory"
+	cont "was not chance!"
+	done
+
+CeruleanCaveGiovanniRetryText:
+	text "You have returned."
+
+	para "Then we settle"
+	line "this properly."
+	done
+
+CeruleanCaveGiovanniBeatenText:
+	text "So! Your strength"
+	line "was no accident."
+	done
+
+CeruleanCaveGiovanniWinText:
+	text "Power decides who"
+	line "shapes the future."
+	done
+
+CeruleanCaveGiovanniDisbandsText:
+	text "Enough."
+
+	para "TEAM ROCKET failed"
+	line "because its ranks"
+	cont "clung to a name."
+
+	para "I will not repeat"
+	line "that mistake."
+
+	para "This revival"
+	line "built on stolen"
+	cont "research ends here."
+
+	para "TEAM ROCKET is"
+	line "disbanded. All of"
+	cont "you, leave at once."
+
+	para "The data and the"
+	line "subject are no"
+	cont "longer ours."
+
+	para "What happens next"
+	line "is your decision."
+
+	para "Do not mistake"
+	line "defeat for my"
+	cont "surrender."
+	done
+
+CeruleanCaveCounterpartBlockedText:
+	text "A strong presence"
+	line "watches beyond."
+
+	para "It will not come"
+	line "while GIOVANNI"
+	cont "commands the cave."
+	done
+
+CeruleanCaveMewBattleText:
+	text "MEW studies you"
+	line "with ancient,"
+	cont "calm eyes."
+
+	para "It chooses to test"
+	line "you!"
+	done
+
+CeruleanCaveMewtwoBattleText:
+	text "MEWTWO fixes you"
+	line "with a defiant"
+	cont "stare."
+
+	para "It chooses to test"
+	line "you!"
+	done
+
 CeruleanCaveScientistMitchSeenText:
 	text "There are two"
 	line "viable outcomes."
@@ -186,7 +380,7 @@ CeruleanCaveScientistRossAfterText:
 	line "abandoned systems."
 
 	para "The PROJECT data"
-	line "came from elsewhere."
+	line "came from outside."
 	done
 
 CeruleanCaveGruntM1SeenText:
@@ -218,7 +412,7 @@ CeruleanCaveGruntF1SeenText:
 	done
 
 CeruleanCaveGruntF1BeatenText:
-	text "I failed the BOSS…"
+	text "I failed our BOSS!"
 	done
 
 CeruleanCaveGruntF1AfterText:
@@ -277,23 +471,23 @@ CeruleanCaveContainmentReleasedText:
 	text "CONTAINMENT:"
 	line "OPEN"
 
-	para "SUBJECT STATUS:"
+	para "SUBJECT SIGNAL:"
 	line "ACTIVE"
 	done
 
 CeruleanCaveContainmentCaughtText:
-	text "CONTAINMENT:"
+	text "CHAMBER:"
 	line "EMPTY"
 
-	para "SUBJECT STATUS:"
-	line "TRANSFER COMPLETE"
+	para "SUBJECT SIGNAL:"
+	line "ABSENT"
 	done
 
 CeruleanCaveEmptyTableText:
 	text "Deep scratches mar"
 	line "the empty table."
 
-	para "Heavy equipment was"
+	para "Equipment was"
 	line "removed recently."
 	done
 
@@ -306,7 +500,7 @@ CeruleanCaveWestTerminalText:
 	done
 
 CeruleanCaveBrokenSamplesText:
-	text "Broken sample trays"
+	text "Broken samples"
 	line "litter the table."
 
 	para "Every label has"
@@ -316,7 +510,7 @@ CeruleanCaveBrokenSamplesText:
 CeruleanCaveEastTerminalText:
 	text "PROJECT MODEL:"
 
-	para "Two viable outcomes"
+	para "Two viable results"
 	line "confirmed."
 
 	para "Neither is marked"
@@ -329,7 +523,7 @@ CeruleanCaveWorkbenchText:
 	cont "and cave power."
 
 	para "No creation work"
-	line "was performed here."
+	line "happened here."
 	done
 
 CeruleanCave_MapEvents:
@@ -356,6 +550,8 @@ CeruleanCave_MapEvents:
 	bg_event  2, 30, BGEVENT_ITEM, CeruleanCaveHiddenBrightPowder
 
 	def_object_events
+	object_event 19,  2, SPRITE_PROJECT_MEW_SUBJECT, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_PINK, OBJECTTYPE_SCRIPT, 0, CeruleanCaveCounterpartScript, EVENT_CAUGHT_CERULEAN_CAVE_COUNTERPART
+	object_event  6,  4, SPRITE_GIOVANNI, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, CeruleanCaveGiovanniScript, EVENT_BEAT_GIOVANNI
 	object_event  5, 21, SPRITE_SCIENTIST, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, -1, PAL_NPC_BLUE, OBJECTTYPE_TRAINER, 0, TrainerCeruleanCaveScientistMitch, EVENT_BEAT_GIOVANNI
 	object_event  6, 28, SPRITE_SCIENTIST, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, -1, PAL_NPC_BLUE, OBJECTTYPE_TRAINER, 2, TrainerCeruleanCaveScientistRoss, EVENT_BEAT_GIOVANNI
 	object_event 18, 29, SPRITE_ROCKET, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_TRAINER, 3, TrainerCeruleanCaveGruntM1, EVENT_BEAT_GIOVANNI

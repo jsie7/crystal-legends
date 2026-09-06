@@ -157,6 +157,9 @@
     "restored_species": "MEWTWO",
     "level": 70,
     "coordinate": [19, 2],
+    "sprite": "SPRITE_PROJECT_MEW_SUBJECT",
+    "movement": "SPRITEMOVEDATA_POKEMON",
+    "palette": "PAL_NPC_PINK",
     "completion_event": "EVENT_CAUGHT_CERULEAN_CAVE_COUNTERPART"
   },
   "giovanni": {
@@ -164,6 +167,8 @@
     "class_name": "ROCKET BOSS",
     "coordinate": [6, 4],
     "sprite": "SPRITE_GIOVANNI",
+    "movement": "SPRITEMOVEDATA_STANDING_DOWN",
+    "palette": "PAL_NPC_BROWN",
     "party": [[70, "PERSIAN"], [71, "DUGTRIO"], [72, "KANGASKHAN"], [73, "NIDOQUEEN"], [74, "NIDOKING"], [75, "RHYDON"]],
     "returned_event": "EVENT_GIOVANNI_RETURNED",
     "defeat_event": "EVENT_BEAT_GIOVANNI"

@@ -31,7 +31,12 @@ def phase_10_constants(repo_root: Path, tmp_path_factory, scenario: dict) -> dic
             "NUM_EVENTS", "GROUP_CERULEAN_CAVE", "MAP_CERULEAN_CAVE",
             "WARP_EVENT_SIZE", "COORD_EVENT_SIZE", "BG_EVENT_SIZE", "OBJECT_EVENT_SIZE",
             "BGEVENT_READ", "BGEVENT_ITEM", "OBJECTTYPE_TRAINER", "OBJECTTYPE_ITEMBALL",
-            "SPRITE_POKE_BALL", "FISHGROUP_CERULEAN_CAVE", "FISHGROUP_DATA_LENGTH",
+            "OBJECTTYPE_SCRIPT", "SPRITE_POKE_BALL", "SPRITE_PROJECT_MEW_SUBJECT",
+            "SPRITE_GIOVANNI", "SPRITEMOVEDATA_POKEMON", "SPRITEMOVEDATA_STANDING_DOWN",
+            "PAL_NPC_PINK", "PAL_NPC_BROWN", "MEW", "MEWTWO", "GIOVANNI", "GIOVANNI1",
+            "FISHGROUP_CERULEAN_CAVE", "FISHGROUP_DATA_LENGTH", "loadtrainer_command",
+            "loadwildmon_command", "startbattle_command", "special_command", "setevent_command",
+            "disappear_command", "reloadmapafterbattle_command",
         ]
     )
     names.extend(remnant["trainer"] for remnant in scenario["remnants"])
@@ -199,6 +204,33 @@ def test_compiled_cave_population_and_lab_records(
         constants["BG_EVENT_SIZE"],
         constants["OBJECT_EVENT_SIZE"],
     )
+    assert len(objects) == 12
+    counterpart_contract = scenario["counterpart"]
+    counterpart = next(
+        event
+        for event in objects
+        if (event.x, event.y) == tuple(counterpart_contract["coordinate"])
+    )
+    assert counterpart.sprite == constants[counterpart_contract["sprite"]]
+    assert counterpart.movement == constants[counterpart_contract["movement"]]
+    assert counterpart.palette_and_type >> 4 == constants[counterpart_contract["palette"]]
+    assert counterpart.palette_and_type & 0xF == constants["OBJECTTYPE_SCRIPT"]
+    assert counterpart.script_pointer == symbols["CeruleanCaveCounterpartScript"].address
+    assert counterpart.event_flag == constants[counterpart_contract["completion_event"]]
+
+    giovanni_contract = scenario["giovanni"]
+    giovanni = next(
+        event
+        for event in objects
+        if (event.x, event.y) == tuple(giovanni_contract["coordinate"])
+    )
+    assert giovanni.sprite == constants[giovanni_contract["sprite"]]
+    assert giovanni.movement == constants[giovanni_contract["movement"]]
+    assert giovanni.palette_and_type >> 4 == constants[giovanni_contract["palette"]]
+    assert giovanni.palette_and_type & 0xF == constants["OBJECTTYPE_SCRIPT"]
+    assert giovanni.script_pointer == symbols["CeruleanCaveGiovanniScript"].address
+    assert giovanni.event_flag == constants[giovanni_contract["defeat_event"]]
+
     script_labels = {
         "S1": "TrainerCeruleanCaveScientistMitch",
         "S2": "TrainerCeruleanCaveScientistRoss",
@@ -337,3 +369,85 @@ def test_compiled_cave_encounter_records_and_fishing_group(
             )
         )
         assert rom.at(symbols[label], len(payload)) == payload
+
+
+def test_compiled_giovanni_state_order_and_blackout_removal(
+    repo_root: Path, phase_10_constants: dict[str, int]
+) -> None:
+    constants = phase_10_constants
+    rom = RomImage.load(repo_root / "crystallegends.gbc")
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    compiled = rom.slice(
+        symbols["CeruleanCaveGiovanniScript"].rom_offset,
+        symbols["CeruleanCaveCounterpartScript"].rom_offset
+        - symbols["CeruleanCaveGiovanniScript"].rom_offset,
+    )
+    returned = bytes([constants["setevent_command"]]) + constants[
+        "EVENT_GIOVANNI_RETURNED"
+    ].to_bytes(2, "little")
+    battle = bytes(
+        [
+            constants["loadtrainer_command"],
+            constants["GIOVANNI"],
+            constants["GIOVANNI1"],
+            constants["startbattle_command"],
+        ]
+    )
+    reload_after_battle = bytes([constants["reloadmapafterbattle_command"]])
+    blackout = (
+        bytes([constants["setevent_command"]])
+        + constants["EVENT_BEAT_GIOVANNI"].to_bytes(2, "little")
+        + b"".join(
+            bytes([constants["disappear_command"], object_id])
+            for object_id in range(3, 10)
+        )
+    )
+    assert returned in compiled
+    assert battle in compiled
+    assert blackout in compiled
+    assert compiled.index(returned) < compiled.index(battle)
+    assert compiled.index(battle) < compiled.index(reload_after_battle)
+    assert compiled.index(reload_after_battle) < compiled.index(blackout)
+
+
+def test_compiled_counterpart_branches_are_level_70_and_capture_only(
+    repo_root: Path, phase_10_constants: dict[str, int], scenario: dict
+) -> None:
+    constants = phase_10_constants
+    rom = RomImage.load(repo_root / "crystallegends.gbc")
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    compiled = rom.slice(
+        symbols["CeruleanCaveCounterpartScript"].rom_offset,
+        symbols["TrainerCeruleanCaveScientistMitch"].rom_offset
+        - symbols["CeruleanCaveCounterpartScript"].rom_offset,
+    )
+    for species in (
+        scenario["counterpart"]["transformed_species"],
+        scenario["counterpart"]["restored_species"],
+    ):
+        encounter = bytes(
+            [
+                constants["loadwildmon_command"],
+                constants[species],
+                scenario["counterpart"]["level"],
+            ]
+        )
+        assert compiled.count(encounter) == 1
+
+    special_id = (
+        symbols["CheckCaughtPokemonSpecial"].address
+        - symbols["SpecialsPointers"].address
+    ) // 3
+    capture_check = bytes([constants["special_command"]]) + special_id.to_bytes(2, "little")
+    caught = (
+        bytes([constants["setevent_command"]])
+        + constants["EVENT_CAUGHT_CERULEAN_CAVE_COUNTERPART"].to_bytes(2, "little")
+        + bytes([constants["disappear_command"], 2])
+    )
+    assert capture_check in compiled
+    assert caught in compiled
+    assert compiled.index(bytes([constants["startbattle_command"]])) < compiled.index(capture_check)
+    assert compiled.index(capture_check) < compiled.index(caught)
+    assert compiled.index(caught) < compiled.index(
+        bytes([constants["reloadmapafterbattle_command"]])
+    )
