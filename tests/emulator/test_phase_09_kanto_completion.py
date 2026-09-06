@@ -1175,7 +1175,11 @@ def test_safari_common_grass_slots_start_normal_battles_with_pack_access(
         y=2,
     ) as session:
         assert session.read_symbol_bytes("wMornEncounterRate", 4) == bytes(
-            [25, 25, 25, 15]
+            rate * 255 // 100
+            for rate in (
+                *scenario["safari"]["grass"]["rates"],
+                scenario["safari"]["water"]["rate"],
+            )
         )
         session.write_symbol("wSafariBallsRemaining", 17)
         session.write_symbol_bytes("wSafariTimeRemaining", b"\x12\x34")
