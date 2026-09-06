@@ -1,0 +1,72 @@
+{
+  "scenario_id": "phase-10-giovanni-cerulean-cave",
+  "rom": "crystallegends.gbc",
+  "symbols": "crystallegends.sym",
+  "reference_rom": "pokecrystal11.gbc",
+  "reference_symbols": "pokecrystal11.sym",
+  "save_fixture": "bedroom_initialized.sav",
+  "max_frames_per_step": 60000,
+  "access": {
+    "events": ["EVENT_PROJECT_MEW_RESOLVED", "EVENT_SILVER_BIRD_RELEASED"],
+    "badge_count": 14,
+    "guard_coordinate": [38, 4],
+    "guard_sprite": "SPRITE_ROCKET",
+    "guard_facing": "SPRITEMOVEDATA_STANDING_RIGHT"
+  },
+  "map": {
+    "name": "CERULEAN_CAVE",
+    "dimensions": [15, 18],
+    "block_path": "maps/CeruleanCave.blk",
+    "block_sha256": "c3aa84a5cf7569721481670864ad14ac6939199c9f845207f3c9259d6ec3cff7",
+    "metadata": ["TILESET_CAVE", "CAVE", "LANDMARK_CERULEAN_CITY", "MUSIC_UNION_CAVE", "TRUE", "PALETTE_NITE", "FISHGROUP_CERULEAN_CAVE"],
+    "border_block": 9,
+    "exit": [21, 33, "ROUTE_4", 2]
+  },
+  "exterior": {
+    "route4_stock": "maps/Route4.blk",
+    "route4_custom": "maps/Route4CrystalLegends.blk",
+    "route4_deltas": [[39, 87, 6], [58, 97, 78], [59, 24, 10], [78, 24, 103], [79, 67, 31]],
+    "cerulean_stock": "maps/CeruleanCity.blk",
+    "cerulean_custom": "maps/CeruleanCityCrystalLegends.blk",
+    "cerulean_deltas": [[140, 67, 10], [160, 67, 31]],
+    "entrance": [38, 3, "CERULEAN_CAVE", 1],
+    "berserk_gene": [2, 12]
+  },
+  "events": {
+    "kanto": [
+      ["EVENT_GIOVANNI_RETURNED", 261],
+      ["EVENT_CAUGHT_CERULEAN_CAVE_COUNTERPART", 262],
+      ["EVENT_CERULEAN_CAVE_TWISTEDSPOON", 263],
+      ["EVENT_CERULEAN_CAVE_LUCKY_EGG", 264],
+      ["EVENT_CERULEAN_CAVE_SACRED_ASH", 265],
+      ["EVENT_CERULEAN_CAVE_MASTER_BALL", 266],
+      ["EVENT_CERULEAN_CAVE_HIDDEN_BRIGHTPOWDER", 267]
+    ],
+    "trainers": [
+      ["EVENT_BEAT_GIOVANNI", 1484],
+      ["EVENT_BEAT_CERULEAN_CAVE_SCIENTIST_1", 1485],
+      ["EVENT_BEAT_CERULEAN_CAVE_GRUNT_M_1", 1486],
+      ["EVENT_BEAT_CERULEAN_CAVE_GRUNT_F_1", 1487],
+      ["EVENT_BEAT_CERULEAN_CAVE_SCIENTIST_2", 1488],
+      ["EVENT_BEAT_CERULEAN_CAVE_GRUNT_M_2", 1489],
+      ["EVENT_BEAT_CERULEAN_CAVE_GRUNT_F_2", 1490]
+    ]
+  },
+  "counterpart": {
+    "selector": "EVENT_PROJECT_MEW_TRANSFORMED",
+    "transformed_species": "MEW",
+    "restored_species": "MEWTWO",
+    "level": 70,
+    "coordinate": [19, 2],
+    "completion_event": "EVENT_CAUGHT_CERULEAN_CAVE_COUNTERPART"
+  },
+  "giovanni": {
+    "class": "GIOVANNI",
+    "class_name": "ROCKET BOSS",
+    "coordinate": [6, 4],
+    "sprite": "SPRITE_GIOVANNI",
+    "party": [[70, "PERSIAN"], [71, "DUGTRIO"], [72, "KANGASKHAN"], [73, "NIDOQUEEN"], [74, "NIDOKING"], [75, "RHYDON"]],
+    "returned_event": "EVENT_GIOVANNI_RETURNED",
+    "defeat_event": "EVENT_BEAT_GIOVANNI"
+  }
+}

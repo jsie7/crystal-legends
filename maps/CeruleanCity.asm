@@ -87,7 +87,48 @@ CeruleanCityFisherScript:
 CeruleanCityYoungsterScript:
 	faceplayer
 	opentext
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_CAUGHT_CERULEAN_CAVE_COUNTERPART
+	iftrue .CaveComplete
+	checkevent EVENT_BEAT_GIOVANNI
+	iftrue .GiovanniDefeated
+	checkevent EVENT_GIOVANNI_RETURNED
+	iftrue .GiovanniReturned
+	checkevent EVENT_PROJECT_MEW_RESOLVED
+	iffalse .FormerCave
+	checkevent EVENT_SILVER_BIRD_RELEASED
+	iffalse .StrangeEquipment
+	readvar VAR_BADGES
+	ifless 14, .DangerousCave
+	writetext CeruleanCityYoungsterCaveOpenText
+	sjump .AfterText
+
+.StrangeEquipment:
+	writetext CeruleanCityYoungsterEquipmentText
+	sjump .AfterText
+
+.DangerousCave:
+	writetext CeruleanCityYoungsterDangerText
+	sjump .AfterText
+
+.GiovanniReturned:
+	writetext CeruleanCityYoungsterGiovanniText
+	sjump .AfterText
+
+.GiovanniDefeated:
+	writetext CeruleanCityYoungsterRocketDefeatedText
+	sjump .AfterText
+
+.CaveComplete:
+	writetext CeruleanCityYoungsterRocketDefeatedText
+	sjump .AfterText
+
+.FormerCave:
+endc
 	writetext CeruleanCityYoungsterText1
+if DEF(_CRYSTALLEGENDS)
+.AfterText:
+endc
 	waitbutton
 	closetext
 	checkevent EVENT_FOUND_BERSERK_GENE_IN_CERULEAN_CITY
@@ -225,6 +266,48 @@ CeruleanCityYoungsterText2:
 	para "My ITEMFINDER is"
 	line "responding…"
 	done
+
+if DEF(_CRYSTALLEGENDS)
+CeruleanCityYoungsterEquipmentText:
+	text "Men hauled strange"
+	line "equipment toward"
+	cont "the old cave."
+	done
+
+CeruleanCityYoungsterDangerText:
+	text "That old cave is"
+	line "open again."
+
+	para "But even KANTO's"
+	line "best TRAINERS fear"
+	cont "the #MON inside."
+	done
+
+CeruleanCityYoungsterCaveOpenText:
+	text "The old cave mouth"
+	line "is open again."
+
+	para "It's just west of"
+	line "CERULEAN."
+	done
+
+CeruleanCityYoungsterGiovanniText:
+	text "They say GIOVANNI"
+	line "has returned."
+
+	para "He went into that"
+	line "old cave himself."
+	done
+
+CeruleanCityYoungsterRocketDefeatedText:
+	text "The ROCKETS fled"
+	line "from the old cave."
+
+	para "Whatever waits"
+	line "inside is still"
+	cont "there."
+	done
+endc
 
 CeruleanCitySignText:
 	text "CERULEAN CITY"

@@ -277,7 +277,18 @@ endc
 	const EVENT_DANA_GAVE_THUNDERSTONE
 	const EVENT_TULLY_GAVE_WATER_STONE
 	const EVENT_TIFFANY_GAVE_PINK_BOW
-; Unused: next 339 events
+if DEF(_CRYSTALLEGENDS)
+	const EVENT_GIOVANNI_RETURNED
+	const EVENT_CAUGHT_CERULEAN_CAVE_COUNTERPART
+	const EVENT_CERULEAN_CAVE_TWISTEDSPOON
+	const EVENT_CERULEAN_CAVE_LUCKY_EGG
+	const EVENT_CERULEAN_CAVE_SACRED_ASH
+	const EVENT_CERULEAN_CAVE_MASTER_BALL
+	const EVENT_CERULEAN_CAVE_HIDDEN_BRIGHTPOWDER
+else
+	const_skip 7 ; reserved for Crystal Legends Cerulean Cave facts
+endc
+; Unused: next 332 events
 
 	const_next 600
 ; Kurt Apricorn events
@@ -1051,7 +1062,18 @@ endc
 	const EVENT_BEAT_SAGE_GAKU
 	const EVENT_BEAT_SAGE_MASA
 	const EVENT_BEAT_SAGE_KOJI
-; Unused: next 116 events
+if DEF(_CRYSTALLEGENDS)
+	const EVENT_BEAT_GIOVANNI
+	const EVENT_BEAT_CERULEAN_CAVE_SCIENTIST_1
+	const EVENT_BEAT_CERULEAN_CAVE_GRUNT_M_1
+	const EVENT_BEAT_CERULEAN_CAVE_GRUNT_F_1
+	const EVENT_BEAT_CERULEAN_CAVE_SCIENTIST_2
+	const EVENT_BEAT_CERULEAN_CAVE_GRUNT_M_2
+	const EVENT_BEAT_CERULEAN_CAVE_GRUNT_F_2
+else
+	const_skip 7 ; reserved for Crystal Legends Cerulean Cave trainers
+endc
+; Unused: next 109 events
 
 	const_next 1600
 ; Sprite visibility flags
@@ -1524,7 +1546,7 @@ else
 	const_skip 4 ; reserved for Crystal Legends Silver bird release facts
 	const_skip 24 ; reserved for Crystal Legends Kanto completion facts
 endc
-; Unused: next 11 events
+; Unused: next 9 events
 
 	const_next 2048
 DEF NUM_EVENTS EQU const_value ; 800

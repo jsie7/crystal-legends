@@ -232,7 +232,11 @@ CinnabarIsland_Blocks:
 	endc
 
 Route4_Blocks:
+	if DEF(_CRYSTALLEGENDS)
+		INCBIN "maps/Route4CrystalLegends.blk"
+	else
 	INCBIN "maps/Route4.blk"
+	endc
 
 Route8_Blocks:
 	INCBIN "maps/Route8.blk"
@@ -304,7 +308,11 @@ ElmsLab_Blocks:
 	INCBIN "maps/ElmsLab.blk"
 
 CeruleanCity_Blocks:
+	if DEF(_CRYSTALLEGENDS)
+		INCBIN "maps/CeruleanCityCrystalLegends.blk"
+	else
 	INCBIN "maps/CeruleanCity.blk"
+	endc
 
 Route1_Blocks:
 	INCBIN "maps/Route1.blk"
@@ -635,8 +643,13 @@ BurnedTower1F_Blocks:
 BurnedTowerB1F_Blocks:
 	INCBIN "maps/BurnedTowerB1F.blk"
 
+if DEF(_CRYSTALLEGENDS)
+CeruleanCave_Blocks:
+	INCBIN "maps/CeruleanCave.blk"
+else
 BetaCaveTestMap_Blocks: ; unreferenced
 	INCBIN "maps/unused/BetaCaveTestMap.blk"
+endc
 
 MountMortar1FOutside_Blocks:
 	INCBIN "maps/MountMortar1FOutside.blk"
