@@ -1,0 +1,65 @@
+{
+  "rom": "crystallegends.gbc",
+  "symbols": "crystallegends.sym",
+  "reference_rom": "pokecrystal11.gbc",
+  "reference_symbols": "pokecrystal11.sym",
+  "save_fixture": "bedroom_initialized.sav",
+  "caught_requirement": 240,
+  "events": [
+    ["EVENT_BEAT_RED", 1491],
+    ["EVENT_BEAT_PROFESSOR_OAK", 1492]
+  ],
+  "red": {
+    "class": "RED",
+    "trainer": "RED1",
+    "party": [
+      [85, "PIKACHU", ["THUNDERBOLT", "THUNDER_WAVE", "CHARM", "QUICK_ATTACK"]],
+      [82, "ESPEON", ["PSYCHIC_M", "BITE", "MORNING_SUN", "REFLECT"]],
+      [83, "SNORLAX", ["BODY_SLAM", "EARTHQUAKE", "CURSE", "REST"]],
+      [84, "VENUSAUR", ["GIGA_DRAIN", "HIDDEN_POWER", "SLEEP_POWDER", "SYNTHESIS"]],
+      [84, "CHARIZARD", ["FLAMETHROWER", "WING_ATTACK", "EARTHQUAKE", "SUNNY_DAY"]],
+      [84, "BLASTOISE", ["SURF", "ICE_BEAM", "EARTHQUAKE", "RAIN_DANCE"]]
+    ]
+  },
+  "oak": {
+    "class": "POKEMON_PROF",
+    "parties": [
+      {
+        "trainer": "OAK_ARTICUNO_PLAYER",
+        "player_starter_event": "EVENT_GOT_ARTICUNO_FROM_ELM",
+        "starter": "CHARIZARD"
+      },
+      {
+        "trainer": "OAK_ZAPDOS_PLAYER",
+        "player_starter_event": "EVENT_GOT_ZAPDOS_FROM_ELM",
+        "starter": "VENUSAUR"
+      },
+      {
+        "trainer": "OAK_MOLTRES_PLAYER",
+        "player_starter_event": "EVENT_GOT_MOLTRES_FROM_ELM",
+        "starter": "BLASTOISE"
+      }
+    ],
+    "common": [
+      [94, "TAUROS", ["BODY_SLAM", "EARTHQUAKE", "BLIZZARD", "REST"]],
+      [95, "EXEGGUTOR", ["PSYCHIC_M", "GIGA_DRAIN", "SLEEP_POWDER", "LEECH_SEED"]],
+      [95, "ARCANINE", ["FLAMETHROWER", "EXTREMESPEED", "IRON_TAIL", "SUNNY_DAY"]],
+      [96, "GYARADOS", ["HYDRO_PUMP", "ICE_BEAM", "THUNDER", "HYPER_BEAM"]]
+    ],
+    "starter_slot": {
+      "level": 97,
+      "moves": {
+        "CHARIZARD": ["FIRE_BLAST", "WING_ATTACK", "EARTHQUAKE", "HYPER_BEAM"],
+        "VENUSAUR": ["GIGA_DRAIN", "HIDDEN_POWER", "SLEEP_POWDER", "SYNTHESIS"],
+        "BLASTOISE": ["SURF", "ICE_BEAM", "EARTHQUAKE", "REST"]
+      }
+    },
+    "ace": [100, "TYRANITAR", ["ROCK_SLIDE", "CRUNCH", "EARTHQUAKE", "FIRE_BLAST"]]
+  },
+  "post_credits": {
+    "sentinel": "SPAWN_OAK",
+    "spawn": "SPAWN_PALLET",
+    "x": 5,
+    "y": 6
+  }
+}

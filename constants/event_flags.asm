@@ -1070,10 +1070,12 @@ if DEF(_CRYSTALLEGENDS)
 	const EVENT_BEAT_CERULEAN_CAVE_SCIENTIST_2
 	const EVENT_BEAT_CERULEAN_CAVE_GRUNT_M_2
 	const EVENT_BEAT_CERULEAN_CAVE_GRUNT_F_2
+	const EVENT_BEAT_RED
+	const EVENT_BEAT_PROFESSOR_OAK
 else
-	const_skip 7 ; reserved for Crystal Legends Cerulean Cave trainers
+	const_skip 9 ; reserved for Crystal Legends Cerulean Cave trainers and endgame bosses
 endc
-; Unused: next 109 events
+; Unused: next 107 events
 
 	const_next 1600
 ; Sprite visibility flags

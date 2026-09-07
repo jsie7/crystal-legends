@@ -18,6 +18,9 @@ Red:
 	startbattle
 	dontrestartmapmusic
 	reloadmapafterbattle
+if DEF(_CRYSTALLEGENDS)
+	setevent EVENT_BEAT_RED
+endc
 	special FadeOutMusic
 	opentext
 	writetext RedLeavesText
