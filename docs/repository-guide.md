@@ -2,7 +2,7 @@
 
 This guide explains what is in the repository, how the pieces fit together, and
 where to look before changing a subsystem. It reflects the Crystal Legends fork
-state as of 2026-08-20.
+state as of 2026-09-07.
 
 ## Current project state
 
@@ -13,10 +13,9 @@ Silver branches, Oak's third-bird handoff, and minimal title-screen branding.
 
 The Phase 2 completion foundation adds the 251-species acquisition ledger,
 single-player replacements for all ten trade evolutions, renewable evolution
-items, and the post-League retryable Celebi event. Phase 9 now closes its
-reserved Kanto starter, Safari-family, and legendary-bird sources. The ledger
-still does not claim all 251 are catchable: Phase 10 owns the opposite Project
-Mew species in Cerulean Cave.
+items, and the post-League retryable Celebi event. Phase 9 closes its reserved
+Kanto starter, Safari-family, and legendary-bird sources, and Phase 10 closes
+the ledger with the opposite Project Mew species in Cerulean Cave.
 
 Phase 9's production routes are intentionally compact. Leader scripts own the
 three level-28 Kanto gifts; the Warden's granddaughter and Fuchsia tile callback
@@ -24,6 +23,15 @@ own access to one unattended `SafariZoneBeta`; and shared branch logic in
 `maps/Phase9LegendaryBirds.asm` selects the Seafoam Articuno, Generator Annex
 Zapdos, and Victory Road Moltres encounters without duplicating the Elm starter.
 Conditional Kanto, Park, and Facility assets keep all reference builds exact.
+
+Phase 10 restores one derived-access Cerulean Cave with Rocket remnants,
+Giovanni, and the branch-correct level-70 Project Mew counterpart. Phase 11
+then closes the playable endgame: Red records a durable first-victory fact,
+and Professor Oak offers a one-time final battle after Red plus at least 240
+caught species. Oak's branch-selected team, credits sentinel, Pallet return,
+and completed dialogue add no map, save field, or Hall of Fame entry. Phase 12
+owns final numeric balance; the Phase 11 SameBoy presentation matrix remains
+separate from the passing automated gate.
 
 The Phase 3 bedroom-TV CHEAT MODE is also implemented in source. Its renewable
 supplies, capped money grants, and four ordinary Pokémon gifts deliberately
@@ -116,6 +124,8 @@ far calls and data-bank assumptions can introduce runtime bugs.
 | Change Phase 9 Kanto starter services | `maps/CeladonGym.asm`, `maps/CeladonCity.asm`, `maps/CeruleanGym.asm`, `maps/SeafoamGym.asm`, `maps/CinnabarIsland.asm` | `pokemon-acquisition.md`, `workflows.md`, and `decisions.md` |
 | Change the unattended Safari preserve | `maps/SafariZoneWardensHome.asm`, `maps/FuchsiaCity.asm`, `maps/SafariZoneFuchsiaGateBeta.asm`, `maps/SafariZoneBeta.asm`, `data/wild/kanto_*.asm` | `pokemon-acquisition.md` and the Phase 9 workflow |
 | Change Phase 9 legendary-bird locations or branches | `maps/Phase9LegendaryBirds.asm`, `maps/SeafoamIslandsCave.asm`, `maps/PowerPlant.asm`, `maps/PowerPlantGeneratorAnnex.asm`, `maps/VictoryRoad.asm`, `maps/OaksLab.asm` | `decisions.md`, `pokemon-acquisition.md`, and the Phase 9 scenario contract |
+| Change Phase 10 Giovanni or Cerulean Cave | `maps/CeruleanCave.asm`, `maps/Route4.asm`, `maps/CeruleanCity.asm`, `data/trainers/`, `data/wild/`, and the Cerulean map/graphics registrations | `decisions.md`, `workflows.md`, and the Phase 10 scenario contract |
+| Change Phase 11 Red, Oak, or true-ending flow | `maps/SilverCaveRoom3.asm`, `maps/OaksLab.asm`, `maps/Phase11Endgame.asm`, `maps/SilverCavePokecenter1F.asm`, `data/trainers/`, `engine/events/halloffame.asm`, `engine/menus/intro_menu.asm`, and the event/spawn constants | `decisions.md`, `workflows.md`, and `tests/fixtures/scenarios/phase_11_endgame.json` |
 | Change menus or UI behavior | `engine/menus/`, subsystem-specific menu code | `menus.md`; search for the visible label or controlling routine |
 | Change Crystal Legends CHEAT MODE | `maps/PlayersHouse2F.asm`, `maps/PlayersHouse2FDebug.asm`, `data/maps/scripts.asm` | `workflows.md`, `decisions.md`, and the neighboring event-script conventions |
 | Change battle animations | `data/moves/animations.asm`, `engine/battle_anims/`, `gfx/battle_anims/` | `battle_anim_commands.md` |

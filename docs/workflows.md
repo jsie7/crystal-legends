@@ -67,7 +67,10 @@ Phase 10 is source-complete: derived Route 4 access, the single-floor Cerulean
 Cave, Rocket remnants and rewards, Giovanni's finale, and both branch-correct
 counterpart encounters pass every automated layer. Its user-owned cave,
 dialogue, encounter, presentation, and provisional-balance review remains
-pending; Phase 11 is next.
+pending. Phase 11 is source-complete: durable Red victory, the 240-caught Oak
+challenge, all three Oak teams, the true-ending credits, Pallet return, and
+ordinary save/reload pass every automated layer. Its user-owned presentation
+and provisional-balance review remains pending; Phase 12 is next.
 
 ## Validate the Crystal Legends build
 
@@ -93,9 +96,10 @@ Phase 2 evolution/item/Celebi behavior, Phase 3 CHEAT MODE, Phase 4's three
 production-map gifts, Phase 5's three Ruins gifts and Route 14 Girafarig trade,
 Phase 6's roamer/Fast Ball contracts, and Phase 7's Project Mew story and
 branching encounter, Phase 8's Silver release and post-release chronology, and
-Phase 9's Kanto gifts, Safari preserve, and world birds, and Phase 10's
-Giovanni/Cerulean Cave finale. Rerun the narrower owning profile after a focused
-change and `make test-all` at a milestone handoff. Phase 5 keeps Kim's Route 14
+Phase 9's Kanto gifts, Safari preserve, and world birds, Phase 10's
+Giovanni/Cerulean Cave finale, and Phase 11's Red/Oak true ending. Rerun the
+narrower owning profile after a focused change and `make test-all` at a
+milestone handoff. Phase 5 keeps Kim's Route 14
 trade as Girafarig's canonical source; Phase 9 deliberately adds no wild
 Girafarig.
 
@@ -666,6 +670,73 @@ Phase 10 is source-complete but not playtest-certified until this SameBoy matrix
 is reported and any presentation failure is fixed or explicitly assigned. Its
 automated evidence does not certify visual polish, story feel, final balance, a
 full-game playthrough, or release readiness.
+
+### Validate Phase 11 Red, Oak, and the true ending
+
+Run the focused Phase 11 layers while editing, then the clean handoff gate:
+
+```bash
+make crystallegends pokecrystal11.gbc
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/static/test_phase_11_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/rom/test_phase_11_regressions.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/emulator/test_phase_11_endgame.py
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest -m phase11
+make clean
+make test-all
+rgbfix -v crystallegends.gbc
+git diff --check
+git status --short
+shasum -a 256 crystallegends.gbc
+```
+
+The accepted automated boundary on 2026-09-07 is:
+
+- implementation and hardening commits `857ccc289` through `0a9e0e9be`;
+- 39 focused Phase 11 tests: 10 static, 7 compiled-ROM, and 22
+  production-ROM emulator cases;
+- 537 complete-gate tests: 145 static, 87 compiled-ROM, and 305 emulator cases;
+- all six upstream reference artifacts reproduced by `make compare`;
+- ROM SHA-256
+  `43e50645d105a5020fd15d6d830304e2f4a59d359148f647face8583c4b9c7be`;
+- event IDs 1491–1492 with `NUM_EVENTS`, WRAM, SRAM, and the save-layout
+  fingerprint unchanged;
+- reviewed Phase 11 bank reserves: ROMX `$0b=$104d`, `$0e=$0436`,
+  `$21=$16fc`, `$22=$05dc`, `$63=$0bb0`, `$66=$046d`, `$6b=$1371`, and
+  `$6c=$05cf`.
+
+Automation owns Red's exact provisional party, loss/victory state order,
+durable completion, rematch visibility, heal, credits, and Mt. Silver return.
+It also owns Oak's exact `Red + at least 240 caught` truth table, multiple
+240-species omission sets, all three starter-selected teams, invalid-state
+protection, decline/loss retry, one-time victory, party heal, unchanged Hall of
+Fame count, full credits, Pallet return, ordinary save/reload persistence, and
+permanent completed dialogue. Static and compiled-ROM contracts additionally
+own event IDs, reference isolation, trainer data, map/object preservation,
+bank-local win/loss text, save layout, and linker floors. A short reference-ROM
+runtime scenario confirms stock Oak rating and stock Red credits behavior.
+
+For playtest certification, use SameBoy with a backed-up or disposable save and
+record the exact version, ROM commit/hash, date, legendary starter branch,
+caught count, and pass/fail result. Manually confirm:
+
+1. Fight Red, lose once, then win. Review the iconic six-member identity,
+   provisional levels/moves/AI, Full Restores, silent presentation, heal,
+   credits, Mt. Silver return, Pokecenter hint, and later Hall of Fame rematch.
+2. Visit Oak below and at 240 caught both before and after Red. Review the stock
+   rating transition, hidden challenge discovery, optional Yes/No prompt,
+   dialogue wrapping and voice, decline behavior, and permanent completed line.
+3. Review all three Oak starter variants, portrait, palette, class/name,
+   champion music, AI/items, Tyranitar ace, loss/retry path, and provisional
+   balance. Numeric tuning belongs to Phase 12 unless the fight is broken.
+4. Win once and review the completion speech, clean credits transition and
+   pacing, Pallet return, later Oak and Mt. Silver dialogue, normal save/reset/
+   Continue, and a post-Oak Red rematch that still returns to Mt. Silver.
+
+Phase 11 is source-complete but not playtest-certified until this SameBoy matrix
+is reported and any presentation failure is fixed or explicitly assigned. Its
+automated evidence does not certify visual polish, dialogue tone, audio,
+credits pacing, final balance, a natural 240-species playthrough, or release
+readiness. Phase 12 owns the complete difficulty curve.
 
 ### Battery-save and scenario fixtures
 

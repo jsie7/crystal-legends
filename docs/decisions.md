@@ -505,3 +505,38 @@ occupies Pics 18 in bank `$59`; lossless custom-only Omastar back-picture
 compression creates the three pointer bytes while keeping the picture in its
 original bank. The finalized bank floors and reproduction commands are owned by
 the same workflow.
+
+## 2026-09-07 — Close the endgame with durable Red and one-time Oak victories
+
+Crystal Legends keeps Red at Mt. Silver with Pikachu, Espeon, Snorlax,
+Venusaur, Charizard, and Blastoise, but raises his provisional endgame party to
+levels 82–85 with max class DVs. `EVENT_RED_IN_MT_SILVER` remains only the
+current object-visibility flag so later Hall of Fame clears can restore a Red
+rematch. New event 1491, `EVENT_BEAT_RED`, records the first successful victory
+permanently and is never cleared by rematch setup.
+
+After Mt. Silver opens, Oak continues to run the stock Pokédex rating before
+the new state response. His only live unlock is `EVENT_BEAT_RED` plus at least
+240 of 251 caught species; no legendary, starter, Ruins, Giovanni, Project Mew,
+or other story fact is an additional requirement. Declining or losing changes
+nothing. Oak uses the existing `POKEMON_PROF` presentation with two Full
+Restores, full leader-grade AI, max DVs, and Champion music. Three level-94-to-
+100 parties select Charizard for an Articuno player, Venusaur for a Zapdos
+player, or Blastoise for a Moltres player; all finish with Tyranitar. The exact
+levels and moves are provisional inputs to Phase 12, while the identities and
+branch mapping are story locks.
+
+Successful Oak victory alone sets event 1492,
+`EVENT_BEAT_PROFESSOR_OAK`, then gives completion dialogue, heals the party,
+and invokes the existing full credits without adding a Hall of Fame record. A
+transient Crystal Legends-only `SPAWN_OAK` selector preserves the Oak ending
+through `RedCredits`, returns to the existing Pallet Town spawn, and clears
+itself. Later Red rematches still select the Mt. Silver return. Credits do not
+autosave; the player resumes in Pallet and may save normally, after which both
+victory facts and Oak's permanent completion dialogue persist.
+
+The two events occupy trainer-gap IDs 1491–1492. `NUM_EVENTS`, WRAM, SRAM, the
+save-layout fingerprint, map geometry, and all reference builds remain
+unchanged. Pre-Phase-11 saves therefore begin with both formerly unused bits
+clear. Presentation, dialogue, credits pacing, and provisional boss balance
+remain a separate user-owned SameBoy gate; Phase 12 owns final numeric tuning.
