@@ -88,6 +88,11 @@ else
 endc
 
 	trainerclass POKEMON_PROF ; a
+if DEF(_CRYSTALLEGENDS)
+	const OAK_ARTICUNO_PLAYER
+	const OAK_ZAPDOS_PLAYER
+	const OAK_MOLTRES_PLAYER
+endc
 
 	trainerclass WILL ; b
 	const WILL1

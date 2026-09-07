@@ -88,6 +88,10 @@ PlayBattleMusic:
 
 .trainermusic
 	ld de, MUSIC_CHAMPION_BATTLE
+if DEF(_CRYSTALLEGENDS)
+	cp POKEMON_PROF
+	jr z, .done
+endc
 	cp CHAMPION
 	jr z, .done
 	cp RED

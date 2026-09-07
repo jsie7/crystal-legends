@@ -497,6 +497,7 @@ INCLUDE "maps/RadioTowerTransmitterAnnex.asm"
 INCLUDE "maps/SeafoamIslandsCave.asm"
 INCLUDE "maps/PowerPlantGeneratorAnnex.asm"
 INCLUDE "maps/CeruleanCave.asm"
+INCLUDE "maps/Phase11Endgame.asm"
 endc
 
 ENDSECTION

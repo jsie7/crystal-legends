@@ -29,6 +29,9 @@ Oak:
 	sjump .AhGood
 
 .CheckPokedex:
+if DEF(_CRYSTALLEGENDS)
+	farsjump Phase11OakEndgameScript
+else
 	writetext OakLabDexCheckText
 	waitbutton
 	special ProfOaksPCBoot
@@ -36,6 +39,7 @@ Oak:
 	waitbutton
 	closetext
 	end
+endc
 
 .OpenMtSilver:
 	writetext OakOpenMtSilverText
