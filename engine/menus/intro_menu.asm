@@ -468,9 +468,21 @@ FinishContinueFunction:
 	set SHOWN_MAP_NAME_SIGN, [hl]
 	farcall OverworldLoop
 	ld a, [wSpawnAfterChampion]
+if DEF(_CRYSTALLEGENDS)
+	cp SPAWN_OAK
+	jr z, .AfterOak
+endc
 	cp SPAWN_RED
 	jr z, .AfterRed
 	jp Reset
+
+if DEF(_CRYSTALLEGENDS)
+.AfterOak:
+	ld a, SPAWN_PALLET
+	ld [wDefaultSpawnpoint], a
+	call PostCreditsSpawn
+	jr .loop
+endc
 
 .AfterRed:
 	call SpawnAfterRed

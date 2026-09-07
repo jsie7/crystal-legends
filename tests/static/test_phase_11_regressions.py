@@ -219,3 +219,85 @@ def test_oak_endgame_state_machine_uses_only_red_and_caught_count(
     )
     assert endgame.count("startbattle") == 1
     assert scenario["caught_requirement"] == 240
+
+
+def test_oak_true_ending_reuses_credits_and_returns_to_pallet(
+    repo_root: Path, scenario: dict
+) -> None:
+    constants = _active_code(repo_root / "constants/ram_constants.asm", CRYSTAL_LEGENDS)
+    reference_constants = _active_code(repo_root / "constants/ram_constants.asm", REFERENCE)
+    assert "DEF SPAWN_OAK   EQU 3" in constants
+    assert not any("SPAWN_OAK" in line for line in reference_constants)
+
+    hall = _active_code(repo_root / "engine/events/halloffame.asm", CRYSTAL_LEGENDS)
+    prepare = hall.index("Phase11PrepareOakCredits::")
+    assert hall[prepare : prepare + 4] == [
+        "Phase11PrepareOakCredits::",
+        "ld a, SPAWN_OAK",
+        "ld [wSpawnAfterChampion], a",
+        "ret",
+    ]
+    red = hall.index("RedCredits::")
+    ready = hall.index(".spawn_ready", red)
+    assert hall[ready - 5 : ready] == [
+        "ld a, [wSpawnAfterChampion]",
+        "cp SPAWN_OAK",
+        "jr z, .spawn_ready",
+        "ld a, SPAWN_RED",
+        "ld [wSpawnAfterChampion], a",
+    ]
+
+    intro = [
+        line.split(";", 1)[0].strip()
+        for line in (repo_root / "engine/menus/intro_menu.asm").read_text().splitlines()
+        if line.split(";", 1)[0].strip()
+    ]
+    after_oak = intro.index(".AfterOak:")
+    assert intro[after_oak : after_oak + 5] == [
+        ".AfterOak:",
+        "ld a, SPAWN_PALLET",
+        "ld [wDefaultSpawnpoint], a",
+        "call PostCreditsSpawn",
+        "jr .loop",
+    ]
+    assert intro[after_oak + 6] == ".AfterRed:"
+
+    endgame = _active_code(repo_root / "maps/Phase11Endgame.asm", CRYSTAL_LEGENDS)
+    assert "halloffame" not in endgame
+    ordered = [
+        "setevent EVENT_BEAT_PROFESSOR_OAK",
+        "writetext Phase11OakCompletionText",
+        "special HealParty",
+        "reanchormap",
+        "callasm Phase11PrepareOakCredits",
+        "credits",
+    ]
+    position = -1
+    for line in ordered:
+        position = endgame.index(line, position + 1)
+    assert scenario["post_credits"]["spawn"] == "SPAWN_PALLET"
+
+
+def test_mt_silver_hint_uses_durable_endgame_facts(repo_root: Path) -> None:
+    custom = _active_code(
+        repo_root / "maps/SilverCavePokecenter1F.asm", CRYSTAL_LEGENDS
+    )
+    reference = _active_code(repo_root / "maps/SilverCavePokecenter1F.asm", REFERENCE)
+    script = custom.index("SilverCavePokecenter1FGrannyScript:")
+    assert custom[script + 1 : script + 5] == [
+        "checkevent EVENT_BEAT_PROFESSOR_OAK",
+        "iftrue .AfterOak",
+        "checkevent EVENT_BEAT_RED",
+        "iftrue .AfterRed",
+    ]
+    assert not any("EVENT_RED_IN_MT_SILVER" in line for line in custom)
+    assert not any("EVENT_BEAT_RED" in line for line in reference)
+
+
+def test_phase_11_dialogue_fits_the_standard_text_width(repo_root: Path) -> None:
+    for relative in ("maps/Phase11Endgame.asm", "maps/SilverCavePokecenter1F.asm"):
+        for line in _active_code(repo_root / relative, CRYSTAL_LEGENDS):
+            if not line.startswith(("text \"", "line \"", "cont \"", "para \"")):
+                continue
+            content = line.split('"', 1)[1].rsplit('"', 1)[0]
+            assert len(content) <= 18, f"{relative}: overlong text row {content!r}"

@@ -11,7 +11,21 @@ SilverCavePokecenter1FNurseScript:
 	jumpstd PokecenterNurseScript
 
 SilverCavePokecenter1FGrannyScript:
+if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_BEAT_PROFESSOR_OAK
+	iftrue .AfterOak
+	checkevent EVENT_BEAT_RED
+	iftrue .AfterRed
+endc
 	jumptextfaceplayer SilverCavePokecenter1FGrannyText
+
+if DEF(_CRYSTALLEGENDS)
+.AfterRed:
+	jumptextfaceplayer SilverCavePokecenter1FGrannyAfterRedText
+
+.AfterOak:
+	jumptextfaceplayer SilverCavePokecenter1FGrannyAfterOakText
+endc
 
 SilverCavePokecenter1FGrannyText:
 	text "Trainers who seek"
@@ -26,6 +40,30 @@ SilverCavePokecenter1FGrannyText:
 	para "feel they can go"
 	line "anywhere…"
 	done
+
+if DEF(_CRYSTALLEGENDS)
+SilverCavePokecenter1FGrannyAfterRedText:
+	text "PROF.OAK has sent"
+	line "word."
+
+	para "After recording at"
+	line "least 240 kinds,"
+
+	para "he hopes you'll"
+	line "visit him again."
+	done
+
+SilverCavePokecenter1FGrannyAfterOakText:
+	text "Even PROF.OAK"
+	line "recognizes your"
+	cont "mastery now."
+
+	para "With your trusted"
+	line "#MON, you truly"
+
+	para "can go anywhere…"
+	done
+endc
 
 SilverCavePokecenter1F_MapEvents:
 	db 0, 0 ; filler

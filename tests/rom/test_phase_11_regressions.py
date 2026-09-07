@@ -32,6 +32,10 @@ def phase_11_constants(repo_root: Path, tmp_path_factory, scenario: dict) -> dic
         "OAK_ZAPDOS_PLAYER",
         "OAK_MOLTRES_PLAYER",
         "FULL_RESTORE",
+        "SPAWN_OAK",
+        "SPAWN_PALLET",
+        "callasm_command",
+        "credits_command",
         "EVENT_BEAT_RED",
         "EVENT_BEAT_PROFESSOR_OAK",
     }
@@ -205,3 +209,37 @@ def test_compiled_oak_attributes_and_dvs_are_custom_only(
     assert reference.slice(
         reference_symbols["TrainerClassDVs"].rom_offset + class_index * 2, 2
     ) == bytes([0x98, 0x88])
+
+
+def test_compiled_oak_credits_selector_and_script_are_transient(
+    repo_root: Path, phase_11_constants: dict[str, int]
+) -> None:
+    assert phase_11_constants["SPAWN_OAK"] == 3
+    custom = RomImage.load(repo_root / "crystallegends.gbc")
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    prepare = symbols["Phase11PrepareOakCredits"]
+    assert custom.at(prepare, 6) == bytes(
+        [
+            0x3E,
+            phase_11_constants["SPAWN_OAK"],
+            0xEA,
+            symbols["wSpawnAfterChampion"].address & 0xFF,
+            symbols["wSpawnAfterChampion"].address >> 8,
+            0xC9,
+        ]
+    )
+
+    script = custom.slice(
+        symbols["Phase11OakEndgameScript"].rom_offset,
+        symbols["Phase11OakNeedsRedText"].rom_offset
+        - symbols["Phase11OakEndgameScript"].rom_offset,
+    )
+    call_prepare = bytes(
+        [phase_11_constants["callasm_command"], prepare.bank]
+    ) + prepare.address.to_bytes(2, "little")
+    assert script.count(call_prepare) == 1
+    assert script.count(bytes([phase_11_constants["credits_command"]])) == 1
+
+    reference_symbols = SymbolTable.parse((repo_root / "pokecrystal11.sym").read_text())
+    assert "Phase11PrepareOakCredits" not in reference_symbols
+    assert "Phase11OakEndgameScript" not in reference_symbols

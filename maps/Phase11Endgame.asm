@@ -51,6 +51,8 @@ Phase11OakEndgameScript:
 	closetext
 	special HealParty
 	reanchormap
+	callasm Phase11PrepareOakCredits
+	credits
 	end
 
 .BelowRequirement:

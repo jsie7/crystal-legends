@@ -49,12 +49,27 @@ RedCredits::
 	ld c, 8
 	call DelayFrames
 	call DisableSpriteUpdates
+if DEF(_CRYSTALLEGENDS)
+	ld a, [wSpawnAfterChampion]
+	cp SPAWN_OAK
+	jr z, .spawn_ready
+endc
 	ld a, SPAWN_RED
 	ld [wSpawnAfterChampion], a
+if DEF(_CRYSTALLEGENDS)
+.spawn_ready
+endc
 	ld a, [wStatusFlags]
 	ld b, a
 	farcall Credits
 	ret
+
+if DEF(_CRYSTALLEGENDS)
+Phase11PrepareOakCredits::
+	ld a, SPAWN_OAK
+	ld [wSpawnAfterChampion], a
+	ret
+endc
 
 HallOfFame_FadeOutMusic:
 	ld a, LOW(MUSIC_NONE)
