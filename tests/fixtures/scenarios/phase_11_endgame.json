@@ -4,7 +4,13 @@
   "reference_rom": "pokecrystal11.gbc",
   "reference_symbols": "pokecrystal11.sym",
   "save_fixture": "bedroom_initialized.sav",
+  "max_frames_per_step": 60000,
   "caught_requirement": 240,
+  "checkpoints": {
+    "oak": {"map": "OAKS_LAB", "x": 4, "y": 3, "facing": "UP"},
+    "red": {"map": "SILVER_CAVE_ROOM_3", "x": 9, "y": 11, "facing": "UP"},
+    "mt_silver_center": {"map": "SILVER_CAVE_POKECENTER_1F", "x": 2, "y": 5, "facing": "LEFT"}
+  },
   "events": [
     ["EVENT_BEAT_RED", 1491],
     ["EVENT_BEAT_PROFESSOR_OAK", 1492]

@@ -35,7 +35,18 @@ def phase_11_constants(repo_root: Path, tmp_path_factory, scenario: dict) -> dic
         "SPAWN_OAK",
         "SPAWN_PALLET",
         "callasm_command",
+        "checkevent_command",
         "credits_command",
+        "iffalse_command",
+        "ifless_command",
+        "iftrue_command",
+        "readvar_command",
+        "special_command",
+        "VAR_DEXCAUGHT",
+        "waitbutton_command",
+        "winlosstext_command",
+        "writetext_command",
+        "yesorno_command",
         "EVENT_BEAT_RED",
         "EVENT_BEAT_PROFESSOR_OAK",
     }
@@ -243,3 +254,61 @@ def test_compiled_oak_credits_selector_and_script_are_transient(
     reference_symbols = SymbolTable.parse((repo_root / "pokecrystal11.sym").read_text())
     assert "Phase11PrepareOakCredits" not in reference_symbols
     assert "Phase11OakEndgameScript" not in reference_symbols
+
+
+def test_compiled_oak_predicate_and_battle_text_banks(
+    repo_root: Path, phase_11_constants: dict[str, int]
+) -> None:
+    constants = phase_11_constants
+    rom = RomImage.load(repo_root / "crystallegends.gbc")
+    symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    offset = symbols["Phase11OakEndgameScript"].rom_offset
+
+    assert rom.u8(offset) == constants["checkevent_command"]
+    assert rom.u16le(offset + 1) == constants["EVENT_BEAT_PROFESSOR_OAK"]
+    offset += 3
+    assert rom.u8(offset) == constants["iftrue_command"]
+    assert rom.u16le(offset + 1) == symbols[
+        "Phase11OakEndgameScript.Complete"
+    ].address
+    offset += 3
+    assert rom.u8(offset) == constants["writetext_command"]
+    offset += 3
+    assert rom.u8(offset) == constants["waitbutton_command"]
+    offset += 1
+    assert rom.u8(offset) == constants["special_command"]
+    offset += 3
+    assert rom.slice(offset, 2) == bytes(
+        [constants["readvar_command"], constants["VAR_DEXCAUGHT"]]
+    )
+    offset += 2
+    assert rom.u8(offset) == constants["ifless_command"]
+    assert rom.u8(offset + 1) == 240
+    assert rom.u16le(offset + 2) == symbols[
+        "Phase11OakEndgameScript.BelowRequirement"
+    ].address
+    offset += 4
+    assert rom.u8(offset) == constants["checkevent_command"]
+    assert rom.u16le(offset + 1) == constants["EVENT_BEAT_RED"]
+    offset += 3
+    assert rom.u8(offset) == constants["iffalse_command"]
+    assert rom.u16le(offset + 1) == symbols[
+        "Phase11OakEndgameScript.ReadyBeforeRed"
+    ].address
+
+    win = symbols["Phase11OakWinText"]
+    loss = symbols["Phase11OakLossText"]
+    lab = symbols["OaksLab_MapScripts"]
+    endgame = symbols["Phase11OakEndgameScript"]
+    assert win.bank == loss.bank == lab.bank
+    assert win.bank != endgame.bank
+    battle_script = rom.slice(
+        endgame.rom_offset,
+        symbols["Phase11OakNeedsRedText"].rom_offset - endgame.rom_offset,
+    )
+    win_loss = (
+        bytes([constants["winlosstext_command"]])
+        + win.address.to_bytes(2, "little")
+        + loss.address.to_bytes(2, "little")
+    )
+    assert battle_script.count(win_loss) == 1

@@ -161,22 +161,6 @@ Phase11OakBattleStartText:
 	cont "taught you!"
 	done
 
-Phase11OakWinText:
-	text "OAK: Splendid!"
-
-	para "You surpassed my"
-	line "final test."
-	done
-
-Phase11OakLossText:
-	text "OAK: Knowledge"
-	line "grows through"
-	cont "every defeat."
-
-	para "Return when you"
-	line "are ready."
-	done
-
 Phase11OakCompletionText:
 	text "OAK: I remember"
 	line "when I first asked"

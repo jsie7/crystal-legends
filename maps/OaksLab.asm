@@ -126,6 +126,26 @@ OakLabGoodbyeText:
 	cont "come visit again."
 	done
 
+if DEF(_CRYSTALLEGENDS)
+; Win/loss text is read through the current map-script bank, so these pointers
+; must remain in Oak's Lab even though the challenge script is far-called.
+Phase11OakWinText:
+	text "OAK: Splendid!"
+
+	para "You surpassed my"
+	line "final test."
+	done
+
+Phase11OakLossText:
+	text "OAK: Knowledge"
+	line "grows through"
+	cont "every defeat."
+
+	para "Return when you"
+	line "are ready."
+	done
+endc
+
 OakOpenMtSilverText:
 	text "OAK: Wow! That's"
 	line "excellent!"

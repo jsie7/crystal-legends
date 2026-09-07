@@ -221,6 +221,16 @@ def test_oak_endgame_state_machine_uses_only_red_and_caught_count(
     assert scenario["caught_requirement"] == 240
 
 
+def test_oak_battle_result_text_stays_in_the_active_map_bank(repo_root: Path) -> None:
+    lab = _active_code(repo_root / "maps/OaksLab.asm", CRYSTAL_LEGENDS)
+    reference_lab = _active_code(repo_root / "maps/OaksLab.asm", REFERENCE)
+    endgame = _active_code(repo_root / "maps/Phase11Endgame.asm", CRYSTAL_LEGENDS)
+    for label in ("Phase11OakWinText:", "Phase11OakLossText:"):
+        assert label in lab
+        assert label not in reference_lab
+        assert label not in endgame
+
+
 def test_oak_true_ending_reuses_credits_and_returns_to_pallet(
     repo_root: Path, scenario: dict
 ) -> None:
@@ -295,8 +305,27 @@ def test_mt_silver_hint_uses_durable_endgame_facts(repo_root: Path) -> None:
 
 
 def test_phase_11_dialogue_fits_the_standard_text_width(repo_root: Path) -> None:
-    for relative in ("maps/Phase11Endgame.asm", "maps/SilverCavePokecenter1F.asm"):
-        for line in _active_code(repo_root / relative, CRYSTAL_LEGENDS):
+    lab = _active_code(repo_root / "maps/OaksLab.asm", CRYSTAL_LEGENDS)
+    phase_11_text = [
+        (
+            "maps/OaksLab.asm",
+            lab[
+                lab.index("Phase11OakWinText:") : lab.index("OakOpenMtSilverText:")
+            ],
+        ),
+        (
+            "maps/Phase11Endgame.asm",
+            _active_code(repo_root / "maps/Phase11Endgame.asm", CRYSTAL_LEGENDS),
+        ),
+        (
+            "maps/SilverCavePokecenter1F.asm",
+            _active_code(
+                repo_root / "maps/SilverCavePokecenter1F.asm", CRYSTAL_LEGENDS
+            ),
+        ),
+    ]
+    for relative, lines in phase_11_text:
+        for line in lines:
             if not line.startswith(("text \"", "line \"", "cont \"", "para \"")):
                 continue
             content = line.split('"', 1)[1].rsplit('"', 1)[0]
