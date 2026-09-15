@@ -7,7 +7,7 @@ natural-play acceptance.
 
 ## Implementation status
 
-Completed slices: A–C (contracts, Johto gyms and League).
+Completed slices: A–D (contracts, Johto gyms, League and Rockets).
 
 | Slice | Scope |
 | --- | --- |
@@ -71,3 +71,11 @@ scripts pass production-ROM checks. All seven focused data/bank checks pass;
 Lance and reference party bytes remain exact. Combined gym/League growth is
 72 bytes, leaving 1,006 bytes in bank $0e. The approved 768-byte final reserve
 is now enforced.
+
+### Rocket evidence
+
+The seven accepted Rocket parties and their exact retained/new moves are
+implemented. Fifty focused Phase 7/12 checks pass, including Project Mew upload,
+loss, victory, annex and Director cleanup. Two additional normal-map scenarios
+verify the Slowpoke Well leader and Radio Tower 4F executive. Growth is 112
+bytes so far; bank $0e retains 966 bytes.

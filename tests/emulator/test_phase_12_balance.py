@@ -18,6 +18,8 @@ CASES = [
     ('KogaGroup', 1, 'KOGAS_ROOM', 5, 8, 'KOGA', 'EVENT_KOGAS_ROOM_EXIT_OPEN'),
     ('BrunoGroup', 1, 'BRUNOS_ROOM', 5, 8, 'BRUNO', 'EVENT_BRUNOS_ROOM_EXIT_OPEN'),
     ('KarenGroup', 1, 'KARENS_ROOM', 5, 8, 'KAREN', 'EVENT_KARENS_ROOM_EXIT_OPEN'),
+    ('GruntMGroup', 1, 'SLOWPOKE_WELL_B1F', 5, 3, 'GRUNTM', 'EVENT_BEAT_ROCKET_GRUNTM_1'),
+    ('ExecutiveMGroup', 2, 'RADIO_TOWER_4F', 14, 2, 'EXECUTIVEM', 'EVENT_BEAT_ROCKET_EXECUTIVEM_2'),
 ]
 
 
@@ -27,7 +29,8 @@ def runtime_constants(repo_root, tmp_path_factory):
              'PARTYMON_STRUCT_LENGTH', 'MON_SPECIES', 'MON_MOVES', 'MON_PP',
              'MON_LEVEL', 'MON_HP', 'MON_MAXHP', 'MON_ATK', 'MON_DEF', 'MON_SPD',
              'MON_SAT', 'MON_SDF', 'TACKLE', 'SURF', 'MON_ITEM',
-             'EVENT_OLIVINE_GYM_JASMINE'}
+             'EVENT_OLIVINE_GYM_JASMINE', 'EVENT_SLOWPOKE_WELL_ROCKETS',
+             'EVENT_RADIO_TOWER_ROCKET_TAKEOVER'}
     for group, index, map_name, x, y, trainer_class, event in CASES:
         names.update((f'GROUP_{map_name}', f'MAP_{map_name}', trainer_class, event))
         if map_name.endswith('S_ROOM'):
@@ -49,6 +52,10 @@ def test_normal_trainer_script_loads_exact_party_and_completes(
     record = next(r for r in trainer_contract(repo_root)['targets']
                   if (r['group'], r['index']) == (group, index))
     events = {'EVENT_OLIVINE_GYM_JASMINE': False} if group == 'JasmineGroup' else {}
+    if map_name == 'SLOWPOKE_WELL_B1F':
+        events['EVENT_SLOWPOKE_WELL_ROCKETS'] = False
+    if map_name == 'RADIO_TOWER_4F':
+        events['EVENT_RADIO_TOWER_ROCKET_TAKEOVER'] = False
     league_room = map_name.endswith('S_ROOM')
     with loaded_phase_9_map_checkpoint(repo_root, tmp_path, constants, SCENARIO,
                                       map_name=map_name, x=x, y=16 if league_room else y,
