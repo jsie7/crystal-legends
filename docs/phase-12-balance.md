@@ -7,7 +7,7 @@ natural-play acceptance.
 
 ## Implementation status
 
-Completed slices: A–H (all named trainer scopes except Silver).
+Completed slices: A–I (the complete named-trainer scope).
 
 | Slice | Scope |
 | --- | --- |
@@ -111,3 +111,12 @@ All three Oak teams now use 84/85/85/86/87/90. Their existing moves,
 branch mapping, class settings and Tyranitar ace remain intact. The focused
 Phase 11/12 gate passes, including Red-plus-240-caught access, decline/loss
 retry, one-time victory, credits, Pallet return and later Red rematches.
+
+### Silver evidence
+
+All 21 Silver records now use the approved seven-stage progression. His bird
+levels are 5/16/22/32/40/50; Golbat remains through Mt. Moon. The bird-free
+rematch is Sneasel 48, Magneton 48, Gengar 49, Alakazam 49, Ursaring 50 and
+Crobat 52, with the ace last. All 58 focused checks pass, including all three
+release branches, rematch entrances, weekly cadence and Dragon's Den cameo.
+Named-trainer growth is exactly 248 bytes, leaving 830 bytes in bank $0e.

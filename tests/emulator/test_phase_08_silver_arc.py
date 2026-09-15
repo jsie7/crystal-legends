@@ -90,6 +90,7 @@ def phase_8_runtime_constants(repo_root: Path, tmp_path_factory) -> dict[str, in
         "MOLTRES",
         "SNEASEL",
         "CROBAT",
+        "URSARING",
         "MAGNETON",
         "GENGAR",
         "ALAKAZAM",
@@ -529,7 +530,7 @@ def test_indigo_rematch_release_weekday_and_weekly_gates(
                 branches[0]["indigo_party"]
             ]
             session.wait_until(
-                lambda current: current.read_symbol("wOTPartyCount") == 5,
+                lambda current: current.read_symbol("wOTPartyCount") == 6,
                 max_frames,
                 "complete Indigo Plateau rematch party",
             )
@@ -592,25 +593,25 @@ def test_indigo_rematch_party_music_victory_and_reload_cadence(
         ]
         session.wait_until(
             lambda current: (
-                current.read_symbol("wOTPartyCount") == 5
-                and current.read_symbol("wOTPartyMon5Level") == 46
+                current.read_symbol("wOTPartyCount") == 6
+                and current.read_symbol("wOTPartyMon6Level") == 52
             ),
             max_frames,
             "complete Indigo Plateau rematch party",
         )
-        assert session.read_symbol("wOTPartyCount") == 5
-        assert list(session.read_symbol_bytes("wOTPartySpecies", 5)) == [
+        assert session.read_symbol("wOTPartyCount") == 6
+        assert list(session.read_symbol_bytes("wOTPartySpecies", 6)) == [
             constants[name]
-            for name in ("SNEASEL", "CROBAT", "MAGNETON", "GENGAR", "ALAKAZAM")
+            for name in ("SNEASEL", "MAGNETON", "GENGAR", "ALAKAZAM", "URSARING", "CROBAT")
         ]
-        party = session.read_symbol_bytes("wOTPartyMon1", 5 * constants["PARTYMON_STRUCT_LENGTH"])
+        party = session.read_symbol_bytes("wOTPartyMon1", 6 * constants["PARTYMON_STRUCT_LENGTH"])
         assert [
             party[index * constants["PARTYMON_STRUCT_LENGTH"] + constants["MON_LEVEL"]]
-            for index in range(5)
-        ] == [45, 48, 45, 46, 46]
+            for index in range(6)
+        ] == [48, 48, 49, 49, 50, 52]
         assert not {
             constants["ARTICUNO"], constants["ZAPDOS"], constants["MOLTRES"]
-        } & set(session.read_symbol_bytes("wOTPartySpecies", 5))
+        } & set(session.read_symbol_bytes("wOTPartySpecies", 6))
         session.write_symbol("wBattleMenuCursorPosition", 1)
         advance_with_a_until(
             session,

@@ -159,7 +159,7 @@ def test_current_mt_moon_selectors_match_phase_8_branch_contract(repo_root: Path
         assert definitions[by_path[branch["rival_path"]]] == branch["mt_moon_party"]
 
 
-def test_silver_mt_moon_and_indigo_parties_remain_frozen(repo_root: Path) -> None:
+def test_silver_mt_moon_and_indigo_parties_match_phase_12(repo_root: Path) -> None:
     parties = [
         party
         for party in parse_trainer_parties(
@@ -169,25 +169,26 @@ def test_silver_mt_moon_and_indigo_parties_remain_frozen(repo_root: Path) -> Non
     ]
     assert len(parties) == 6
     bird_rows = {
-        "ARTICUNO": ("60", "ARTICUNO", "WING_ATTACK", "ICE_BEAM", "MIND_READER", "BLIZZARD"),
-        "ZAPDOS": ("60", "ZAPDOS", "DRILL_PECK", "THUNDERBOLT", "LIGHT_SCREEN", "THUNDER"),
-        "MOLTRES": ("60", "MOLTRES", "WING_ATTACK", "FLAMETHROWER", "SAFEGUARD", "SKY_ATTACK"),
+        "ARTICUNO": ("50", "ARTICUNO", "WING_ATTACK", "ICE_BEAM", "REFLECT", "AGILITY"),
+        "ZAPDOS": ("50", "ZAPDOS", "DRILL_PECK", "THUNDERBOLT", "LIGHT_SCREEN", "THUNDER_WAVE"),
+        "MOLTRES": ("50", "MOLTRES", "WING_ATTACK", "FLAMETHROWER", "SAFEGUARD", "AGILITY"),
     }
     for party, species in zip(parties[:3], ("ARTICUNO", "ZAPDOS", "MOLTRES")):
         assert len(party.members) == 6
         assert party.members[-1] == bird_rows[species]
 
     expected_rematch = (
-        ("45", "SNEASEL", "QUICK_ATTACK", "SCREECH", "FAINT_ATTACK", "FURY_CUTTER"),
-        ("48", "CROBAT", "TOXIC", "BITE", "CONFUSE_RAY", "WING_ATTACK"),
-        ("45", "MAGNETON", "THUNDER", "SONICBOOM", "THUNDER_WAVE", "SWIFT"),
-        ("46", "GENGAR", "MEAN_LOOK", "CURSE", "SHADOW_BALL", "CONFUSE_RAY"),
-        ("46", "ALAKAZAM", "RECOVER", "FUTURE_SIGHT", "PSYCHIC_M", "REFLECT"),
+        ('48', 'SNEASEL', 'STRENGTH', 'SCREECH', 'FAINT_ATTACK', 'ICY_WIND'),
+        ('48', 'MAGNETON', 'THUNDER', 'SONICBOOM', 'THUNDER_WAVE', 'SWIFT'),
+        ('49', 'GENGAR', 'MEAN_LOOK', 'CURSE', 'SHADOW_BALL', 'CONFUSE_RAY'),
+        ('49', 'ALAKAZAM', 'RECOVER', 'FUTURE_SIGHT', 'PSYCHIC_M', 'REFLECT'),
+        ('50', 'URSARING', 'FAINT_ATTACK', 'REST', 'SLASH', 'SNORE'),
+        ('52', 'CROBAT', 'TOXIC', 'BITE', 'CONFUSE_RAY', 'WING_ATTACK'),
     )
     for party in parties[3:]:
         assert party.members == expected_rematch
         assert all(member[1] not in {"ARTICUNO", "ZAPDOS", "MOLTRES"} for member in party.members)
-        assert max(int(member[0]) for member in party.members) == 48
+        assert max(int(member[0]) for member in party.members) == 52
 
     battle_music = _active_code(
         repo_root / "engine/battle/start_battle.asm", CRYSTAL_LEGENDS

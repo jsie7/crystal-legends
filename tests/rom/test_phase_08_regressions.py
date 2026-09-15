@@ -39,6 +39,7 @@ def phase_8_constants(repo_root: Path, tmp_path_factory, phase_8_contract: dict)
         "RIVAL2_2_MOLTRES",
         "SNEASEL",
         "CROBAT",
+        "URSARING",
         "MAGNETON",
         "GENGAR",
         "ALAKAZAM",
@@ -126,16 +127,16 @@ def test_compiled_silver_parties_and_numeric_slots_remain_stable(
     birds = ("ARTICUNO", "ZAPDOS", "MOLTRES")
     for party, bird in zip(parties[:3], birds):
         assert len(party) == 6
-        assert party[-1][:2] == (60, phase_8_constants[bird])
+        assert party[-1][:2] == (50, phase_8_constants[bird])
 
     expected_species = [
         phase_8_constants[name]
-        for name in ("SNEASEL", "CROBAT", "MAGNETON", "GENGAR", "ALAKAZAM")
+        for name in ("SNEASEL", "MAGNETON", "GENGAR", "ALAKAZAM", "URSARING", "CROBAT")
     ]
     for party in parties[3:]:
-        assert len(party) == 5
+        assert len(party) == 6
         assert [member[1] for member in party] == expected_species
-        assert [member[0] for member in party] == [45, 48, 45, 46, 46]
+        assert [member[0] for member in party] == [48, 48, 49, 49, 50, 52]
         assert all(member[1] not in {phase_8_constants[name] for name in birds} for member in party)
 
 
