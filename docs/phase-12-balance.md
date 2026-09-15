@@ -7,7 +7,7 @@ natural-play acceptance.
 
 ## Implementation status
 
-Completed slices: A (contracts).
+Completed slices: A (contracts), B (Johto gyms).
 
 | Slice | Scope |
 | --- | --- |
@@ -56,3 +56,10 @@ including `make test-all`, reference comparisons and bank/save-layout checks.
 Natural-play review must separately sample all three starters, four- and
 six-member parties, consecutive boss fatigue, captures and evolution timing.
 No Phase 12 playtest certification has been recorded.
+
+### Johto gym evidence
+
+All 238 source/ROM checks and three production-map battle/reward scenarios
+pass. The gym additions use exactly 48 bytes, leaving 1,030 bytes in bank $0e.
+Prepared battle outcomes verify victory scripts; natural difficulty remains
+a separate playtest gate.

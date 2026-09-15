@@ -1,6 +1,6 @@
 {
   "baseline_head": "e01d6ebe284d8a216886fc162afe53d24efa8c7c",
-  "applied_slices": [],
+  "applied_slices": ["B"],
   "expected_growth": 252,
   "baseline_reference": [
     {"group": "FalknerGroup", "index": 1, "name": "FALKNER", "trainer_type": "TRAINERTYPE_MOVES", "members": [["7", "PIDGEY", "TACKLE", "MUD_SLAP", "NO_MOVE", "NO_MOVE"], ["9", "PIDGEOTTO", "TACKLE", "MUD_SLAP", "GUST", "NO_MOVE"]]},
