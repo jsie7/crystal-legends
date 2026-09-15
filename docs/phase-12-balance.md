@@ -7,7 +7,7 @@ natural-play acceptance.
 
 ## Implementation status
 
-Completed slices: A (contracts), B (Johto gyms).
+Completed slices: A–C (contracts, Johto gyms and League).
 
 | Slice | Scope |
 | --- | --- |
@@ -63,3 +63,11 @@ All 238 source/ROM checks and three production-map battle/reward scenarios
 pass. The gym additions use exactly 48 bytes, leaving 1,030 bytes in bank $0e.
 Prepared battle outcomes verify victory scripts; natural difficulty remains
 a separate playtest gate.
+
+### League evidence
+
+The four six-member teams and their normal entrance, victory and exit-opening
+scripts pass production-ROM checks. All seven focused data/bank checks pass;
+Lance and reference party bytes remain exact. Combined gym/League growth is
+72 bytes, leaving 1,006 bytes in bank $0e. The approved 768-byte final reserve
+is now enforced.

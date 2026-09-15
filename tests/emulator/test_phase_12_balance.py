@@ -14,6 +14,10 @@ CASES = [
     ('FalknerGroup', 1, 'VIOLET_GYM', 5, 2, 'FALKNER', 'EVENT_GOT_TM31_MUD_SLAP'),
     ('JasmineGroup', 1, 'OLIVINE_GYM', 5, 4, 'JASMINE', 'EVENT_GOT_TM23_IRON_TAIL'),
     ('ClairGroup', 1, 'BLACKTHORN_GYM_1F', 5, 4, 'CLAIR', 'EVENT_BEAT_CLAIR'),
+    ('WillGroup', 1, 'WILLS_ROOM', 5, 8, 'WILL', 'EVENT_WILLS_ROOM_EXIT_OPEN'),
+    ('KogaGroup', 1, 'KOGAS_ROOM', 5, 8, 'KOGA', 'EVENT_KOGAS_ROOM_EXIT_OPEN'),
+    ('BrunoGroup', 1, 'BRUNOS_ROOM', 5, 8, 'BRUNO', 'EVENT_BRUNOS_ROOM_EXIT_OPEN'),
+    ('KarenGroup', 1, 'KARENS_ROOM', 5, 8, 'KAREN', 'EVENT_KARENS_ROOM_EXIT_OPEN'),
 ]
 
 
@@ -26,6 +30,8 @@ def runtime_constants(repo_root, tmp_path_factory):
              'EVENT_OLIVINE_GYM_JASMINE'}
     for group, index, map_name, x, y, trainer_class, event in CASES:
         names.update((f'GROUP_{map_name}', f'MAP_{map_name}', trainer_class, event))
+        if map_name.endswith('S_ROOM'):
+            names.add(f'EVENT_{map_name}_ENTRANCE_CLOSED')
         record = next(r for r in trainer_contract(repo_root)['targets']
                       if (r['group'], r['index']) == (group, index))
         for row, moves in zip(record['members'], record['moves'], strict=True):
@@ -43,8 +49,15 @@ def test_normal_trainer_script_loads_exact_party_and_completes(
     record = next(r for r in trainer_contract(repo_root)['targets']
                   if (r['group'], r['index']) == (group, index))
     events = {'EVENT_OLIVINE_GYM_JASMINE': False} if group == 'JasmineGroup' else {}
+    league_room = map_name.endswith('S_ROOM')
     with loaded_phase_9_map_checkpoint(repo_root, tmp_path, constants, SCENARIO,
-                                      map_name=map_name, x=x, y=y, events=events) as session:
+                                      map_name=map_name, x=x, y=16 if league_room else y,
+                                      events=events) as session:
+        if league_room:
+            session.wait_until(lambda current: event_is_set(
+                current, constants[f'EVENT_{map_name}_ENTRANCE_CLOSED']),
+                60000, 'normal League entrance scene')
+            wait_for_idle(session, 60000)
         prepare_battle_party(session, constants, constants['ARTICUNO'], True)
         session.write_symbol('wPartyMon1Moves', constants['SURF'])
         session.write_symbol('wPartyMon1PP', 63)
