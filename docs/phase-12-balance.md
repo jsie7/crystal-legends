@@ -7,7 +7,7 @@ natural-play acceptance.
 
 ## Implementation status
 
-Completed slices: A–G (Johto/League, Kanto leaders, cave, Giovanni and Red).
+Completed slices: A–H (all named trainer scopes except Silver).
 
 | Slice | Scope |
 | --- | --- |
@@ -104,3 +104,10 @@ uses Screech and Giovanni's Kangaskhan uses Strength. Red returns to
 approved moves. All 103 focused Phase 10/11/12 checks pass, including cave
 access, crew cleanup, counterpart retries, Red rematches and ending behavior.
 These edits add no bytes and preserve the level-70 counterpart.
+
+### Oak evidence
+
+All three Oak teams now use 84/85/85/86/87/90. Their existing moves,
+branch mapping, class settings and Tyranitar ace remain intact. The focused
+Phase 11/12 gate passes, including Red-plus-240-caught access, decline/loss
+retry, one-time victory, credits, Pallet return and later Red rematches.

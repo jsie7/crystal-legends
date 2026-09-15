@@ -47,20 +47,20 @@
       }
     ],
     "common": [
-      [94, "TAUROS", ["BODY_SLAM", "EARTHQUAKE", "BLIZZARD", "REST"]],
-      [95, "EXEGGUTOR", ["PSYCHIC_M", "GIGA_DRAIN", "SLEEP_POWDER", "LEECH_SEED"]],
-      [95, "ARCANINE", ["FLAMETHROWER", "EXTREMESPEED", "IRON_TAIL", "SUNNY_DAY"]],
-      [96, "GYARADOS", ["HYDRO_PUMP", "ICE_BEAM", "THUNDER", "HYPER_BEAM"]]
+      [84, "TAUROS", ["BODY_SLAM", "EARTHQUAKE", "BLIZZARD", "REST"]],
+      [85, "EXEGGUTOR", ["PSYCHIC_M", "GIGA_DRAIN", "SLEEP_POWDER", "LEECH_SEED"]],
+      [85, "ARCANINE", ["FLAMETHROWER", "EXTREMESPEED", "IRON_TAIL", "SUNNY_DAY"]],
+      [86, "GYARADOS", ["HYDRO_PUMP", "ICE_BEAM", "THUNDER", "HYPER_BEAM"]]
     ],
     "starter_slot": {
-      "level": 97,
+      "level": 87,
       "moves": {
         "CHARIZARD": ["FIRE_BLAST", "WING_ATTACK", "EARTHQUAKE", "HYPER_BEAM"],
         "VENUSAUR": ["GIGA_DRAIN", "HIDDEN_POWER", "SLEEP_POWDER", "SYNTHESIS"],
         "BLASTOISE": ["SURF", "ICE_BEAM", "EARTHQUAKE", "REST"]
       }
     },
-    "ace": [100, "TYRANITAR", ["ROCK_SLIDE", "CRUNCH", "EARTHQUAKE", "FIRE_BLAST"]]
+    "ace": [90, "TYRANITAR", ["ROCK_SLIDE", "CRUNCH", "EARTHQUAKE", "FIRE_BLAST"]]
   },
   "post_credits": {
     "sentinel": "SPAWN_OAK",
