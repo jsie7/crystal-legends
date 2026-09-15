@@ -164,12 +164,12 @@ def test_giovanni_trainer_class_art_and_party_are_custom_only(repo_root: Path) -
     assert parties[start : start + 9] == [
         "GiovanniGroup:",
         'db "GIOVANNI@", TRAINERTYPE_MOVES',
-        "db 70, PERSIAN,    SLASH, FAINT_ATTACK, SCREECH, THUNDER",
-        "db 71, DUGTRIO,    EARTHQUAKE, SLASH, SANDSTORM, MUD_SLAP",
-        "db 72, KANGASKHAN, RETURN, EARTHQUAKE, SHADOW_BALL, REST",
-        "db 73, NIDOQUEEN,  EARTHQUAKE, ICE_BEAM, THUNDER, BODY_SLAM",
-        "db 74, NIDOKING,   EARTHQUAKE, THUNDER, FIRE_BLAST, SURF",
-        "db 75, RHYDON,     EARTHQUAKE, ROCK_SLIDE, MEGAHORN, REST",
+        "db 60, PERSIAN, SLASH, FAINT_ATTACK, SCREECH, THUNDER",
+        "db 61, DUGTRIO, EARTHQUAKE, SLASH, SANDSTORM, MUD_SLAP",
+        "db 62, KANGASKHAN, STRENGTH, EARTHQUAKE, SHADOW_BALL, REST",
+        "db 63, NIDOQUEEN, EARTHQUAKE, ICE_BEAM, THUNDER, BODY_SLAM",
+        "db 64, NIDOKING, EARTHQUAKE, THUNDER, FIRE_BLAST, SURF",
+        "db 65, RHYDON, EARTHQUAKE, ROCK_SLIDE, MEGAHORN, REST",
         "db -1",
     ]
     assert not any("GiovanniGroup" in line for line in _active_code(repo_root / "data/trainers/parties.asm", REFERENCE))

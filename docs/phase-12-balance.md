@@ -7,7 +7,7 @@ natural-play acceptance.
 
 ## Implementation status
 
-Completed slices: A–F (Johto/League, Kanto leaders, thief and Cal).
+Completed slices: A–G (Johto/League, Kanto leaders, cave, Giovanni and Red).
 
 | Slice | Scope |
 | --- | --- |
@@ -95,3 +95,12 @@ Blue remains exact. All 133 focused Phase 9/12 checks pass, preserving starter
 services and gifts. Added runtime checks verify Sabrina and Surge, plus Cal
 55's exact natural moves, same-day refusal and unchanged saved-opponent bytes.
 The trainer-bank increase is 188 bytes, leaving 890 bytes free.
+
+### Cave and Red evidence
+
+Cave remnants use 54–60 and Giovanni uses 60/61/62/63/64/65. Ross's Magneton
+uses Screech and Giovanni's Kangaskhan uses Strength. Red returns to
+81/73/75/77/77/77 with Swift, Amnesia, Slash and Bite replacing the four
+approved moves. All 103 focused Phase 10/11/12 checks pass, including cave
+access, crew cleanup, counterpart retries, Red rematches and ending behavior.
+These edits add no bytes and preserve the level-70 counterpart.
