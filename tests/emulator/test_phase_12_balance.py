@@ -3,7 +3,7 @@ import pytest
 
 from tests.support.bedroom_scenario import event_is_set, wait_for_idle
 from tests.support.constant_resolver import resolve_constants
-from tests.support.legendary_scenario import advance_with_a_until, place_player, prepare_battle_party
+from tests.support.legendary_scenario import advance_with_a_until, place_player, prepare_battle_party, walk_steps
 from tests.support.phase_09_scenario import loaded_phase_9_map_checkpoint
 from tests.support.phase_12_data import trainer_contract
 
@@ -21,6 +21,8 @@ CASES = [
     ('GruntMGroup', 1, 'SLOWPOKE_WELL_B1F', 5, 3, 'GRUNTM', 'EVENT_BEAT_ROCKET_GRUNTM_1'),
     ('ExecutiveMGroup', 2, 'RADIO_TOWER_4F', 14, 2, 'EXECUTIVEM', 'EVENT_BEAT_ROCKET_EXECUTIVEM_2'),
     ('BlackbeltGroup', 6, 'MOUNT_MORTAR_B1F', 16, 5, 'BLACKBELT_T', 'EVENT_BEAT_BLACKBELT_KIYO'),
+    ('SabrinaGroup', 1, 'SAFFRON_GYM', 9, 9, 'SABRINA', 'EVENT_BEAT_SABRINA'),
+    ('LtSurgeGroup', 1, 'VERMILION_GYM', 5, 3, 'LT_SURGE', 'EVENT_BEAT_LTSURGE'),
 ]
 
 
@@ -32,6 +34,12 @@ def runtime_constants(repo_root, tmp_path_factory):
              'MON_SAT', 'MON_SDF', 'TACKLE', 'SURF', 'MON_ITEM',
              'EVENT_OLIVINE_GYM_JASMINE', 'EVENT_SLOWPOKE_WELL_ROCKETS',
              'EVENT_RADIO_TOWER_ROCKET_TAKEOVER', 'EVENT_GOT_TYROGUE_FROM_KIYO', 'TYROGUE'}
+    names.update(('GROUP_TRAINER_HOUSE_B1F', 'MAP_TRAINER_HOUSE_B1F', 'CAL', 'CAL3',
+                  'DAILYFLAGS1_TRAINER_HOUSE_F'))
+    cal = next(r for r in trainer_contract(repo_root)['targets'] if r['title'].startswith('Cal ('))
+    for row, moves in zip(cal['members'], cal['moves'], strict=True):
+        names.add(row[1])
+        names.update(moves)
     for group, index, map_name, x, y, trainer_class, event in CASES:
         names.update((f'GROUP_{map_name}', f'MAP_{map_name}', trainer_class, event))
         if map_name.endswith('S_ROOM'):
@@ -116,3 +124,53 @@ def test_normal_trainer_script_loads_exact_party_and_completes(
                             60000, f'{group} script completion')
         wait_for_idle(session, 60000)
         assert session.read_symbol('wBattleMode') == 0
+
+
+def test_default_cal_loads_natural_moves_and_keeps_daily_limit(repo_root, tmp_path, runtime_constants):
+    constants = runtime_constants
+    cal = next(r for r in trainer_contract(repo_root)['targets'] if r['title'].startswith('Cal ('))
+    with loaded_phase_9_map_checkpoint(repo_root, tmp_path, constants, SCENARIO,
+                                      map_name='TRAINER_HOUSE_B1F', x=8, y=3) as session:
+        prepare_battle_party(session, constants, constants['ARTICUNO'], True)
+        session.enable_script_tracing()
+        # Read SRAM bank zero explicitly; the CPU bus may have SRAM disabled.
+        flag = session.symbols['sMysteryGiftTrainerHouseFlag']
+        assert session.pyboy.memory[flag.bank, flag.address] == 0
+        opponent = session.symbols['sMysteryGiftTrainer']
+        length = (session.symbols['wMysteryGiftTrainerEnd'].address
+                  - session.symbols['wMysteryGiftTrainer'].address)
+
+        def saved_trainer():
+            return bytes(session.pyboy.memory[opponent.bank, opponent.address + i] for i in range(length))
+
+        saved_opponent = saved_trainer()
+        session.register_hook('ReadTrainerParty.done')
+        session.register_hook('ExitBattle')
+        session.register_hook('HasEnemyFainted',
+                              lambda current: current.write_symbol_bytes('wEnemyMonHP', b'\0\0'))
+        session.wait_for_hook('CheckMenuOW', 60000)
+        walk_steps(session, 'left', 'wXCoord', -1, 1, 60000)
+        advance_with_a_until(session, lambda current: 'ReadTrainerParty.done' in current.hook_history,
+                            60000, 'default Cal battle')
+        assert session.read_symbol('wOtherTrainerClass') == constants['CAL']
+        assert session.read_symbol('wOtherTrainerID') == constants['CAL3']
+        assert session.read_symbol('wOTPartyCount') == 3
+        for i, (row, moves) in enumerate(zip(cal['members'], cal['moves'], strict=True), 1):
+            assert session.read_symbol(f'wOTPartyMon{i}Species') == constants[row[1]]
+            assert session.read_symbol(f'wOTPartyMon{i}Level') == 55
+            assert session.read_symbol_bytes(f'wOTPartyMon{i}Moves', 4) == bytes(constants[m] for m in moves)
+        session.write_symbol('wBattleMenuCursorPosition', 1)
+        advance_with_a_until(session, lambda current: 'ExitBattle' in current.hook_history,
+                            60000, 'Cal victory')
+        advance_with_a_until(session, lambda current: current.read_symbol('wScriptMode') == 0
+                            and current.read_symbol('wBattleMode') == 0,
+                            60000, 'Cal exit movement')
+        assert session.read_symbol('wDailyFlags1') & (1 << constants['DAILYFLAGS1_TRAINER_HOUSE_F'])
+        session.wait_for_hook('CheckMenuOW', 60000)
+        place_player(session, 8, 3)
+        walk_steps(session, 'left', 'wXCoord', -1, 1, 60000)
+        advance_with_a_until(session, lambda current:
+                            'TrainerHouseReceptionistScript.FoughtTooManyTimes' in current.script_history,
+                            60000, 'same-day Cal refusal')
+        assert session.hook_history.count('ReadTrainerParty.done') == 1
+        assert saved_trainer() == saved_opponent

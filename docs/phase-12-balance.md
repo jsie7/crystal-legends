@@ -7,7 +7,7 @@ natural-play acceptance.
 
 ## Implementation status
 
-Completed slices: A–E (contracts and the complete Johto/League trainer scope).
+Completed slices: A–F (Johto/League, Kanto leaders, thief and Cal).
 
 | Slice | Scope |
 | --- | --- |
@@ -87,3 +87,11 @@ Elder Li is preserved. Source/ROM checks verify the 31-record Johto subtotal,
 132-byte growth and pooled XP increase from 91,030 to 111,497. Kiyo loads all
 three authored level-36 Hitmons and still grants level-10 Tyrogue through the
 normal reward and nickname flow. Bank $0e retains 946 bytes.
+
+### Kanto leader and training evidence
+
+The seven changed leaders, thief and default Cal use their accepted parties;
+Blue remains exact. All 133 focused Phase 9/12 checks pass, preserving starter
+services and gifts. Added runtime checks verify Sabrina and Surge, plus Cal
+55's exact natural moves, same-day refusal and unchanged saved-opponent bytes.
+The trainer-bank increase is 188 bytes, leaving 890 bytes free.
