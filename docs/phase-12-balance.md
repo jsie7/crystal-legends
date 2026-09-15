@@ -7,7 +7,8 @@ natural-play acceptance.
 
 ## Implementation status
 
-Completed slices: A–J (named trainers and Kanto wild levels).
+Completed slices: A–K. All approved gameplay/data changes are implemented;
+the clean integration gate is pending.
 
 | Slice | Scope |
 | --- | --- |
@@ -136,3 +137,19 @@ At these levels Chansey naturally has DoubleSlap/Minimize/Sing/Egg Bomb and
 Remoraid 25–29 has Lock-On/Psybeam/Aurora Beam/BubbleBeam. No wild movesets
 or global learnsets were changed. Further design changes to these sets and
 updated player-level forecasts remain outside the accepted implementation.
+
+### Ordinary Kanto evidence
+
+All 93 records implement the fixed +10 gym/+8 route policy with geographic
+caps. Species, counts and held items are preserved; Colette alone gains an
+authored Clefairy 44 set with DoubleSlap replacing Minimize. Both Jo & Zoe
+orders remain present and count as one battle. Twenty-seven focused checks
+pass, including all representative trainer scenarios and Colette's normal
+battle. The final measured growth is 252 bytes, leaving exactly 826 bytes
+free in bank $0e, 58 above the approved reserve.
+
+One branch-selected clear covers 149 listed battles from 166 source records.
+The accepted pooled XP totals are 577,396 / 577,300 / 577,375 for Articuno /
+Zapdos / Moltres, versus stock 397,101 / 397,042 / 396,628. These include
+optional encounters and Oak's victory reward, exclude additional repeats and
+wild KOs, and do not predict the player's readiness for those battles.

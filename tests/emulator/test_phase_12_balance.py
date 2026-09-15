@@ -23,6 +23,7 @@ CASES = [
     ('BlackbeltGroup', 6, 'MOUNT_MORTAR_B1F', 16, 5, 'BLACKBELT_T', 'EVENT_BEAT_BLACKBELT_KIYO'),
     ('SabrinaGroup', 1, 'SAFFRON_GYM', 9, 9, 'SABRINA', 'EVENT_BEAT_SABRINA'),
     ('LtSurgeGroup', 1, 'VERMILION_GYM', 5, 3, 'LT_SURGE', 'EVENT_BEAT_LTSURGE'),
+    ('TeacherGroup', 1, 'ROUTE_15', 30, 11, 'TEACHER', 'EVENT_BEAT_TEACHER_COLETTE'),
 ]
 
 
@@ -78,7 +79,7 @@ def test_normal_trainer_script_loads_exact_party_and_completes(
         session.write_symbol('wPartyMon1Moves', constants['SURF'])
         session.write_symbol('wPartyMon1PP', 63)
         place_player(session, x, y)
-        session.write_symbol('wPlayerDirection', constants['OW_UP'])
+        session.write_symbol('wPlayerDirection', constants['OW_DOWN'] if group == 'TeacherGroup' else constants['OW_UP'])
         captured = []
 
         def capture(current):

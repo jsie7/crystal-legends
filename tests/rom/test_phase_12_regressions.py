@@ -8,6 +8,7 @@ from tests.support.phase_12_data import (
 )
 from tests.support.rom_image import RomImage
 from tests.support.symbol_table import SymbolTable
+from tests.support.linker_map import parse_linker_map
 
 pytestmark = [pytest.mark.rom, pytest.mark.phase12]
 
@@ -39,3 +40,12 @@ def test_complete_compiled_trainer_groups_and_record_boundaries(repo_root, tmp_p
         if index + 1 < len(ordered):
             assert symbols[group].rom_offset + size == symbols[ordered[index + 1]].rom_offset, group
         cursor += size
+
+
+def test_final_trainer_bank_growth_and_reserve(repo_root):
+    contract = trainer_contract(repo_root)
+    assert set(contract['applied_slices']) == set('BCDEFGHIK')
+    usage = parse_linker_map((repo_root / 'crystallegends.map').read_text())
+    assert usage['ROMX', 14].free == 826
+    assert 1078 - usage['ROMX', 14].free == contract['expected_growth'] == 252
+    assert usage['ROMX', 14].free - 768 == 58

@@ -90,3 +90,27 @@ def test_combined_branch_selected_battles_and_experience(repo_root, starter, sto
     assert sum(xp(reference[party_key(r)]) for r in selected if party_key(r) in reference) == stock_xp
     assert sum(xp(r) for r in ordinary) == 236498
     assert sum(xp(reference[party_key(r)]) for r in ordinary) == 187154
+
+
+def test_ordinary_kanto_policy_caps_formats_and_duplicate_battle(repo_root):
+    contract = trainer_contract(repo_root)
+    reference = expected_parties(contract, False)
+    targets = {party_key(r): r for r in contract['targets'] if r['category'] == 'ordinary'}
+    policies = {party_key(r): r for r in contract['ordinary_battles']}
+    assert set(targets) - set(policies) == {('TwinsGroup', 6)}
+    policies['TwinsGroup', 6] = policies['TwinsGroup', 5]
+    reduced_increments = 0
+    for key, record in targets.items():
+        policy = policies[key]
+        old = reference[key]
+        assert record['trainer_type'] == ('TRAINERTYPE_MOVES' if key == ('TeacherGroup', 1)
+                                          else old['trainer_type'])
+        assert len(record['members']) == len(old['members'])
+        for previous, current in zip(old['members'], record['members'], strict=True):
+            assert previous[1] == current[1]
+            assert int(current[0]) == min(int(previous[0]) + policy['increment'], policy['cap'])
+            if old['trainer_type'] == 'TRAINERTYPE_ITEM':
+                assert current[2] == previous[2]
+            reduced_increments += int(current[0]) - int(previous[0]) < policy['increment']
+    assert reduced_increments == 4
+    assert targets['TwinsGroup', 5]['members'] == list(reversed(targets['TwinsGroup', 6]['members']))

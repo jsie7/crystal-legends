@@ -732,26 +732,52 @@ YoungsterGroup:
 	db -1 ; end
 
 	; YOUNGSTER (9)
+if DEF(_CRYSTALLEGENDS)
+	db "WARREN@", TRAINERTYPE_NORMAL
+	db 43, FEAROW
+	db -1 ; end
+else
 	db "WARREN@", TRAINERTYPE_NORMAL
 	db 35, FEAROW
 	db -1 ; end
+endc
 
 	; YOUNGSTER (10)
+if DEF(_CRYSTALLEGENDS)
+	db "JIMMY@", TRAINERTYPE_NORMAL
+	db 41, RATICATE
+	db 41, ARBOK
+	db -1 ; end
+else
 	db "JIMMY@", TRAINERTYPE_NORMAL
 	db 33, RATICATE
 	db 33, ARBOK
 	db -1 ; end
+endc
 
 	; YOUNGSTER (11)
+if DEF(_CRYSTALLEGENDS)
+	db "OWEN@", TRAINERTYPE_NORMAL
+	db 43, GROWLITHE
+	db -1 ; end
+else
 	db "OWEN@", TRAINERTYPE_NORMAL
 	db 35, GROWLITHE
 	db -1 ; end
+endc
 
 	; YOUNGSTER (12)
+if DEF(_CRYSTALLEGENDS)
+	db "JASON@", TRAINERTYPE_NORMAL
+	db 41, SANDSLASH
+	db 41, CROBAT
+	db -1 ; end
+else
 	db "JASON@", TRAINERTYPE_NORMAL
 	db 33, SANDSLASH
 	db 33, CROBAT
 	db -1 ; end
+endc
 
 	; YOUNGSTER (13)
 	db "JOEY@", TRAINERTYPE_MOVES
@@ -771,12 +797,21 @@ SchoolboyGroup:
 	db -1 ; end
 
 	; SCHOOLBOY (2)
+if DEF(_CRYSTALLEGENDS)
+	db "KIPP@", TRAINERTYPE_NORMAL
+	db 35, VOLTORB
+	db 35, MAGNEMITE
+	db 39, VOLTORB
+	db 39, MAGNETON
+	db -1 ; end
+else
 	db "KIPP@", TRAINERTYPE_NORMAL
 	db 27, VOLTORB
 	db 27, MAGNEMITE
 	db 31, VOLTORB
 	db 31, MAGNETON
 	db -1 ; end
+endc
 
 	; SCHOOLBOY (3)
 	db "ALAN@", TRAINERTYPE_NORMAL
@@ -784,43 +819,88 @@ SchoolboyGroup:
 	db -1 ; end
 
 	; SCHOOLBOY (4)
+if DEF(_CRYSTALLEGENDS)
+	db "JOHNNY@", TRAINERTYPE_NORMAL
+	db 37, BELLSPROUT
+	db 39, WEEPINBELL
+	db 41, VICTREEBEL
+	db -1 ; end
+else
 	db "JOHNNY@", TRAINERTYPE_NORMAL
 	db 29, BELLSPROUT
 	db 31, WEEPINBELL
 	db 33, VICTREEBEL
 	db -1 ; end
+endc
 
 	; SCHOOLBOY (5)
+if DEF(_CRYSTALLEGENDS)
+	db "DANNY@", TRAINERTYPE_NORMAL
+	db 39, JYNX
+	db 39, ELECTABUZZ
+	db 39, MAGMAR
+	db -1 ; end
+else
 	db "DANNY@", TRAINERTYPE_NORMAL
 	db 31, JYNX
 	db 31, ELECTABUZZ
 	db 31, MAGMAR
 	db -1 ; end
+endc
 
 	; SCHOOLBOY (6)
+if DEF(_CRYSTALLEGENDS)
+	db "TOMMY@", TRAINERTYPE_NORMAL
+	db 40, XATU
+	db 42, ALAKAZAM
+	db -1 ; end
+else
 	db "TOMMY@", TRAINERTYPE_NORMAL
 	db 32, XATU
 	db 34, ALAKAZAM
 	db -1 ; end
+endc
 
 	; SCHOOLBOY (7)
+if DEF(_CRYSTALLEGENDS)
+	db "DUDLEY@", TRAINERTYPE_NORMAL
+	db 43, ODDISH
+	db -1 ; end
+else
 	db "DUDLEY@", TRAINERTYPE_NORMAL
 	db 35, ODDISH
 	db -1 ; end
+endc
 
 	; SCHOOLBOY (8)
+if DEF(_CRYSTALLEGENDS)
+	db "JOE@", TRAINERTYPE_NORMAL
+	db 41, TANGELA
+	db 41, VAPOREON
+	db -1 ; end
+else
 	db "JOE@", TRAINERTYPE_NORMAL
 	db 33, TANGELA
 	db 33, VAPOREON
 	db -1 ; end
+endc
 
 	; SCHOOLBOY (9)
+if DEF(_CRYSTALLEGENDS)
+	db "BILLY@", TRAINERTYPE_NORMAL
+	db 35, PARAS
+	db 35, PARAS
+	db 35, POLIWHIRL
+	db 43, DITTO
+	db -1 ; end
+else
 	db "BILLY@", TRAINERTYPE_NORMAL
 	db 27, PARAS
 	db 27, PARAS
 	db 27, POLIWHIRL
 	db 35, DITTO
 	db -1 ; end
+endc
 
 	; SCHOOLBOY (10)
 	db "CHAD@", TRAINERTYPE_NORMAL
@@ -967,28 +1047,56 @@ BirdKeeperGroup:
 	db -1 ; end
 
 	; BIRD_KEEPER (8)
+if DEF(_CRYSTALLEGENDS)
+	db "HANK@", TRAINERTYPE_NORMAL
+	db 20, PIDGEY
+	db 42, PIDGEOT
+	db -1 ; end
+else
 	db "HANK@", TRAINERTYPE_NORMAL
 	db 12, PIDGEY
 	db 34, PIDGEOT
 	db -1 ; end
+endc
 
 	; BIRD_KEEPER (9)
+if DEF(_CRYSTALLEGENDS)
+	db "ROY@", TRAINERTYPE_NORMAL
+	db 37, FEAROW
+	db 43, FEAROW
+	db -1 ; end
+else
 	db "ROY@", TRAINERTYPE_NORMAL
 	db 29, FEAROW
 	db 35, FEAROW
 	db -1 ; end
+endc
 
 	; BIRD_KEEPER (10)
+if DEF(_CRYSTALLEGENDS)
+	db "BORIS@", TRAINERTYPE_NORMAL
+	db 38, DODUO
+	db 36, DODUO
+	db 40, DODRIO
+	db -1 ; end
+else
 	db "BORIS@", TRAINERTYPE_NORMAL
 	db 30, DODUO
 	db 28, DODUO
 	db 32, DODRIO
 	db -1 ; end
+endc
 
 	; BIRD_KEEPER (11)
+if DEF(_CRYSTALLEGENDS)
+	db "BOB@", TRAINERTYPE_NORMAL
+	db 42, NOCTOWL
+	db -1 ; end
+else
 	db "BOB@", TRAINERTYPE_NORMAL
 	db 34, NOCTOWL
 	db -1 ; end
+endc
 
 	; BIRD_KEEPER (12)
 	db "JOSE@", TRAINERTYPE_NORMAL
@@ -1008,15 +1116,28 @@ BirdKeeperGroup:
 	db -1 ; end
 
 	; BIRD_KEEPER (15)
+if DEF(_CRYSTALLEGENDS)
+	db "PERRY@", TRAINERTYPE_NORMAL
+	db 42, FARFETCH_D
+	db -1 ; end
+else
 	db "PERRY@", TRAINERTYPE_NORMAL
 	db 34, FARFETCH_D
 	db -1 ; end
+endc
 
 	; BIRD_KEEPER (16)
+if DEF(_CRYSTALLEGENDS)
+	db "BRET@", TRAINERTYPE_NORMAL
+	db 40, PIDGEOTTO
+	db 40, FEAROW
+	db -1 ; end
+else
 	db "BRET@", TRAINERTYPE_NORMAL
 	db 32, PIDGEOTTO
 	db 32, FEAROW
 	db -1 ; end
+endc
 
 	; BIRD_KEEPER (17)
 	db "JOSE@", TRAINERTYPE_MOVES
@@ -1049,11 +1170,19 @@ LassGroup:
 	db -1 ; end
 
 	; LASS (3)
+if DEF(_CRYSTALLEGENDS)
+	db "ALICE@", TRAINERTYPE_NORMAL
+	db 40, GLOOM
+	db 44, ARBOK
+	db 40, GLOOM
+	db -1 ; end
+else
 	db "ALICE@", TRAINERTYPE_NORMAL
 	db 30, GLOOM
 	db 34, ARBOK
 	db 30, GLOOM
 	db -1 ; end
+endc
 
 	; LASS (4)
 	db "KRISE@", TRAINERTYPE_NORMAL
@@ -1067,32 +1196,64 @@ LassGroup:
 	db -1 ; end
 
 	; LASS (6)
+if DEF(_CRYSTALLEGENDS)
+	db "LINDA@", TRAINERTYPE_NORMAL
+	db 40, BULBASAUR
+	db 42, IVYSAUR
+	db 44, VENUSAUR
+	db -1 ; end
+else
 	db "LINDA@", TRAINERTYPE_NORMAL
 	db 30, BULBASAUR
 	db 32, IVYSAUR
 	db 34, VENUSAUR
 	db -1 ; end
+endc
 
 	; LASS (7)
+if DEF(_CRYSTALLEGENDS)
+	db "LAURA@", TRAINERTYPE_NORMAL
+	db 36, GLOOM
+	db 39, PIDGEOTTO
+	db 39, BELLOSSOM
+	db -1 ; end
+else
 	db "LAURA@", TRAINERTYPE_NORMAL
 	db 28, GLOOM
 	db 31, PIDGEOTTO
 	db 31, BELLOSSOM
 	db -1 ; end
+endc
 
 	; LASS (8)
+if DEF(_CRYSTALLEGENDS)
+	db "SHANNON@", TRAINERTYPE_NORMAL
+	db 37, PARAS
+	db 37, PARAS
+	db 40, PARASECT
+	db -1 ; end
+else
 	db "SHANNON@", TRAINERTYPE_NORMAL
 	db 29, PARAS
 	db 29, PARAS
 	db 32, PARASECT
 	db -1 ; end
+endc
 
 	; LASS (9)
+if DEF(_CRYSTALLEGENDS)
+	db "MICHELLE@", TRAINERTYPE_NORMAL
+	db 42, SKIPLOOM
+	db 43, HOPPIP
+	db 44, JUMPLUFF
+	db -1 ; end
+else
 	db "MICHELLE@", TRAINERTYPE_NORMAL
 	db 32, SKIPLOOM
 	db 33, HOPPIP
 	db 34, JUMPLUFF
 	db -1 ; end
+endc
 
 	; LASS (10)
 	db "DANA@", TRAINERTYPE_MOVES
@@ -1101,10 +1262,17 @@ LassGroup:
 	db -1 ; end
 
 	; LASS (11)
+if DEF(_CRYSTALLEGENDS)
+	db "ELLEN@", TRAINERTYPE_NORMAL
+	db 38, WIGGLYTUFF
+	db 42, GRANBULL
+	db -1 ; end
+else
 	db "ELLEN@", TRAINERTYPE_NORMAL
 	db 30, WIGGLYTUFF
 	db 34, GRANBULL
 	db -1 ; end
+endc
 
 	; LASS (12)
 	db "CONNIE@", TRAINERTYPE_NORMAL
@@ -1268,11 +1436,19 @@ CooltrainerMGroup:
 	db -1 ; end
 
 	; COOLTRAINERM (17)
+if DEF(_CRYSTALLEGENDS)
+	db "KEVIN@", TRAINERTYPE_NORMAL
+	db 46, RHYHORN
+	db 43, CHARMELEON
+	db 43, WARTORTLE
+	db -1 ; end
+else
 	db "KEVIN@", TRAINERTYPE_NORMAL
 	db 38, RHYHORN
 	db 35, CHARMELEON
 	db 35, WARTORTLE
 	db -1 ; end
+endc
 
 	; COOLTRAINERM (18)
 	db "STEVE@", TRAINERTYPE_NORMAL
@@ -1374,10 +1550,17 @@ CooltrainerFGroup:
 	db -1 ; end
 
 	; COOLTRAINERF (14)
+if DEF(_CRYSTALLEGENDS)
+	db "QUINN@", TRAINERTYPE_NORMAL
+	db 46, IVYSAUR
+	db 46, STARMIE
+	db -1 ; end
+else
 	db "QUINN@", TRAINERTYPE_NORMAL
 	db 38, IVYSAUR
 	db 38, STARMIE
 	db -1 ; end
+endc
 
 	; COOLTRAINERF (15)
 	db "EMMA@", TRAINERTYPE_NORMAL
@@ -1495,11 +1678,19 @@ BeautyGroup:
 	db -1 ; end
 
 	; BEAUTY (14)
+if DEF(_CRYSTALLEGENDS)
+	db "JULIA@", TRAINERTYPE_NORMAL
+	db 42, PARAS
+	db 42, EXEGGCUTE
+	db 45, PARASECT
+	db -1 ; end
+else
 	db "JULIA@", TRAINERTYPE_NORMAL
 	db 32, PARAS
 	db 32, EXEGGCUTE
 	db 35, PARASECT
 	db -1 ; end
+endc
 
 	; BEAUTY (15)
 	db "THERESA@", TRAINERTYPE_NORMAL
@@ -1834,10 +2025,17 @@ GentlemanGroup:
 	db -1 ; end
 
 	; GENTLEMAN (3)
+if DEF(_CRYSTALLEGENDS)
+	db "GREGORY@", TRAINERTYPE_NORMAL
+	db 46, PIKACHU
+	db 43, FLAAFFY
+	db -1 ; end
+else
 	db "GREGORY@", TRAINERTYPE_NORMAL
 	db 37, PIKACHU
 	db 33, FLAAFFY
 	db -1 ; end
+endc
 
 	; GENTLEMAN (4)
 	db "VIRGIL@", TRAINERTYPE_NORMAL
@@ -1862,15 +2060,28 @@ SkierGroup:
 
 TeacherGroup:
 	; TEACHER (1)
+if DEF(_CRYSTALLEGENDS)
+	db "COLETTE@", TRAINERTYPE_MOVES
+	db 44, CLEFAIRY, DOUBLESLAP, DEFENSE_CURL, METRONOME, MOONLIGHT
+	db -1 ; end
+else
 	db "COLETTE@", TRAINERTYPE_NORMAL
 	db 36, CLEFAIRY
 	db -1 ; end
+endc
 
 	; TEACHER (2)
+if DEF(_CRYSTALLEGENDS)
+	db "HILLARY@", TRAINERTYPE_NORMAL
+	db 40, AIPOM
+	db 44, CUBONE
+	db -1 ; end
+else
 	db "HILLARY@", TRAINERTYPE_NORMAL
 	db 32, AIPOM
 	db 36, CUBONE
 	db -1 ; end
+endc
 
 	; TEACHER (3)
 	db "SHIRLEY@", TRAINERTYPE_NORMAL
@@ -1903,17 +2114,32 @@ BugCatcherGroup:
 	db -1 ; end
 
 	; BUG_CATCHER (2)
+if DEF(_CRYSTALLEGENDS)
+	db "ROB@", TRAINERTYPE_NORMAL
+	db 40, BEEDRILL
+	db 40, BUTTERFREE
+	db -1 ; end
+else
 	db "ROB@", TRAINERTYPE_NORMAL
 	db 32, BEEDRILL
 	db 32, BUTTERFREE
 	db -1 ; end
+endc
 
 	; BUG_CATCHER (3)
+if DEF(_CRYSTALLEGENDS)
+	db "ED@", TRAINERTYPE_NORMAL
+	db 38, BEEDRILL
+	db 38, BEEDRILL
+	db 38, BEEDRILL
+	db -1 ; end
+else
 	db "ED@", TRAINERTYPE_NORMAL
 	db 30, BEEDRILL
 	db 30, BEEDRILL
 	db 30, BEEDRILL
 	db -1 ; end
+endc
 
 	; BUG_CATCHER (4)
 	db "WADE@", TRAINERTYPE_NORMAL
@@ -1969,9 +2195,15 @@ BugCatcherGroup:
 	db -1 ; end
 
 	; BUG_CATCHER (12)
+if DEF(_CRYSTALLEGENDS)
+	db "DOUG@", TRAINERTYPE_NORMAL
+	db 42, ARIADOS
+	db -1 ; end
+else
 	db "DOUG@", TRAINERTYPE_NORMAL
 	db 34, ARIADOS
 	db -1 ; end
+endc
 
 	; BUG_CATCHER (13)
 	db "ARNIE@", TRAINERTYPE_NORMAL
@@ -2030,16 +2262,30 @@ FisherGroup:
 	db -1 ; end
 
 	; FISHER (3)
+if DEF(_CRYSTALLEGENDS)
+	db "ARNOLD@", TRAINERTYPE_NORMAL
+	db 42, TENTACRUEL
+	db -1 ; end
+else
 	db "ARNOLD@", TRAINERTYPE_NORMAL
 	db 34, TENTACRUEL
 	db -1 ; end
+endc
 
 	; FISHER (4)
+if DEF(_CRYSTALLEGENDS)
+	db "KYLE@", TRAINERTYPE_NORMAL
+	db 36, SEAKING
+	db 39, POLIWHIRL
+	db 39, SEAKING
+	db -1 ; end
+else
 	db "KYLE@", TRAINERTYPE_NORMAL
 	db 28, SEAKING
 	db 31, POLIWHIRL
 	db 31, SEAKING
 	db -1 ; end
+endc
 
 	; FISHER (5)
 	db "HENRY@", TRAINERTYPE_NORMAL
@@ -2095,25 +2341,49 @@ FisherGroup:
 	db -1 ; end
 
 	; FISHER (13)
+if DEF(_CRYSTALLEGENDS)
+	db "MARTIN@", TRAINERTYPE_NORMAL
+	db 40, REMORAID
+	db 40, REMORAID
+	db -1 ; end
+else
 	db "MARTIN@", TRAINERTYPE_NORMAL
 	db 32, REMORAID
 	db 32, REMORAID
 	db -1 ; end
+endc
 
 	; FISHER (14)
+if DEF(_CRYSTALLEGENDS)
+	db "STEPHEN@", TRAINERTYPE_NORMAL
+	db 33, MAGIKARP
+	db 33, MAGIKARP
+	db 39, QWILFISH
+	db 39, TENTACRUEL
+	db -1 ; end
+else
 	db "STEPHEN@", TRAINERTYPE_NORMAL
 	db 25, MAGIKARP
 	db 25, MAGIKARP
 	db 31, QWILFISH
 	db 31, TENTACRUEL
 	db -1 ; end
+endc
 
 	; FISHER (15)
+if DEF(_CRYSTALLEGENDS)
+	db "BARNEY@", TRAINERTYPE_NORMAL
+	db 38, GYARADOS
+	db 38, GYARADOS
+	db 38, GYARADOS
+	db -1 ; end
+else
 	db "BARNEY@", TRAINERTYPE_NORMAL
 	db 30, GYARADOS
 	db 30, GYARADOS
 	db 30, GYARADOS
 	db -1 ; end
+endc
 
 	; FISHER (16)
 	db "RALPH@", TRAINERTYPE_NORMAL
@@ -2180,10 +2450,17 @@ FisherGroup:
 
 SwimmerMGroup:
 	; SWIMMERM (1)
+if DEF(_CRYSTALLEGENDS)
+	db "HAROLD@", TRAINERTYPE_NORMAL
+	db 40, REMORAID
+	db 38, SEADRA
+	db -1 ; end
+else
 	db "HAROLD@", TRAINERTYPE_NORMAL
 	db 32, REMORAID
 	db 30, SEADRA
 	db -1 ; end
+endc
 
 	; SWIMMERM (2)
 	db "SIMON@", TRAINERTYPE_NORMAL
@@ -2266,18 +2543,34 @@ SwimmerMGroup:
 	db -1 ; end
 
 	; SWIMMERM (14)
+if DEF(_CRYSTALLEGENDS)
+	db "JEROME@", TRAINERTYPE_NORMAL
+	db 34, SEADRA
+	db 36, TENTACOOL
+	db 38, TENTACRUEL
+	db 36, GOLDEEN
+	db -1 ; end
+else
 	db "JEROME@", TRAINERTYPE_NORMAL
 	db 26, SEADRA
 	db 28, TENTACOOL
 	db 30, TENTACRUEL
 	db 28, GOLDEEN
 	db -1 ; end
+endc
 
 	; SWIMMERM (15)
+if DEF(_CRYSTALLEGENDS)
+	db "TUCKER@", TRAINERTYPE_NORMAL
+	db 38, SHELLDER
+	db 42, CLOYSTER
+	db -1 ; end
+else
 	db "TUCKER@", TRAINERTYPE_NORMAL
 	db 30, SHELLDER
 	db 34, CLOYSTER
 	db -1 ; end
+endc
 
 	; SWIMMERM (16)
 	db "RICK@", TRAINERTYPE_NORMAL
@@ -2287,16 +2580,30 @@ SwimmerMGroup:
 	db -1 ; end
 
 	; SWIMMERM (17)
+if DEF(_CRYSTALLEGENDS)
+	db "CAMERON@", TRAINERTYPE_NORMAL
+	db 42, MARILL
+	db -1 ; end
+else
 	db "CAMERON@", TRAINERTYPE_NORMAL
 	db 34, MARILL
 	db -1 ; end
+endc
 
 	; SWIMMERM (18)
+if DEF(_CRYSTALLEGENDS)
+	db "SETH@", TRAINERTYPE_NORMAL
+	db 37, QUAGSIRE
+	db 37, OCTILLERY
+	db 40, QUAGSIRE
+	db -1 ; end
+else
 	db "SETH@", TRAINERTYPE_NORMAL
 	db 29, QUAGSIRE
 	db 29, OCTILLERY
 	db 32, QUAGSIRE
 	db -1 ; end
+endc
 
 	; SWIMMERM (19)
 	db "JAMES@", TRAINERTYPE_NORMAL
@@ -2313,11 +2620,19 @@ SwimmerMGroup:
 	db -1 ; end
 
 	; SWIMMERM (21)
+if DEF(_CRYSTALLEGENDS)
+	db "PARKER@", TRAINERTYPE_NORMAL
+	db 42, HORSEA
+	db 42, HORSEA
+	db 45, SEADRA
+	db -1 ; end
+else
 	db "PARKER@", TRAINERTYPE_NORMAL
 	db 32, HORSEA
 	db 32, HORSEA
 	db 35, SEADRA
 	db -1 ; end
+endc
 
 SwimmerFGroup:
 	; SWIMMERF (1)
@@ -2382,9 +2697,15 @@ SwimmerFGroup:
 	db -1 ; end
 
 	; SWIMMERF (12)
+if DEF(_CRYSTALLEGENDS)
+	db "DAWN@", TRAINERTYPE_NORMAL
+	db 42, SEAKING
+	db -1 ; end
+else
 	db "DAWN@", TRAINERTYPE_NORMAL
 	db 34, SEAKING
 	db -1 ; end
+endc
 
 	; SWIMMERF (13)
 	db "TARA@", TRAINERTYPE_NORMAL
@@ -2392,17 +2713,32 @@ SwimmerFGroup:
 	db -1 ; end
 
 	; SWIMMERF (14)
+if DEF(_CRYSTALLEGENDS)
+	db "NICOLE@", TRAINERTYPE_NORMAL
+	db 37, MARILL
+	db 37, MARILL
+	db 40, LAPRAS
+	db -1 ; end
+else
 	db "NICOLE@", TRAINERTYPE_NORMAL
 	db 29, MARILL
 	db 29, MARILL
 	db 32, LAPRAS
 	db -1 ; end
+endc
 
 	; SWIMMERF (15)
+if DEF(_CRYSTALLEGENDS)
+	db "LORI@", TRAINERTYPE_NORMAL
+	db 40, STARMIE
+	db 40, STARMIE
+	db -1 ; end
+else
 	db "LORI@", TRAINERTYPE_NORMAL
 	db 32, STARMIE
 	db 32, STARMIE
 	db -1 ; end
+endc
 
 	; SWIMMERF (16)
 	db "JODY@", TRAINERTYPE_NORMAL
@@ -2410,23 +2746,45 @@ SwimmerFGroup:
 	db -1 ; end
 
 	; SWIMMERF (17)
+if DEF(_CRYSTALLEGENDS)
+	db "NIKKI@", TRAINERTYPE_NORMAL
+	db 36, SEEL
+	db 36, SEEL
+	db 36, SEEL
+	db 36, DEWGONG
+	db -1 ; end
+else
 	db "NIKKI@", TRAINERTYPE_NORMAL
 	db 28, SEEL
 	db 28, SEEL
 	db 28, SEEL
 	db 28, DEWGONG
 	db -1 ; end
+endc
 
 	; SWIMMERF (18)
+if DEF(_CRYSTALLEGENDS)
+	db "DIANA@", TRAINERTYPE_NORMAL
+	db 47, GOLDUCK
+	db -1 ; end
+else
 	db "DIANA@", TRAINERTYPE_NORMAL
 	db 37, GOLDUCK
 	db -1 ; end
+endc
 
 	; SWIMMERF (19)
+if DEF(_CRYSTALLEGENDS)
+	db "BRIANA@", TRAINERTYPE_NORMAL
+	db 45, SEAKING
+	db 45, SEAKING
+	db -1 ; end
+else
 	db "BRIANA@", TRAINERTYPE_NORMAL
 	db 35, SEAKING
 	db 35, SEAKING
 	db -1 ; end
+endc
 
 SailorGroup:
 	; SAILOR (1)
@@ -2540,22 +2898,43 @@ SuperNerdGroup:
 	db -1 ; end
 
 	; SUPER_NERD (6)
+if DEF(_CRYSTALLEGENDS)
+	db "SAM@", TRAINERTYPE_NORMAL
+	db 42, GRIMER
+	db 42, MUK
+	db -1 ; end
+else
 	db "SAM@", TRAINERTYPE_NORMAL
 	db 34, GRIMER
 	db 34, MUK
 	db -1 ; end
+endc
 
 	; SUPER_NERD (7)
+if DEF(_CRYSTALLEGENDS)
+	db "TOM@", TRAINERTYPE_NORMAL
+	db 40, MAGNEMITE
+	db 40, MAGNEMITE
+	db 40, MAGNEMITE
+	db -1 ; end
+else
 	db "TOM@", TRAINERTYPE_NORMAL
 	db 32, MAGNEMITE
 	db 32, MAGNEMITE
 	db 32, MAGNEMITE
 	db -1 ; end
+endc
 
 	; SUPER_NERD (8)
+if DEF(_CRYSTALLEGENDS)
+	db "PAT@", TRAINERTYPE_NORMAL
+	db 44, PORYGON
+	db -1 ; end
+else
 	db "PAT@", TRAINERTYPE_NORMAL
 	db 36, PORYGON
 	db -1 ; end
+endc
 
 	; SUPER_NERD (9)
 	db "SHAWN@", TRAINERTYPE_NORMAL
@@ -2729,12 +3108,21 @@ GuitaristGroup:
 	db -1 ; end
 
 	; GUITARIST (2)
+if DEF(_CRYSTALLEGENDS)
+	db "VINCENT@", TRAINERTYPE_NORMAL
+	db 37, MAGNEMITE
+	db 43, VOLTORB
+	db 42, MAGNEMITE
+	db 42, MAGNEMITE
+	db -1 ; end
+else
 	db "VINCENT@", TRAINERTYPE_NORMAL
 	db 27, MAGNEMITE
 	db 33, VOLTORB
 	db 32, MAGNEMITE
 	db 32, MAGNEMITE
 	db -1 ; end
+endc
 
 HikerGroup:
 	; HIKER (1)
@@ -2819,11 +3207,19 @@ HikerGroup:
 	db -1 ; end
 
 	; HIKER (13)
+if DEF(_CRYSTALLEGENDS)
+	db "TIM@", TRAINERTYPE_NORMAL
+	db 39, GRAVELER
+	db 39, GRAVELER
+	db 39, GRAVELER
+	db -1 ; end
+else
 	db "TIM@", TRAINERTYPE_NORMAL
 	db 31, GRAVELER
 	db 31, GRAVELER
 	db 31, GRAVELER
 	db -1 ; end
+endc
 
 	; HIKER (14)
 	db "NOLAND@", TRAINERTYPE_NORMAL
@@ -2832,23 +3228,45 @@ HikerGroup:
 	db -1 ; end
 
 	; HIKER (15)
+if DEF(_CRYSTALLEGENDS)
+	db "SIDNEY@", TRAINERTYPE_NORMAL
+	db 42, DUGTRIO
+	db 40, ONIX
+	db -1 ; end
+else
 	db "SIDNEY@", TRAINERTYPE_NORMAL
 	db 34, DUGTRIO
 	db 32, ONIX
 	db -1 ; end
+endc
 
 	; HIKER (16)
+if DEF(_CRYSTALLEGENDS)
+	db "KENNY@", TRAINERTYPE_NORMAL
+	db 35, SANDSLASH
+	db 37, GRAVELER
+	db 39, GOLEM
+	db 37, GRAVELER
+	db -1 ; end
+else
 	db "KENNY@", TRAINERTYPE_NORMAL
 	db 27, SANDSLASH
 	db 29, GRAVELER
 	db 31, GOLEM
 	db 29, GRAVELER
 	db -1 ; end
+endc
 
 	; HIKER (17)
+if DEF(_CRYSTALLEGENDS)
+	db "JIM@", TRAINERTYPE_NORMAL
+	db 43, MACHAMP
+	db -1 ; end
+else
 	db "JIM@", TRAINERTYPE_NORMAL
 	db 35, MACHAMP
 	db -1 ; end
+endc
 
 	; HIKER (18)
 	db "DANIEL@", TRAINERTYPE_NORMAL
@@ -2897,48 +3315,99 @@ BikerGroup:
 	db -1 ; end
 
 	; BIKER (3)
+if DEF(_CRYSTALLEGENDS)
+	db "DWAYNE@", TRAINERTYPE_NORMAL
+	db 35, KOFFING
+	db 36, KOFFING
+	db 37, KOFFING
+	db 38, KOFFING
+	db -1 ; end
+else
 	db "DWAYNE@", TRAINERTYPE_NORMAL
 	db 27, KOFFING
 	db 28, KOFFING
 	db 29, KOFFING
 	db 30, KOFFING
 	db -1 ; end
+endc
 
 	; BIKER (4)
+if DEF(_CRYSTALLEGENDS)
+	db "HARRIS@", TRAINERTYPE_NORMAL
+	db 42, FLAREON
+	db -1 ; end
+else
 	db "HARRIS@", TRAINERTYPE_NORMAL
 	db 34, FLAREON
 	db -1 ; end
+endc
 
 	; BIKER (5)
+if DEF(_CRYSTALLEGENDS)
+	db "ZEKE@", TRAINERTYPE_NORMAL
+	db 40, KOFFING
+	db 40, KOFFING
+	db -1 ; end
+else
 	db "ZEKE@", TRAINERTYPE_NORMAL
 	db 32, KOFFING
 	db 32, KOFFING
 	db -1 ; end
+endc
 
 	; BIKER (6)
+if DEF(_CRYSTALLEGENDS)
+	db "CHARLES@", TRAINERTYPE_NORMAL
+	db 38, KOFFING
+	db 38, CHARMELEON
+	db 38, WEEZING
+	db -1 ; end
+else
 	db "CHARLES@", TRAINERTYPE_NORMAL
 	db 30, KOFFING
 	db 30, CHARMELEON
 	db 30, WEEZING
 	db -1 ; end
+endc
 
 	; BIKER (7)
+if DEF(_CRYSTALLEGENDS)
+	db "RILEY@", TRAINERTYPE_NORMAL
+	db 42, WEEZING
+	db -1 ; end
+else
 	db "RILEY@", TRAINERTYPE_NORMAL
 	db 34, WEEZING
 	db -1 ; end
+endc
 
 	; BIKER (8)
+if DEF(_CRYSTALLEGENDS)
+	db "JOEL@", TRAINERTYPE_NORMAL
+	db 40, MAGMAR
+	db 40, MAGMAR
+	db -1 ; end
+else
 	db "JOEL@", TRAINERTYPE_NORMAL
 	db 32, MAGMAR
 	db 32, MAGMAR
 	db -1 ; end
+endc
 
 	; BIKER (9)
+if DEF(_CRYSTALLEGENDS)
+	db "GLENN@", TRAINERTYPE_NORMAL
+	db 36, KOFFING
+	db 38, MAGMAR
+	db 40, WEEZING
+	db -1 ; end
+else
 	db "GLENN@", TRAINERTYPE_NORMAL
 	db 28, KOFFING
 	db 30, MAGMAR
 	db 32, WEEZING
 	db -1 ; end
+endc
 
 BlaineGroup:
 	; BLAINE (1)
@@ -2982,11 +3451,19 @@ BurglarGroup:
 
 FirebreatherGroup:
 	; FIREBREATHER (1)
+if DEF(_CRYSTALLEGENDS)
+	db "OTIS@", TRAINERTYPE_NORMAL
+	db 37, MAGMAR
+	db 40, WEEZING
+	db 37, MAGMAR
+	db -1 ; end
+else
 	db "OTIS@", TRAINERTYPE_NORMAL
 	db 29, MAGMAR
 	db 32, WEEZING
 	db 29, MAGMAR
 	db -1 ; end
+endc
 
 	; FIREBREATHER (2)
 	db "DICK@", TRAINERTYPE_NORMAL
@@ -3001,10 +3478,17 @@ FirebreatherGroup:
 	db -1 ; end
 
 	; FIREBREATHER (4)
+if DEF(_CRYSTALLEGENDS)
+	db "BURT@", TRAINERTYPE_NORMAL
+	db 40, KOFFING
+	db 40, SLUGMA
+	db -1 ; end
+else
 	db "BURT@", TRAINERTYPE_NORMAL
 	db 32, KOFFING
 	db 32, SLUGMA
 	db -1 ; end
+endc
 
 	; FIREBREATHER (5)
 	db "BILL@", TRAINERTYPE_NORMAL
@@ -3047,12 +3531,21 @@ JugglerGroup:
 	db -1 ; end
 
 	; JUGGLER (3)
+if DEF(_CRYSTALLEGENDS)
+	db "HORTON@", TRAINERTYPE_NORMAL
+	db 43, ELECTRODE
+	db 43, ELECTRODE
+	db 43, ELECTRODE
+	db 43, ELECTRODE
+	db -1 ; end
+else
 	db "HORTON@", TRAINERTYPE_NORMAL
 	db 33, ELECTRODE
 	db 33, ELECTRODE
 	db 33, ELECTRODE
 	db 33, ELECTRODE
 	db -1 ; end
+endc
 
 	; JUGGLER (4)
 	db "IRWIN@", TRAINERTYPE_NORMAL
@@ -3219,21 +3712,41 @@ PsychicGroup:
 	db -1 ; end
 
 	; PSYCHIC_T (2)
+if DEF(_CRYSTALLEGENDS)
+	db "FRANKLIN@", TRAINERTYPE_NORMAL
+	db 47, KADABRA
+	db -1 ; end
+else
 	db "FRANKLIN@", TRAINERTYPE_NORMAL
 	db 37, KADABRA
 	db -1 ; end
+endc
 
 	; PSYCHIC_T (3)
+if DEF(_CRYSTALLEGENDS)
+	db "HERMAN@", TRAINERTYPE_NORMAL
+	db 38, EXEGGCUTE
+	db 38, EXEGGCUTE
+	db 38, EXEGGUTOR
+	db -1 ; end
+else
 	db "HERMAN@", TRAINERTYPE_NORMAL
 	db 30, EXEGGCUTE
 	db 30, EXEGGCUTE
 	db 30, EXEGGUTOR
 	db -1 ; end
+endc
 
 	; PSYCHIC_T (4)
+if DEF(_CRYSTALLEGENDS)
+	db "FIDEL@", TRAINERTYPE_NORMAL
+	db 42, XATU
+	db -1 ; end
+else
 	db "FIDEL@", TRAINERTYPE_NORMAL
 	db 34, XATU
 	db -1 ; end
+endc
 
 	; PSYCHIC_T (5)
 	db "GREG@", TRAINERTYPE_MOVES
@@ -3272,11 +3785,19 @@ PsychicGroup:
 	db -1 ; end
 
 	; PSYCHIC_T (11)
+if DEF(_CRYSTALLEGENDS)
+	db "JARED@", TRAINERTYPE_NORMAL
+	db 42, MR__MIME
+	db 42, EXEGGCUTE
+	db 45, EXEGGCUTE
+	db -1 ; end
+else
 	db "JARED@", TRAINERTYPE_NORMAL
 	db 32, MR__MIME
 	db 32, EXEGGCUTE
 	db 35, EXEGGCUTE
 	db -1 ; end
+endc
 
 	; PSYCHIC_T (12)
 	db "RODNEY@", TRAINERTYPE_NORMAL
@@ -3308,20 +3829,39 @@ PicnickerGroup:
 	db -1 ; end
 
 	; PICNICKER (5)
+if DEF(_CRYSTALLEGENDS)
+	db "CINDY@", TRAINERTYPE_NORMAL
+	db 44, NIDOQUEEN
+	db -1 ; end
+else
 	db "CINDY@", TRAINERTYPE_NORMAL
 	db 36, NIDOQUEEN
 	db -1 ; end
+endc
 
 	; PICNICKER (6)
+if DEF(_CRYSTALLEGENDS)
+	db "HOPE@", TRAINERTYPE_NORMAL
+	db 42, FLAAFFY
+	db -1 ; end
+else
 	db "HOPE@", TRAINERTYPE_NORMAL
 	db 34, FLAAFFY
 	db -1 ; end
+endc
 
 	; PICNICKER (7)
+if DEF(_CRYSTALLEGENDS)
+	db "SHARON@", TRAINERTYPE_NORMAL
+	db 39, FURRET
+	db 41, RAPIDASH
+	db -1 ; end
+else
 	db "SHARON@", TRAINERTYPE_NORMAL
 	db 31, FURRET
 	db 33, RAPIDASH
 	db -1 ; end
+endc
 
 	; PICNICKER (8)
 	db "DEBRA@", TRAINERTYPE_NORMAL
@@ -3355,16 +3895,30 @@ PicnickerGroup:
 	db -1 ; end
 
 	; PICNICKER (13)
+if DEF(_CRYSTALLEGENDS)
+	db "HEIDI@", TRAINERTYPE_NORMAL
+	db 40, SKIPLOOM
+	db 40, SKIPLOOM
+	db -1 ; end
+else
 	db "HEIDI@", TRAINERTYPE_NORMAL
 	db 32, SKIPLOOM
 	db 32, SKIPLOOM
 	db -1 ; end
+endc
 
 	; PICNICKER (14)
+if DEF(_CRYSTALLEGENDS)
+	db "EDNA@", TRAINERTYPE_NORMAL
+	db 38, NIDORINA
+	db 42, RAICHU
+	db -1 ; end
+else
 	db "EDNA@", TRAINERTYPE_NORMAL
 	db 30, NIDORINA
 	db 34, RAICHU
 	db -1 ; end
+endc
 
 	; PICNICKER (15)
 	db "GINA@", TRAINERTYPE_NORMAL
@@ -3390,9 +3944,15 @@ PicnickerGroup:
 	db -1 ; end
 
 	; PICNICKER (19)
+if DEF(_CRYSTALLEGENDS)
+	db "TANYA@", TRAINERTYPE_NORMAL
+	db 47, EXEGGUTOR
+	db -1 ; end
+else
 	db "TANYA@", TRAINERTYPE_NORMAL
 	db 37, EXEGGUTOR
 	db -1 ; end
+endc
 
 	; PICNICKER (20)
 	db "TIFFANY@", TRAINERTYPE_MOVES
@@ -3464,27 +4024,54 @@ CamperGroup:
 	db -1 ; end
 
 	; CAMPER (5)
+if DEF(_CRYSTALLEGENDS)
+	db "BARRY@", TRAINERTYPE_NORMAL
+	db 44, NIDOKING
+	db -1 ; end
+else
 	db "BARRY@", TRAINERTYPE_NORMAL
 	db 36, NIDOKING
 	db -1 ; end
+endc
 
 	; CAMPER (6)
+if DEF(_CRYSTALLEGENDS)
+	db "LLOYD@", TRAINERTYPE_NORMAL
+	db 42, NIDOKING
+	db -1 ; end
+else
 	db "LLOYD@", TRAINERTYPE_NORMAL
 	db 34, NIDOKING
 	db -1 ; end
+endc
 
 	; CAMPER (7)
+if DEF(_CRYSTALLEGENDS)
+	db "DEAN@", TRAINERTYPE_NORMAL
+	db 41, GOLDUCK
+	db 39, SANDSLASH
+	db -1 ; end
+else
 	db "DEAN@", TRAINERTYPE_NORMAL
 	db 33, GOLDUCK
 	db 31, SANDSLASH
 	db -1 ; end
+endc
 
 	; CAMPER (8)
+if DEF(_CRYSTALLEGENDS)
+	db "SID@", TRAINERTYPE_NORMAL
+	db 40, DUGTRIO
+	db 37, PRIMEAPE
+	db 37, POLIWRATH
+	db -1 ; end
+else
 	db "SID@", TRAINERTYPE_NORMAL
 	db 32, DUGTRIO
 	db 29, PRIMEAPE
 	db 29, POLIWRATH
 	db -1 ; end
+endc
 
 	; CAMPER (9)
 	db "HARVEY@", TRAINERTYPE_NORMAL
@@ -3548,9 +4135,15 @@ CamperGroup:
 	db -1 ; end
 
 	; CAMPER (18)
+if DEF(_CRYSTALLEGENDS)
+	db "JERRY@", TRAINERTYPE_NORMAL
+	db 46, SANDSLASH
+	db -1 ; end
+else
 	db "JERRY@", TRAINERTYPE_NORMAL
 	db 37, SANDSLASH
 	db -1 ; end
+endc
 
 	; CAMPER (19)
 	db "SPENCER@", TRAINERTYPE_NORMAL
@@ -3743,16 +4336,30 @@ MediumGroup:
 	db -1 ; end
 
 	; MEDIUM (6)
+if DEF(_CRYSTALLEGENDS)
+	db "REBECCA@", TRAINERTYPE_NORMAL
+	db 45, DROWZEE
+	db 45, HYPNO
+	db -1 ; end
+else
 	db "REBECCA@", TRAINERTYPE_NORMAL
 	db 35, DROWZEE
 	db 35, HYPNO
 	db -1 ; end
+endc
 
 	; MEDIUM (7)
+if DEF(_CRYSTALLEGENDS)
+	db "DORIS@", TRAINERTYPE_NORMAL
+	db 44, SLOWPOKE
+	db 46, SLOWBRO
+	db -1 ; end
+else
 	db "DORIS@", TRAINERTYPE_NORMAL
 	db 34, SLOWPOKE
 	db 36, SLOWBRO
 	db -1 ; end
+endc
 
 BoarderGroup:
 	; BOARDER (1)
@@ -3787,31 +4394,62 @@ PokefanMGroup:
 	db -1 ; end
 
 	; POKEFANM (3)
+if DEF(_CRYSTALLEGENDS)
 	db "ROBERT@", TRAINERTYPE_ITEM
-	db 33, QUAGSIRE,   BERRY
+	db 41, QUAGSIRE, BERRY
 	db -1 ; end
+else
+	db "ROBERT@", TRAINERTYPE_ITEM
+	db 33, QUAGSIRE, BERRY
+	db -1 ; end
+endc
 
 	; POKEFANM (4)
+if DEF(_CRYSTALLEGENDS)
 	db "JOSHUA@", TRAINERTYPE_ITEM
-	db 23, PIKACHU,    BERRY
-	db 23, PIKACHU,    BERRY
-	db 23, PIKACHU,    BERRY
-	db 23, PIKACHU,    BERRY
-	db 23, PIKACHU,    BERRY
-	db 23, PIKACHU,    BERRY
+	db 31, PIKACHU, BERRY
+	db 31, PIKACHU, BERRY
+	db 31, PIKACHU, BERRY
+	db 31, PIKACHU, BERRY
+	db 31, PIKACHU, BERRY
+	db 31, PIKACHU, BERRY
 	db -1 ; end
+else
+	db "JOSHUA@", TRAINERTYPE_ITEM
+	db 23, PIKACHU, BERRY
+	db 23, PIKACHU, BERRY
+	db 23, PIKACHU, BERRY
+	db 23, PIKACHU, BERRY
+	db 23, PIKACHU, BERRY
+	db 23, PIKACHU, BERRY
+	db -1 ; end
+endc
 
 	; POKEFANM (5)
+if DEF(_CRYSTALLEGENDS)
 	db "CARTER@", TRAINERTYPE_ITEM
-	db 29, BULBASAUR,  BERRY
-	db 29, CHARMANDER, BERRY
-	db 29, SQUIRTLE,   BERRY
+	db 37, BULBASAUR, BERRY
+	db 37, CHARMANDER, BERRY
+	db 37, SQUIRTLE, BERRY
 	db -1 ; end
+else
+	db "CARTER@", TRAINERTYPE_ITEM
+	db 29, BULBASAUR, BERRY
+	db 29, CHARMANDER, BERRY
+	db 29, SQUIRTLE, BERRY
+	db -1 ; end
+endc
 
 	; POKEFANM (6)
+if DEF(_CRYSTALLEGENDS)
 	db "TREVOR@", TRAINERTYPE_ITEM
-	db 33, PSYDUCK,    BERRY
+	db 41, PSYDUCK, BERRY
 	db -1 ; end
+else
+	db "TREVOR@", TRAINERTYPE_ITEM
+	db 33, PSYDUCK, BERRY
+	db -1 ; end
+endc
 
 	; POKEFANM (7)
 	db "BRANDON@", TRAINERTYPE_ITEM
@@ -3841,21 +4479,41 @@ PokefanMGroup:
 	db -1 ; end
 
 	; POKEFANM (12)
+if DEF(_CRYSTALLEGENDS)
 	db "ALEX@", TRAINERTYPE_ITEM
-	db 29, NIDOKING,   BERRY
-	db 29, SLOWKING,   BERRY
-	db 29, SEAKING,    BERRY
+	db 37, NIDOKING, BERRY
+	db 37, SLOWKING, BERRY
+	db 37, SEAKING, BERRY
 	db -1 ; end
+else
+	db "ALEX@", TRAINERTYPE_ITEM
+	db 29, NIDOKING, BERRY
+	db 29, SLOWKING, BERRY
+	db 29, SEAKING, BERRY
+	db -1 ; end
+endc
 
 	; POKEFANM (13)
+if DEF(_CRYSTALLEGENDS)
 	db "REX@", TRAINERTYPE_ITEM
-	db 35, PHANPY,     BERRY
+	db 43, PHANPY, BERRY
 	db -1 ; end
+else
+	db "REX@", TRAINERTYPE_ITEM
+	db 35, PHANPY, BERRY
+	db -1 ; end
+endc
 
 	; POKEFANM (14)
+if DEF(_CRYSTALLEGENDS)
 	db "ALLAN@", TRAINERTYPE_ITEM
-	db 35, TEDDIURSA,  BERRY
+	db 43, TEDDIURSA, BERRY
 	db -1 ; end
+else
+	db "ALLAN@", TRAINERTYPE_ITEM
+	db 35, TEDDIURSA, BERRY
+	db -1 ; end
+endc
 
 KimonoGirlGroup:
 	; KIMONO_GIRL (1)
@@ -3946,16 +4604,30 @@ TwinsGroup:
 	db -1 ; end
 
 	; TWINS (5)
+if DEF(_CRYSTALLEGENDS)
+	db "JO & ZOE@", TRAINERTYPE_NORMAL
+	db 45, VICTREEBEL
+	db 45, VILEPLUME
+	db -1 ; end
+else
 	db "JO & ZOE@", TRAINERTYPE_NORMAL
 	db 35, VICTREEBEL
 	db 35, VILEPLUME
 	db -1 ; end
+endc
 
 	; TWINS (6)
+if DEF(_CRYSTALLEGENDS)
+	db "JO & ZOE@", TRAINERTYPE_NORMAL
+	db 45, VILEPLUME
+	db 45, VICTREEBEL
+	db -1 ; end
+else
 	db "JO & ZOE@", TRAINERTYPE_NORMAL
 	db 35, VILEPLUME
 	db 35, VICTREEBEL
 	db -1 ; end
+endc
 
 	; TWINS (7)
 	db "MEG & PEG@", TRAINERTYPE_NORMAL
