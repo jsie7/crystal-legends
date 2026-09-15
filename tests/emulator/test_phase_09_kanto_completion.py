@@ -1199,9 +1199,9 @@ def test_safari_common_grass_slots_start_normal_battles_with_pack_access(
         assert session.read_symbol("wBattleMode") == constants["WILD_BATTLE"]
         assert session.read_symbol("wEnemyMonSpecies") == constants[species]
         assert session.read_symbol("wEnemyMonLevel") == {
-            "MANKEY": 22,
-            "MAREEP": 20,
-            "VULPIX": 24,
+            "MANKEY": 32,
+            "MAREEP": 28,
+            "VULPIX": 34,
         }[species]
         assert "SafariBattleMenu" not in session.hook_history
         assert session.read_symbol_bytes("wSafariBallsRemaining", 3) == safari_state
@@ -1242,7 +1242,7 @@ def test_safari_water_slot_uses_remoraid_in_a_normal_surf_battle(
         assert session.read_symbol("wBattleType") == constants["BATTLETYPE_NORMAL"]
         assert session.read_symbol("wBattleMode") == constants["WILD_BATTLE"]
         assert session.read_symbol("wEnemyMonSpecies") == constants["REMORAID"]
-        assert 22 <= session.read_symbol("wEnemyMonLevel") <= 26
+        assert 25 <= session.read_symbol("wEnemyMonLevel") <= 29
         assert "SafariBattleMenu" not in session.hook_history
 
 

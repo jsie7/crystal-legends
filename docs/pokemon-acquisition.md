@@ -59,7 +59,7 @@ data, an external distribution, or the optional cheat menu.
 | 034 | Nidoking | Evolution | Use Moon Stone on Nidorino | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 035 | Clefairy | Wild | Mt. Moon | Kanto | Existing | Yes | `data/wild/kanto_grass.asm` |
 | 036 | Clefable | Evolution | Use Moon Stone on Clefairy | Kanto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
-| 037 | Vulpix | Wild | Level 24 in unattended SafariZoneBeta grass; one of the three common slots at morning, day, and night | Kanto | Phase 9 | Yes | `data/wild/kanto_grass.asm`; `maps/SafariZoneBeta.asm` |
+| 037 | Vulpix | Wild | Level 34 in unattended SafariZoneBeta grass; one of the three common slots at morning, day, and night | Kanto | Phase 9 | Yes | `data/wild/kanto_grass.asm`; `maps/SafariZoneBeta.asm` |
 | 038 | Ninetales | Evolution | Use Fire Stone on Phase 9 Vulpix | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Vulpix source |
 | 039 | Jigglypuff | Wild | Route 34 | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 040 | Wigglytuff | Evolution | Use Moon Stone on Jigglypuff | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
@@ -78,7 +78,7 @@ data, an external distribution, or the optional cheat menu.
 | 053 | Persian | Evolution or wild | Meowth at level 28; Route 7 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/kanto_grass.asm` |
 | 054 | Psyduck | Wild | National Park or via Surf | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm`; `data/wild/johto_water.asm` |
 | 055 | Golduck | Evolution or wild | Psyduck at level 33; Silver Cave | Late Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
-| 056 | Mankey | Wild | Level 22 in unattended SafariZoneBeta grass; one of the three common slots at morning, day, and night | Kanto | Phase 9 | Yes | `data/wild/kanto_grass.asm`; `maps/SafariZoneBeta.asm` |
+| 056 | Mankey | Wild | Level 32 in unattended SafariZoneBeta grass; one of the three common slots at morning, day, and night | Kanto | Phase 9 | Yes | `data/wild/kanto_grass.asm`; `maps/SafariZoneBeta.asm` |
 | 057 | Primeape | Evolution | Mankey at level 28 | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Mankey source |
 | 058 | Growlithe | Wild | Route 35 | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 059 | Arcanine | Evolution | Use Fire Stone on Growlithe | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
@@ -201,7 +201,7 @@ data, an external distribution, or the optional cheat menu.
 | 176 | Togetic | Evolution | Togepi with high friendship | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 177 | Natu | Wild | Ruins of Alph outside | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 178 | Xatu | Evolution or NPC trade | Natu at level 25; trade Haunter | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/events/npc_trades.asm` |
-| 179 | Mareep | Wild | Level 20 in unattended SafariZoneBeta grass; one of the three common slots at morning, day, and night | Kanto | Phase 9 | Yes | `data/wild/kanto_grass.asm`; `maps/SafariZoneBeta.asm` |
+| 179 | Mareep | Wild | Level 28 in unattended SafariZoneBeta grass; one of the three common slots at morning, day, and night | Kanto | Phase 9 | Yes | `data/wild/kanto_grass.asm`; `maps/SafariZoneBeta.asm` |
 | 180 | Flaaffy | Evolution | Level up the Phase 9 Mareep once; it is already above level 15 | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Mareep source |
 | 181 | Ampharos | Evolution | Flaaffy at level 30 | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Mareep source |
 | 182 | Bellossom | Evolution | Use Sun Stone on Gloom | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `engine/events/std_scripts.asm` |
@@ -245,8 +245,8 @@ data, an external distribution, or the optional cheat menu.
 | 220 | Swinub | Wild | Ice Path | Before Badge 8 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 221 | Piloswine | Evolution | Swinub at level 33 | Before League | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 222 | Corsola | Fishing | Shore and ocean fishing groups during the day | After obtaining the appropriate rod | Existing | Yes | `data/wild/fish.asm` |
-| 223 | Remoraid | Wild | Levels 22 and 24 in the two common unattended SafariZoneBeta water slots | Kanto | Phase 9 | Yes | `data/wild/kanto_water.asm`; `maps/SafariZoneBeta.asm` |
-| 224 | Octillery | Evolution or wild | Remoraid at level 25; optional level-28 third SafariZoneBeta water slot | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/kanto_water.asm` |
+| 223 | Remoraid | Wild | Surf bases 25 and 27 (actual levels 25–31) in the two common unattended SafariZoneBeta water slots | Kanto | Phase 9 | Yes | `data/wild/kanto_water.asm`; `maps/SafariZoneBeta.asm` |
+| 224 | Octillery | Evolution or wild | Remoraid at level 25; optional third SafariZoneBeta surf slot at base 31 (actual levels 31–35) | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/kanto_water.asm` |
 | 225 | Delibird | Wild | Ice Path at night | Before Badge 8 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 226 | Mantine | Wild | Surf on Route 41 | After Surf | Existing | Yes | `data/wild/johto_water.asm` |
 | 227 | Skarmory | Wild | Route 45 | After Badge 8 | Existing | Yes | `data/wild/johto_grass.asm` |
@@ -280,24 +280,26 @@ data, an external distribution, or the optional cheat menu.
 SafariZoneBeta becomes accessible only after speaking with the Warden's
 granddaughter and owning the Soul Badge. It is an unattended ordinary-battle
 area: no fee, timer, Safari Balls, bait, rocks, or Safari battle menu. Grass
-uses rate 10 at every time; water also uses rate 10. The exact renewable slots
-are:
+uses rate 10 at every time; water also uses rate 10. The exact renewable slots below use the implemented [Phase 12 levels](phase-12-balance.md).
+Mareep 28 can evolve to Flaaffy 29 and Ampharos 30 with ThunderPunch;
+Vulpix 34 already has Flamethrower. Surf retains its random +0–4 variation.
+The slots are:
 
 | Slot | Morning | Day | Night |
 | ---: | --- | --- | --- |
-| 1 | Lv.22 Mankey | Lv.20 Mareep | Lv.24 Vulpix |
-| 2 | Lv.20 Mareep | Lv.24 Vulpix | Lv.22 Mankey |
-| 3 | Lv.24 Vulpix | Lv.22 Mankey | Lv.20 Mareep |
-| 4 | Lv.24 Exeggcute | Lv.24 Exeggcute | Lv.24 Exeggcute |
-| 5 | Lv.26 Tauros | Lv.26 Scyther | Lv.26 Pinsir |
-| 6 | Lv.28 Chansey | Lv.28 Chansey | Lv.28 Chansey |
-| 7 | Lv.28 Kangaskhan | Lv.28 Kangaskhan | Lv.28 Kangaskhan |
+| 1 | Lv.32 Mankey | Lv.28 Mareep | Lv.34 Vulpix |
+| 2 | Lv.28 Mareep | Lv.34 Vulpix | Lv.32 Mankey |
+| 3 | Lv.34 Vulpix | Lv.32 Mankey | Lv.28 Mareep |
+| 4 | Lv.34 Exeggcute | Lv.34 Exeggcute | Lv.34 Exeggcute |
+| 5 | Lv.36 Tauros | Lv.36 Scyther | Lv.36 Pinsir |
+| 6 | Lv.38 Chansey | Lv.38 Chansey | Lv.38 Chansey |
+| 7 | Lv.38 Kangaskhan | Lv.38 Kangaskhan | Lv.38 Kangaskhan |
 
 | Water slot | Encounter |
 | ---: | --- |
-| 1 | Lv.22 Remoraid |
-| 2 | Lv.24 Remoraid |
-| 3 | Lv.28 Octillery |
+| 1 | Base 25 Remoraid; actual 25–29 |
+| 2 | Base 27 Remoraid; actual 27–31 |
+| 3 | Base 31 Octillery; actual 31–35 |
 
 The classic Safari species are optional late-game alternatives; their earlier
 canonical sources remain valid. The bird branch is also explicit and

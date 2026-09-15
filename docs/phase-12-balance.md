@@ -7,7 +7,7 @@ natural-play acceptance.
 
 ## Implementation status
 
-Completed slices: A–I (the complete named-trainer scope).
+Completed slices: A–J (named trainers and Kanto wild levels).
 
 | Slice | Scope |
 | --- | --- |
@@ -120,3 +120,19 @@ rematch is Sneasel 48, Magneton 48, Gengar 49, Alakazam 49, Ursaring 50 and
 Crobat 52, with the ace last. All 58 focused checks pass, including all three
 release branches, rematch entrances, weekly cadence and Dragon's Den cameo.
 Named-trainer growth is exactly 248 bytes, leaving 830 bytes in bank $0e.
+
+### Wild encounter evidence
+
+All 26 land and 13 surf targets are implemented: exactly 545 land and 39 surf
+level bytes change, with no added data. The [wild contract](../tests/contracts/phase_12_wild.json)
+checks every Kanto record, original reference tables and unchanged habitats.
+Forty-two focused wild checks cover source/ROM tables, time-dependent Diglett
+slots, rare grass slots, natural moves, all five Safari surf variations, Repel,
+and actual capture/evolution of Houndour 26→27 and Mareep 28→29→30 with
+Ampharos learning ThunderPunch. Together with existing Phase 2 runtime checks,
+59 tests pass. Existing Phase 9 habitat/service checks also retain their gates.
+
+At these levels Chansey naturally has DoubleSlap/Minimize/Sing/Egg Bomb and
+Remoraid 25–29 has Lock-On/Psybeam/Aurora Beam/BubbleBeam. No wild movesets
+or global learnsets were changed. Further design changes to these sets and
+updated player-level forecasts remain outside the accepted implementation.

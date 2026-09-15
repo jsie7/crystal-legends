@@ -332,7 +332,7 @@ introduction into a second speech. The access event is permanent.
 The preserve uses normal wild battles, the Bag, ordinary Poké Balls, experience,
 and escape rules. It has no clerk, fee, timer, step counter, Safari Balls,
 bait/rock commands, prize, or reopening ceremony. A 10-percent all-time grass
-table makes level-20 Mareep, level-24 Vulpix, and level-22 Mankey common; a
+table initially made level-20 Mareep, level-24 Vulpix, and level-22 Mankey common; a
 10-percent water table puts Remoraid in both common slots. Two ordinary visible
 item balls reward exploration. The compact northern preserve uses denser grass,
 an eight-by-six-tile pond framed by the National Park stone shore, and one
@@ -540,3 +540,18 @@ save-layout fingerprint, map geometry, and all reference builds remain
 unchanged. Pre-Phase-11 saves therefore begin with both formerly unused bits
 clear. Presentation, dialogue, credits pacing, and provisional boss balance
 remain a separate user-owned SameBoy gate; Phase 12 owns final numeric tuning.
+
+## 2026-09-15 — Apply fixed Kanto wild levels without changing habitats
+
+Phase 12 changes 584 level bytes across 26 land and 13 surfing records.
+Species, ordered slots, time windows, rates, fishing and encounter mechanics
+remain exact. Safari now has Mareep 28, Mankey 32, Vulpix/Exeggcute 34,
+Tauros/Scyther/Pinsir 36 and Chansey/Kangaskhan 38. Its surf bases are
+Remoraid 25/27 and Octillery 31, with the native +0–4 variation. Route 7
+Houndour stays 26 and Diglett's Cave preserves its time-dependent differences.
+
+The [acquisition ledger](pokemon-acquisition.md) records current levels; earlier
+Phase 9 evidence describes the original implementation. Preserve Johto, the
+pre-League approach, oceans, Mt. Silver, Cerulean Cave, scripted encounters and
+gift levels. These fixed tables add no bytes or guaranteed training XP. See
+[Phase 12](phase-12-balance.md) for the exact contract and acceptance boundary.

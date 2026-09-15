@@ -123,17 +123,21 @@ def _use_first_item_on_first_mon(session, max_frames: int, effect: str) -> None:
     session.register_hook("LoadPartyMenuGFX")
     scrolling_menus = session.hook_history.count("ScrollingMenu") + 1
     vertical_menus = session.hook_history.count("VerticalMenu") + 1
+    starts = session.hook_history.count("StartMenu") + 1
+    loops = session.hook_history.count("StartMenu.loop") + 1
+    effects = session.hook_history.count(effect) + 1
+    party_menus = session.hook_history.count("LoadPartyMenuGFX") + 1
     session.write_symbol("wBattleMenuCursorPosition", 3)
     session.tap("start", 10, 10)
-    session.wait_for_hook("StartMenu", max_frames)
-    session.wait_for_hook("StartMenu.loop", max_frames)
+    session.wait_for_hook_count("StartMenu", starts, max_frames)
+    session.wait_for_hook_count("StartMenu.loop", loops, max_frames)
     session.tap("a", 10, 10)
     session.wait_for_hook_count("ScrollingMenu", scrolling_menus, max_frames)
     session.tap("a", 10, 10)
     session.wait_for_hook_count("VerticalMenu", vertical_menus, max_frames)
     session.tap("a", 10, 10)
-    session.wait_for_hook(effect, max_frames)
-    session.wait_for_hook("LoadPartyMenuGFX", max_frames)
+    session.wait_for_hook_count(effect, effects, max_frames)
+    session.wait_for_hook_count("LoadPartyMenuGFX", party_menus, max_frames)
     session.tap("a", 10, 10)
 
 

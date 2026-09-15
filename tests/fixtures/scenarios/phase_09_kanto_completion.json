@@ -167,13 +167,13 @@
     },
     "grass": {
       "rates": [10, 10, 10],
-      "morning": [[22, "MANKEY"], [20, "MAREEP"], [24, "VULPIX"], [24, "EXEGGCUTE"], [26, "TAUROS"], [28, "CHANSEY"], [28, "KANGASKHAN"]],
-      "day": [[20, "MAREEP"], [24, "VULPIX"], [22, "MANKEY"], [24, "EXEGGCUTE"], [26, "SCYTHER"], [28, "CHANSEY"], [28, "KANGASKHAN"]],
-      "night": [[24, "VULPIX"], [22, "MANKEY"], [20, "MAREEP"], [24, "EXEGGCUTE"], [26, "PINSIR"], [28, "CHANSEY"], [28, "KANGASKHAN"]]
+      "morning": [[32, "MANKEY"], [28, "MAREEP"], [34, "VULPIX"], [34, "EXEGGCUTE"], [36, "TAUROS"], [38, "CHANSEY"], [38, "KANGASKHAN"]],
+      "day": [[28, "MAREEP"], [34, "VULPIX"], [32, "MANKEY"], [34, "EXEGGCUTE"], [36, "SCYTHER"], [38, "CHANSEY"], [38, "KANGASKHAN"]],
+      "night": [[34, "VULPIX"], [32, "MANKEY"], [28, "MAREEP"], [34, "EXEGGCUTE"], [36, "PINSIR"], [38, "CHANSEY"], [38, "KANGASKHAN"]]
     },
     "water": {
       "rate": 10,
-      "slots": [[22, "REMORAID"], [24, "REMORAID"], [28, "OCTILLERY"]]
+      "slots": [[25, "REMORAID"], [27, "REMORAID"], [31, "OCTILLERY"]]
     }
   },
   "seafoam": {
