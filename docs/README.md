@@ -93,6 +93,9 @@ See
 
 ## Repository guidance
 
+- [Phase 12 balance](phase-12-balance.md): approved scope, incremental
+  implementation status, preservation boundaries and validation.
+
 - [Repository guide](repository-guide.md): what the codebase contains and where
   to make common changes.
 - [Workflows](workflows.md): repeatable build and validation procedures.
