@@ -1,14 +1,13 @@
 # Phase 12 balance
 
 Phase 12 applies the approved trainer and Kanto encounter balance targets. The
-implementation is incremental; the completed slices below describe current
-behavior. Approval of the design and automated correctness are separate from
-natural-play acceptance.
+implementation and automated validation are complete. Natural-play acceptance
+remains pending; the automated scenarios do not certify enjoyable difficulty.
 
 ## Implementation status
 
-Completed slices: A–K. All approved gameplay/data changes are implemented;
-the clean integration gate is pending.
+Completed slices: A–K. All approved gameplay/data changes are implemented and
+the clean integration gate passes.
 
 | Slice | Scope |
 | --- | --- |
@@ -29,7 +28,8 @@ contains exact ordered targets, accepted natural moves, the stock baseline,
 custom baseline differences and implemented slices. Existing out-of-scope
 records and all reference records are checked in source and assembled ROMs.
 The complete trainer package adds 44 members across source variants and 252
-bytes. The reviewed final bank reserve is 768 bytes, with 826 projected free.
+bytes. Bank $0e has 826 measured free bytes against the reviewed 768-byte
+reserve, leaving 58 bytes of margin.
 
 ## Boundaries
 
@@ -42,7 +42,35 @@ Trainer moves are approved. Kiyo and Colette are the only automatic-to-authored
 format conversions. Wild natural-move questions and revised player-level
 forecasts remain separate; optional recruits are not a balance requirement.
 
-## Validation
+## Final validation — 2026-09-15
+
+The clean `make test-all` gate passed on gameplay commit `8dfa578a6`:
+
+| Layer | Result |
+| --- | --- |
+| Source contracts | 165 passed |
+| Compiled-ROM contracts | 92 passed |
+| Production-ROM emulator scenarios | 348 passed |
+| Total | 605 passed, including 68 Phase 12 cases |
+| Upstream reference artifacts | All six exact comparisons passed |
+| Bank/save-layout contracts | Passed; 826 bytes free in bank $0e; save layout unchanged |
+
+ROM: `crystallegends.gbc`. SHA-256:
+`b35e021533ded2f2cc117775905f5f5a6f0c39dfd77855e237c095f7ef98aa35`.
+The final documentation commit does not change this ROM. ROM-header validation
+and `git diff --check` also pass.
+
+Follow the [Phase 12 workflow](workflows.md#validate-phase-12-trainer-and-wild-balance)
+to reproduce the gate and record the remaining natural-play matrix. Runtime
+coverage includes normal trainer scripts, rewards, daily/weekly restrictions,
+all starter branches, capture, Repel and evolution. Prepared parties, controlled
+RNG inputs and forced battle outcomes are used where needed to isolate state
+transitions; natural-play difficulty is not inferred from those scenarios.
+
+### Incremental verification record
+
+The slice results below record checks and bank space at each implementation
+commit. Final totals and free space are given above.
 
 Run focused source/ROM checks after each data slice:
 

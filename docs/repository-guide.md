@@ -2,7 +2,7 @@
 
 This guide explains what is in the repository, how the pieces fit together, and
 where to look before changing a subsystem. It reflects the Crystal Legends fork
-state as of 2026-09-07.
+state as of 2026-09-15.
 
 ## Current project state
 
@@ -30,8 +30,11 @@ then closes the playable endgame: Red records a durable first-victory fact,
 and Professor Oak offers a one-time final battle after Red plus at least 240
 caught species. Oak's branch-selected team, credits sentinel, Pallet return,
 and completed dialogue add no map, save field, or Hall of Fame entry. Phase 12
-owns final numeric balance; the Phase 11 SameBoy presentation matrix remains
-separate from the passing automated gate.
+now implements the accepted trainer and Kanto wild balance: 166 trainer
+records, 39 encounter tables, 252 added trainer bytes and no save-layout change.
+The [balance guide](phase-12-balance.md) owns current levels, exact contracts
+and evidence. Natural-play balance and the Phase 11 SameBoy presentation
+matrix remain separate from the passing automated gate.
 
 The Phase 3 bedroom-TV CHEAT MODE is also implemented in source. Its renewable
 supplies, capped money grants, and four ordinary Pokémon gifts deliberately
@@ -126,6 +129,7 @@ far calls and data-bank assumptions can introduce runtime bugs.
 | Change Phase 9 legendary-bird locations or branches | `maps/Phase9LegendaryBirds.asm`, `maps/SeafoamIslandsCave.asm`, `maps/PowerPlant.asm`, `maps/PowerPlantGeneratorAnnex.asm`, `maps/VictoryRoad.asm`, `maps/OaksLab.asm` | `decisions.md`, `pokemon-acquisition.md`, and the Phase 9 scenario contract |
 | Change Phase 10 Giovanni or Cerulean Cave | `maps/CeruleanCave.asm`, `maps/Route4.asm`, `maps/CeruleanCity.asm`, `data/trainers/`, `data/wild/`, and the Cerulean map/graphics registrations | `decisions.md`, `workflows.md`, and the Phase 10 scenario contract |
 | Change Phase 11 Red, Oak, or true-ending flow | `maps/SilverCaveRoom3.asm`, `maps/OaksLab.asm`, `maps/Phase11Endgame.asm`, `maps/SilverCavePokecenter1F.asm`, `data/trainers/`, `engine/events/halloffame.asm`, `engine/menus/intro_menu.asm`, and the event/spawn constants | `decisions.md`, `workflows.md`, and `tests/fixtures/scenarios/phase_11_endgame.json` |
+| Change Phase 12 trainer or wild balance | `data/trainers/parties.asm`, `data/wild/kanto_grass.asm`, `data/wild/kanto_water.asm` | `phase-12-balance.md`, `workflows.md`, `tests/contracts/phase_12_trainers.json`, `tests/contracts/phase_12_wild.json`, and owning Phase 8–11 numeric contracts |
 | Change menus or UI behavior | `engine/menus/`, subsystem-specific menu code | `menus.md`; search for the visible label or controlling routine |
 | Change Crystal Legends CHEAT MODE | `maps/PlayersHouse2F.asm`, `maps/PlayersHouse2FDebug.asm`, `data/maps/scripts.asm` | `workflows.md`, `decisions.md`, and the neighboring event-script conventions |
 | Change battle animations | `data/moves/animations.asm`, `engine/battle_anims/`, `gfx/battle_anims/` | `battle_anim_commands.md` |

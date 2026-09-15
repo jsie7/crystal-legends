@@ -555,3 +555,35 @@ Phase 9 evidence describes the original implementation. Preserve Johto, the
 pre-League approach, oceans, Mt. Silver, Cerulean Cave, scripted encounters and
 gift levels. These fixed tables add no bytes or guaranteed training XP. See
 [Phase 12](phase-12-balance.md) for the exact contract and acceptance boundary.
+
+## 2026-09-15 — Implement the accepted Phase 12 trainer package
+
+Crystal Legends uses the complete approved 166-record trainer scope, covering
+149 distinct battles when selecting one starter branch and clearing the listed
+optional encounters once. Johto leaders retain every stock partner and gain
+one each; the four Elite Four teams gain a sixth. Lance, Blue, Elder Li,
+ordinary Johto, pre-League Routes 26/27 and shared S.S. Aqua parties remain
+stock. Ordinary Kanto gym underlings gain 10 levels and listed routes gain 8,
+both capped one below the assigned geographic gym ace. Colette is the sole
+ordinary authored-move exception. Cal remains daily with natural level-55 moves.
+
+Silver's bird progression is 5/16/22/32/40/50; supporting additions arrive at
+Azalea, Burned Tower and Goldenrod. After the existing release scene, Ursaring
+fills the sixth rematch slot and Crobat 52 is last and highest-level. Golbat
+remains through Mt. Moon; release prerequisites, branches and weekly cadence
+are unchanged. Cave remnants are 54–60, Giovanni is 60–65, Red returns to
+stock levels with four softer moves, and all Oak variants are 84/85/85/86/87/90.
+These supersede the provisional numeric targets in earlier phase decisions.
+
+The [trainer contract](../tests/contracts/phase_12_trainers.json) owns exact
+ordered members, moves, formats and preservation targets. Only Kiyo and Colette
+convert automatic parties to authored moves. Preserve existing class items,
+AI, DVs, rewards logic, story scripts, gifts, player learnsets and save layout.
+Do not add a global level boost or dynamic badge scaling. The 252-byte expansion
+leaves 826 bytes in bank $0e; the reviewed 768-byte floor leaves 58 bytes of
+margin. All reference artifacts must remain exact.
+
+Automated data/state tests and natural-play difficulty are separate gates.
+The [Phase 12 workflow](workflows.md#validate-phase-12-trainer-and-wild-balance)
+owns the remaining manual matrix. Do not equate optional recruits, access to
+Red/Oak, later victory rewards or historical level forecasts with readiness.

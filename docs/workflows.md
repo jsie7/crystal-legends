@@ -70,7 +70,9 @@ dialogue, encounter, presentation, and provisional-balance review remains
 pending. Phase 11 is source-complete: durable Red victory, the 240-caught Oak
 challenge, all three Oak teams, the true-ending credits, Pallet return, and
 ordinary save/reload pass every automated layer. Its user-owned presentation
-and provisional-balance review remains pending; Phase 12 is next.
+and natural-play balance review remains pending. Phase 12 trainer and Kanto
+wild balancing is source-complete and passes the clean full gate; its separate
+natural-play acceptance matrix below remains pending.
 
 ## Validate the Crystal Legends build
 
@@ -97,7 +99,8 @@ production-map gifts, Phase 5's three Ruins gifts and Route 14 Girafarig trade,
 Phase 6's roamer/Fast Ball contracts, and Phase 7's Project Mew story and
 branching encounter, Phase 8's Silver release and post-release chronology, and
 Phase 9's Kanto gifts, Safari preserve, and world birds, Phase 10's
-Giovanni/Cerulean Cave finale, and Phase 11's Red/Oak true ending. Rerun the
+Giovanni/Cerulean Cave finale, Phase 11's Red/Oak true ending, and Phase 12's
+trainer/wild balance, capture and evolution checks. Rerun the
 narrower owning profile after a focused change and `make test-all` at a
 milestone handoff. Phase 5 keeps Kim's Route 14
 trade as Girafarig's canonical source; Phase 9 deliberately adds no wild
@@ -461,7 +464,8 @@ all three Mt. Moon selectors, victory and loss, pending native save/reload, the
 three automatic lab scenes, branch-correct name and cry, choreography and
 walkable paths, availability isolation, mutation order, actor removal, replay
 prevention, and ordinary later Elm interaction. It also owns both
-Monday/Wednesday Indigo entrances, the five-member bird-free party, Champion
+Monday/Wednesday Indigo entrances, the bird-free party (six members since
+Phase 12), Champion
 music, weekly lockout and persistence, Tuesday/Thursday Dragon's Den visibility
 and repeat dialogue, the Dragon Shrine elder route, save-layout and bank
 floors, and complete reference isolation.
@@ -471,14 +475,14 @@ emulator/version, ROM commit and hash, date, branch, preparation boundary, and
 result. Confirm:
 
 1. For each player starter, win and lose at Mt. Moon, verify Silver's matching
-   level-60 bird, and judge the provisional roster balance and post-victory
+   level-50 bird, and judge the Phase 12 roster balance and post-victory
    direction back to Elm.
 2. Save while the return is pending, travel naturally to New Bark Town, and
    review the complete lab scene: object placement and palettes, dialogue
    wrapping and voice, branch-correct cry, bird look-back, both exit paths,
    post-scene lab interactions, re-entry, and save/reload.
 3. After release, play one natural Monday or Wednesday Indigo rematch. Confirm
-   Champion music, five non-legendary Pokémon with Crobat as the ace, coherent
+   Champion music, six non-legendary Pokémon with Crobat 52 as the ace, coherent
    unchanged dialogue, and the native weekly lockout after victory.
 4. Visit Dragon's Den on Tuesday or Thursday, confirm both unchanged training
    lines and the elder hint, then verify Silver is absent on an excluded day.
@@ -499,8 +503,9 @@ return travel, the natural Indigo rematch, the Dragon's Den cameo, and the
 Phase 8/Phase 9 boundary in SameBoy. The exact SameBoy version was not supplied.
 Evidence applies to ROM commit `0e73807d2`, SHA-256
 `a5c2b67aaad42b1f3f06290bd40da6204c98279b7a037e0e14549cdd5fcc26f9`.
-Phase 8 is therefore playtest-certified; Silver's full balance pass remains
-separate Phase 12 work.
+Phase 8's story matrix is therefore playtest-certified. The later Phase 12
+party changes pass automation and require their own natural-play balance
+review; the earlier manual evidence does not certify those new teams.
 
 ### Validate Phase 9 Kanto completion
 
@@ -585,8 +590,8 @@ and pass/fail result. Manually confirm:
    assistant hints.
 4. Keep balance review provisional: the three starter rewards should be useful
    without replacing leader teams, level-60 birds should be catchable with
-   ordinary late-game resources, and Safari levels should fit Kanto. Phase 12,
-   not this review, owns the full Kanto/Silver/Red balance pass.
+   ordinary late-game resources, and Safari levels should fit Kanto. Use the
+   Phase 12 matrix below for the implemented Kanto/Silver/Red balance pass.
 
 Phase 9 is source-complete but not playtest-certified until this SameBoy matrix
 is reported and any presentation failure is fixed or explicitly assigned. The
@@ -720,14 +725,14 @@ record the exact version, ROM commit/hash, date, legendary starter branch,
 caught count, and pass/fail result. Manually confirm:
 
 1. Fight Red, lose once, then win. Review the iconic six-member identity,
-   provisional levels/moves/AI, Full Restores, silent presentation, heal,
+   approved Phase 12 levels/moves, AI, Full Restores, silent presentation, heal,
    credits, Mt. Silver return, Pokecenter hint, and later Hall of Fame rematch.
 2. Visit Oak below and at 240 caught both before and after Red. Review the stock
    rating transition, hidden challenge discovery, optional Yes/No prompt,
    dialogue wrapping and voice, decline behavior, and permanent completed line.
 3. Review all three Oak starter variants, portrait, palette, class/name,
-   champion music, AI/items, Tyranitar ace, loss/retry path, and provisional
-   balance. Numeric tuning belongs to Phase 12 unless the fight is broken.
+   champion music, AI/items, Tyranitar 90 ace, loss/retry path, and the
+   approved Phase 12 balance. Record any further tuning request separately.
 4. Win once and review the completion speech, clean credits transition and
    pacing, Pallet return, later Oak and Mt. Silver dialogue, normal save/reset/
    Continue, and a post-Oak Red rematch that still returns to Mt. Silver.
@@ -736,7 +741,60 @@ Phase 11 is source-complete but not playtest-certified until this SameBoy matrix
 is reported and any presentation failure is fixed or explicitly assigned. Its
 automated evidence does not certify visual polish, dialogue tone, audio,
 credits pacing, final balance, a natural 240-species playthrough, or release
-readiness. Phase 12 owns the complete difficulty curve.
+readiness. Phase 12 implements the accepted difficulty targets; natural-play
+validation of the complete curve is still required.
+
+### Validate Phase 12 trainer and wild balance
+
+The exact implemented scope and evidence are in [phase-12-balance.md](phase-12-balance.md).
+The trainer and wild JSON contracts contain symbolic source IDs, complete
+ordered targets and explicit preservation baselines. Update owning Phase 8–11
+numeric expectations only when their accepted behavior actually changes.
+
+```bash
+make crystallegends crystal11
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest -m phase12
+make clean
+make test-all
+rgbfix -v crystallegends.gbc
+git diff --check
+shasum -a 256 crystallegends.gbc
+```
+
+The clean automated gate verifies all 166 trainer records, 149 branch-selected
+battles in XP accounting, 39 changed wild tables, exactly 584 changed wild
+level bytes, zero wild-data growth and exactly 252 added trainer bytes. Bank
+$0e retains 826 bytes against a 768-byte floor. All six upstream reference
+artifacts reproduce exactly and the save-layout fingerprint is unchanged.
+Runtime cases use actual map scripts and encounter selection. Some use
+prepared parties, RNG inputs or forced battle outcomes to test state changes;
+these are correctness checks and provide no natural difficulty certification.
+
+For natural-play acceptance, use disposable/backed-up production-ROM saves.
+Record the exact emulator/version, ROM commit/hash, starter branch, date,
+party species/levels/XP/moves/items, route coverage, losses and healing use.
+Sample all three bird starters with four- and six-member established teams:
+
+1. Review Falkner, Whitney, Jasmine, Clair, the longer Rocket sequence and final
+   Houndoom's Flamethrower, Eusine 24–26, Kiyo 36, the Wise Trio 34 and four
+   consecutive six-member Elite Four teams. Evaluate counterplay and fatigue.
+2. Continue the same party from its actual League-clear levels through Kanto.
+   Include ordinary route/gym battles, Janine, Sabrina, Blaine, stock Blue,
+   daily Cal 55, cave fatigue, Giovanni 60–65, Red 73–81 and Oak 84–90.
+   Review Colette's reduced evasion and Kangaskhan's functional Strength.
+3. Review Silver's seven stages in each branch, bird moves at 40/50, Golbat at
+   Mt. Moon, the release scene and Crobat 52 as the final rematch partner.
+4. Review Kanto recruitment and training in low routes, inland ponds, Diglett's
+   Cave at every time, Rock Tunnel and Safari. Check Houndour 26, Mareep 28,
+   Vulpix 34, rare encounters, Repel, Selfdestruct/Teleport and surf bounds.
+5. Keep wild KOs, optional recruits and repeated Cal/League/Silver wins separate
+   from the fixed trainer XP totals. Do not assume Oak's 240-caught unlock or
+   rewards earned after a boss prove readiness to beat that boss. Historical
+   player-level forecasts remain estimates and have not been refreshed.
+
+Phase 12 is source-complete and automatically validated. Natural-play balance,
+presentation, a full no-cheat playthrough and release readiness remain separate
+pending gates. Prior phase certification does not certify these new parties.
 
 ### Battery-save and scenario fixtures
 

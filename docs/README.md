@@ -9,8 +9,8 @@ guide.
 Crystal Legends v0.1, the Phase 2 completion foundation, Phase 3 CHEAT MODE,
 the Phase 4 Johto starter events, the Phase 5 Ruins gifts, Phase 6 roamer
 quality-of-life, Phase 7 Project Mew, Phase 8 Silver arc, Phase 9 Kanto
-completion, Phase 10 Giovanni/Cerulean Cave finale, and Phase 11 Red/Oak
-endgame are source-complete.
+completion, Phase 10 Giovanni/Cerulean Cave finale, Phase 11 Red/Oak
+endgame, and Phase 12 trainer/wild balance are source-complete.
 Chikorita is a
 level-14 gift at the Ilex Forest shrine after Cut, Cyndaquil is a level-19 gift
 in Burned Tower after the legendary beasts awaken, and Totodile is a level-24
@@ -58,10 +58,16 @@ Phase 11 strengthens Red while preserving his six-species identity and rematch
 behavior, records his first defeat independently of his current visibility,
 and unlocks Professor Oak's one-time final challenge after Red plus at least
 240 caught species. Oak selects one of three teams from the original legendary
-starter branch, uses level-100 Tyranitar as his ace, and awards the true ending
+starter branch, now uses level-90 Tyranitar as his ace, and awards the true ending
 through completion dialogue, a party heal, the full credits, and a return to
 Pallet Town. The completed state persists through an ordinary save without a
 Hall of Fame mutation or save-layout change.
+Phase 12 applies all 166 approved trainer records and 39 Kanto wild tables.
+Johto leaders gain one partner each, the Elite Four have six-member teams,
+ordinary Kanto trainers use capped +10 gym/+8 route levels, and Silver ends
+with Crobat 52 after release. Giovanni is 60–65, Red returns to stock levels
+with softened custom moves, and Oak is 84–90. See the
+[balance guide](phase-12-balance.md) for exact contracts and validation.
 
 The earlier manual pass confirmed the title screen, all three legendary-bird
 starter branches, the first Silver battle, the Elm/Oak handoff, player-bird
@@ -73,7 +79,8 @@ hunt-feel, and Fast Ball presentation review. Phase 7 still needs its user-owned
 story clarity, annex presentation, pacing, and both-branch review. Phase 8
 has passed its complete user-owned manual matrix: all three Mt. Moon/lab
 branches, loss/retry and return travel, one natural Indigo rematch, and one
-natural Dragon's Den cameo. Silver's full balance pass remains Phase 12 work.
+natural Dragon's Den cameo. Silver's Phase 12 balance changes are implemented;
+their natural-play review remains separate from that earlier story acceptance.
 Phase 2 presentation and full-game acceptance also remain deferred. Phase 8 is
 playtest-certified, but the overall milestone is not yet release-ready because
 the other listed manual gates remain open. Phase 9 passes its static,
@@ -85,16 +92,17 @@ gates, but its entrance, cave presentation, trainer flow, Giovanni battle,
 blackout, and both counterpart branches still require user review in SameBoy.
 Phase 11 passes its complete automated and reference gates, but Red/Oak battle
 balance, dialogue, music, presentation, credits pacing, and the Pallet return
-still require user review in SameBoy. Phase 12 full balancing is the next
-roadmap phase.
+still require user review in SameBoy. Phase 12 passes its clean automated and
+reference gates; its natural-play difficulty and progression review remains
+pending. Automated battle outcomes do not certify pacing or enjoyable balance.
 See
 [workflows.md](workflows.md) for the validation boundary and
 [decisions.md](decisions.md) for the sequencing decision.
 
 ## Repository guidance
 
-- [Phase 12 balance](phase-12-balance.md): approved scope, incremental
-  implementation status, preservation boundaries and validation.
+- [Phase 12 balance](phase-12-balance.md): implemented scope, exact contracts,
+  preservation boundaries and validation.
 
 - [Repository guide](repository-guide.md): what the codebase contains and where
   to make common changes.
