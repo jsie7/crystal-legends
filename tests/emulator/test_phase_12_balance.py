@@ -20,6 +20,7 @@ CASES = [
     ('KarenGroup', 1, 'KARENS_ROOM', 5, 8, 'KAREN', 'EVENT_KARENS_ROOM_EXIT_OPEN'),
     ('GruntMGroup', 1, 'SLOWPOKE_WELL_B1F', 5, 3, 'GRUNTM', 'EVENT_BEAT_ROCKET_GRUNTM_1'),
     ('ExecutiveMGroup', 2, 'RADIO_TOWER_4F', 14, 2, 'EXECUTIVEM', 'EVENT_BEAT_ROCKET_EXECUTIVEM_2'),
+    ('BlackbeltGroup', 6, 'MOUNT_MORTAR_B1F', 16, 5, 'BLACKBELT_T', 'EVENT_BEAT_BLACKBELT_KIYO'),
 ]
 
 
@@ -30,7 +31,7 @@ def runtime_constants(repo_root, tmp_path_factory):
              'MON_LEVEL', 'MON_HP', 'MON_MAXHP', 'MON_ATK', 'MON_DEF', 'MON_SPD',
              'MON_SAT', 'MON_SDF', 'TACKLE', 'SURF', 'MON_ITEM',
              'EVENT_OLIVINE_GYM_JASMINE', 'EVENT_SLOWPOKE_WELL_ROCKETS',
-             'EVENT_RADIO_TOWER_ROCKET_TAKEOVER'}
+             'EVENT_RADIO_TOWER_ROCKET_TAKEOVER', 'EVENT_GOT_TYROGUE_FROM_KIYO', 'TYROGUE'}
     for group, index, map_name, x, y, trainer_class, event in CASES:
         names.update((f'GROUP_{map_name}', f'MAP_{map_name}', trainer_class, event))
         if map_name.endswith('S_ROOM'):
@@ -82,6 +83,9 @@ def test_normal_trainer_script_loads_exact_party_and_completes(
             ])
 
         session.register_hook('ReadTrainerParty.done', capture)
+        if group == 'BlackbeltGroup':
+            session.register_hook('GiveANickname_YesNo')
+            session.register_hook('VerticalMenu')
         session.tap('a', 2, 10)
         advance_with_a_until(session, lambda current: bool(captured), 60000,
                             f'{group} normal party load')
@@ -96,6 +100,18 @@ def test_normal_trainer_script_loads_exact_party_and_completes(
         session.write_symbol('wBattleMenuCursorPosition', 1)
         advance_with_a_until(session, lambda current: event_is_set(current, constants[completion]),
                             60000, f'{group} victory and reward')
+        if group == 'BlackbeltGroup':
+            advance_with_a_until(session, lambda current: 'GiveANickname_YesNo' in current.hook_history,
+                                60000, 'Kiyo Tyrogue gift')
+            advance_with_a_until(session, lambda current: 'VerticalMenu' in current.hook_history,
+                                60000, 'Tyrogue nickname prompt')
+            session.tick(20)
+            session.tap('b', 2, 10)
+            advance_with_a_until(session, lambda current: event_is_set(
+                current, constants['EVENT_GOT_TYROGUE_FROM_KIYO']), 60000, 'Kiyo gift completion')
+            assert session.read_symbol('wPartyCount') == 2
+            assert session.read_symbol('wPartyMon2Species') == constants['TYROGUE']
+            assert session.read_symbol('wPartyMon2Level') == 10
         advance_with_a_until(session, lambda current: current.read_symbol('wScriptMode') == 0,
                             60000, f'{group} script completion')
         wait_for_idle(session, 60000)

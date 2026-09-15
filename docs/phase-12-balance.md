@@ -7,7 +7,7 @@ natural-play acceptance.
 
 ## Implementation status
 
-Completed slices: A–D (contracts, Johto gyms, League and Rockets).
+Completed slices: A–E (contracts and the complete Johto/League trainer scope).
 
 | Slice | Scope |
 | --- | --- |
@@ -79,3 +79,11 @@ implemented. Fifty focused Phase 7/12 checks pass, including Project Mew upload,
 loss, victory, annex and Director cleanup. Two additional normal-map scenarios
 verify the Slowpoke Well leader and Radio Tower 4F executive. Growth is 112
 bytes so far; bank $0e retains 966 bytes.
+
+### Other Johto trials
+
+The Kimono Girls, Eusine, Kiyo and Wise Trio now use their approved parties;
+Elder Li is preserved. Source/ROM checks verify the 31-record Johto subtotal,
+132-byte growth and pooled XP increase from 91,030 to 111,497. Kiyo loads all
+three authored level-36 Hitmons and still grants level-10 Tyrogue through the
+normal reward and nickname flow. Bank $0e retains 946 bytes.

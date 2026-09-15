@@ -1,4 +1,5 @@
 from collections import Counter
+import re
 
 import pytest
 
@@ -42,3 +43,50 @@ def test_every_accepted_automatic_moveset_matches_fillmoves(repo_root):
             continue
         for row, moves in zip(record['members'], record['moves'], strict=True):
             assert natural_moves(repo_root, row[1], int(row[0])) == moves, (party_key(record), row)
+
+
+def _experience_function(root):
+    base_exp = {}
+    for path in (root / 'data/pokemon/base_stats').glob('*.asm'):
+        text = path.read_text()
+        species = re.search(r'\bdb\s+([A-Z][A-Z0-9_]*)', text).group(1)
+        base_exp[species] = int(re.search(r'\bdb\s+(\d+)\s*; base exp', text).group(1))
+
+    def experience(record):
+        # One original-OT participant, trainer bonus, no Lucky Egg.
+        # Gen II truncates division by seven before applying the 1.5x bonus.
+        return sum((base_exp[row[1]] * int(row[0]) // 7) * 3 // 2 for row in record['members'])
+    return experience
+
+
+def test_johto_subtotal_matches_approved_experience_and_capacity(repo_root):
+    contract = trainer_contract(repo_root)
+    xp = _experience_function(repo_root)
+    reference = expected_parties(contract, False)
+    johto = [r for r in contract['targets'] if r['slice'] in 'BCDE']
+    assert len(johto) == 31
+    assert sum(xp(reference[party_key(r)]) for r in johto) == 91030
+    assert sum(xp(r) for r in johto) == 111497
+    assert sum(party_size(r) - party_size(reference[party_key(r)]) for r in johto) == 132
+
+
+@pytest.mark.parametrize('starter,stock_xp,accepted_xp', [
+    ('Articuno', 397101, 577396), ('Zapdos', 397042, 577300), ('Moltres', 396628, 577375),
+])
+def test_combined_branch_selected_battles_and_experience(repo_root, starter, stock_xp, accepted_xp):
+    contract = trainer_contract(repo_root)
+    targets = {party_key(r): r for r in contract['targets']}
+    reference = expected_parties(contract, False)
+    named = [r for r in targets.values() if r['category'] == 'named'
+             and ('player chose' not in r['title'] or r['title'].endswith(starter))]
+    ordinary = [targets[party_key(r)] for r in contract['ordinary_battles']]
+    assert len(named) == 57
+    assert len(ordinary) == 92
+    assert sum(len(r['members']) for r in ordinary) == 205
+    selected = named + ordinary
+    assert len({party_key(r) for r in selected}) == 149
+    xp = _experience_function(repo_root)
+    assert sum(xp(r) for r in selected) == accepted_xp
+    assert sum(xp(reference[party_key(r)]) for r in selected if party_key(r) in reference) == stock_xp
+    assert sum(xp(r) for r in ordinary) == 236498
+    assert sum(xp(reference[party_key(r)]) for r in ordinary) == 187154
