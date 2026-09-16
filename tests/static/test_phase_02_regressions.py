@@ -181,7 +181,14 @@ def test_phase_2_celebi_source_state_machine_is_retry_safe(repo_root: Path) -> N
     assert "checkitem GS_BALL" in shrine
     assert "loadwildmon CELEBI, 30" in shrine
     assert "special CheckCaughtCelebi\n\tiffalse .DidntCatchCelebi" in shrine
-    retry = shrine.split(".DidntCatchCelebi:", 1)[1]
-    assert "giveitem GS_BALL" in retry
-    assert "setevent EVENT_FOREST_IS_RESTLESS" in retry
-    assert "setflag ENGINE_FOREST_IS_RESTLESS" in retry
+    assert shrine.index("startbattle") < shrine.index("special CheckCaughtCelebi")
+    assert shrine.index("special CheckCaughtCelebi") < shrine.index(
+        "\n\treloadmapafterbattle\n"
+    )
+    retry = shrine.split(".DidntCatchCelebi:", 1)[1].split(".Done:", 1)[0]
+    for restore in (
+        "giveitem GS_BALL",
+        "setevent EVENT_FOREST_IS_RESTLESS",
+        "setflag ENGINE_FOREST_IS_RESTLESS",
+    ):
+        assert retry.index(restore) < retry.index("reloadmapafterbattle")

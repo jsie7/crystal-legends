@@ -5,11 +5,19 @@ import json
 
 import pytest
 
-from tests.support.bedroom_scenario import event_is_set, loaded_session, wait_for_idle
+from tests.support.bedroom_scenario import (
+    dump_battery_ram,
+    event_is_set,
+    loaded_session,
+    save_game_from_overworld,
+    start_saved_game,
+    wait_for_idle,
+)
 from tests.support.constant_resolver import resolve_constants
 from tests.support.game_state import read_inventory, read_progress
 from tests.support.legendary_scenario import advance_with_a_until, prepare_battle_party
 from tests.support.phase_02_scenario import loaded_phase_2_checkpoint
+from tests.support.pyboy_session import PyBoySession, prepare_rom
 
 
 pytestmark = pytest.mark.emulator
@@ -46,6 +54,8 @@ def phase_2_constants(
         "MAP_KURTS_HOUSE",
         "GROUP_ILEX_FOREST",
         "MAP_ILEX_FOREST",
+        "GROUP_AZALEA_TOWN",
+        "MAP_AZALEA_TOWN",
         "SPAWN_N_A",
         "MAPSETUP_WARP",
         "GS_BALL",
@@ -67,6 +77,8 @@ def phase_2_constants(
         "TACKLE",
         "BATTLERESULT_CAUGHT_CELEBI",
         "BATTLERESULT_BOX_FULL",
+        "BATTLERESULT_BITMASK",
+        "LOSE",
         "BALL_POCKET",
         "ITEM_POCKET",
         "RARE_CANDY",
@@ -444,6 +456,69 @@ def _assert_celebi_retry_state(session, constants: dict[str, int]) -> None:
     assert session.read_symbol("wCelebiEvent") & (1 << bit)
 
 
+def test_celebi_loss_restores_retry_state_through_blackout_and_continue(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_2_constants: dict[str, int],
+) -> None:
+    constants = phase_2_constants
+    max_frames = 60_000
+    saved_game = tmp_path / "after-blackout.sav"
+    spawn = (constants["GROUP_AZALEA_TOWN"], constants["MAP_AZALEA_TOWN"])
+
+    def prepare_loss(session) -> None:
+        prepare_battle_party(session, constants, constants["ARTICUNO"], False)
+        session.write_symbol("wLastSpawnMapGroup", spawn[0])
+        session.write_symbol("wLastSpawnMapNumber", spawn[1])
+
+    with loaded_phase_2_checkpoint(
+        repo_root,
+        tmp_path / "battle",
+        constants,
+        "celebi_shrine",
+        max_frames,
+        before_overworld=prepare_loss,
+    ) as session:
+        _start_shrine_battle(session, max_frames)
+        advance_with_a_until(
+            session,
+            lambda current: (
+                current.read_symbol("wBattleMode") == 0
+                and current.read_symbol("wScriptMode") == 0
+                and (
+                    current.read_symbol("wMapGroup"),
+                    current.read_symbol("wMapNumber"),
+                )
+                == spawn
+            ),
+            max_frames,
+            "Celebi loss and completed blackout",
+        )
+        assert (
+            session.read_symbol("wBattleResult") & ~constants["BATTLERESULT_BITMASK"]
+        ) == constants["LOSE"]
+        _assert_celebi_retry_state(session, constants)
+        position = (session.read_symbol("wXCoord"), session.read_symbol("wYCoord"))
+        save_game_from_overworld(session, max_frames)
+        dump_battery_ram(session, saved_game)
+
+    prepared = prepare_rom(
+        tmp_path / "continue",
+        repo_root / "crystallegends.gbc",
+        repo_root / "crystallegends.sym",
+        save_fixture=saved_game,
+    )
+    with PyBoySession(prepared) as session:
+        start_saved_game(session, max_frames)
+        assert (
+            session.read_symbol("wMapGroup"), session.read_symbol("wMapNumber")
+        ) == spawn
+        assert (
+            session.read_symbol("wXCoord"), session.read_symbol("wYCoord")
+        ) == position
+        _assert_celebi_retry_state(session, constants)
+
+
 def test_celebi_knockout_restores_the_retry_path(
     repo_root: Path,
     tmp_path: Path,
@@ -550,6 +625,8 @@ def test_celebi_capture_and_capacity_outcomes(
                 session, phase_2_constants["EVENT_FOREST_IS_RESTLESS"]
             )
             assert not _has_key_item(session, phase_2_constants["GS_BALL"])
+            bit = phase_2_constants["CELEBIEVENT_FOREST_IS_RESTLESS_F"]
+            assert not session.read_symbol("wCelebiEvent") & (1 << bit)
             encounters = session.hook_history.count("BattleMenu")
             session.tap("up", 2, 2)
             session.tap("a")

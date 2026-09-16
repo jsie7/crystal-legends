@@ -185,8 +185,9 @@ Cerulean Cave now uses the sprite for Giovanni's stationary script object at
 ## Run the local automated test harness
 
 The automated harness is opt-in and local to the development Mac. It does not
-change the default `make` target or `.github/workflows/main.yml`. Install its
-locked Python dependencies once, then use the narrowest useful profile:
+change the default `make` target or `.github/workflows/main.yml`. It requires
+Python 3.10 or newer. Install its locked Python dependencies once, then use the
+narrowest useful profile:
 
 ```bash
 uv sync --frozen --group test
@@ -853,7 +854,7 @@ Passed:
 - CHEAT MODE entry, navigation, grants, reset/cancel behavior, capacity and
   failure variants, and story-state isolation.
 
-Deferred by the user:
+Deferred at the time of this report:
 
 - the rest of the v0.1 path through Falkner and its save/reload smoke test;
 - later player-bird balance and Silver encounters through the Indigo rematch;
@@ -861,6 +862,14 @@ Deferred by the user:
 - full-game and no-cheat playthrough certification.
 
 This is a partial consolidated-gate pass, not a full-game certification.
+
+### Falkner follow-up — 2026-09-16
+
+The user confirmed that progression through Falkner was completed manually.
+This supersedes the Falkner progression deferral above. The confirmation did
+not identify a ROM revision, emulator/version, or separate save/reload result;
+it does not extend the original ROM-specific evidence or certify the later
+Phase 12 balance changes. The remaining manual gates retain their own status.
 
 ## Exercise CHEAT MODE safely
 

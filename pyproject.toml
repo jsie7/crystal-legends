@@ -2,7 +2,7 @@
 name = "crystal-legends-tests"
 version = "0.0.0"
 description = "Local automated validation tooling for Crystal Legends"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = []
 
 [dependency-groups]

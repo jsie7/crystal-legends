@@ -468,10 +468,17 @@ IlexForestShrineScript:
 	special CelebiShrineEvent
 	loadwildmon CELEBI, 30
 	startbattle
-	reloadmapafterbattle
-	pause 20
+if DEF(_CRYSTALLEGENDS)
+; A loss leaves this script at reloadmapafterbattle, so restore retries first.
 	special CheckCaughtCelebi
 	iffalse .DidntCatchCelebi
+endc
+	reloadmapafterbattle
+	pause 20
+if !DEF(_CRYSTALLEGENDS)
+	special CheckCaughtCelebi
+	iffalse .DidntCatchCelebi
+endc
 	appear ILEXFOREST_KURT
 	applymovement ILEXFOREST_KURT, IlexForestKurtStepsUpMovement
 	opentext
@@ -488,6 +495,8 @@ if DEF(_CRYSTALLEGENDS)
 	giveitem GS_BALL
 	setevent EVENT_FOREST_IS_RESTLESS
 	setflag ENGINE_FOREST_IS_RESTLESS
+	reloadmapafterbattle
+	pause 20
 endc
 .Done:
 	end

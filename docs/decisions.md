@@ -43,6 +43,10 @@ A full Key Items pocket must not advance the event, and any non-capture result
 at the shrine restores the GS Ball plus both forest-restless states. A capture
 finalizes the event and never produces a duplicate Celebi.
 
+Resolve the capture result and restore retry state before `reloadmapafterbattle`:
+on a loss, that command transfers control to the blackout script and never
+returns to the shrine script. Keep the upstream sequence in reference builds.
+
 ## 2026-08-09 — Defer the v0.1 and Phase 2 emulator matrices until the cheat menu
 
 Treat v0.1 as implementation-complete after its clean custom build, static
@@ -83,12 +87,17 @@ both permitted outcomes of that battle, the player-bird learnsets, and CHEAT
 MODE entry, navigation, grants, and safety variants.
 
 This closes the Phase 3 feature matrix and the early v0.1 story slice through
-the one-time Oak handoff. The user has deliberately deferred the remaining
-playthrough-dependent checks: progression through Falkner, later Silver and
-balance sampling, and the Phase 2 evolution/item/Celebi matrix. Do not describe
-v0.1, Phase 2, or the complete project as fully playtest-certified until those
-remaining matrices pass. The exact emulator/version was not supplied with this
-test report and should be appended if it becomes available.
+the one-time Oak handoff. At the time, the user deliberately deferred the
+remaining playthrough-dependent checks: progression through Falkner, later
+Silver and balance sampling, and the Phase 2 evolution/item/Celebi matrix.
+Do not describe v0.1, Phase 2, or the complete project as fully playtest-certified
+until those remaining matrices pass. The exact emulator/version was not supplied
+with this test report and should be appended if it becomes available.
+
+On 2026-09-16, the user confirmed that progression through Falkner was completed
+manually. That portion of the deferral is superseded by the
+[manual follow-up](workflows.md#falkner-follow-up--2026-09-16); the original
+ROM-specific evidence above remains unchanged.
 
 ## 2026-08-10 — Keep the automated harness local and layered
 

@@ -71,10 +71,12 @@ with softened custom moves, and Oak is 84–90. See the
 
 The earlier manual pass confirmed the title screen, all three legendary-bird
 starter branches, the first Silver battle, the Elm/Oak handoff, player-bird
-learnsets, CHEAT MODE, and progression through Falkner. Phase 4 still needs the
-user-owned presentation matrix for sprite appearance, dialogue, discoverability,
-scene choreography, and story feel. Phase 5 also needs its user-owned Ruins and
-Route 14 presentation matrix. Phase 6 still needs its user-owned tracker,
+learnsets, and CHEAT MODE. Progression through Falkner was also completed
+manually, as recorded in the
+[manual follow-up](workflows.md#falkner-follow-up--2026-09-16). Phase 4 still needs
+the user-owned presentation matrix for sprite appearance, dialogue,
+discoverability, scene choreography, and story feel. Phase 5 also needs its
+user-owned Ruins and Route 14 presentation matrix. Phase 6 still needs its tracker,
 hunt-feel, and Fast Ball presentation review. Phase 7 still needs its user-owned
 story clarity, annex presentation, pacing, and both-branch review. Phase 8
 has passed its complete user-owned manual matrix: all three Mt. Moon/lab

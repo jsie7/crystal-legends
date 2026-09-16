@@ -5,7 +5,8 @@ checked-in source and data, compiled ROM contracts, and short headless emulator
 scenarios. They do not replace manual visual, audio, balance, or full-playthrough
 acceptance.
 
-Install the locked local test environment:
+The harness requires Python 3.10 or newer (`zip(..., strict=True)` is used by
+the validation helpers). Install the locked local test environment:
 
 ```bash
 uv sync --frozen --group test
@@ -46,10 +47,11 @@ unchanged afterward.
 
 The Phase 2 regression profile automates all ten single-player evolution
 results, item consumption/rejection, the renewable-item tables, and the
-Hall-of-Fame through Celebi state machine. Manual acceptance remains the source
-of truth for evolution and capture animation quality, item-menu wording and
-feel, held-item effects during representative battles, Celebi presentation,
-and long-form progression or balance.
+Hall-of-Fame through Celebi state machine, including retry-state persistence
+after losing, completing the blackout, and native Save/restart/Continue.
+Manual acceptance remains the source of truth for evolution and capture
+animation quality, item-menu wording and feel, held-item effects during
+representative battles, Celebi presentation, and long-form progression or balance.
 
 The Phase 3 profile exhaustively drives the current CHEAT MODE action allowlist,
 both Back mechanisms, pocket and storage capacity, money saturation, duplicate

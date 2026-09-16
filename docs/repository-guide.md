@@ -40,9 +40,11 @@ The Phase 3 bedroom-TV CHEAT MODE is also implemented in source. Its renewable
 supplies, capped money grants, and four ordinary Pokémon gifts deliberately
 exclude story progression. A user-run manual pass confirmed CHEAT MODE and the
 three v0.1 branches through Elm's post-break-in handoff, including title,
-starter, first-Silver, third-bird, and player-learnset behavior. Progression
-through Falkner, later Silver/balance checks, and the Phase 2 matrix remain
-deferred, so the project is not yet fully playtest-certified.
+starter, first-Silver, third-bird, and player-learnset behavior. The user also
+confirmed that progression through Falkner was completed manually; see the
+[manual follow-up](workflows.md#falkner-follow-up--2026-09-16). The remaining
+phase-specific manual gates are tracked in [workflows.md](workflows.md); the
+project is not yet fully playtest-certified.
 
 Use sources in this order when they disagree:
 
