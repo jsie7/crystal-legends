@@ -484,6 +484,10 @@ def test_final_executive_sends_data_before_battle_and_opens_existing_flag_gate(
         [
             "checkevent EVENT_PROJECT_MEW_RESOLVED",
             "iffalse .ReturnToAnnex",
+            "readvar VAR_XCOORD",
+            "ifnotequal 14, .ReturnToAnnex",
+            "readvar VAR_YCOORD",
+            "ifnotequal 0, .ReturnToAnnex",
             "applymovement PLAYER, RadioTower5FPlayerReturnsFromAnnexMovement",
             "sjump RadioTower5FDirectorCleanupScript",
             ".ReturnToAnnex:",

@@ -43,6 +43,11 @@ RadioTower5FProjectMewEntranceCallback:
 RadioTower5FResumeProjectMewScript:
 	checkevent EVENT_PROJECT_MEW_RESOLVED
 	iffalse .ReturnToAnnex
+; After a blackout, the ordinary 4F stairs do not match this walk's origin.
+	readvar VAR_XCOORD
+	ifnotequal 14, .ReturnToAnnex
+	readvar VAR_YCOORD
+	ifnotequal 0, .ReturnToAnnex
 	applymovement PLAYER, RadioTower5FPlayerReturnsFromAnnexMovement
 	sjump RadioTower5FDirectorCleanupScript
 

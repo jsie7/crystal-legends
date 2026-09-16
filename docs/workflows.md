@@ -407,7 +407,8 @@ glass observation; cancellation keeping the glass and exit closed; both
 permanent terminal outcomes opening them together; the data-sent, resolved,
 transformed, and caught facts; level-30 encounter identity; successful capture;
 fresh retries after knockout or escape; player defeat; and resuming the stock
-Director/Clear Bell cleanup without requiring capture.
+Director/Clear Bell cleanup without requiring capture. Both ordinary 4F stairs
+are covered for each resolved outcome while that cleanup is still pending.
 
 For manual acceptance, use a backed-up or disposable save and record the
 emulator/version, ROM commit and hash, date, preparation boundary, selected

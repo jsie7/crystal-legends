@@ -50,6 +50,8 @@ def phase_7_runtime_constants(repo_root: Path, tmp_path_factory) -> dict[str, in
         "MAP_RADIO_TOWER_TRANSMITTER_ANNEX",
         "GROUP_RADIO_TOWER_5F",
         "MAP_RADIO_TOWER_5F",
+        "GROUP_RADIO_TOWER_4F",
+        "MAP_RADIO_TOWER_4F",
         "GROUP_TEAM_ROCKET_BASE_B3F",
         "MAP_TEAM_ROCKET_BASE_B3F",
         "EVENT_TEAM_ROCKET_BASE_B3F_EXECUTIVE",
@@ -877,6 +879,77 @@ def test_successful_capture_sets_fact_and_removes_selected_subject(
             session.script_history.count("RadioTowerTransmitterAnnexSubjectScript")
             == subject_count
         )
+
+
+@pytest.mark.parametrize("stair_x", [0, 12], ids=["west", "east"])
+@pytest.mark.parametrize("transformed", [False, True], ids=["mew", "mewtwo"])
+def test_resolved_5f_stair_return_routes_through_annex_before_cleanup(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_7_runtime_constants: dict[str, int],
+    scenario: dict,
+    stair_x: int,
+    transformed: bool,
+) -> None:
+    constants = phase_7_runtime_constants
+    max_frames = scenario["max_frames_per_step"]
+
+    def approach_stairs(session) -> None:
+        # Resume the post-blackout journey at 4F without changing story facts.
+        session.write_symbol("wMapGroup", constants["GROUP_RADIO_TOWER_4F"])
+        session.write_symbol("wMapNumber", constants["MAP_RADIO_TOWER_4F"])
+        session.write_symbol("wXCoord", stair_x)
+        session.write_symbol("wYCoord", 1)
+
+    with loaded_phase_7_checkpoint(
+        repo_root,
+        tmp_path,
+        constants,
+        scenario,
+        start="subject",
+        resolved=True,
+        transformed=transformed,
+        before_overworld=approach_stairs,
+    ) as session:
+        session.enable_script_tracing()
+        session.tap("up", 2, 20)
+        session.tap("up", 2, 20)
+        session.wait_until(
+            lambda current: (
+                current.read_symbol("wMapGroup")
+                == constants["GROUP_RADIO_TOWER_TRANSMITTER_ANNEX"]
+                and current.read_symbol("wMapNumber")
+                == constants["MAP_RADIO_TOWER_TRANSMITTER_ANNEX"]
+                and current.read_symbol("wRadioTowerTransmitterAnnexSceneID")
+                == constants["SCENE_RADIOTOWERTRANSMITTERANNEX_NOOP"]
+                and current.read_symbol("wScriptMode") == 0
+            ),
+            3_000,
+            "ordinary 4F staircase returning to the resolved annex",
+        )
+        assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (4, 6)
+        assert _event(session, constants, "EVENT_PROJECT_MEW_RESOLVED")
+        assert _event(session, constants, "EVENT_PROJECT_MEW_TRANSFORMED") is transformed
+        assert not _event(session, constants, "EVENT_CLEARED_RADIO_TOWER")
+
+        session.tap("down", 2, 20)
+        session.tap("down", 2, 20)
+        session.tap("down", 2, 20)
+        advance_with_a_until(
+            session,
+            lambda current: (
+                _event(current, constants, "EVENT_TEAM_ROCKET_DISBANDED")
+                and current.read_symbol("wScriptMode") == 0
+            ),
+            max_frames,
+            "Director cleanup after returning from either 4F staircase",
+        )
+        assert constants["CLEAR_BELL"] in read_inventory(session).key_items
+        assert _event(session, constants, "EVENT_GOT_CLEAR_BELL")
+        assert not _event(session, constants, "EVENT_CAUGHT_PROJECT_MEW_SUBJECT")
+        assert session.read_symbol("wRadioTower5FSceneID") == constants["SCENE_RADIOTOWER5F_NOOP"]
+        session.tick(120)
+        assert session.script_history.count("RadioTower5FDirectorCleanupScript") == 1
 
 
 def test_return_without_capture_resumes_stock_director_progression_once(

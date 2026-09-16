@@ -241,6 +241,10 @@ places the player back on the revealed stair at `(14, 0)`, then automatically
 retraces the walkable corridor to the original post-battle position at
 `(14, 5)` before stock Director cleanup resumes.
 
+If cleanup is still pending after a blackout, either ordinary 4F staircase
+routes back through the annex without changing the permanent decision. Start
+the return choreography only at `(14, 0)`, where its walkable path begins.
+
 The selected subject is a normal level-30 wild battle that remains available
 after knockout, escape, or player defeat and starts each retry at full HP with
 no status. A single event-masked object represents the subject; its variable
