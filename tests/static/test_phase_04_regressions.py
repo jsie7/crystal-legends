@@ -149,7 +149,7 @@ def test_burned_tower_cyndaquil_visibility_and_gift_contract(
     object_row = (
         "object_event 10,  4, SPRITE_CYNDAQUIL, SPRITEMOVEDATA_POKEMON, 0, 0, "
         "-1, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, "
-        "BurnedTowerB1FCyndaquilScript, -1"
+        "BurnedTowerB1FCyndaquilScript, EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER"
     )
 
     assert object_row in crystal
@@ -164,10 +164,10 @@ def test_burned_tower_cyndaquil_visibility_and_gift_contract(
             "iftrue .Hide",
             "checkevent EVENT_RELEASED_THE_BEASTS",
             "iffalse .Hide",
-            "appear BURNEDTOWERB1F_CYNDAQUIL",
+            "loadmem wMap1ObjectSprite + (BURNEDTOWERB1F_CYNDAQUIL - 2) * MAPOBJECT_LENGTH, SPRITE_CYNDAQUIL",
             "endcallback",
             ".Hide:",
-            "disappear BURNEDTOWERB1F_CYNDAQUIL",
+            "loadmem wMap1ObjectSprite + (BURNEDTOWERB1F_CYNDAQUIL - 2) * MAPOBJECT_LENGTH, 0",
             "endcallback",
         ],
     )
@@ -175,6 +175,8 @@ def test_burned_tower_cyndaquil_visibility_and_gift_contract(
         crystal,
         [
             "BurnedTowerB1FCyndaquilScript:",
+            "checkevent EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER",
+            "iftrue .Done",
             "faceplayer",
             "opentext",
             "checkevent EVENT_RELEASED_THE_BEASTS",

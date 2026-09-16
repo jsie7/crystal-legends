@@ -248,6 +248,13 @@ non-consumption, unrelated story-state preservation, bank floors, and reference
 isolation. Source completion means these gates pass; it does not certify the
 presentation.
 
+Gift persistence tests exercise native Save/restart/Continue separately from
+forced fresh map loads. Negative interactions inspect the live object and face
+its position before pressing A. Cyndaquil and the Ruins gifts also cover actual
+exit/re-entry warps after party and box delivery, plus a stale visible object's
+refusal to grant an already completed gift. Only synthetic retargeted checkpoints
+request `fresh_map=True` outside the explicitly named map-load regression cases.
+
 For playtest certification, use a backed-up or disposable save and record the
 emulator/version, ROM commit and hash, date, preparation boundary, and result.
 Manually confirm:

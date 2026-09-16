@@ -14,7 +14,10 @@ from tests.support.bedroom_scenario import (
 from tests.support.constant_resolver import resolve_constants
 from tests.support.game_state import read_progress
 from tests.support.gift_scenario import (
+    assert_completed_gift_is_inert,
+    assert_gift_absent,
     clear_current_box,
+    cross_map_warp,
     interact_with_gift,
     set_current_box_full,
     set_party_full,
@@ -24,6 +27,7 @@ from tests.support.phase_05_scenario import (
     loaded_phase_5_saved_game,
     retarget_phase_5_save,
 )
+from tests.support.legendary_scenario import place_player
 from tests.support.symbol_table import SymbolTable
 
 
@@ -43,6 +47,14 @@ def phase_5_constants(
 ) -> dict[str, int]:
     names = {
         "SPAWN_N_A",
+        "NUM_OBJECTS",
+        "OW_UP",
+        "OW_RIGHT",
+        "OW_DOWN",
+        "GROUP_RUINS_OF_ALPH_INNER_CHAMBER",
+        "MAP_RUINS_OF_ALPH_INNER_CHAMBER",
+        "GROUP_RUINS_OF_ALPH_OUTSIDE",
+        "MAP_RUINS_OF_ALPH_OUTSIDE",
         "MAPSETUP_WARP",
         "EVENT_GOT_KABUTO_FROM_ALPH",
         "EVENT_GOT_OMANYTE_FROM_ALPH",
@@ -205,6 +217,22 @@ def test_opened_chamber_scene_survives_native_save_reload(
 
 
 @pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE", "AERODACTYL"])
+def test_completed_gift_script_refuses_delivery_even_if_still_visible(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_5_constants: dict[str, int],
+    scenarios: list[dict],
+    species_name: str,
+) -> None:
+    scenario = next(row for row in scenarios if row["species"] == species_name)
+    with loaded_phase_5_checkpoint(
+        repo_root, tmp_path, phase_5_constants, scenario,
+        location="gift_room", picture=True, wall=True,
+    ) as session:
+        assert_completed_gift_is_inert(session, phase_5_constants, scenario)
+
+
+@pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE", "AERODACTYL"])
 def test_gift_visibility_and_decline_are_retryable(
     repo_root: Path,
     tmp_path: Path,
@@ -229,9 +257,7 @@ def test_gift_visibility_and_decline_are_retryable(
             wall=wall,
             completed=completed,
         ) as session:
-            session.enable_script_tracing()
-            session.tap("a", 2, 30)
-            assert scenario["gift"]["script"] not in session.script_history
+            assert_gift_absent(session, phase_5_constants, scenario)
             assert event_is_set(session, completion) is completed
 
     with loaded_phase_5_checkpoint(
@@ -248,6 +274,14 @@ def test_gift_visibility_and_decline_are_retryable(
         assert read_progress(session).party.count == 0
         assert interact_with_gift(session, scenario, accept=False) is None
         assert session.script_history.count(scenario["gift"]["script"]) == 2
+        save_game_from_overworld(session, scenario["max_frames_per_step"])
+        pending = dump_battery_ram(session, tmp_path / "pending.sav")
+
+    with loaded_phase_5_saved_game(
+        repo_root, tmp_path / "pending-continue", phase_5_constants, scenario, pending
+    ) as session:
+        assert not event_is_set(session, completion)
+        assert interact_with_gift(session, scenario, accept=False) is None
 
 
 @pytest.mark.parametrize("destination", ["party", "current-box"])
@@ -291,8 +325,28 @@ def test_gift_party_and_box_delivery_finalize_once(
             assert session.read_symbol("sBoxMon1Level") == scenario["level"]
         for event_name in scenario["item_room"]["item_events"]:
             assert not event_is_set(session, phase_5_constants[event_name])
-        session.tap("a", 2, 30)
-        assert session.script_history.count(scenario["gift"]["script"]) == 1
+        assert_gift_absent(session, phase_5_constants, scenario)
+
+        # The word room exits through its floor pit. Return through the chamber
+        # and item room so the gift's objects are rebuilt by ordinary map entry.
+        entrance = {"KABUTO": (14, 8), "OMANYTE": (2, 30), "AERODACTYL": (16, 34)}
+        pit_approach = (17, 12) if species_name == "OMANYTE" else (17, 10)
+        route = (
+            (pit_approach, "down", "RUINS_OF_ALPH_INNER_CHAMBER"),
+            ((10, 12), "down", "RUINS_OF_ALPH_OUTSIDE"),
+            (entrance[species_name], "up", scenario["chamber"]["map"]),
+            ((4, 1), "up", scenario["item_room"]["map"]),
+            ((3, 2), "up", scenario["gift"]["map"]),
+        )
+        for approach, direction, destination_map in route:
+            cross_map_warp(session, phase_5_constants, approach, direction,
+                           destination_map, scenario["max_frames_per_step"])
+        start = scenario["gift"]["start"]
+        place_player(session, start["x"], start["y"])
+        session.tick(30)
+        assert_gift_absent(session, phase_5_constants, scenario)
+        assert read_progress(session).party == progress.party
+        assert read_progress(session).current_box == progress.current_box
 
 
 @pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE", "AERODACTYL"])
@@ -330,12 +384,14 @@ def test_gift_full_storage_is_atomic_and_retryable(
 
 
 @pytest.mark.parametrize("species_name", ["KABUTO", "OMANYTE", "AERODACTYL"])
-def test_gift_completion_survives_native_save_reload(
+@pytest.mark.parametrize("fresh_map", [False, True], ids=["continue", "fresh-map"])
+def test_gift_completion_survives_continue_and_fresh_map_load(
     repo_root: Path,
     tmp_path: Path,
     phase_5_constants: dict[str, int],
     scenarios: list[dict],
     species_name: str,
+    fresh_map: bool,
 ) -> None:
     scenario = next(row for row in scenarios if row["species"] == species_name)
     completion = phase_5_constants[scenario["completion_event"]]
@@ -360,12 +416,11 @@ def test_gift_completion_survives_native_save_reload(
         phase_5_constants,
         scenario,
         persisted,
+        fresh_map=fresh_map,
     ) as session:
         assert event_is_set(session, completion)
         assert read_progress(session).party.species == (species,)
-        session.enable_script_tracing()
-        session.tap("a", 2, 30)
-        assert scenario["gift"]["script"] not in session.script_history
+        assert_gift_absent(session, phase_5_constants, scenario)
 
 
 def test_all_three_gifts_can_be_collected_in_one_persistent_save(
@@ -405,6 +460,7 @@ def test_all_three_gifts_can_be_collected_in_one_persistent_save(
                 phase_5_constants,
                 scenario,
                 retargeted,
+                fresh_map=True,
             )
 
         with context as session:

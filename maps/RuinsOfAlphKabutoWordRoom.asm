@@ -19,14 +19,20 @@ RuinsOfAlphKabutoWordRoomKabutoCallback:
 	iffalse .Hide
 	checkevent EVENT_WALL_OPENED_IN_KABUTO_CHAMBER
 	iffalse .Hide
-	appear RUINSOFALPHKABUTOWORDROOM_KABUTO
+	loadmem wMap1ObjectSprite + (RUINSOFALPHKABUTOWORDROOM_KABUTO - 2) * MAPOBJECT_LENGTH, SPRITE_KABUTO
 	endcallback
 
 .Hide:
-	disappear RUINSOFALPHKABUTOWORDROOM_KABUTO
+	loadmem wMap1ObjectSprite + (RUINSOFALPHKABUTOWORDROOM_KABUTO - 2) * MAPOBJECT_LENGTH, 0
 	endcallback
 
 RuinsOfAlphKabutoWordRoomKabutoScript:
+	checkevent EVENT_GOT_KABUTO_FROM_ALPH
+	iftrue .Done
+	checkevent EVENT_SOLVED_KABUTO_PUZZLE
+	iffalse .Done
+	checkevent EVENT_WALL_OPENED_IN_KABUTO_CHAMBER
+	iffalse .Done
 	faceplayer
 	opentext
 	cry KABUTO
@@ -55,6 +61,7 @@ RuinsOfAlphKabutoWordRoomKabutoScript:
 .Wait:
 	waitbutton
 	closetext
+.Done:
 	end
 
 RuinsOfAlphKabutoWordRoomKabutoOfferText:
@@ -97,5 +104,5 @@ RuinsOfAlphKabutoWordRoom_MapEvents:
 
 	def_object_events
 if DEF(_CRYSTALLEGENDS)
-	object_event 10,  8, SPRITE_KABUTO, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, RuinsOfAlphKabutoWordRoomKabutoScript, -1
+	object_event 10,  8, SPRITE_KABUTO, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, RuinsOfAlphKabutoWordRoomKabutoScript, EVENT_GOT_KABUTO_FROM_ALPH
 endc

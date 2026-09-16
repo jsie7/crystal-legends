@@ -27,9 +27,9 @@
     "completion_event": "EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER",
     "object_constant": "BURNEDTOWERB1F_CYNDAQUIL",
     "object_sprite": "SPRITE_CYNDAQUIL",
-    "object_event_flag": "-1",
+    "object_event_flag": "EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER",
     "script": "BurnedTowerB1FCyndaquilScript",
-    "visibility": "callback",
+    "visibility": "prerequisite_sprite_and_completion_event_mask",
     "max_frames_per_step": 60000,
     "delivery_contract": "stock_givepoke_0_party_1_box_2_full"
   },

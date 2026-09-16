@@ -10,7 +10,7 @@
       "object_constant": "RUINSOFALPHKABUTOWORDROOM_KABUTO",
       "object_sprite": "SPRITE_KABUTO",
       "object_palette": "PAL_NPC_BROWN",
-      "object_event_flag": "-1",
+      "object_event_flag": "EVENT_GOT_KABUTO_FROM_ALPH",
       "script": "RuinsOfAlphKabutoWordRoomKabutoScript"
     },
     "item_room": {
@@ -47,7 +47,7 @@
       "object_constant": "RUINSOFALPHOMANYTEWORDROOM_OMANYTE",
       "object_sprite": "SPRITE_OMANYTE",
       "object_palette": "PAL_NPC_BLUE",
-      "object_event_flag": "-1",
+      "object_event_flag": "EVENT_GOT_OMANYTE_FROM_ALPH",
       "script": "RuinsOfAlphOmanyteWordRoomOmanyteScript"
     },
     "item_room": {
@@ -84,7 +84,7 @@
       "object_constant": "RUINSOFALPHAERODACTYLWORDROOM_AERODACTYL",
       "object_sprite": "SPRITE_AERODACTYL",
       "object_palette": "PAL_NPC_PINK",
-      "object_event_flag": "-1",
+      "object_event_flag": "EVENT_GOT_AERODACTYL_FROM_ALPH",
       "script": "RuinsOfAlphAerodactylWordRoomAerodactylScript"
     },
     "item_room": {

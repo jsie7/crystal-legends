@@ -49,6 +49,7 @@ def phase_4_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "setevent_command",
             "disappear_command",
             "appear_command",
+            "loadmem_command",
             "takeitem_command",
             "SECRETPOTION",
         ],
@@ -218,7 +219,7 @@ def test_compiled_burned_tower_cyndaquil_uses_callback_visibility(
         phase_4_constants["PAL_NPC_RED"] << 4
         | phase_4_constants["OBJECTTYPE_SCRIPT"]
     )
-    assert event.event_flag == 0xFFFF
+    assert event.event_flag == phase_4_constants["EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER"]
 
     rom = RomImage.load(repo_root / "crystallegends.gbc")
     start = symbols["BurnedTowerB1FCyndaquilScript"].rom_offset
@@ -257,8 +258,12 @@ def test_compiled_burned_tower_cyndaquil_uses_callback_visibility(
         bytes([phase_4_constants["checkevent_command"]])
         + _pointer(phase_4_constants["EVENT_RELEASED_THE_BEASTS"])
     )
-    assert bytes([phase_4_constants["appear_command"], 11]) in callback
-    assert bytes([phase_4_constants["disappear_command"], 11]) in callback
+    sprite_address = symbols[f"wMap{len(custom_events)}ObjectSprite"].address
+    for sprite in (0, phase_4_constants["SPRITE_CYNDAQUIL"]):
+        assert (
+            bytes([phase_4_constants["loadmem_command"]])
+            + _pointer(sprite_address) + bytes([sprite])
+        ) in callback
 
     release_start = symbols["ReleaseTheBeasts"].rom_offset
     release_end = symbols["BurnedTowerB1FCyndaquilScript"].rom_offset

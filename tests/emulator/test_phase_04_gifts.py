@@ -14,7 +14,10 @@ from tests.support.bedroom_scenario import (
 from tests.support.constant_resolver import resolve_constants
 from tests.support.game_state import read_progress
 from tests.support.gift_scenario import (
+    assert_completed_gift_is_inert,
+    assert_gift_absent,
     clear_current_box,
+    cross_map_warp,
     interact_with_gift,
     set_current_box_full,
     set_party_full,
@@ -44,6 +47,12 @@ def phase_4_constants(
 ) -> dict[str, int]:
     names = {
         "SPAWN_N_A",
+        "NUM_OBJECTS",
+        "OW_UP",
+        "OW_RIGHT",
+        "OW_DOWN",
+        "GROUP_BURNED_TOWER_1F",
+        "MAP_BURNED_TOWER_1F",
         "MAPSETUP_WARP",
         "PARTY_LENGTH",
         "MONS_PER_BOX",
@@ -53,6 +62,7 @@ def phase_4_constants(
         "EVENT_GOT_TOTODILE_FROM_CIANWOOD",
         "EVENT_BURNED_TOWER_B1F_BEASTS_1",
         "EVENT_BURNED_TOWER_B1F_BEASTS_2",
+        "EVENT_HOLE_IN_BURNED_TOWER",
         "EVENT_SAW_SUICUNE_AT_CIANWOOD_CITY",
         "RAIKOU",
         "ENTEI",
@@ -76,6 +86,7 @@ def phase_4_constants(
     )
     symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
     for scene in (
+        "SCENE_BURNEDTOWER1F_NOOP",
         "SCENE_BURNEDTOWERB1F_RELEASE_THE_BEASTS",
         "SCENE_BURNEDTOWERB1F_NOOP",
     ):
@@ -182,6 +193,17 @@ def test_phase_4_party_and_box_delivery_finalize_once(
             assert progress.current_box.species == (species,)
             assert session.read_symbol("sBoxMon1Level") == scenario["level"]
 
+        if species_name == "CYNDAQUIL":
+            cross_map_warp(session, phase_4_constants, (7, 14), "down",
+                           "BURNED_TOWER_1F", scenario["max_frames_per_step"])
+            cross_map_warp(session, phase_4_constants, (10, 10), "up",
+                           "BURNED_TOWER_B1F", scenario["max_frames_per_step"])
+            place_player(session, scenario["start"]["x"], scenario["start"]["y"])
+            session.tick(30)
+            assert_gift_absent(session, phase_4_constants, scenario)
+            assert read_progress(session).party == progress.party
+            assert read_progress(session).current_box == progress.current_box
+
 
 @pytest.mark.parametrize("species_name", ["CHIKORITA", "CYNDAQUIL", "TOTODILE"])
 def test_phase_4_full_storage_is_atomic_and_retryable(
@@ -216,12 +238,14 @@ def test_phase_4_full_storage_is_atomic_and_retryable(
 
 
 @pytest.mark.parametrize("species_name", ["CHIKORITA", "CYNDAQUIL", "TOTODILE"])
-def test_phase_4_completion_survives_native_save_reload_without_duplicates(
+@pytest.mark.parametrize("fresh_map", [False, True], ids=["continue", "fresh-map"])
+def test_phase_4_completion_survives_continue_and_fresh_map_load(
     repo_root: Path,
     tmp_path: Path,
     phase_4_constants: dict[str, int],
     implemented_gifts: dict[str, dict],
     species_name: str,
+    fresh_map: bool,
 ) -> None:
     scenario = implemented_gifts[species_name]
     completion = phase_4_constants[scenario["completion_event"]]
@@ -244,6 +268,7 @@ def test_phase_4_completion_survives_native_save_reload_without_duplicates(
         phase_4_constants,
         scenario,
         persisted,
+        fresh_map=fresh_map,
     ) as session:
         assert event_is_set(session, completion)
         assert read_progress(session).party.species == (species,)
@@ -252,10 +277,20 @@ def test_phase_4_completion_survives_native_save_reload_without_duplicates(
                 assert not event_is_set(
                     session, phase_4_constants[other["completion_event"]]
                 )
-        session.enable_script_tracing()
-        session.tap("a", 2, 30)
-        assert scenario["script"] not in session.script_history
+        assert_gift_absent(session, phase_4_constants, scenario)
         assert read_progress(session).party.species == (species,)
+
+
+def test_cyndaquil_script_refuses_a_completed_gift_even_if_still_visible(
+    repo_root: Path,
+    tmp_path: Path,
+    phase_4_constants: dict[str, int],
+    cyndaquil: dict,
+) -> None:
+    with loaded_phase_4_checkpoint(
+        repo_root, tmp_path, phase_4_constants, cyndaquil, prerequisite=True
+    ) as session:
+        assert_completed_gift_is_inert(session, phase_4_constants, cyndaquil)
 
 
 def test_cyndaquil_is_hidden_before_release_and_after_completion(
@@ -274,9 +309,7 @@ def test_cyndaquil_is_hidden_before_release_and_after_completion(
             prerequisite=completed,
             completed=completed,
         ) as session:
-            session.enable_script_tracing()
-            session.tap("a", 2, 30)
-            assert cyndaquil["script"] not in session.script_history
+            assert_gift_absent(session, phase_4_constants, cyndaquil)
             assert event_is_set(session, completion) is completed
 
 
@@ -313,13 +346,15 @@ def test_cyndaquil_appears_in_release_scene_and_restores_while_pending(
         )
         walk_steps(session, "up", "wYCoord", -1, 1, cyndaquil["max_frames_per_step"])
         assert interact_with_gift(session, cyndaquil, accept=False) is None
+        save_game_from_overworld(session, cyndaquil["max_frames_per_step"])
+        pending = dump_battery_ram(session, tmp_path / "pending.sav")
 
-    with loaded_phase_4_checkpoint(
+    with loaded_phase_4_saved_game(
         repo_root,
         tmp_path / "reload-pending",
         phase_4_constants,
         cyndaquil,
-        prerequisite=True,
+        pending,
     ) as session:
         assert interact_with_gift(session, cyndaquil, accept=False) is None
         assert not event_is_set(session, completion)
@@ -401,6 +436,7 @@ def test_all_three_johto_starters_are_obtainable_on_one_save(
                 phase_4_constants,
                 scenario,
                 retargeted,
+                fresh_map=True,
             )
         with context as session:
             assert interact_with_gift(session, scenario, accept=True) == 0

@@ -234,7 +234,10 @@ def loaded_phase_5_saved_game(
     constants: dict[str, int],
     scenario: dict,
     save_fixture: Path,
+    *,
+    fresh_map: bool = False,
 ) -> Iterator[PyBoySession]:
+    """Use native Continue unless explicitly testing a fresh or retargeted map."""
     prepared = prepare_rom(
         work_dir,
         repo_root / "crystallegends.gbc",
@@ -249,6 +252,6 @@ def loaded_phase_5_saved_game(
         start_saved_game(
             session,
             scenario["max_frames_per_step"],
-            force_fresh_map_load,
+            force_fresh_map_load if fresh_map else None,
         )
         yield session

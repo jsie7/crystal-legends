@@ -19,14 +19,20 @@ RuinsOfAlphAerodactylWordRoomAerodactylCallback:
 	iffalse .Hide
 	checkevent EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER
 	iffalse .Hide
-	appear RUINSOFALPHAERODACTYLWORDROOM_AERODACTYL
+	loadmem wMap1ObjectSprite + (RUINSOFALPHAERODACTYLWORDROOM_AERODACTYL - 2) * MAPOBJECT_LENGTH, SPRITE_AERODACTYL
 	endcallback
 
 .Hide:
-	disappear RUINSOFALPHAERODACTYLWORDROOM_AERODACTYL
+	loadmem wMap1ObjectSprite + (RUINSOFALPHAERODACTYLWORDROOM_AERODACTYL - 2) * MAPOBJECT_LENGTH, 0
 	endcallback
 
 RuinsOfAlphAerodactylWordRoomAerodactylScript:
+	checkevent EVENT_GOT_AERODACTYL_FROM_ALPH
+	iftrue .Done
+	checkevent EVENT_SOLVED_AERODACTYL_PUZZLE
+	iffalse .Done
+	checkevent EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER
+	iffalse .Done
 	faceplayer
 	opentext
 	cry AERODACTYL
@@ -55,6 +61,7 @@ RuinsOfAlphAerodactylWordRoomAerodactylScript:
 .Wait:
 	waitbutton
 	closetext
+.Done:
 	end
 
 RuinsOfAlphAerodactylWordRoomAerodactylOfferText:
@@ -97,5 +104,5 @@ RuinsOfAlphAerodactylWordRoom_MapEvents:
 
 	def_object_events
 if DEF(_CRYSTALLEGENDS)
-	object_event 16,  8, SPRITE_AERODACTYL, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_PINK, OBJECTTYPE_SCRIPT, 0, RuinsOfAlphAerodactylWordRoomAerodactylScript, -1
+	object_event 16,  8, SPRITE_AERODACTYL, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_PINK, OBJECTTYPE_SCRIPT, 0, RuinsOfAlphAerodactylWordRoomAerodactylScript, EVENT_GOT_AERODACTYL_FROM_ALPH
 endc

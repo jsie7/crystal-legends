@@ -19,14 +19,20 @@ RuinsOfAlphOmanyteWordRoomOmanyteCallback:
 	iffalse .Hide
 	checkevent EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER
 	iffalse .Hide
-	appear RUINSOFALPHOMANYTEWORDROOM_OMANYTE
+	loadmem wMap1ObjectSprite + (RUINSOFALPHOMANYTEWORDROOM_OMANYTE - 2) * MAPOBJECT_LENGTH, SPRITE_OMANYTE
 	endcallback
 
 .Hide:
-	disappear RUINSOFALPHOMANYTEWORDROOM_OMANYTE
+	loadmem wMap1ObjectSprite + (RUINSOFALPHOMANYTEWORDROOM_OMANYTE - 2) * MAPOBJECT_LENGTH, 0
 	endcallback
 
 RuinsOfAlphOmanyteWordRoomOmanyteScript:
+	checkevent EVENT_GOT_OMANYTE_FROM_ALPH
+	iftrue .Done
+	checkevent EVENT_SOLVED_OMANYTE_PUZZLE
+	iffalse .Done
+	checkevent EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER
+	iffalse .Done
 	faceplayer
 	opentext
 	cry OMANYTE
@@ -55,6 +61,7 @@ RuinsOfAlphOmanyteWordRoomOmanyteScript:
 .Wait:
 	waitbutton
 	closetext
+.Done:
 	end
 
 RuinsOfAlphOmanyteWordRoomOmanyteOfferText:
@@ -97,5 +104,5 @@ RuinsOfAlphOmanyteWordRoom_MapEvents:
 
 	def_object_events
 if DEF(_CRYSTALLEGENDS)
-	object_event 15, 10, SPRITE_OMANYTE, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, RuinsOfAlphOmanyteWordRoomOmanyteScript, -1
+	object_event 15, 10, SPRITE_OMANYTE, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, RuinsOfAlphOmanyteWordRoomOmanyteScript, EVENT_GOT_OMANYTE_FROM_ALPH
 endc

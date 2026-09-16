@@ -282,7 +282,7 @@ def test_word_room_gift_is_retry_safe_and_item_room_stays_stock(
     object_row = (
         f"object_event {x:2}, {y:2}, SPRITE_{species}, SPRITEMOVEDATA_POKEMON, 0, 0, "
         f"-1, -1, {palette}, OBJECTTYPE_SCRIPT, 0, "
-        f"{gift_prefix}{species.title()}Script, -1"
+        f"{gift_prefix}{species.title()}Script, EVENT_GOT_{species}_FROM_ALPH"
     )
 
     assert f"const {object_constant}" in gift_crystal
@@ -299,10 +299,10 @@ def test_word_room_gift_is_retry_safe_and_item_room_stays_stock(
             "iffalse .Hide",
             f"checkevent EVENT_WALL_OPENED_IN_{species}_CHAMBER",
             "iffalse .Hide",
-            f"appear {object_constant}",
+            f"loadmem wMap1ObjectSprite + ({object_constant} - 2) * MAPOBJECT_LENGTH, SPRITE_{species}",
             "endcallback",
             ".Hide:",
-            f"disappear {object_constant}",
+            f"loadmem wMap1ObjectSprite + ({object_constant} - 2) * MAPOBJECT_LENGTH, 0",
             "endcallback",
         ],
     )
@@ -310,6 +310,12 @@ def test_word_room_gift_is_retry_safe_and_item_room_stays_stock(
         gift_crystal,
         [
             f"{gift_prefix}{species.title()}Script:",
+            f"checkevent EVENT_GOT_{species}_FROM_ALPH",
+            "iftrue .Done",
+            f"checkevent EVENT_SOLVED_{species}_PUZZLE",
+            "iffalse .Done",
+            f"checkevent EVENT_WALL_OPENED_IN_{species}_CHAMBER",
+            "iffalse .Done",
             "faceplayer",
             "opentext",
             f"cry {species}",

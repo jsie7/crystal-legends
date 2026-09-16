@@ -42,11 +42,11 @@ BurnedTowerB1FCyndaquilCallback:
 	iftrue .Hide
 	checkevent EVENT_RELEASED_THE_BEASTS
 	iffalse .Hide
-	appear BURNEDTOWERB1F_CYNDAQUIL
+	loadmem wMap1ObjectSprite + (BURNEDTOWERB1F_CYNDAQUIL - 2) * MAPOBJECT_LENGTH, SPRITE_CYNDAQUIL
 	endcallback
 
 .Hide:
-	disappear BURNEDTOWERB1F_CYNDAQUIL
+	loadmem wMap1ObjectSprite + (BURNEDTOWERB1F_CYNDAQUIL - 2) * MAPOBJECT_LENGTH, 0
 	endcallback
 endc
 
@@ -114,7 +114,12 @@ ReleaseTheBeasts:
 	changeblock 6, 14, $1b ; ladder
 	refreshmap
 if DEF(_CRYSTALLEGENDS)
+	checkevent EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER
+	iftrue .CyndaquilDone
+	loadmem wMap1ObjectSprite + (BURNEDTOWERB1F_CYNDAQUIL - 2) * MAPOBJECT_LENGTH, SPRITE_CYNDAQUIL
+	special LoadUsedSpritesGFX
 	appear BURNEDTOWERB1F_CYNDAQUIL
+.CyndaquilDone:
 endc
 	closetext
 	setscene SCENE_BURNEDTOWERB1F_NOOP
@@ -122,6 +127,8 @@ endc
 
 if DEF(_CRYSTALLEGENDS)
 BurnedTowerB1FCyndaquilScript:
+	checkevent EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER
+	iftrue .Done
 	faceplayer
 	opentext
 	checkevent EVENT_RELEASED_THE_BEASTS
@@ -143,6 +150,7 @@ BurnedTowerB1FCyndaquilScript:
 
 .NotReady:
 	closetext
+.Done:
 	end
 
 .Declined:
@@ -349,5 +357,5 @@ BurnedTowerB1F_MapEvents:
 	object_event 16,  4, SPRITE_POKE_BALL, SPRITEMOVEDATA_STILL, 0, 0, -1, -1, 0, OBJECTTYPE_ITEMBALL, 0, BurnedTowerB1FTMEndure, EVENT_BURNED_TOWER_B1F_TM_ENDURE
 	object_event 10, 12, SPRITE_SUPER_NERD, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, BurnedTowerB1FEusine, EVENT_EUSINE_IN_BURNED_TOWER
 if DEF(_CRYSTALLEGENDS)
-	object_event 10,  4, SPRITE_CYNDAQUIL, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, BurnedTowerB1FCyndaquilScript, -1
+	object_event 10,  4, SPRITE_CYNDAQUIL, SPRITEMOVEDATA_POKEMON, 0, 0, -1, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, BurnedTowerB1FCyndaquilScript, EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER
 endc

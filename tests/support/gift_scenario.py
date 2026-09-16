@@ -1,8 +1,90 @@
 from __future__ import annotations
 
 from tests.support.bedroom_scenario import wait_for_idle
-from tests.support.legendary_scenario import advance_with_a_until
+from tests.support.game_state import read_progress
+from tests.support.legendary_scenario import advance_with_a_until, place_player
 from tests.support.pyboy_session import PyBoySession
+
+
+def cross_map_warp(
+    session: PyBoySession,
+    constants: dict[str, int],
+    approach: tuple[int, int],
+    direction: str,
+    destination: str,
+    max_frames: int,
+) -> None:
+    # Skip walking across the room, but enter the actual production warp by input.
+    place_player(session, *approach)
+    session.write_symbol("wPlayerDirection", constants[f"OW_{direction.upper()}"])
+    session.tap(direction, 2, 20)
+    session.wait_until(
+        lambda current: (
+            current.read_symbol("wMapGroup") == constants[f"GROUP_{destination}"]
+            and current.read_symbol("wMapNumber") == constants[f"MAP_{destination}"]
+        ),
+        max_frames,
+        f"production warp into {destination}",
+    )
+    session.tick(120)  # Finish the fade and automatic doorway step.
+    wait_for_idle(session, max_frames)
+
+
+def _gift_map_object(session: PyBoySession, constants: dict[str, int], gift: dict) -> int:
+    pointer = session.symbols[gift["script"]].address
+    matches = [
+        index for index in range(1, constants["NUM_OBJECTS"])
+        if int.from_bytes(
+            session.read_symbol_bytes(f"wMap{index}ObjectScript", 2), "little"
+        ) == pointer
+    ]
+    assert len(matches) == 1
+    return matches[0]
+
+
+def assert_gift_absent(
+    session: PyBoySession, constants: dict[str, int], scenario: dict
+) -> None:
+    gift = scenario.get("gift", scenario)
+    assert (session.read_symbol("wXCoord"), session.read_symbol("wYCoord")) == (
+        gift["start"]["x"], gift["start"]["y"]
+    )
+    map_object = _gift_map_object(session, constants, gift)
+    assert session.read_symbol(f"wMap{map_object}ObjectStructID") == 0xFF
+    before = read_progress(session)
+    session.enable_script_tracing()
+    calls = session.script_history.count(gift["script"])
+    session.write_symbol(
+        "wPlayerDirection", constants[f"OW_{gift['start']['facing']}"]
+    )
+    session.tap("a", 2, 30)
+    assert session.script_history.count(gift["script"]) == calls
+    assert read_progress(session) == before
+
+
+def assert_completed_gift_is_inert(
+    session: PyBoySession, constants: dict[str, int], scenario: dict
+) -> None:
+    gift = scenario.get("gift", scenario)
+    map_object = _gift_map_object(session, constants, gift)
+    assert session.read_symbol(f"wMap{map_object}ObjectStructID") != 0xFF
+    # Simulate a stale visible object so the script guard is tested independently.
+    event = constants[scenario["completion_event"]]
+    flags = session.symbols["wEventFlags"]
+    address = flags.address + event // 8
+    session.pyboy.memory[flags.bank, address] |= 1 << (event % 8)
+    before = read_progress(session)
+    session.enable_script_tracing()
+    session.register_hook("GivePoke")
+    grants = session.hook_history.count("GivePoke")
+    session.write_symbol(
+        "wPlayerDirection", constants[f"OW_{gift['start']['facing']}"]
+    )
+    session.tap("a", 2, 60)
+    assert gift["script"] in session.script_history
+    assert session.read_symbol("wScriptMode") == 0
+    assert session.hook_history.count("GivePoke") == grants
+    assert read_progress(session) == before
 
 
 def _finish_text(session: PyBoySession, max_frames: int) -> None:

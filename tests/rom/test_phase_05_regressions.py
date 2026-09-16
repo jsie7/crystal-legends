@@ -52,6 +52,7 @@ def phase_5_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "ifequal_command",
             "setevent_command",
             "appear_command",
+            "loadmem_command",
             "disappear_command",
             "NPC_TRADE_KIM",
             "NUM_NPC_TRADES",
@@ -362,7 +363,7 @@ def test_compiled_hidden_room_object_and_gift_match_the_contract(
     script_label = f"{gift_prefix}{species.title()}Script"
     callback_label = f"{gift_prefix}{species.title()}Callback"
     assert event.script_pointer == symbols[script_label].address
-    assert event.event_flag == 0xFFFF
+    assert event.event_flag == phase_5_constants[f"EVENT_GOT_{species}_FROM_ALPH"]
 
     rom = RomImage.load(repo_root / "crystallegends.gbc")
     script_start = symbols[script_label].rom_offset
@@ -408,8 +409,12 @@ def test_compiled_hidden_room_object_and_gift_match_the_contract(
     assert [callback.index(check) for check in checks] == sorted(
         callback.index(check) for check in checks
     )
-    assert bytes([phase_5_constants["appear_command"], object_id]) in callback
-    assert disappear in callback
+    sprite_address = symbols[f"wMap{object_id - 1}ObjectSprite"].address
+    for sprite in (0, phase_5_constants[f"SPRITE_{species}"]):
+        assert (
+            bytes([phase_5_constants["loadmem_command"]])
+            + sprite_address.to_bytes(2, "little") + bytes([sprite])
+        ) in callback
 
     assert callback_label not in reference_symbols
     assert script_label not in reference_symbols

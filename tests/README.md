@@ -60,7 +60,9 @@ user-run manual pass remains separate evidence for text/layout quality, cursor
 feel, music and graphics cleanup, and bedroom-PC or decoration presentation.
 
 The Phase 4 profile owns the Chikorita, Cyndaquil, and Totodile production-map
-gift state machines. Its static, compiled-ROM, capacity, retry, persistence, and
+gift state machines. Persistence covers native Continue and fresh map loads
+separately, including Cyndaquil's immediate reveal and return through the tower.
+Its static, compiled-ROM, capacity, retry, persistence, and
 story-isolation checks do not certify placement, dialogue, choreography, or
 story feel.
 
@@ -74,11 +76,12 @@ UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/emulator/test_p
 UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest -m phase5
 ```
 
-Phase 5 has 47 focused tests: 14 source contracts, 11 compiled-ROM contracts,
-21 production-map gift scenarios, and one production-ROM Route 14 trade
+Phase 5 has 53 focused tests: 14 source contracts, 11 compiled-ROM contracts,
+27 production-map gift scenarios, and one production-ROM Route 14 trade
 scenario. They own the picture-plus-wall gates, three retry-safe gifts, exact
 levels 10/26/23, combined-save behavior, Girafarig trade fields and inherited
-level, save/reload persistence, one-time completion, bank budgets, and complete
+level, native Continue and fresh map loads, one-time completion after ordinary
+room exit/re-entry, stale-object rejection, bank budgets, and complete
 reference isolation. The user-owned manual matrix in
 [`docs/workflows.md`](../docs/workflows.md#validate-the-phase-5-ruins-gifts-and-girafarig-trade)
 owns natural puzzle/item/field-move flow, sprite and palette appearance,

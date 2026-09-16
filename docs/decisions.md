@@ -145,10 +145,12 @@ is a level-24 Cianwood east-shore rescue after SecretPotion receipt. Each uses
 its own persistent completion event and the stock `givepoke` party/current-box
 path, so a decline or full party and current box leaves the gift retryable.
 
-The Chikorita and Totodile objects use their completion events directly.
-Cyndaquil's object-event flag stays `-1`; a map callback owns its visibility so
-the Pokémon can appear in the same scene as the beast release without mutating
-the completion event. The pharmacist adds a discoverability hint after giving
+All three objects use their completion events as permanent hide flags.
+Cyndaquil's object callback derives its sprite from the beast-release and
+completion events before object masks load; it does not change saved events.
+The beast-release scene restores the sprite and graphics before showing the
+unclaimed gift. Its interaction script also rejects an already completed gift.
+The pharmacist adds a discoverability hint after giving
 the SecretPotion, but Phase 4 never consumes that item or changes Amphy,
 lighthouse, gym, roamer, or downstream Suicune state.
 
@@ -178,8 +180,11 @@ after the inscription's final glyph, so the sprite acts as the sentence's
 period. It uses the stock `givepoke` party/current-box transaction and a
 dedicated success event: declining or having both destinations full leaves the
 gift waiting, while successful party or box delivery completes it permanently.
-Its callback controls visibility without mutating saved state, and the
-preceding item room retains all four stock item balls.
+Each Ruins gift uses its completion event as its permanent object hide flag.
+Its object callback derives the sprite from the prerequisites and completion
+before object masks load, without mutating saved state. The interaction script
+independently checks both prerequisites and completion before offering a gift.
+The preceding item room retains all four stock item balls.
 
 The Omanyte word room uses the same independent transaction for a level-26
 Omanyte at `(15, 10)`, immediately after its final inscription glyph. Its Water
