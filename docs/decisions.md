@@ -605,3 +605,15 @@ Automated data/state tests and natural-play difficulty are separate gates.
 The [Phase 12 workflow](workflows.md#validate-phase-12-trainer-and-wild-balance)
 owns the remaining manual matrix. Do not equate optional recruits, access to
 Red/Oak, later victory rewards or historical level forecasts with readiness.
+
+## 2026-09-17 — Finalize Elm's starter choice only after delivery
+
+All three legendary-bird choices use the native `givepoke` result before
+removing their Poké Ball, recording the chosen species, or announcing receipt.
+A full party and full current box show a storage refusal and leave every
+choice and story gate unchanged, including after native Save/Continue. Party
+or current-box delivery proceeds through the existing Elm directions once.
+Keep this guard custom-only and preserve reference-ROM bytes.
+
+The [legendary starter workflow](workflows.md#validate-elms-legendary-starter-gifts)
+owns refusal, retry, ordinary delivery, and branch regression coverage.

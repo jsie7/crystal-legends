@@ -223,6 +223,25 @@ the production `crystallegends.gbc` through normal inputs and inspect symbolic
 RAM/SRAM state. These layers complement, but do not replace, the manual matrix
 below.
 
+### Validate Elm's legendary starter gifts
+
+```bash
+make crystallegends
+UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/emulator/test_legendary_branches.py tests/rom/test_legendary_branches.py tests/static/test_legendary_branches.py
+make test-crystallegends
+make compare
+```
+
+The production-map tests cover all three choices with an empty party, decline,
+full party plus full current box, refusal preserved through native
+Save/Continue, and retry after freeing one party or current-box slot. Verify
+that refusal keeps every ball visible and all choice/story flags unchanged;
+successful delivery sets only the chosen branch, advances Elm's directions,
+and prevents taking a second starter. Synthetic storage setup skips filling
+the destinations through CHEAT MODE; interactions and persistence use normal
+game input. Compiled-ROM checks require delivery and its failure branch before
+the choice event and receipt text. Dialogue presentation remains a manual check.
+
 ### Validate the Phase 4 Johto starter events
 
 Run the focused Phase 4 suites while editing, then the aggregate and clean

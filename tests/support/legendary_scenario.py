@@ -30,11 +30,35 @@ def build_story_checkpoint(
         "EVENT_GOT_ZAPDOS_FROM_ELM",
         "EVENT_GOT_MOLTRES_FROM_ELM",
     ):
-        save.set_event(constants[candidate], candidate == branch["choice_event"])
-    save.set_event(constants["EVENT_GOT_A_POKEMON_FROM_ELM"], True)
+        save.set_event(
+            constants[candidate],
+            checkpoint != "starter_choice" and candidate == branch["choice_event"],
+        )
+    save.set_event(
+        constants["EVENT_GOT_A_POKEMON_FROM_ELM"], checkpoint != "starter_choice"
+    )
     save.write_saved_u8("wWarpNumber", 0)
 
-    if checkpoint == "first_silver":
+    if checkpoint == "starter_choice":
+        save.write_saved_u8("wMapGroup", constants["GROUP_ELMS_LAB"])
+        save.write_saved_u8("wMapNumber", constants["MAP_ELMS_LAB"])
+        save.write_saved_u8(
+            "wXCoord", {"LEFT": 6, "CENTER": 7, "RIGHT": 8}[branch["starter_slot"]]
+        )
+        save.write_saved_u8("wYCoord", 4)
+        save.write_saved_u8("wElmsLabSceneID", constants["SCENE_ELMSLAB_CANT_LEAVE"])
+        save.write_saved_u8(
+            "wNewBarkTownSceneID", constants["SCENE_NEWBARKTOWN_TEACHER_STOPS_YOU"]
+        )
+        save.set_event(constants["EVENT_COP_IN_ELMS_LAB"], True)
+        for event in (
+            "EVENT_ARTICUNO_POKEBALL_IN_ELMS_LAB",
+            "EVENT_ZAPDOS_POKEBALL_IN_ELMS_LAB",
+            "EVENT_MOLTRES_POKEBALL_IN_ELMS_LAB",
+            "EVENT_RIVAL_CHERRYGROVE_CITY",
+        ):
+            save.set_event(constants[event], False)
+    elif checkpoint == "first_silver":
         save.write_saved_u8("wMapGroup", constants["GROUP_CHERRYGROVE_CITY"])
         save.write_saved_u8("wMapNumber", constants["MAP_CHERRYGROVE_CITY"])
         save.write_saved_u8("wXCoord", 34)
@@ -91,14 +115,15 @@ def loaded_story_checkpoint(
     )
     try:
         with PyBoySession(prepared) as session:
-            spawn = (
-                constants["SPAWN_CHERRYGROVE"]
-                if checkpoint == "first_silver"
-                else constants["SPAWN_NEW_BARK"]
-            )
+            spawn_name = {
+                "starter_choice": "SPAWN_N_A",
+                "first_silver": "SPAWN_CHERRYGROVE",
+                "elm_handoff": "SPAWN_NEW_BARK",
+            }[checkpoint]
+            spawn = constants[spawn_name]
 
             def force_fresh_map_load(current: PyBoySession) -> None:
-                current.write_symbol("wDefaultSpawnpoint", spawn)
+                current.write_symbol("wDefaultSpawnpoint", spawn & 0xFF)
                 current.write_symbol("hMapEntryMethod", constants["MAPSETUP_WARP"])
 
             start_saved_game(session, max_frames, force_fresh_map_load)

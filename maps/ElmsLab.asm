@@ -221,17 +221,27 @@ else
 endc
 	yesorno
 	iffalse DidntChooseStarterScript
+if !DEF(_CRYSTALLEGENDS)
 	disappear ELMSLAB_POKE_BALL1
 	setevent ELMSLAB_LEFT_STARTER_CHOICE_EVENT
+endc
 	writetext ChoseStarterText
 	promptbutton
+if DEF(_CRYSTALLEGENDS)
+	givepoke ELMSLAB_LEFT_STARTER_SPECIES, 5, BERRY
+	ifequal 2, ElmStarterStorageFullScript
+	disappear ELMSLAB_POKE_BALL1
+	setevent ELMSLAB_LEFT_STARTER_CHOICE_EVENT
+endc
 	waitsfx
 	getmonname STRING_BUFFER_3, ELMSLAB_LEFT_STARTER_SPECIES
 	writetext ReceivedStarterText
 	playsound SFX_CAUGHT_MON
 	waitsfx
 	promptbutton
+if !DEF(_CRYSTALLEGENDS)
 	givepoke ELMSLAB_LEFT_STARTER_SPECIES, 5, BERRY
+endc
 	closetext
 	readvar VAR_FACING
 	ifequal RIGHT, ElmDirectionsScript
@@ -255,17 +265,27 @@ else
 endc
 	yesorno
 	iffalse DidntChooseStarterScript
+if !DEF(_CRYSTALLEGENDS)
 	disappear ELMSLAB_POKE_BALL2
 	setevent ELMSLAB_CENTER_STARTER_CHOICE_EVENT
+endc
 	writetext ChoseStarterText
 	promptbutton
+if DEF(_CRYSTALLEGENDS)
+	givepoke ELMSLAB_CENTER_STARTER_SPECIES, 5, BERRY
+	ifequal 2, ElmStarterStorageFullScript
+	disappear ELMSLAB_POKE_BALL2
+	setevent ELMSLAB_CENTER_STARTER_CHOICE_EVENT
+endc
 	waitsfx
 	getmonname STRING_BUFFER_3, ELMSLAB_CENTER_STARTER_SPECIES
 	writetext ReceivedStarterText
 	playsound SFX_CAUGHT_MON
 	waitsfx
 	promptbutton
+if !DEF(_CRYSTALLEGENDS)
 	givepoke ELMSLAB_CENTER_STARTER_SPECIES, 5, BERRY
+endc
 	closetext
 	applymovement PLAYER, AfterTotodileMovement
 	sjump ElmDirectionsScript
@@ -287,17 +307,27 @@ else
 endc
 	yesorno
 	iffalse DidntChooseStarterScript
+if !DEF(_CRYSTALLEGENDS)
 	disappear ELMSLAB_POKE_BALL3
 	setevent ELMSLAB_RIGHT_STARTER_CHOICE_EVENT
+endc
 	writetext ChoseStarterText
 	promptbutton
+if DEF(_CRYSTALLEGENDS)
+	givepoke ELMSLAB_RIGHT_STARTER_SPECIES, 5, BERRY
+	ifequal 2, ElmStarterStorageFullScript
+	disappear ELMSLAB_POKE_BALL3
+	setevent ELMSLAB_RIGHT_STARTER_CHOICE_EVENT
+endc
 	waitsfx
 	getmonname STRING_BUFFER_3, ELMSLAB_RIGHT_STARTER_SPECIES
 	writetext ReceivedStarterText
 	playsound SFX_CAUGHT_MON
 	waitsfx
 	promptbutton
+if !DEF(_CRYSTALLEGENDS)
 	givepoke ELMSLAB_RIGHT_STARTER_SPECIES, 5, BERRY
+endc
 	closetext
 	applymovement PLAYER, AfterChikoritaMovement
 	sjump ElmDirectionsScript
@@ -307,6 +337,14 @@ DidntChooseStarterScript:
 	waitbutton
 	closetext
 	end
+
+if DEF(_CRYSTALLEGENDS)
+ElmStarterStorageFullScript:
+	writetext ElmStarterStorageFullText
+	waitbutton
+	closetext
+	end
+endc
 
 ElmDirectionsScript:
 	turnobject PLAYER, UP
@@ -1075,6 +1113,17 @@ ReceivedStarterText:
 	text_ram wStringBuffer3
 	text "!"
 	done
+
+if DEF(_CRYSTALLEGENDS)
+ElmStarterStorageFullText:
+	text "ELM: Your party"
+	line "and current BOX"
+	cont "are full."
+
+	para "Make room for your"
+	line "partner first."
+	done
+endc
 
 ElmDirectionsText1:
 	text "MR.#MON lives a"

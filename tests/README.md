@@ -45,6 +45,12 @@ progression state, and reproduction procedure. Runtime tests copy it beside a
 temporary ROM before boot and verify that the canonical file's hash is
 unchanged afterward.
 
+The legendary starter profile covers all three Elm choices, normal delivery,
+decline, full-storage refusal, native Save/Continue, and retries into the last
+free party or current-box slot. It also verifies the first Silver battle and
+one-time Elm/Oak handoff for each branch. See the
+[starter workflow](../docs/workflows.md#validate-elms-legendary-starter-gifts).
+
 The Phase 2 regression profile automates all ten single-player evolution
 results, item consumption/rejection, the renewable-item tables, and the
 Hall-of-Fame through Celebi state machine, including retry-state persistence

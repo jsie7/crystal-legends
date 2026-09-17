@@ -5,8 +5,19 @@ from pathlib import Path
 
 import pytest
 
-from tests.support.bedroom_scenario import event_is_set
+from tests.support.bedroom_scenario import (
+    dump_battery_ram,
+    event_is_set,
+    save_game_from_overworld,
+    start_saved_game,
+)
 from tests.support.constant_resolver import resolve_constants
+from tests.support.game_state import read_progress
+from tests.support.gift_scenario import (
+    interact_with_gift,
+    set_current_box_full,
+    set_party_full,
+)
 from tests.support.legendary_scenario import (
     advance_with_a_until,
     loaded_story_checkpoint,
@@ -14,6 +25,7 @@ from tests.support.legendary_scenario import (
     prepare_battle_party,
     walk_steps,
 )
+from tests.support.pyboy_session import PyBoySession, prepare_rom
 from tests.support.symbol_table import SymbolTable
 
 
@@ -47,6 +59,11 @@ def branch_constants(
         "MAP_ELMS_LAB",
         "SPAWN_CHERRYGROVE",
         "SPAWN_NEW_BARK",
+        "SPAWN_N_A",
+        "PARTY_LENGTH",
+        "MONS_PER_BOX",
+        "EEVEE",
+        "BERRY",
         "MAPSETUP_WARP",
         "WIN",
         "LOSE",
@@ -85,10 +102,168 @@ def branch_constants(
         "SCENE_CHERRYGROVECITY_MEET_RIVAL",
         "SCENE_CHERRYGROVECITY_NOOP",
         "SCENE_ELMSLAB_NOOP",
+        "SCENE_ELMSLAB_CANT_LEAVE",
+        "SCENE_ELMSLAB_AIDE_GIVES_POTION",
         "SCENE_NEWBARKTOWN_NOOP",
+        "SCENE_NEWBARKTOWN_TEACHER_STOPS_YOU",
     ):
         constants[scene] = symbols.constant(scene)
     return constants
+
+
+def _starter_scenario(branch: dict) -> dict:
+    return {
+        "species": branch["player"],
+        "script": branch["starter_script"],
+        "storage_label": "ElmStarterStorageFullScript",
+        "start": {
+            "x": {"LEFT": 6, "CENTER": 7, "RIGHT": 8}[branch["starter_slot"]],
+            "y": 4,
+            "facing": "UP",
+        },
+        "max_frames_per_step": 12_000,
+    }
+
+
+def _assert_starter_unclaimed(
+    session: PyBoySession, constants: dict[str, int], branches: list[dict]
+) -> None:
+    for branch in branches:
+        assert not event_is_set(session, constants[branch["choice_event"]])
+        assert not event_is_set(session, constants[branch["pokeball_event"]])
+    assert not event_is_set(session, constants["EVENT_GOT_A_POKEMON_FROM_ELM"])
+    assert not event_is_set(session, constants["EVENT_RIVAL_CHERRYGROVE_CITY"])
+    assert session.read_symbol("wElmsLabSceneID") == constants["SCENE_ELMSLAB_CANT_LEAVE"]
+    assert session.read_symbol("wNewBarkTownSceneID") == constants[
+        "SCENE_NEWBARKTOWN_TEACHER_STOPS_YOU"
+    ]
+    # Elm and his aide precede the three Poké Balls in the native object list.
+    for index in range(3, 6):
+        assert session.read_symbol(f"wMap{index}ObjectStructID") != 0xFF
+
+
+def _assert_starter_claimed(
+    session: PyBoySession,
+    constants: dict[str, int],
+    branches: list[dict],
+    chosen: dict,
+) -> None:
+    for branch in branches:
+        expected = branch == chosen
+        assert event_is_set(session, constants[branch["choice_event"]]) == expected
+        assert event_is_set(session, constants[branch["pokeball_event"]]) == expected
+    assert event_is_set(session, constants["EVENT_GOT_A_POKEMON_FROM_ELM"])
+    assert event_is_set(session, constants["EVENT_RIVAL_CHERRYGROVE_CITY"])
+    assert session.read_symbol("wElmsLabSceneID") == constants[
+        "SCENE_ELMSLAB_AIDE_GIVES_POTION"
+    ]
+    assert session.read_symbol("wNewBarkTownSceneID") == constants["SCENE_NEWBARKTOWN_NOOP"]
+
+
+@pytest.mark.parametrize("branch_index", [0, 1, 2], ids=["articuno", "zapdos", "moltres"])
+@pytest.mark.parametrize("destination", ["party", "current-box"])
+def test_starter_full_storage_preserves_choice_through_continue_and_retry(
+    repo_root: Path,
+    tmp_path: Path,
+    branch_contract: dict,
+    branch_constants: dict[str, int],
+    branch_index: int,
+    destination: str,
+) -> None:
+    branches = branch_contract["branches"]
+    branch = branches[branch_index]
+    constants = branch_constants
+    scenario = _starter_scenario(branch)
+    max_frames = scenario["max_frames_per_step"]
+    with loaded_story_checkpoint(
+        repo_root, tmp_path / "full", constants, branch, "starter_choice", max_frames
+    ) as session:
+        set_party_full(session, constants["EEVEE"], constants["PARTY_LENGTH"])
+        set_current_box_full(session, constants["EEVEE"], constants["MONS_PER_BOX"])
+        before = read_progress(session)
+        flags = session.read_symbol_range("wEventFlags", "wBoxNames")
+        assert interact_with_gift(session, scenario, accept=True) == 2
+        assert read_progress(session) == before
+        assert session.read_symbol_range("wEventFlags", "wBoxNames") == flags
+        _assert_starter_unclaimed(session, constants, branches)
+        assert "ElmDirectionsScript" not in session.script_history
+        save_game_from_overworld(session, max_frames)
+        saved = dump_battery_ram(session, tmp_path / "refused.sav")
+
+    prepared = prepare_rom(
+        tmp_path / "continue",
+        repo_root / "crystallegends.gbc",
+        repo_root / "crystallegends.sym",
+        save_fixture=saved,
+    )
+    with PyBoySession(prepared) as session:
+        start_saved_game(session, max_frames)
+        _assert_starter_unclaimed(session, constants, branches)
+        assert read_progress(session) == before
+        assert interact_with_gift(session, scenario, accept=True) == 2
+        _assert_starter_unclaimed(session, constants, branches)
+        assert read_progress(session) == before
+
+        if destination == "party":
+            set_party_full(session, constants["EEVEE"], constants["PARTY_LENGTH"] - 1)
+            prefix = f"wPartyMon{constants['PARTY_LENGTH']}"
+            expected_result = 0
+        else:
+            set_current_box_full(
+                session, constants["EEVEE"], constants["MONS_PER_BOX"] - 1
+            )
+            prefix = "sBoxMon1"
+            expected_result = 1
+        assert interact_with_gift(session, scenario, accept=True) == expected_result
+        _assert_starter_claimed(session, constants, branches, branch)
+        after = read_progress(session)
+        assert after.party.count == constants["PARTY_LENGTH"]
+        assert after.current_box.count == constants["MONS_PER_BOX"]
+        assert after.owns(constants[branch["player"]])
+        assert session.read_symbol(f"{prefix}Species") == constants[branch["player"]]
+        assert session.read_symbol(f"{prefix}Level") == 5
+        if destination == "party":
+            assert session.read_symbol(f"{prefix}Item") == constants["BERRY"]
+
+        other = _starter_scenario(branches[(branch_index + 1) % len(branches)])
+        place_player(session, other["start"]["x"], other["start"]["y"])
+        assert interact_with_gift(session, other, accept=None) is None
+        assert "LookAtElmPokeBallScript" in session.script_history
+        assert read_progress(session) == after
+        _assert_starter_claimed(session, constants, branches, branch)
+
+
+@pytest.mark.parametrize("branch_index", [0, 1, 2], ids=["articuno", "zapdos", "moltres"])
+def test_starter_decline_then_normal_empty_party_delivery(
+    repo_root: Path,
+    tmp_path: Path,
+    branch_contract: dict,
+    branch_constants: dict[str, int],
+    branch_index: int,
+) -> None:
+    branch = branch_contract["branches"][branch_index]
+    scenario = _starter_scenario(branch)
+    with loaded_story_checkpoint(
+        repo_root,
+        tmp_path,
+        branch_constants,
+        branch,
+        "starter_choice",
+        scenario["max_frames_per_step"],
+    ) as session:
+        before = read_progress(session)
+        assert interact_with_gift(session, scenario, accept=False) is None
+        _assert_starter_unclaimed(session, branch_constants, branch_contract["branches"])
+        assert read_progress(session) == before
+        assert interact_with_gift(session, scenario, accept=True) == 0
+        _assert_starter_claimed(
+            session, branch_constants, branch_contract["branches"], branch
+        )
+        assert read_progress(session).party.species == (
+            branch_constants[branch["player"]],
+        )
+        assert session.read_symbol("wPartyMon1Level") == 5
+        assert session.read_symbol("wPartyMon1Item") == branch_constants["BERRY"]
 
 
 @pytest.mark.parametrize(

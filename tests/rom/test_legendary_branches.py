@@ -39,6 +39,8 @@ def branch_constants(
         "givepoke_command",
         "checkevent_command",
         "iftrue_command",
+        "ifequal_command",
+        "writetext_command",
         "loadtrainer_command",
         "loadvar_command",
         "startbattle_command",
@@ -94,6 +96,21 @@ def test_compiled_starter_gifts_match_all_three_branches(
             ]
         )
         assert segment.count(expected) == 1, branch["id"]
+        delivery = segment.index(expected)
+        refusal = (
+            bytes([branch_constants["ifequal_command"], 2])
+            + _pointer(symbols["ElmStarterStorageFullScript"].address)
+        )
+        assert segment[delivery + len(expected) :].startswith(refusal)
+        choice = (
+            bytes([branch_constants["setevent_command"]])
+            + _pointer(branch_constants[branch["choice_event"]])
+        )
+        receipt = (
+            bytes([branch_constants["writetext_command"]])
+            + _pointer(symbols["ReceivedStarterText"].address)
+        )
+        assert delivery < segment.index(choice) < segment.index(receipt)
 
 
 def test_compiled_first_silver_selector_and_can_lose_contract(
