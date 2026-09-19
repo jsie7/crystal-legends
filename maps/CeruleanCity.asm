@@ -120,7 +120,7 @@ if DEF(_CRYSTALLEGENDS)
 	sjump .AfterText
 
 .CaveComplete:
-	writetext CeruleanCityYoungsterRocketDefeatedText
+	writetext CeruleanCityYoungsterCaveCompleteText
 	sjump .AfterText
 
 .FormerCave:
@@ -306,6 +306,14 @@ CeruleanCityYoungsterRocketDefeatedText:
 	para "Whatever waits"
 	line "inside is still"
 	cont "there."
+	done
+
+CeruleanCityYoungsterCaveCompleteText:
+	text "The ROCKETS fled"
+	line "from the old cave."
+
+	para "It seems peaceful"
+	line "there now."
 	done
 endc
 
