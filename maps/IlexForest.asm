@@ -988,7 +988,7 @@ IlexForestChikoritaOfferText:
 	done
 
 IlexForestChikoritaWaitText:
-	text "CHIKORITA will wait"
+	text "CHIKORITA waits"
 	line "by the SHRINE."
 	done
 

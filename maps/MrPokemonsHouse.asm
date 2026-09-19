@@ -290,7 +290,7 @@ if DEF(_CRYSTALLEGENDS)
 
 	para "He must believe"
 	line "you'll treat it"
-	cont "with love and care."
+	cont "with loving care."
 
 	para "You seem to be"
 	line "dependable."
@@ -303,8 +303,8 @@ if DEF(_CRYSTALLEGENDS)
 	cont "#DEX."
 
 	para "It records data on"
-	line "#MON you've seen"
-	cont "or caught."
+	line "#MON you've"
+	cont "seen or caught."
 	done
 else
 	text "OAK: Aha! So"

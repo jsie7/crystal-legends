@@ -294,13 +294,13 @@ CeruleanCaveGiovanniDisbandsText:
 	para "I will not repeat"
 	line "that mistake."
 
-	para "This revival"
-	line "built on stolen"
-	cont "research ends here."
+	para "This revival built"
+	line "on stolen research"
+	cont "ends here."
 
 	para "TEAM ROCKET is"
-	line "disbanded. All of"
-	cont "you, leave at once."
+	line "disbanded. Leave"
+	cont "at once."
 
 	para "The data and the"
 	line "subject are no"

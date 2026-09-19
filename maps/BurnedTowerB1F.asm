@@ -314,8 +314,8 @@ BurnedTowerB1FCyndaquilOfferText:
 	done
 
 BurnedTowerB1FCyndaquilWaitText:
-	text "CYNDAQUIL will wait"
-	line "by the warm stones."
+	text "CYNDAQUIL waits"
+	line "by warm stones."
 	done
 
 BurnedTowerB1FCyndaquilStorageFullText:

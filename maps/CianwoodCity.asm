@@ -280,7 +280,7 @@ ChucksWifeChubbyText:
 if DEF(_CRYSTALLEGENDS)
 CianwoodCityTotodileNotReadyText:
 	text "TOTODILE is tired"
-	line "from the rough sea."
+	line "from rough seas."
 
 	para "Medicine from town"
 	line "may help it."

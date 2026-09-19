@@ -280,7 +280,7 @@ CeruleanCityYoungsterDangerText:
 
 	para "But even KANTO's"
 	line "best TRAINERS fear"
-	cont "the #MON inside."
+	cont "the #MON there."
 	done
 
 CeruleanCityYoungsterCaveOpenText:
