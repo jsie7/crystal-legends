@@ -95,6 +95,7 @@ FuchsiaCityPokefanMText:
 	cont "the ELITE FOUR."
 	done
 
+if !DEF(_CRYSTALLEGENDS)
 FuchsiaCityTeacherText:
 	text "The SAFARI ZONE is"
 	line "closed… It's sad,"
@@ -103,6 +104,7 @@ FuchsiaCityTeacherText:
 	line "FUCHSIA's main"
 	cont "attraction."
 	done
+endc
 
 if DEF(_CRYSTALLEGENDS)
 FuchsiaCityTeacherGranddaughterText:
@@ -146,6 +148,7 @@ WardensHomeSignText:
 	line "WARDEN'S HOME"
 	done
 
+if !DEF(_CRYSTALLEGENDS)
 SafariZoneClosedSignText:
 	text "The WARDEN is"
 	line "traveling abroad."
@@ -154,6 +157,7 @@ SafariZoneClosedSignText:
 	line "SAFARI ZONE is"
 	cont "closed."
 	done
+endc
 
 if DEF(_CRYSTALLEGENDS)
 SafariZoneGranddaughterSignText:

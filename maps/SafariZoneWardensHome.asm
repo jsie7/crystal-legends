@@ -59,6 +59,7 @@ SafariZonePhoto:
 WardensHomeBookshelf:
 	jumpstd PictureBookshelfScript
 
+if !DEF(_CRYSTALLEGENDS)
 WardensGranddaughterText1:
 	text "My grandpa is the"
 	line "SAFARI ZONE WAR-"
@@ -85,6 +86,7 @@ WardensGranddaughterText2:
 	line "down, but Grandpa"
 	cont "is so stubborn…"
 	done
+endc
 
 if DEF(_CRYSTALLEGENDS)
 WardensGranddaughterSoulBadgeText:

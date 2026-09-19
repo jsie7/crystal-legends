@@ -1220,6 +1220,7 @@ ElmAfterTheftDiscoveryText:
 	done
 endc
 
+if !DEF(_CRYSTALLEGENDS)
 ElmAfterTheftText1:
 	text "ELM: <PLAY_G>, this"
 	line "is terrible…"
@@ -1228,6 +1229,7 @@ ElmAfterTheftText1:
 	line "MR.#MON's big"
 	cont "discovery?"
 	done
+endc
 
 ElmAfterTheftText2:
 	text "<PLAYER> handed"
