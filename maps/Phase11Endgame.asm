@@ -3,7 +3,7 @@ DEF OAK_CHALLENGE_CAUGHT_REQUIREMENT EQU 240
 Phase11OakEndgameScript:
 	checkevent EVENT_BEAT_PROFESSOR_OAK
 	iftrue .Complete
-	writetext OakLabDexCheckText
+	farwritetext OakLabDexCheckText
 	waitbutton
 	special ProfOaksPCBoot
 	readvar VAR_DEXCAUGHT
@@ -64,7 +64,7 @@ Phase11OakEndgameScript:
 	end
 
 .OrdinaryGoodbye:
-	writetext OakLabGoodbyeText
+	farwritetext OakLabGoodbyeText
 	waitbutton
 	closetext
 	end

@@ -37,6 +37,8 @@ def phase_11_constants(repo_root: Path, tmp_path_factory, scenario: dict) -> dic
         "callasm_command",
         "checkevent_command",
         "credits_command",
+        "end_command",
+        "farwritetext_command",
         "iffalse_command",
         "ifless_command",
         "iftrue_command",
@@ -249,7 +251,10 @@ def test_compiled_oak_credits_selector_and_script_are_transient(
         [phase_11_constants["callasm_command"], prepare.bank]
     ) + prepare.address.to_bytes(2, "little")
     assert script.count(call_prepare) == 1
-    assert script.count(bytes([phase_11_constants["credits_command"]])) == 1
+    # Count the instruction sequence, not matching bytes inside text pointers.
+    assert script.count(call_prepare + bytes([
+        phase_11_constants["credits_command"], phase_11_constants["end_command"]
+    ])) == 1
 
     reference_symbols = SymbolTable.parse((repo_root / "pokecrystal11.sym").read_text())
     assert "Phase11PrepareOakCredits" not in reference_symbols
@@ -272,8 +277,11 @@ def test_compiled_oak_predicate_and_battle_text_banks(
         "Phase11OakEndgameScript.Complete"
     ].address
     offset += 3
-    assert rom.u8(offset) == constants["writetext_command"]
-    offset += 3
+    assert symbols["OakLabDexCheckText"].bank != symbols["Phase11OakEndgameScript"].bank
+    assert rom.u8(offset) == constants["farwritetext_command"]
+    assert rom.u8(offset + 1) == symbols["OakLabDexCheckText"].bank
+    assert rom.u16le(offset + 2) == symbols["OakLabDexCheckText"].address
+    offset += 4
     assert rom.u8(offset) == constants["waitbutton_command"]
     offset += 1
     assert rom.u8(offset) == constants["special_command"]
@@ -295,6 +303,12 @@ def test_compiled_oak_predicate_and_battle_text_banks(
     assert rom.u16le(offset + 1) == symbols[
         "Phase11OakEndgameScript.ReadyBeforeRed"
     ].address
+
+    goodbye = symbols["OakLabGoodbyeText"]
+    offset = symbols["Phase11OakEndgameScript.OrdinaryGoodbye"].rom_offset
+    assert rom.u8(offset) == constants["farwritetext_command"]
+    assert rom.u8(offset + 1) == goodbye.bank
+    assert rom.u16le(offset + 2) == goodbye.address
 
     win = symbols["Phase11OakWinText"]
     loss = symbols["Phase11OakLossText"]

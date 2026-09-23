@@ -731,6 +731,12 @@ full-game playthrough, or release readiness.
 
 ### Validate Phase 11 Red, Oak, and the true ending
 
+The 2026-09-19 manual-bundle preparation exposed a bank mismatch in Oak's
+introductory Pokédex text and ordinary goodbye. The endgame script is in a
+different bank from `OaksLab`; both shared lines now use `farwritetext`.
+Compiled-ROM checks verify the command, bank, and pointer, while the normal
+Oak interaction and battle scenarios exercise the resulting flow.
+
 Run the focused Phase 11 layers while editing, then the clean handoff gate:
 
 ```bash
