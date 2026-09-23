@@ -178,7 +178,7 @@ def test_giovanni_trainer_class_art_and_party_are_custom_only(repo_root: Path) -
 def test_giovanni_extends_every_applicable_trainer_table(repo_root: Path) -> None:
     expected = {
         "data/trainers/party_pointers.asm": "dw GiovanniGroup",
-        "data/trainers/class_names.asm": 'li "ROCKET BOSS"',
+        "data/trainers/class_names.asm": 'li "BOSS"',
         "data/trainers/dvs.asm": "dn 15, 13, 13, 14",
         "data/trainers/encounter_music.asm": "db MUSIC_ROCKET_ENCOUNTER",
         "data/trainers/pic_pointers.asm": "dba_pic GiovanniPic",

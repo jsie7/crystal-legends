@@ -69,6 +69,6 @@ TrainerClassNames::
 	li "ROCKET"
 	li "MYSTICALMAN"
 if DEF(_CRYSTALLEGENDS)
-	li "ROCKET BOSS"
+	li "BOSS"
 endc
 	assert_list_length NUM_TRAINER_CLASSES

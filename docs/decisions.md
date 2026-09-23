@@ -514,11 +514,12 @@ native Continue.
 The cave holds six Rocket remnant trainers with independent defeat flags, but
 all six object masks and Giovanni's object mask use `EVENT_BEAT_GIOVANNI` so the
 post-boss blackout removes the complete crew even when a remnant was skipped.
-Giovanni is a stationary script object and a dedicated custom-only `ROCKET
-BOSS` class with a six-Pokémon party. Set `EVENT_GIOVANNI_RETURNED` before the
-first battle; set `EVENT_BEAT_GIOVANNI` only after victory and the reload, then
-remove all seven Rocket objects without walking choreography. A loss therefore
-preserves a truthful retry state.
+Giovanni is a stationary script object and a dedicated custom-only `BOSS`
+class with a six-Pokémon party. The displayed `BOSS GIOVANNI` label fits the
+18-character battle textbox, including punctuation in loss messages. Set
+`EVENT_GIOVANNI_RETURNED` before the first battle; set `EVENT_BEAT_GIOVANNI`
+only after victory and the reload, then remove all seven Rocket objects without
+walking choreography. A loss therefore preserves a truthful retry state.
 
 After Giovanni, the same variable-sprite object exposes the Project Mew
 counterpart: the transformed Johto branch gets level-70 Mew, and the restored

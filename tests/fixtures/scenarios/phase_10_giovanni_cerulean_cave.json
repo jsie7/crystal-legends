@@ -164,7 +164,7 @@
   },
   "giovanni": {
     "class": "GIOVANNI",
-    "class_name": "ROCKET BOSS",
+    "class_name": "BOSS",
     "coordinate": [6, 4],
     "sprite": "SPRITE_GIOVANNI",
     "movement": "SPRITEMOVEDATA_STANDING_DOWN",
