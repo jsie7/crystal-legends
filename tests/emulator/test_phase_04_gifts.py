@@ -48,6 +48,17 @@ def phase_4_constants(
     names = {
         "SPAWN_N_A",
         "NUM_OBJECTS",
+        "NUM_OBJECT_STRUCTS",
+        "OBJECT_LENGTH",
+        "OBJECT_SPRITE",
+        "OBJECT_SPRITE_TILE",
+        "OBJECT_FACING",
+        "OBJECT_FLAGS2",
+        "OFF_SCREEN_F",
+        "FACING_STEP_DOWN_0",
+        "FACING_STEP_UP_0",
+        "TILE_SIZE",
+        "SPRITE_SUPER_NERD",
         "OW_UP",
         "OW_RIGHT",
         "OW_DOWN",
@@ -73,6 +84,7 @@ def phase_4_constants(
         names.update(
             {
                 scenario["species"],
+                scenario["object_sprite"],
                 scenario["prerequisite_event"],
                 scenario["completion_event"],
                 f"GROUP_{scenario['map']}",
@@ -114,6 +126,112 @@ def implemented_gifts(
     chikorita: dict, cyndaquil: dict, totodile: dict
 ) -> dict[str, dict]:
     return {row["species"]: row for row in (chikorita, cyndaquil, totodile)}
+
+
+def _sprite_slots(session) -> dict[int, int]:
+    table = session.read_symbol_range("wUsedSprites", "wUsedSpritesEnd")
+    return {sprite: tile for sprite, tile in zip(table[::2], table[1::2]) if sprite}
+
+
+def _assert_live_sprite_slots(session, constants: dict[str, int]) -> None:
+    slots = _sprite_slots(session)
+    length = constants["OBJECT_LENGTH"]
+    objects = session.read_symbol_bytes(
+        "wObjectStructs", constants["NUM_OBJECT_STRUCTS"] * length
+    )
+    for index in range(constants["NUM_OBJECT_STRUCTS"]):
+        row = objects[index * length : (index + 1) * length]
+        sprite = row[constants["OBJECT_SPRITE"]]
+        if sprite:
+            assert sprite in slots, f"object {index}: unloaded sprite {sprite}"
+            assert row[constants["OBJECT_SPRITE_TILE"]] == slots[sprite], (
+                f"object {index}: stale graphics slot for sprite {sprite}"
+            )
+
+
+def _assert_loaded_graphics(session, constants, sprite, graphics, tiles) -> None:
+    slots = _sprite_slots(session)
+    assert sprite in slots, f"sprite {sprite} is missing from the graphics list"
+    tile = slots[sprite]
+    # The high bit selects the second sprite table in VRAM bank 0.
+    bank = 0 if tile & 0x80 else 1
+    address = session.symbols["vTiles0"].address + (tile & 0x7F) * constants["TILE_SIZE"]
+    length = tiles * constants["TILE_SIZE"]
+    actual = bytes(session.pyboy.memory[bank, address + i] for i in range(length))
+    offset = session.symbols[graphics].rom_offset
+    expected = session.prepared.rom.read_bytes()[offset : offset + length]
+    assert actual == expected, f"incorrect loaded graphics for {graphics}"
+
+
+def _assert_gift_graphics(session, constants, scenario) -> dict[int, int]:
+    icons = {"CHIKORITA": "OddishIcon", "CYNDAQUIL": "FoxIcon", "TOTODILE": "MonsterIcon"}
+    _assert_loaded_graphics(
+        session, constants, constants[scenario["object_sprite"]],
+        icons[scenario["species"]], 8,
+    )
+    _assert_live_sprite_slots(session, constants)
+    length = constants["OBJECT_LENGTH"]
+    objects = session.read_symbol_bytes(
+        "wObjectStructs", constants["NUM_OBJECT_STRUCTS"] * length
+    )
+    for index in range(constants["NUM_OBJECT_STRUCTS"]):
+        row = objects[index * length : (index + 1) * length]
+        if row[constants["OBJECT_SPRITE"]] != constants[scenario["object_sprite"]]:
+            continue
+        if row[constants["OBJECT_FLAGS2"]] & (1 << constants["OFF_SCREEN_F"]):
+            continue
+        # Icons contain two four-tile frames, not the human directional frames.
+        assert row[constants["OBJECT_FACING"]] in {
+            constants["FACING_STEP_DOWN_0"], constants["FACING_STEP_UP_0"],
+        }, f"{scenario['species']} is drawing outside its icon frames"
+    return _sprite_slots(session)
+
+
+def _open_and_close_options(session, max_frames: int) -> None:
+    # Options always sits two UP presses from the first Start-menu entry,
+    # including checkpoints with no party. Returning reloads overworld graphics.
+    session.register_hook("_Option.joypad_loop")
+    session.register_hook("ReloadTilesetAndPalettes")
+    options_count = session.hook_history.count("_Option.joypad_loop") + 1
+    reload_count = session.hook_history.count("ReloadTilesetAndPalettes") + 1
+    session.write_symbol("wBattleMenuCursorPosition", 1)
+    session.tap("start", 10, 30)
+    session.tap("up", 10, 10)
+    session.tap("up", 10, 10)
+    session.tap("a", 10, 10)
+    session.wait_for_hook_count("_Option.joypad_loop", options_count, max_frames)
+    session.tap("b", 10, 120)
+    session.wait_for_hook_count("ReloadTilesetAndPalettes", reload_count, max_frames)
+    session.tap("b", 10, 120)
+    wait_for_idle(session, max_frames)
+
+
+@pytest.mark.parametrize("species_name", ["CHIKORITA", "CYNDAQUIL", "TOTODILE"])
+@pytest.mark.parametrize("prerequisite", [False, True], ids=["not-ready", "ready"])
+def test_phase_4_graphics_survive_menu_and_continue(
+    repo_root, tmp_path, phase_4_constants, implemented_gifts, species_name, prerequisite
+) -> None:
+    scenario = implemented_gifts[species_name]
+    limit = scenario["max_frames_per_step"]
+    with loaded_phase_4_checkpoint(
+        repo_root, tmp_path / "initial", phase_4_constants, scenario,
+        prerequisite=prerequisite,
+    ) as session:
+        slots = _assert_gift_graphics(session, phase_4_constants, scenario)
+        _open_and_close_options(session, limit)
+        assert _assert_gift_graphics(session, phase_4_constants, scenario) == slots
+        if species_name != "CYNDAQUIL" or prerequisite:
+            interact_with_gift(session, scenario, accept=False if prerequisite else None)
+            assert _assert_gift_graphics(session, phase_4_constants, scenario) == slots
+        save_game_from_overworld(session, limit)
+        pending = dump_battery_ram(session, tmp_path / "pending.sav")
+
+    with loaded_phase_4_saved_game(
+        repo_root, tmp_path / "continue", phase_4_constants, scenario, pending,
+    ) as session:
+        assert _assert_gift_graphics(session, phase_4_constants, scenario) == slots
+        _open_and_close_options(session, limit)
+        assert _assert_gift_graphics(session, phase_4_constants, scenario) == slots
 
 
 def test_chikorita_requires_cut_and_decline_remains_retryable(
@@ -258,7 +376,10 @@ def test_phase_4_completion_survives_continue_and_fresh_map_load(
         scenario,
         prerequisite=True,
     ) as session:
+        slots = _assert_gift_graphics(session, phase_4_constants, scenario)
         assert interact_with_gift(session, scenario, accept=True) == 0
+        _open_and_close_options(session, scenario["max_frames_per_step"])
+        assert _assert_gift_graphics(session, phase_4_constants, scenario) == slots
         save_game_from_overworld(session, scenario["max_frames_per_step"])
         dump_battery_ram(session, persisted)
 
@@ -279,6 +400,8 @@ def test_phase_4_completion_survives_continue_and_fresh_map_load(
                 )
         assert_gift_absent(session, phase_4_constants, scenario)
         assert read_progress(session).party.species == (species,)
+        _open_and_close_options(session, scenario["max_frames_per_step"])
+        assert _assert_gift_graphics(session, phase_4_constants, scenario) == slots
 
 
 def test_cyndaquil_script_refuses_a_completed_gift_even_if_still_visible(
@@ -329,6 +452,15 @@ def test_cyndaquil_appears_in_release_scene_and_restores_while_pending(
         prerequisite=False,
     ) as session:
         place_player(session, 10, 7)
+        save_game_from_overworld(session, cyndaquil["max_frames_per_step"])
+        before_release = dump_battery_ram(session, tmp_path / "before-release.sav")
+
+    # The manual playtest starts with native Continue while Cyndaquil is hidden.
+    with loaded_phase_4_saved_game(
+        repo_root, tmp_path / "continue-before-release", phase_4_constants,
+        cyndaquil, before_release,
+    ) as session:
+        slots = _assert_gift_graphics(session, phase_4_constants, cyndaquil)
         session.enable_script_tracing()
         walk_steps(session, "up", "wYCoord", -1, 1, cyndaquil["max_frames_per_step"])
         session.wait_for_script("ReleaseTheBeasts", cyndaquil["max_frames_per_step"])
@@ -344,6 +476,16 @@ def test_cyndaquil_appears_in_release_scene_and_restores_while_pending(
         assert not event_is_set(
             session, phase_4_constants["EVENT_SAW_SUICUNE_AT_CIANWOOD_CITY"]
         )
+        assert _assert_gift_graphics(session, phase_4_constants, cyndaquil) == slots
+        walk_steps(session, "down", "wYCoord", 1, 5, cyndaquil["max_frames_per_step"])
+        _open_and_close_options(session, cyndaquil["max_frames_per_step"])
+        assert _assert_gift_graphics(session, phase_4_constants, cyndaquil) == slots
+        assert session.read_symbol("wObject1Sprite") == phase_4_constants["SPRITE_SUPER_NERD"]
+        _assert_loaded_graphics(
+            session, phase_4_constants, phase_4_constants["SPRITE_SUPER_NERD"],
+            "SuperNerdSpriteGFX", 12,
+        )
+        walk_steps(session, "up", "wYCoord", -1, 5, cyndaquil["max_frames_per_step"])
         walk_steps(session, "up", "wYCoord", -1, 1, cyndaquil["max_frames_per_step"])
         assert interact_with_gift(session, cyndaquil, accept=False) is None
         save_game_from_overworld(session, cyndaquil["max_frames_per_step"])
@@ -356,6 +498,7 @@ def test_cyndaquil_appears_in_release_scene_and_restores_while_pending(
         cyndaquil,
         pending,
     ) as session:
+        assert _assert_gift_graphics(session, phase_4_constants, cyndaquil) == slots
         assert interact_with_gift(session, cyndaquil, accept=False) is None
         assert not event_is_set(session, completion)
         assert interact_with_gift(session, cyndaquil, accept=False) is None

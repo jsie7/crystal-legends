@@ -27,6 +27,8 @@ def phase_4_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "SPRITE_CHIKORITA",
             "SPRITE_CYNDAQUIL",
             "SPRITE_TOTODILE",
+            "SPRITE_TAUROS",
+            "MAX_OUTDOOR_SPRITES",
             "NUM_POKEMON_SPRITES",
             "CHIKORITA",
             "CYNDAQUIL",
@@ -36,7 +38,6 @@ def phase_4_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "BG_EVENT_SIZE",
             "OBJECT_EVENT_SIZE",
             "SPRITEMOVEDATA_POKEMON",
-            "SPRITEMOVEDATA_SWIM_WANDER",
             "PAL_NPC_GREEN",
             "PAL_NPC_RED",
             "PAL_NPC_BLUE",
@@ -117,6 +118,33 @@ def test_compiled_phase_4_sprite_table_extends_only_the_custom_rom(
     reference_end = reference_symbols["OutdoorSprites"].rom_offset
     assert reference_end - reference_start == 35
     assert custom_table[:35] == reference.slice(reference_start, 35)
+
+
+def test_cianwood_outdoor_graphics_replace_only_the_unused_tauros_slot(
+    repo_root: Path, phase_4_constants: dict[str, int],
+) -> None:
+    custom = RomImage.load(repo_root / "crystallegends.gbc")
+    reference = RomImage.load(repo_root / "pokecrystal11.gbc")
+    custom_symbols = SymbolTable.parse((repo_root / "crystallegends.sym").read_text())
+    reference_symbols = SymbolTable.parse((repo_root / "pokecrystal11.sym").read_text())
+    length = phase_4_constants["MAX_OUTDOOR_SPRITES"]
+    expected = bytearray(reference.at(reference_symbols["CianwoodGroupSprites"], length))
+    tauros = phase_4_constants["SPRITE_TAUROS"]
+    assert expected.count(tauros) == 1
+    expected[expected.index(tauros)] = phase_4_constants["SPRITE_TOTODILE"]
+    assert custom.at(custom_symbols["CianwoodGroupSprites"], length) == expected
+    assert (
+        custom_symbols["OlivineGroupSprites"].rom_offset
+        - custom_symbols["CianwoodGroupSprites"].rom_offset
+    ) == length
+
+    # These are all outdoor maps sharing this graphics list.
+    for map_name in ("Route40", "Route41", "CianwoodCity", "BattleTowerOutside"):
+        events = _object_events(
+            repo_root, "crystallegends.gbc", "crystallegends.sym",
+            f"{map_name}_MapEvents", phase_4_constants,
+        )
+        assert all(event.sprite != tauros for event in events)
 
 
 def test_compiled_ilex_chikorita_object_and_script_match_the_contract(
@@ -310,7 +338,7 @@ def test_compiled_cianwood_totodile_rescue_preserves_secretpotion(
     assert len(custom_events) == 13
     assert len(matching) == 1
     event = matching[0]
-    assert event.movement == phase_4_constants["SPRITEMOVEDATA_SWIM_WANDER"]
+    assert event.movement == phase_4_constants["SPRITEMOVEDATA_POKEMON"]
     assert event.radius == 0
     assert event.palette_and_type == (
         phase_4_constants["PAL_NPC_BLUE"] << 4

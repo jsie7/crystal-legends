@@ -507,9 +507,15 @@ CianwoodGroupSprites:
 	db SPRITE_SAILOR
 	db SPRITE_POKEFAN_F
 	db SPRITE_SUPER_NERD
+if DEF(_CRYSTALLEGENDS)
+; Tauros is unused in this group. Both icons occupy the same sprite tile space.
+	db SPRITE_TOTODILE
+else
 	db SPRITE_TAUROS
+endc
 	db SPRITE_FRUIT_TREE
 	db SPRITE_ROCK
+	assert @ - CianwoodGroupSprites == MAX_OUTDOOR_SPRITES
 
 OlivineGroupSprites:
 	db SPRITE_SUICUNE

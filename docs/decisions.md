@@ -159,6 +159,24 @@ graphics assets. Keep every event flag, sprite entry, map object, script, and
 hint behind `_CRYSTALLEGENDS`; reference builds must contain none of this
 behavior and must continue to reproduce exactly.
 
+## 2026-09-23 — Reserve graphics independently of Johto gift visibility
+
+Burned Tower B1F always reserves Cyndaquil's graphics, including before the
+beast release and after collection. The object callback still controls its
+visibility. Keeping the graphics list stable prevents native Continue and
+submenu redraws from moving the tile slots used by Cyndaquil, Eusine, and the
+beasts. Cianwood's fixed-length outdoor graphics list replaces its unused
+Tauros icon with Totodile; both use the same allocation size and sprite type.
+Totodile uses the fixed-facing Pokémon animation: its two-frame icon cannot
+provide the directional frames selected by ordinary swimming movement.
+Both changes are custom-only and leave reference ROM bytes unchanged.
+
+The [Phase 4 workflow](workflows.md#validate-the-phase-4-johto-starter-events)
+covers loaded graphics, live object tile references, and event persistence
+separately from manual presentation acceptance. Older saves can retain stale
+object tile references; one ordinary exit and re-entry rebuilds the map objects
+without changing gift progress or the save layout.
+
 ## 2026-08-11 — Gate Ruins gifts on both ancient conditions
 
 For the Kabuto, Omanyte, and Aerodactyl chambers, Crystal Legends opens the

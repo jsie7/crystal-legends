@@ -219,7 +219,7 @@ def test_cianwood_totodile_rescue_is_event_gated_and_item_neutral(
     pharmacy = _active_code(pharmacy_source, CRYSTAL_LEGENDS)
     reference_pharmacy = _active_code(pharmacy_source, REFERENCE)
     object_row = (
-        "object_event 28, 38, SPRITE_TOTODILE, SPRITEMOVEDATA_SWIM_WANDER, 0, "
+        "object_event 28, 38, SPRITE_TOTODILE, SPRITEMOVEDATA_POKEMON, 0, "
         "0, -1, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, "
         "CianwoodCityTotodileScript, EVENT_GOT_TOTODILE_FROM_CIANWOOD"
     )

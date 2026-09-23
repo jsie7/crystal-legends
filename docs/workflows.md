@@ -292,6 +292,23 @@ Manually confirm:
 Any presentation failure must be fixed and retested or explicitly assigned
 before Phase 4 is described as playtest-certified or release-ready.
 
+The 2026-09-23 sprite fix reserves Cyndaquil's graphics throughout its hidden,
+pending, and collected states, and registers Totodile in Cianwood's outdoor
+graphics list. Emulator checks compare the loaded icon bytes with ROM artwork
+and verify live object tile references and valid icon animation frames across
+submenu redraws, native Save/Continue, collection, and fresh map loads. The
+beast-release case begins
+with native Continue and checks Eusine's graphics after a menu redraw. The
+compiled-ROM contract verifies Cianwood's fixed table length and unchanged
+entries, and confirms the replaced Tauros entry is unused by its outdoor maps.
+Totodile uses the same fixed-facing Pokémon animation as the other gifts, so
+approaching or talking to it cannot select nonexistent directional artwork.
+These checks do not replace the manual sprite/palette review above.
+
+When testing a save created before this fix, leave and re-enter the affected
+map once to rebuild any already-stale object tile references, or use a fresh
+playtest checkpoint. Gift completion and other story progress are preserved.
+
 ### Validate the Phase 5 Ruins gifts and Girafarig trade
 
 Run the focused Phase 5 suites while editing, then the aggregate and clean

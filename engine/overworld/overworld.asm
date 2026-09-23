@@ -96,7 +96,20 @@ AddMapSprites:
 	call CheckOutdoorMap
 	jr z, .outdoor
 	call AddIndoorSprites
+if DEF(_CRYSTALLEGENDS)
+; The object callback hides Cyndaquil by clearing its map sprite. Reserve its
+; graphics anyway so Continue and menu redraws keep every object's tile slot.
+	ld a, [wMapGroup]
+	cp GROUP_BURNED_TOWER_B1F
+	ret nz
+	ld a, [wMapNumber]
+	cp MAP_BURNED_TOWER_B1F
+	ret nz
+	ld a, SPRITE_CYNDAQUIL
+	jp AddSpriteGFX
+else
 	ret
+endc
 
 .outdoor
 	call AddOutdoorSprites
