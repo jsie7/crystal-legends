@@ -174,13 +174,13 @@ data, an external distribution, or the optional cheat menu.
 | 149 | Dragonite | Evolution | Dragonair at level 55 | Post-League training | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 150 | Mewtwo | Story encounter | Level 30 in the Radio Tower transmitter annex after STABILIZE SEQUENCE; level 70 in Cerulean Cave after defeating Giovanni if REVERSE SEQUENCE was chosen | Late Johto or Kanto | Phase 7 / Phase 10 | No; each branch has one capture-only encounter that retries until captured | `maps/RadioTowerTransmitterAnnex.asm`; `maps/CeruleanCave.asm` |
 | 151 | Mew | Story encounter | Level 30 in the Radio Tower transmitter annex after REVERSE SEQUENCE; level 70 in Cerulean Cave after defeating Giovanni if STABILIZE SEQUENCE was chosen | Late Johto or Kanto | Phase 7 / Phase 10 | No; each branch has one capture-only encounter that retries until captured | `maps/RadioTowerTransmitterAnnex.asm`; `maps/CeruleanCave.asm` |
-| 152 | Chikorita | Gift event | Level 14 at the Ilex Forest shrine after receiving Cut | After Badge 2 | Phase 4 | Yes after gift through breeding | `maps/IlexForest.asm` |
+| 152 | Chikorita | Gift event | Level 14 holding a Lucky Egg at the Ilex Forest shrine after receiving Cut | After Badge 2 | Phase 4 | Yes after gift through breeding | `maps/IlexForest.asm` |
 | 153 | Bayleef | Evolution | Chikorita at level 16 | Johto | Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; `maps/IlexForest.asm` |
 | 154 | Meganium | Evolution | Bayleef at level 32 | Johto | Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; `maps/IlexForest.asm` |
-| 155 | Cyndaquil | Gift event | Level 19 in Burned Tower B1F after the legendary beasts awaken | Ecruteak City | Phase 4 | Yes after gift through breeding | `maps/BurnedTowerB1F.asm` |
+| 155 | Cyndaquil | Gift event | Level 19 holding a Lucky Egg in Burned Tower B1F after the legendary beasts awaken | Ecruteak City | Phase 4 | Yes after gift through breeding | `maps/BurnedTowerB1F.asm` |
 | 156 | Quilava | Evolution | Cyndaquil at level 14 | Johto | Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; `maps/BurnedTowerB1F.asm` |
 | 157 | Typhlosion | Evolution | Quilava at level 36 | Johto | Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; `maps/BurnedTowerB1F.asm` |
-| 158 | Totodile | Gift event | Level 24 on Cianwood's east shore after receiving the SecretPotion | Cianwood City | Phase 4 | Yes after gift through breeding | `maps/CianwoodCity.asm`; `maps/CianwoodPharmacy.asm` |
+| 158 | Totodile | Gift event | Level 24 holding a Lucky Egg on Cianwood's east shore after receiving the SecretPotion | Cianwood City | Phase 4 | Yes after gift through breeding | `maps/CianwoodCity.asm`; `maps/CianwoodPharmacy.asm` |
 | 159 | Croconaw | Evolution | Totodile at level 18 | Johto | Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; `maps/CianwoodCity.asm` |
 | 160 | Feraligatr | Evolution | Croconaw at level 30 | Johto | Phase 4 | Yes | `data/pokemon/evos_attacks.asm`; `maps/CianwoodCity.asm` |
 | 161 | Sentret | Wild | Route 29, morning or day | Start | Existing | Yes | `data/wild/johto_grass.asm` |

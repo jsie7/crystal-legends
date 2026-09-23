@@ -262,13 +262,16 @@ git status --short
 
 Automation owns the exact species, levels, map coordinates, prerequisites,
 completion events, object visibility, party/current-box/full-capacity behavior,
-retry and duplicate prevention, save/reload persistence, SecretPotion
+held Lucky Eggs on all three gifts, retry and duplicate prevention,
+save/reload persistence, SecretPotion
 non-consumption, unrelated story-state preservation, bank floors, and reference
 isolation. Source completion means these gates pass; it does not certify the
 presentation.
 
 Gift persistence tests exercise native Save/restart/Continue separately from
-forced fresh map loads. Negative interactions inspect the live object and face
+forced fresh map loads, for both party and current-box delivery. Both paths
+must retain the Lucky Egg; full storage must leave existing held items unchanged.
+Negative interactions inspect the live object and face
 its position before pressing A. Cyndaquil and the Ruins gifts also cover actual
 exit/re-entry warps after party and box delivery, plus a stale visible object's
 refusal to grant an already completed gift. Only synthetic retargeted checkpoints
@@ -288,6 +291,11 @@ Manually confirm:
    dialogue, and Cianwood flow feel natural.
 4. All three discoveries and levels feel appropriate in one normal Johto run,
    and a reference ROM shows none of the new objects, hint, or behavior.
+5. Each gift holds a Lucky Egg. Check the held-item display, taking and giving
+   the item, and the effect of the earlier EXP boost on the rest of the party.
+
+Lucky Eggs are attached when the gifts are received. Updating the ROM does not
+add items to starters already collected on an older build.
 
 Any presentation failure must be fixed and retested or explicitly assigned
 before Phase 4 is described as playtest-certified or release-ready.

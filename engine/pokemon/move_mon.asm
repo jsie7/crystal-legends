@@ -1667,8 +1667,16 @@ GivePoke::
 	ld a, [wCurItem]
 	and a
 	jr z, .done
+IF DEF(_CRYSTALLEGENDS)
+	; SendMonIntoBox closes SRAM before returning.
+	ld a, BANK(sBoxMon1Item)
+	call OpenSRAM
+ENDC
 	ld a, [wCurItem]
 	ld [sBoxMon1Item], a
+IF DEF(_CRYSTALLEGENDS)
+	call CloseSRAM
+ENDC
 
 .done
 	ld a, [wCurPartySpecies]

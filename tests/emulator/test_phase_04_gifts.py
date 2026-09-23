@@ -66,8 +66,11 @@ def phase_4_constants(
         "MAP_BURNED_TOWER_1F",
         "MAPSETUP_WARP",
         "PARTY_LENGTH",
+        "PARTYMON_STRUCT_LENGTH",
+        "BOXMON_STRUCT_LENGTH",
         "MONS_PER_BOX",
         "EEVEE",
+        "LUCKY_EGG",
         "EVENT_GOT_CHIKORITA_FROM_ILEX_FOREST",
         "EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER",
         "EVENT_GOT_TOTODILE_FROM_CIANWOOD",
@@ -131,6 +134,22 @@ def implemented_gifts(
 def _sprite_slots(session) -> dict[int, int]:
     table = session.read_symbol_range("wUsedSprites", "wUsedSpritesEnd")
     return {sprite: tile for sprite, tile in zip(table[::2], table[1::2]) if sprite}
+
+
+def _held_items(session, constants: dict[str, int]) -> tuple[tuple[int, ...], ...]:
+    inventories = []
+    for count_label, item_label, stride_constant in (
+        ("wPartyCount", "wPartyMon1Item", "PARTYMON_STRUCT_LENGTH"),
+        ("sBoxCount", "sBoxMon1Item", "BOXMON_STRUCT_LENGTH"),
+    ):
+        count = session.read_symbol(count_label)
+        stride = constants[stride_constant]
+        data = (
+            session.read_symbol_bytes(item_label, (count - 1) * stride + 1)
+            if count else b""
+        )
+        inventories.append(tuple(data[::stride]))
+    return tuple(inventories)
 
 
 def _assert_live_sprite_slots(session, constants: dict[str, int]) -> None:
@@ -306,10 +325,12 @@ def test_phase_4_party_and_box_delivery_finalize_once(
         if destination == "party":
             assert progress.party.species == (species,)
             assert session.read_symbol("wPartyMon1Level") == scenario["level"]
+            assert session.read_symbol("wPartyMon1Item") == phase_4_constants["LUCKY_EGG"]
             assert progress.current_box.count == 0
         else:
             assert progress.current_box.species == (species,)
             assert session.read_symbol("sBoxMon1Level") == scenario["level"]
+            assert session.read_symbol("sBoxMon1Item") == phase_4_constants["LUCKY_EGG"]
 
         if species_name == "CYNDAQUIL":
             cross_map_warp(session, phase_4_constants, (7, 14), "down",
@@ -345,18 +366,22 @@ def test_phase_4_full_storage_is_atomic_and_retryable(
         set_party_full(session, filler, phase_4_constants["PARTY_LENGTH"])
         set_current_box_full(session, filler, phase_4_constants["MONS_PER_BOX"])
         before = read_progress(session)
+        held_before = _held_items(session, phase_4_constants)
         assert interact_with_gift(session, scenario, accept=True) == 2
         assert not event_is_set(session, completion)
         assert read_progress(session) == before
+        assert _held_items(session, phase_4_constants) == held_before
 
         clear_current_box(session)
         assert interact_with_gift(session, scenario, accept=True) == 1
         assert event_is_set(session, completion)
         assert read_progress(session).current_box.species == (species,)
+        assert session.read_symbol("sBoxMon1Item") == phase_4_constants["LUCKY_EGG"]
 
 
 @pytest.mark.parametrize("species_name", ["CHIKORITA", "CYNDAQUIL", "TOTODILE"])
 @pytest.mark.parametrize("fresh_map", [False, True], ids=["continue", "fresh-map"])
+@pytest.mark.parametrize("destination", ["party", "current-box"])
 def test_phase_4_completion_survives_continue_and_fresh_map_load(
     repo_root: Path,
     tmp_path: Path,
@@ -364,10 +389,13 @@ def test_phase_4_completion_survives_continue_and_fresh_map_load(
     implemented_gifts: dict[str, dict],
     species_name: str,
     fresh_map: bool,
+    destination: str,
 ) -> None:
     scenario = implemented_gifts[species_name]
     completion = phase_4_constants[scenario["completion_event"]]
     species = phase_4_constants[scenario["species"]]
+    item_label = "wPartyMon1Item" if destination == "party" else "sBoxMon1Item"
+    expected_outcome = 0 if destination == "party" else 1
     persisted = tmp_path / "persisted.sav"
     with loaded_phase_4_checkpoint(
         repo_root,
@@ -377,7 +405,16 @@ def test_phase_4_completion_survives_continue_and_fresh_map_load(
         prerequisite=True,
     ) as session:
         slots = _assert_gift_graphics(session, phase_4_constants, scenario)
-        assert interact_with_gift(session, scenario, accept=True) == 0
+        if destination == "current-box":
+            set_party_full(
+                session, phase_4_constants["EEVEE"], phase_4_constants["PARTY_LENGTH"]
+            )
+        assert interact_with_gift(session, scenario, accept=True) == expected_outcome
+        assert session.read_symbol(item_label) == phase_4_constants["LUCKY_EGG"]
+        progress = read_progress(session)
+        delivered = progress.party if destination == "party" else progress.current_box
+        assert delivered.species == (species,)
+        held_items = _held_items(session, phase_4_constants)
         _open_and_close_options(session, scenario["max_frames_per_step"])
         assert _assert_gift_graphics(session, phase_4_constants, scenario) == slots
         save_game_from_overworld(session, scenario["max_frames_per_step"])
@@ -392,14 +429,16 @@ def test_phase_4_completion_survives_continue_and_fresh_map_load(
         fresh_map=fresh_map,
     ) as session:
         assert event_is_set(session, completion)
-        assert read_progress(session).party.species == (species,)
+        assert read_progress(session) == progress
+        assert session.read_symbol(item_label) == phase_4_constants["LUCKY_EGG"]
         for other in implemented_gifts.values():
             if other is not scenario:
                 assert not event_is_set(
                     session, phase_4_constants[other["completion_event"]]
                 )
         assert_gift_absent(session, phase_4_constants, scenario)
-        assert read_progress(session).party.species == (species,)
+        assert read_progress(session) == progress
+        assert _held_items(session, phase_4_constants) == held_items
         _open_and_close_options(session, scenario["max_frames_per_step"])
         assert _assert_gift_graphics(session, phase_4_constants, scenario) == slots
 

@@ -635,3 +635,20 @@ Keep this guard custom-only and preserve reference-ROM bytes.
 
 The [legendary starter workflow](workflows.md#validate-elms-legendary-starter-gifts)
 owns refusal, retry, ordinary delivery, and branch regression coverage.
+
+## 2026-09-23 — Attach Lucky Eggs to the three Johto world gifts
+
+Chikorita, Cyndaquil, and Totodile each arrive holding a Lucky Egg through the
+existing `givepoke` item argument. Keep their levels, prerequisites, completion
+flags, and party/current-box delivery behavior unchanged. Refusal grants
+neither a Pokémon nor an item. The held item persists through native saves
+and can be transferred normally, making three early 1.5× EXP items available.
+
+The custom `GivePoke` box path reopens SRAM around the held-item write:
+`SendMonIntoBox` has already closed it, so the original write silently lost
+scripted held items on direct box delivery. Keep the reference engine unchanged.
+
+Only future gift receipts gain these items; do not retroactively edit already
+collected Pokémon or change the save layout. The changes remain custom-only.
+The [Phase 4 workflow](workflows.md#validate-the-phase-4-johto-starter-events)
+owns delivery, persistence, refusal, and manual balance review.

@@ -511,7 +511,7 @@ IlexForestChikoritaScript:
 	writetext IlexForestChikoritaOfferText
 	yesorno
 	iffalse .Declined
-	givepoke CHIKORITA, 14
+	givepoke CHIKORITA, 14, LUCKY_EGG
 	ifequal 2, .StorageFull
 	setevent EVENT_GOT_CHIKORITA_FROM_ILEX_FOREST
 	writetext IlexForestChikoritaJoinedText

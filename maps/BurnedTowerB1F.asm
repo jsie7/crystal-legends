@@ -137,7 +137,7 @@ BurnedTowerB1FCyndaquilScript:
 	writetext BurnedTowerB1FCyndaquilOfferText
 	yesorno
 	iffalse .Declined
-	givepoke CYNDAQUIL, 19
+	givepoke CYNDAQUIL, 19, LUCKY_EGG
 	ifequal 2, .StorageFull
 	setevent EVENT_GOT_CYNDAQUIL_FROM_BURNED_TOWER
 	writetext BurnedTowerB1FCyndaquilJoinedText

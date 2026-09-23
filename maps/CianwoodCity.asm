@@ -122,7 +122,7 @@ CianwoodCityTotodileScript:
 	writetext CianwoodCityTotodileOfferText
 	yesorno
 	iffalse .Declined
-	givepoke TOTODILE, 24
+	givepoke TOTODILE, 24, LUCKY_EGG
 	ifequal 2, .StorageFull
 	setevent EVENT_GOT_TOTODILE_FROM_CIANWOOD
 	writetext CianwoodCityTotodileJoinedText

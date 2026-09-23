@@ -42,7 +42,7 @@ def phase_4_constants(repo_root: Path, tmp_path_factory) -> dict[str, int]:
             "PAL_NPC_RED",
             "PAL_NPC_BLUE",
             "OBJECTTYPE_SCRIPT",
-            "NO_ITEM",
+            "LUCKY_EGG",
             "FALSE",
             "givepoke_command",
             "checkevent_command",
@@ -190,7 +190,7 @@ def test_compiled_ilex_chikorita_object_and_script_match_the_contract(
             phase_4_constants["givepoke_command"],
             phase_4_constants["CHIKORITA"],
             14,
-            phase_4_constants["NO_ITEM"],
+            phase_4_constants["LUCKY_EGG"],
             phase_4_constants["FALSE"],
         ]
     )
@@ -261,7 +261,7 @@ def test_compiled_burned_tower_cyndaquil_uses_callback_visibility(
             phase_4_constants["givepoke_command"],
             phase_4_constants["CYNDAQUIL"],
             19,
-            phase_4_constants["NO_ITEM"],
+            phase_4_constants["LUCKY_EGG"],
             phase_4_constants["FALSE"],
         ]
     )
@@ -360,7 +360,7 @@ def test_compiled_cianwood_totodile_rescue_preserves_secretpotion(
             phase_4_constants["givepoke_command"],
             phase_4_constants["TOTODILE"],
             24,
-            phase_4_constants["NO_ITEM"],
+            phase_4_constants["LUCKY_EGG"],
             phase_4_constants["FALSE"],
         ]
     )
