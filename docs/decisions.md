@@ -1,8 +1,48 @@
 # Decisions
 
-Record durable technical or policy decisions here.
+This log owns durable policy, rationale, and state-model constraints. Current
+acceptance belongs in [status](status.md), repeatable operations in
+[workflows](workflows.md), and run evidence in
+[history](history/validation.md). Exact acquisition rows and balance targets
+have their own linked contracts.
 
-For each entry, capture the decision, the reasoning, and any context that matters later.
+When a decision changes, state which earlier rule it supersedes and preserve
+the reason. Earlier Phase 8–11 numeric parties and Phase 9 wild levels are
+superseded by Phase 12; their story and acquisition rules still apply.
+
+## Decision index
+
+| Decision | Date |
+| --- | --- |
+| [Keep Crystal Legends isolated from reference builds](#2026-08-09--keep-crystal-legends-isolated-from-reference-builds) | 2026-08-09 |
+| [Use native single-player evolution paths](#2026-08-09--use-native-single-player-evolution-paths) | 2026-08-09 |
+| [Reserve four ordinary missing families for the Safari Zone](#2026-08-09--reserve-four-ordinary-missing-families-for-the-safari-zone) | 2026-08-09 |
+| [Activate and harden the native Celebi sequence](#2026-08-09--activate-and-harden-the-native-celebi-sequence) | 2026-08-09 |
+| [Keep CHEAT MODE temporary and story-safe](#2026-08-10--keep-cheat-mode-temporary-and-story-safe) | 2026-08-10 |
+| [Keep the automated harness local and layered](#2026-08-10--keep-the-automated-harness-local-and-layered) | 2026-08-10 |
+| [Permit reviewed battery fixtures, not savestates](#2026-08-10--permit-reviewed-battery-fixtures-not-savestates) | 2026-08-10 |
+| [Keep automated and manual acceptance separate](#2026-08-10--keep-automated-and-manual-acceptance-separate) | 2026-08-10 |
+| [Place the Johto starters in independent world gifts](#2026-08-11--place-the-johto-starters-in-independent-world-gifts) | 2026-08-11 |
+| [Reserve graphics independently of Johto gift visibility](#2026-09-23--reserve-graphics-independently-of-johto-gift-visibility) | 2026-09-23 |
+| [Gate Ruins gifts on both ancient conditions](#2026-08-11--gate-ruins-gifts-on-both-ancient-conditions) | 2026-08-11 |
+| [Preserve stock roamers and fix only the custom Fast Ball scan](#2026-08-12--preserve-stock-roamers-and-fix-only-the-custom-fast-ball-scan) | 2026-08-12 |
+| [Resolve Project Mew before Radio Tower cleanup](#2026-08-12--resolve-project-mew-before-radio-tower-cleanup) | 2026-08-12 |
+| [End Silver's stolen-bird arc with voluntary release](#2026-08-19--end-silvers-stolen-bird-arc-with-voluntary-release) | 2026-08-19 |
+| [Earn all three Kanto starters through independent services](#2026-08-20--earn-all-three-kanto-starters-through-independent-services) | 2026-08-20 |
+| [Open one unattended Safari preserve through existing Fuchsia state](#2026-08-20--open-one-unattended-safari-preserve-through-existing-fuchsia-state) | 2026-08-20 |
+| [Place branch-safe birds in compact Kanto world locations](#2026-08-20--place-branch-safe-birds-in-compact-kanto-world-locations) | 2026-08-20 |
+| [Align Kanto starter-gifting leaders in the Phase 12 balance pass](#2026-08-23--align-kanto-starter-gifting-leaders-in-the-phase-12-balance-pass) | 2026-08-23 |
+| [Reuse unused Cave blocks for three lab fixtures](#2026-08-26--reuse-unused-cave-blocks-for-three-lab-fixtures) | 2026-08-26 |
+| [Import standing-only Giovanni artwork from Pokémon Red](#2026-08-26--import-standing-only-giovanni-artwork-from-pokémon-red) | 2026-08-26 |
+| [Finish Project Mew in one derived-access Cerulean Cave](#2026-09-06--finish-project-mew-in-one-derived-access-cerulean-cave) | 2026-09-06 |
+| [Close the endgame with durable Red and one-time Oak victories](#2026-09-07--close-the-endgame-with-durable-red-and-one-time-oak-victories) | 2026-09-07 |
+| [Apply fixed Kanto wild levels without changing habitats](#2026-09-15--apply-fixed-kanto-wild-levels-without-changing-habitats) | 2026-09-15 |
+| [Implement the accepted Phase 12 trainer package](#2026-09-15--implement-the-accepted-phase-12-trainer-package) | 2026-09-15 |
+| [Finalize Elm's starter choice only after delivery](#2026-09-17--finalize-elms-starter-choice-only-after-delivery) | 2026-09-17 |
+| [Attach Lucky Eggs to the three Johto world gifts](#2026-09-23--attach-lucky-eggs-to-the-three-johto-world-gifts) | 2026-09-23 |
+
+Historical scheduling and acceptance entries remain below as links to their
+[archived records](history/decisions.md).
 
 ## 2026-08-09 — Keep Crystal Legends isolated from reference builds
 
@@ -28,12 +68,13 @@ records and item behavior in every reference build.
 ## 2026-08-09 — Reserve four ordinary missing families for the Safari Zone
 
 Mareep, Vulpix, Mankey, and Remoraid and their dependent evolutions belong to
-the Phase 9 unattended Safari Zone. The canonical acquisition ledger must
-identify the reservation until Phase 9 lands; the implemented area, levels,
-rates, and slots are recorded in the later Phase 9 decision below. Phase 2 must
-not add substitute Johto encounters for these families. Girafarig was
-originally included in this reservation; Phase 5 instead makes Kim's Route 14
-trade its canonical source, and Phase 9 adds no wild Girafarig.
+the unattended Safari preserve, implemented in Phase 9. Keep those missing
+families as Kanto discoveries rather than adding substitute Johto encounters.
+The [acquisition ledger](pokemon-acquisition.md) owns their current methods and
+levels.
+
+Girafarig's original Safari reservation was superseded by Phase 5: Kim's Route
+14 trade is its canonical source, and the preserve adds no wild Girafarig.
 
 ## 2026-08-09 — Activate and harden the native Celebi sequence
 
@@ -49,14 +90,8 @@ returns to the shrine script. Keep the upstream sequence in reference builds.
 
 ## 2026-08-09 — Defer the v0.1 and Phase 2 emulator matrices until the cheat menu
 
-Treat v0.1 as implementation-complete after its clean custom build, static
-checks, and reference-ROM comparison pass. Defer the full three-starter
-emulator matrix until the optional cheat/debug menu is implemented, then run
-the v0.1, Phase 2, and cheat-menu acceptance checks together.
-
-Build and source-level validation are still required while work continues.
-Do not describe v0.1 or Phase 2 as playtest-certified or release-ready until the
-deferred matrices have passed.
+This historical scheduling or acceptance record is preserved in
+[decision history](history/decisions.md#2026-08-09--defer-the-v01-and-phase-2-emulator-matrices-until-the-cheat-menu). Use [project status](status.md) for the remaining acceptance boundaries.
 
 ## 2026-08-10 — Keep CHEAT MODE temporary and story-safe
 
@@ -80,24 +115,8 @@ reference builds to extend this testing tool.
 
 ## 2026-08-10 — Record partial manual acceptance and defer progression
 
-A user-run manual pass on the Crystal Legends ROM at commit `5ec915ce1`
-confirmed the title screen, all three legendary-bird starter branches through
-Elm's post-break-in handoff, the correct first Silver bird for every branch,
-both permitted outcomes of that battle, the player-bird learnsets, and CHEAT
-MODE entry, navigation, grants, and safety variants.
-
-This closes the Phase 3 feature matrix and the early v0.1 story slice through
-the one-time Oak handoff. At the time, the user deliberately deferred the
-remaining playthrough-dependent checks: progression through Falkner, later
-Silver and balance sampling, and the Phase 2 evolution/item/Celebi matrix.
-Do not describe v0.1, Phase 2, or the complete project as fully playtest-certified
-until those remaining matrices pass. The exact emulator/version was not supplied
-with this test report and should be appended if it becomes available.
-
-On 2026-09-16, the user confirmed that progression through Falkner was completed
-manually. That portion of the deferral is superseded by the
-[manual follow-up](workflows.md#falkner-follow-up--2026-09-16); the original
-ROM-specific evidence above remains unchanged.
+This historical scheduling or acceptance record is preserved in
+[decision history](history/decisions.md#2026-08-10--record-partial-manual-acceptance-and-defer-progression). Use [project status](status.md) for the remaining acceptance boundaries.
 
 ## 2026-08-10 — Keep the automated harness local and layered
 
@@ -161,64 +180,45 @@ behavior and must continue to reproduce exactly.
 
 ## 2026-09-23 — Reserve graphics independently of Johto gift visibility
 
-Burned Tower B1F always reserves Cyndaquil's graphics, including before the
-beast release and after collection. The object callback still controls its
-visibility. Keeping the graphics list stable prevents native Continue and
-submenu redraws from moving the tile slots used by Cyndaquil, Eusine, and the
-beasts. Cianwood's fixed-length outdoor graphics list replaces its unused
-Tauros icon with Totodile; both use the same allocation size and sprite type.
-Totodile uses the fixed-facing Pokémon animation: its two-frame icon cannot
-provide the directional frames selected by ordinary swimming movement.
-Both changes are custom-only and leave reference ROM bytes unchanged.
+Keep the stock icon allocation stable even while a gift is hidden. Burned Tower
+B1F therefore always reserves Cyndaquil's graphics; its object callback
+controls visibility. Native Continue and submenu redraws must not move the tile
+slots used by Cyndaquil, Eusine, or the beasts.
 
-The [Phase 4 workflow](workflows.md#validate-the-phase-4-johto-starter-events)
-covers loaded graphics, live object tile references, and event persistence
-separately from manual presentation acceptance. Older saves can retain stale
-object tile references; one ordinary exit and re-entry rebuilds the map objects
-without changing gift progress or the save layout.
+Cianwood's fixed-length outdoor list replaces the unused Tauros icon with the
+same-size Totodile icon. Totodile uses fixed-facing Pokémon animation because
+its two frames cannot supply ordinary swimming directions. Both changes remain
+custom-only. See [coverage](../tests/coverage.md#johto-starter-gifts-phase-4)
+and the
+[older-save procedure](playtesting/johto.md#johto-starter-gifts-phase-4).
 
 ## 2026-08-11 — Gate Ruins gifts on both ancient conditions
 
-For the Kabuto, Omanyte, and Aerodactyl chambers, Crystal Legends opens the
-hidden room only after both the matching picture puzzle and the chamber's stock
-hidden-wall condition are complete. The stock Escape Rope, Water Stone, and
-Flash handlers may record their wall event before the picture is solved, but
-the chamber must remain visibly closed and continue to show its clue until the
-picture event is also set. Ho-Oh remains entirely stock.
+Kabuto, Omanyte, and Aerodactyl hidden rooms require both their picture puzzle
+and stock hidden-wall condition. Escape Rope, Water Stone, and Flash may record
+the wall event first, but the wall and clue stay closed until the picture is
+solved. Apply the same predicate to scenes, tile callbacks, right-wall text,
+and Kabuto's scientist; preserve the independent picture-floor drop and all
+four preceding item-room rewards. Ho-Oh remains stock.
 
-Apply this dual predicate consistently to the opening scene, tile callback,
-right-wall text, and Kabuto scientist dialogue while preserving the independent
-picture-floor drop. There are no retained player-progression saves predating
-this behavior, so do not add scene normalization, trade migration, save-version
-conversion, or other compatibility scaffolding for hypothetical old progress.
+Each word-room gift sits immediately after its final inscription glyph, acting
+as a period. Use independent success events and the stock `givepoke`
+party/current-box transaction. Decline or full storage keeps the gift
+retryable; success completes it permanently. Completion is the object hide
+flag, while the callback derives its sprite before object masks load without
+mutating saved state. The interaction independently checks prerequisites and
+completion. Omanyte's Water Stone condition consumes nothing and accepts a Bag
+or held Stone. Exact species, levels, locations, and renewal paths live in the
+[acquisition ledger](pokemon-acquisition.md).
 
-The Kabuto word room beyond the stock item chamber contains a visible level-10
-Kabuto once both conditions are complete. It sits at `(10, 8)`, immediately
-after the inscription's final glyph, so the sprite acts as the sentence's
-period. It uses the stock `givepoke` party/current-box transaction and a
-dedicated success event: declining or having both destinations full leaves the
-gift waiting, while successful party or box delivery completes it permanently.
-Each Ruins gift uses its completion event as its permanent object hide flag.
-Its object callback derives the sprite from the prerequisites and completion
-before object masks load, without mutating saved state. The interaction script
-independently checks both prerequisites and completion before offering a gift.
-The preceding item room retains all four stock item balls.
+Kim's Route 14 trade changes only the offered species/name to same-level
+Girafarig `GIRAFY`; retain the Chansey request, table index, dialogue, DVs,
+Gold Berry, OT identity, and gender rule. References retain Aerodactyl `AEROY`. Breeding renews Girafarig; Phase 9 deliberately adds no competing wild
+source.
 
-The Omanyte word room uses the same independent transaction for a level-26
-Omanyte at `(15, 10)`, immediately after its final inscription glyph. Its Water
-Stone condition remains non-consuming and recognizes either the Bag or a party
-Pokémon's held item. Once both the picture and remembered wall event are set,
-the callback exposes the retry-safe gift without changing either prerequisite
-or any stock room reward.
-
-The Aerodactyl word room completes the set with a level-23 Aerodactyl at
-`(16, 8)`, immediately after its final inscription glyph, using the same
-independent, retry-safe contract. Kim's existing Route 14 trade keeps its
-Chansey request, table index, dialog set, DVs, Gold Berry, OT identity, and
-gender rule, but Crystal Legends offers a same-level Girafarig named `GIRAFY`.
-Reference builds retain the complete stock Aerodactyl `AEROY` row. Girafarig is
-renewable through breeding after this one-time trade, and Phase 9 deliberately
-adds no wild Safari encounter that would undermine it.
+No retained player-progression saves predated this change. Do not add scene
+normalization, trade migration, or save-version scaffolding for hypothetical
+old progress.
 
 ## 2026-08-12 — Preserve stock roamers and fix only the custom Fast Ball scan
 
@@ -302,8 +302,9 @@ interaction unchanged afterward.
 
 Require the release fact in Crystal Legends before either Monday/Wednesday
 Indigo rematch entrance, Silver's Tuesday/Thursday Dragon's Den cameo, or the
-Dragon Shrine training hint. Preserve their stock dialogue, party data,
-weekday checks, weekly cadence, and every reference-build byte.
+Dragon Shrine training hint. Preserve their stock dialogue, weekday checks,
+weekly cadence, and every reference-build byte. Phase 12 supersedes the earlier
+rematch party data.
 
 Phase 8 sets only Silver's released-bird availability state. Phase 9 owns all
 physical Articuno, Zapdos, and Moltres locations, encounter and retry behavior,
@@ -313,17 +314,8 @@ scene-layout, or reference-build compatibility boundary changes.
 
 ## 2026-08-19 — Accept the complete Phase 8 manual matrix
 
-The user verified and passed every Phase 8 manual acceptance check in SameBoy
-after the final Elm's Lab presentation fixes. This covers all three Mt. Moon
-and lab branches, loss/retry behavior, normal return travel, the released
-bird's visible look-back, dialogue and exit presentation, one natural Indigo
-rematch, one natural Dragon's Den cameo, and the Phase 8/Phase 9 boundary.
-
-The accepted ROM is commit `0e73807d2`, SHA-256
-`a5c2b67aaad42b1f3f06290bd40da6204c98279b7a037e0e14549cdd5fcc26f9`.
-The exact SameBoy version was not supplied. This evidence makes Phase 8
-playtest-certified; it does not certify earlier phases, the Phase 12 Silver
-balance pass, the complete project, or release readiness.
+This historical scheduling or acceptance record is preserved in
+[decision history](history/decisions.md#2026-08-19--accept-the-complete-phase-8-manual-matrix). Use [project status](status.md) for the remaining acceptance boundaries.
 
 ## 2026-08-20 — Earn all three Kanto starters through independent services
 
@@ -345,38 +337,29 @@ who help their cities. The second assistant remains dedicated to bird tracking.
 Use the stock `givepoke` party/current-box transaction and ordinary generated
 moves, then assign the gifting leader's OT name and a deterministic OT ID based
 on their trainer class and party index. Decline or full party plus full current
-box must not set the gift event
-or repeat a completed service. The Blaine return fact is set before the gift
-attempt so storage failure never repeats the investigation. The hidden cache
-uses the stock boulder graphic at `(17, 12)` in the Crystal Legends-only
-Cinnabar object list; three noninteractive boulders at `(12, 6)`, `(17, 1)`,
-and `(12, 2)` make it part of the surrounding rubble. Its gray shelf staircase
-uses a custom block, metatile, collision, and one imported stair-tread tile;
-reference assets remain exact. The staircase uses nonzero Kanto metatile `$4b`
-because block `$00` is a rendering and collision sentinel, not a usable map
-block.
+box must not set the gift event or repeat a completed service. The Blaine
+return fact is set before the gift attempt so storage failure never repeats the
+investigation. See [Kanto map art](assets.md#kanto-map-art) for the cache and
+staircase layout.
 
 ## 2026-08-20 — Open one unattended Safari preserve through existing Fuchsia state
 
-Phase 9 reworks `SafariZoneBeta` as one outdoor Park-tileset preserve. The
-existing Warden's granddaughter releases the north maintenance gate only after
-the player has spoken with her and owns the Soul Badge; both prerequisite
-orders converge in her conversation. Her Crystal Legends first-contact text
-states the badge requirement directly instead of chaining the long stock
-introduction into a second speech. The access event is permanent.
+Reuse `SafariZoneBeta` as one unattended outdoor Park-tileset preserve. The
+Warden's granddaughter permanently opens the north maintenance gate after both
+her conversation and the Soul Badge, in either order; her first-contact text
+states the badge requirement directly.
 
-The preserve uses normal wild battles, the Bag, ordinary Poké Balls, experience,
-and escape rules. It has no clerk, fee, timer, step counter, Safari Balls,
-bait/rock commands, prize, or reopening ceremony. A 10-percent all-time grass
-table initially made level-20 Mareep, level-24 Vulpix, and level-22 Mankey common; a
-10-percent water table puts Remoraid in both common slots. Two ordinary visible
-item balls reward exploration. The compact northern preserve uses denser grass,
-an eight-by-six-tile pond framed by the National Park stone shore, and one
-additional tree barrier. A Crystal Legends-only Park graphic duplicates that
-shore into a gray-palette tile so it does not render with the orange roof
-palette. Its two notices flank the two-tile south exit, whose carpet is limited
-to the actual warp tiles. Multi-area ports and official Safari mechanics remain
-deferred.
+Use ordinary wild battles, Bag, Poké Balls, experience, and escape rules. There
+is no clerk, fee, timer, step counter, Safari Balls, bait/rock system, prize,
+or reopening ceremony. Grass and water rates remain 10 percent, with all-time
+land slots and Remoraid in both common water slots. The
+[acquisition ledger](pokemon-acquisition.md) and
+[Phase 12 contract](phase-12-balance.md) own current encounters;
+[history](history/decisions.md#superseded-numeric-targets) retains the original
+levels. Two visible item balls reward exploration.
+
+Keep the area compact and use the [custom Park art](assets.md#kanto-map-art).
+Multi-area ports and official Safari mechanics remain deferred.
 
 ## 2026-08-20 — Place branch-safe birds in compact Kanto world locations
 
@@ -410,89 +393,48 @@ and Zapdos. Moltres occupies `(18, 29)` and is approached from `(18, 30)`.
 These maps reuse stock sprites and tiles wherever possible. They change no
 save-layout dimensions and remain wholly absent from reference builds.
 
-The Seafoam cave uses a visible south exit and several connected ice lanes.
-Rock stops frame the entrance, separate the eastern ice field from Articuno,
-and turn the route to the bird into a short sliding puzzle. An exposed Ultra
-Ball rewards the western branch, while a hidden NeverMeltIce sits in the
-northeast ice rock.
-
-Both tiles of the annex's two-tile generator console share one reading. It
-reports unsafe output only while Zapdos is physically present and safe output
-whenever the location selector hides it, including capture and the
-Zapdos-starter branch. A visible Magnet in the southeast corner rewards annex
-exploration and gives Zapdos an immediately relevant held item.
+See [Kanto map art](assets.md#kanto-map-art) for the Seafoam ice lanes and
+Generator Annex presentation.
 
 ## 2026-08-23 — Align Kanto starter-gifting leaders in the Phase 12 balance pass
 
-Phase 12 must add the final evolution of each gifted Kanto starter to the
+Phase 12 adds the final evolution of each gifted Kanto starter to the
 corresponding leader's battle party: Venusaur for Erika, Blastoise for Misty,
 and Charizard for Blaine. This makes each Phase 9 gift read as a Pokémon line
-the leader personally trains rather than an unrelated reward. Phase 12 owns
-the exact level, moves, party position, and which existing party member—if
-any—is replaced; it must evaluate those choices with the complete Kanto
-difficulty curve. Do not change the Phase 9 service prerequisites, gift level,
-leader OT assignment, or retry behavior as part of that roster work.
+the leader personally trains rather than an unrelated reward. Phase 12 owns the
+exact level, moves, party position, and which existing party member—if any—is
+replaced; evaluate future changes with the complete Kanto difficulty curve. Do
+not change the Phase 9 service prerequisites, gift level, leader OT assignment,
+or retry behavior as part of that roster work.
 
 ## 2026-08-26 — Reuse unused Cave blocks for three lab fixtures
 
-Crystal Legends reserves Cave block `$03` for an empty Facility-style table,
-`$16` for the computer workbench from Lab block `$21`, and `$17` for the
-Facility `$08` control terminal. The empty table uses Facility `$29` with its
-two paper tiles replaced by the plain tabletop graphic `$51`. Approach from
-the north for the bench, and from the south for the table and terminal.
-Exposed floor tiles use the raised cave ground. The fixtures are scenery only
-until map placement and background-event scripts are
-approved; this asset preparation does not implement the Phase 10 story or
-register Cerulean Cave as a playable map.
+Reuse three unused Cave blocks and existing source art for the lab furniture.
+Keep the 96-tile graphics sheet and 64-block table dimensions unchanged and
+preserve all other blocks and reference assets. Cave and Dark Cave share block,
+collision, and palette tables; the furniture is valid only with Cave graphics.
+Phase 10 owns its Cerulean Cave placement and interactions.
 
-Reuse 32 8-by-8 graphic slots without increasing the 96-tile graphics sheet or
-64-block table. Of these, 31 were unreferenced by every original block; graphic
-`$04` is reclaimed from the retired grass block `$03`. The other blocks, their
-graphics, collision, and palettes remain unchanged. Cave and Dark Cave share
-block/collision/palette tables, so tests prohibit all three reserved blocks in
-their existing maps; the new furniture is intended for Cave graphics, not Dark
-Cave. Reference
-builds continue to use all original assets and collision rows.
-
-The terminal's whole bottom tile row uses cave ground, replacing both the
-Facility patterned-floor tile `$01` and its blank-floor tile `$26`.
-
-Keep the first two fixtures' graphic allocations stable when adding the table.
-Reclaiming the grass graphic and selecting the existing compressor's optimized
-mode only for `cave_crystallegends.2bpp.lz` keeps the three-fixture graphics at
-the same 1008 bytes as the two-fixture version. Original assets retain matching
-compression. Do not delete block `$3f`: it is Victory Road's pit block and has
-no unique graphics to reclaim.
-
-The custom compressed graphics occupy 1008 bytes versus the original 912,
-leaving `$0034` (52) bytes free in ROMX bank `$07`. Keep a reviewed `$0030`
-floor there; further growth requires a separate capacity review. No bank
-relocation, new tileset ID, map size, object slot, event flag, or save-layout
-field is needed.
-Reproduction and verification are documented in
-[workflows.md](workflows.md#regenerate-and-validate-the-cave-lab-fixtures).
+Reclaiming the retired grass graphic and using optimized compression only for
+the custom asset avoids bank relocation. Preserve Victory Road pit block `$3f`. The [asset guide](assets.md#cave-fixture-design-constraints) owns exact block
+and tile allocations, artwork, compression, and capacity limits; its
+[procedure](assets.md#regenerate-and-validate-the-cave-lab-fixtures) owns
+regeneration.
 
 ## 2026-08-26 — Import standing-only Giovanni artwork from Pokémon Red
 
-Crystal Legends appends `SPRITE_GIOVANNI` at ordinary sprite ID `$67`, leaving
-all existing IDs and the `$80` Pokémon-icon range unchanged. Import Red's three
-standing 16-by-16 poses without redrawing pixels: down, up, and left, with the
-engine mirroring left for right. The source PNG is 16-by-48; its 12 native 2bpp
-tiles occupy 192 bytes. Use `STANDING_SPRITE` and `PAL_OW_BROWN`.
+Import Pokémon Red's three standing Giovanni poses unchanged and use the
+existing standing-sprite loader. Giovanni may turn, but must never walk or use
+automatic trainer approach: the loader's second graphics region has no walking
+frames. The cave victory blackout removes the crew without walking
+choreography.
 
-Giovanni may turn but must not walk or use the automatic trainer-approach
-sequence. The planned post-victory blackout removes the cave crew without
-walking choreography. This asset slice does not implement that scene, his
-trainer portrait/class/battle, map registration, or any event flags.
-
-Place the custom-only bytes in `Crystal Legends Sprites`, after `Map Blocks 3`
-in bank `$2c`. The section is empty in reference builds. Both original sprite
-banks remain unchanged; the custom bank retains `$23da` (9178) free bytes and
-its existing `$2000` minimum reserve. No bank relocation, ROM expansion, engine
-change, or save-layout change is required. The draft now previews the real
-sprite at player coordinate `(06,04)`, facing down. Source provenance and the
-repeatable import/check procedure are in
-[workflows.md](workflows.md#giovanni-standing-sprite).
+Append the custom ID and bank section without changing existing sprite IDs,
+stock banks, engine code, or save layout. The
+[asset guide](assets.md#giovanni-standing-sprite) owns provenance and
+reproduction;
+[registration constraints](assets.md#giovanni-sprite-registration) own the
+exact allocation, palette, and bank reserve.
 
 ## 2026-09-06 — Finish Project Mew in one derived-access Cerulean Cave
 
@@ -503,13 +445,13 @@ beta-cave payload at the same size. Route 4 and Cerulean City use same-size
 custom block variants, retain their stock connection, and preserve the hidden
 Berserk Gene.
 
-Access requires `EVENT_PROJECT_MEW_RESOLVED`, `EVENT_SILVER_BIRD_RELEASED`, and
-at least 14 badges. Do not store a separate cave-open fact. Route 4's object
-callback writes the guard map object's sprite to `SPRITE_ROCKET` or zero before
-visible object structs are initialized; `appear`/`disappear` cannot correctly
-derive an eventless object's initial visibility at that callback boundary.
-This keeps eligibility order-independent and reconstructs it on map load and
-native Continue.
+Access requires `EVENT_PROJECT_MEW_RESOLVED`, `EVENT_SILVER_BIRD_RELEASED`,
+and at least 14 badges. Do not store a separate cave-open fact. Route 4's
+object callback writes the guard map object's sprite to `SPRITE_ROCKET` or zero
+before visible object structs are initialized; `appear` /`disappear` cannot
+correctly derive an eventless object's initial visibility at that callback
+boundary. This keeps eligibility order-independent and reconstructs it on map
+load and native Continue.
 
 The cave holds six Rocket remnant trainers with independent defeat flags, but
 all six object masks and Giovanni's object mask use `EVENT_BEAT_GIOVANNI` so the
@@ -536,20 +478,19 @@ The walking, Surf, and fishing tables are custom-only, as are the map, scripts,
 events, trainer data, portrait, and overworld object. `NUM_EVENTS`, WRAM/SRAM,
 the save fingerprint, and every reference-build byte remain unchanged.
 
-Giovanni's 56-by-56 portrait adapts the Pokémon Red source linked in
-[workflows.md](workflows.md#validate-phase-10-giovanni-and-cerulean-cave). It
-occupies Pics 18 in bank `$59`; lossless custom-only Omastar back-picture
-compression creates the three pointer bytes while keeping the picture in its
-original bank. The finalized bank floors and reproduction commands are owned by
-the same workflow.
+The [asset guide](assets.md#giovanni-trainer-portrait) owns Giovanni's
+portrait, its source hashes, and the custom-only lossless Omastar recompression
+that creates pointer space without moving the original picture.
 
 ## 2026-09-07 — Close the endgame with durable Red and one-time Oak victories
 
 Crystal Legends keeps Red at Mt. Silver with Pikachu, Espeon, Snorlax,
-Venusaur, Charizard, and Blastoise, but raises his provisional endgame party to
-levels 82–85 with max class DVs. `EVENT_RED_IN_MT_SILVER` remains only the
-current object-visibility flag so later Hall of Fame clears can restore a Red
-rematch. New event 1491, `EVENT_BEAT_RED`, records the first successful victory
+Venusaur, Charizard, and Blastoise, with max class DVs. His initial numeric
+targets were superseded by the
+[Phase 12 package](#2026-09-15--implement-the-accepted-phase-12-trainer-package); the current [trainer contract](../tests/contracts/phase_12_trainers.json)
+owns levels and moves. `EVENT_RED_IN_MT_SILVER` remains only the current
+object-visibility flag so later Hall of Fame clears can restore a Red rematch.
+New event 1491, `EVENT_BEAT_RED`, records the first successful victory
 permanently and is never cleared by rematch setup.
 
 After Mt. Silver opens, Oak continues to run the stock Pokédex rating before
@@ -557,11 +498,12 @@ the new state response. His only live unlock is `EVENT_BEAT_RED` plus at least
 240 of 251 caught species; no legendary, starter, Ruins, Giovanni, Project Mew,
 or other story fact is an additional requirement. Declining or losing changes
 nothing. Oak uses the existing `POKEMON_PROF` presentation with two Full
-Restores, full leader-grade AI, max DVs, and Champion music. Three level-94-to-
-100 parties select Charizard for an Articuno player, Venusaur for a Zapdos
-player, or Blastoise for a Moltres player; all finish with Tyranitar. The exact
-levels and moves are provisional inputs to Phase 12, while the identities and
-branch mapping are story locks.
+Restores, full leader-grade AI, max DVs, and Champion music. Three
+starter-selected parties use Charizard for an Articuno player, Venusaur for a
+Zapdos player, or Blastoise for a Moltres player; all finish with Tyranitar.
+Phase 12 owns the exact levels and moves; the identities and branch mapping
+remain story locks. [History](history/decisions.md#superseded-numeric-targets)
+retains the provisional numbers.
 
 Successful Oak victory alone sets event 1492,
 `EVENT_BEAT_PROFESSOR_OAK`, then gives completion dialogue, heals the party,
@@ -575,55 +517,48 @@ victory facts and Oak's permanent completion dialogue persist.
 The two events occupy trainer-gap IDs 1491–1492. `NUM_EVENTS`, WRAM, SRAM, the
 save-layout fingerprint, map geometry, and all reference builds remain
 unchanged. Pre-Phase-11 saves therefore begin with both formerly unused bits
-clear. Presentation, dialogue, credits pacing, and provisional boss balance
-remain a separate user-owned SameBoy gate; Phase 12 owns final numeric tuning.
+clear. Presentation, dialogue, credits pacing, and natural boss difficulty use
+the [manual endgame matrix](playtesting/endgame.md); acceptance is recorded in
+[project status](status.md).
 
 ## 2026-09-15 — Apply fixed Kanto wild levels without changing habitats
 
-Phase 12 changes 584 level bytes across 26 land and 13 surfing records.
-Species, ordered slots, time windows, rates, fishing and encounter mechanics
-remain exact. Safari now has Mareep 28, Mankey 32, Vulpix/Exeggcute 34,
-Tauros/Scyther/Pinsir 36 and Chansey/Kangaskhan 38. Its surf bases are
-Remoraid 25/27 and Octillery 31, with the native +0–4 variation. Route 7
-Houndour stays 26 and Diglett's Cave preserves its time-dependent differences.
+Use fixed Kanto encounter levels while preserving species, ordered slots, time
+windows, rates, fishing, and encounter mechanics. Preserve Johto, pre-League
+routes, oceans, Mt. Silver, Cerulean Cave, scripted encounters, and gift
+levels. This raises recruitment levels without changing habitats or
+guaranteeing training XP; the edits add no data bytes.
 
-The [acquisition ledger](pokemon-acquisition.md) records current levels; earlier
-Phase 9 evidence describes the original implementation. Preserve Johto, the
-pre-League approach, oceans, Mt. Silver, Cerulean Cave, scripted encounters and
-gift levels. These fixed tables add no bytes or guaranteed training XP. See
-[Phase 12](phase-12-balance.md) for the exact contract and acceptance boundary.
+The [acquisition ledger](pokemon-acquisition.md) owns species availability and
+current levels. The
+[balance guide and wild contract](phase-12-balance.md#encounter-and-xp-contracts)
+own exact table targets. These replace the original Phase 9 levels, not its
+access or capture rules.
 
 ## 2026-09-15 — Implement the accepted Phase 12 trainer package
 
-Crystal Legends uses the complete approved 166-record trainer scope, covering
-149 distinct battles when selecting one starter branch and clearing the listed
-optional encounters once. Johto leaders retain every stock partner and gain
-one each; the four Elite Four teams gain a sixth. Lance, Blue, Elder Li,
-ordinary Johto, pre-League Routes 26/27 and shared S.S. Aqua parties remain
-stock. Ordinary Kanto gym underlings gain 10 levels and listed routes gain 8,
-both capped one below the assigned geographic gym ace. Colette is the sole
-ordinary authored-move exception. Cal remains daily with natural level-55 moves.
+Apply the accepted fixed trainer package rather than global level boosts or
+dynamic badge scaling. Johto leaders retain their stock partners and gain one
+each; the four Elite Four teams gain a sixth. Ordinary Kanto gym trainers gain
+10 levels and listed routes gain 8, capped one below their geographic gym ace.
+Colette is the sole ordinary authored-move exception. Preserve Lance, Blue,
+Elder Li, ordinary Johto, pre-League Routes 26/27, and shared S.S. Aqua
+parties.
 
-Silver's bird progression is 5/16/22/32/40/50; supporting additions arrive at
-Azalea, Burned Tower and Goldenrod. After the existing release scene, Ursaring
-fills the sixth rematch slot and Crobat 52 is last and highest-level. Golbat
-remains through Mt. Moon; release prerequisites, branches and weekly cadence
-are unchanged. Cave remnants are 54–60, Giovanni is 60–65, Red returns to
-stock levels with four softer moves, and all Oak variants are 84/85/85/86/87/90.
-These supersede the provisional numeric targets in earlier phase decisions.
+Silver's release scene still precedes the bird-free rematch; Ursaring fills its
+sixth slot and Crobat is last and highest-level. Golbat remains through Mt.
+Moon. Preserve class items, AI, DVs, rewards logic, story scripts, gifts,
+player learnsets, save layout, and all reference artifacts. Only Kiyo and
+Colette convert automatic parties to authored moves; Cal remains daily with
+natural moves.
 
-The [trainer contract](../tests/contracts/phase_12_trainers.json) owns exact
-ordered members, moves, formats and preservation targets. Only Kiyo and Colette
-convert automatic parties to authored moves. Preserve existing class items,
-AI, DVs, rewards logic, story scripts, gifts, player learnsets and save layout.
-Do not add a global level boost or dynamic badge scaling. The 252-byte expansion
-leaves 826 bytes in bank $0e; the reviewed 768-byte floor leaves 58 bytes of
-margin. All reference artifacts must remain exact.
-
-Automated data/state tests and natural-play difficulty are separate gates.
-The [Phase 12 workflow](workflows.md#validate-phase-12-trainer-and-wild-balance)
-owns the remaining manual matrix. Do not equate optional recruits, access to
-Red/Oak, later victory rewards or historical level forecasts with readiness.
+The [balance guide](phase-12-balance.md) and linked trainer contract own exact
+ordered members, levels, moves, formats, XP totals, and bank reserve. Their
+numeric targets supersede the provisional Phase 8–11 parties; story identities,
+branches, and cadence remain unchanged. Automated data/state checks and
+[natural-play difficulty](playtesting/endgame.md#trainer-and-wild-balance-phase-12)
+are separate gates. Optional recruits, unlocks, later victory rewards, and
+historical player-level forecasts do not establish readiness.
 
 ## 2026-09-17 — Finalize Elm's starter choice only after delivery
 
@@ -634,7 +569,8 @@ choice and story gate unchanged, including after native Save/Continue. Party
 or current-box delivery proceeds through the existing Elm directions once.
 Keep this guard custom-only and preserve reference-ROM bytes.
 
-The [legendary starter workflow](workflows.md#validate-elms-legendary-starter-gifts)
+The
+[legendary starter coverage](../tests/coverage.md#legendary-starter-gifts-phase-1)
 owns refusal, retry, ordinary delivery, and branch regression coverage.
 
 ## 2026-09-23 — Attach Lucky Eggs to the three Johto world gifts
@@ -651,5 +587,7 @@ scripted held items on direct box delivery. Keep the reference engine unchanged.
 
 Only future gift receipts gain these items; do not retroactively edit already
 collected Pokémon or change the save layout. The changes remain custom-only.
-The [Phase 4 workflow](workflows.md#validate-the-phase-4-johto-starter-events)
-owns delivery, persistence, refusal, and manual balance review.
+The [Phase 4 coverage](../tests/coverage.md#johto-starter-gifts-phase-4) owns
+delivery, persistence, and refusal. The
+[manual balance matrix](playtesting/endgame.md#trainer-and-wild-balance-phase-12)
+covers the earlier EXP boosts.

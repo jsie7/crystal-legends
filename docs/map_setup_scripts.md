@@ -1,5 +1,11 @@
 # Map Setup Commands
 
+[Documentation](README.md) · [Related references](README.md#map-and-event-scripting)
+
+Map-setup opcode index; command behavior is defined by the local setup routines.
+This inherited reference retains upstream examples and source links. For Crystal
+Legends, the checked-out implementation is authoritative: [setup scripts](../data/maps/setup_scripts.asm) and [dispatch table](../data/maps/setup_script_pointers.asm).
+
 Encoded by the `mapsetup` macro in [data/maps/setup_scripts.asm](https://github.com/pret/pokecrystal/blob/master/data/maps/setup_scripts.asm) and dispatched by [data/maps/setup_script_pointers.asm:MapSetupCommands](https://github.com/pret/pokecrystal/blob/master/data/maps/setup_script_pointers.asm).
 
 

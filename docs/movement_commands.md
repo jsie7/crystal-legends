@@ -1,5 +1,11 @@
 # Movement Commands
 
+[Documentation](README.md) · [Related references](README.md#map-and-event-scripting)
+
+Movement opcode index; most entries have no behavioral description.
+This inherited reference retains upstream examples and source links. For Crystal
+Legends, the checked-out implementation is authoritative: [movement macros](../macros/scripts/movement.asm) and [movement dispatcher](../engine/overworld/movement.asm).
+
 Defined in [macros/scripts/movement.asm](https://github.com/pret/pokecrystal/blob/master/macros/scripts/movement.asm) and [engine/overworld/movement.asm:MovementPointers](https://github.com/pret/pokecrystal/blob/master/engine/overworld/movement.asm).
 
 

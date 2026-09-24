@@ -8,12 +8,9 @@ Phase 12 encounter levels. See [project status](status.md) for automated and
 manual acceptance boundaries, including the remaining natural single-save
 251-species collection run.
 
-`Existing` means the method was inherited from the upstream game. `Phase N`
-identifies a method implemented by that Crystal Legends milestone. `Reserved
-Phase N` identifies planned content that is not yet
-obtainable; its source names the owning phase and intended checked-in
-destination. Reserved encounter details may be explicitly `TBD`, but no row may
-have a blank method, location, availability, or source.
+`Existing` means an inherited method; `Phase N` identifies the Crystal Legends
+milestone that added it. Availability is an implementation label, not manual
+acceptance. Each row must keep a method, location, availability, and source.
 
 `Renewable` describes whether another specimen can be acquired in the same save
 after the first successful acquisition. A breedable one-time gift is renewable

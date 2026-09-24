@@ -1,5 +1,11 @@
 # Pic Animations
 
+[Documentation](README.md) · [Related references](README.md#other-scripting-languages-and-subsystems)
+
+Picture-animation data overview: commands, bitmasks, and frames.
+This inherited reference retains upstream examples and source links. For Crystal
+Legends, the checked-out implementation is authoritative: [animation macros](../macros/scripts/pic_anims.asm) and [picture engine](../engine/gfx/pic_animation.asm).
+
 Defined in [macros/scripts/pic_anims.asm](https://github.com/pret/pokecrystal/blob/master/macros/scripts/pic_anims.asm).
 
 Pic animations are assembled in 3 parts:

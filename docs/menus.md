@@ -1,5 +1,11 @@
 # Menu Data
 
+[Documentation](README.md) · [Related references](README.md#other-scripting-languages-and-subsystems)
+
+Menu-structure examples and selected entry points, not an exhaustive UI API.
+This inherited reference retains upstream examples and source links. For Crystal
+Legends, the checked-out implementation is authoritative: [menu engine](../engine/menus/menu.asm) and [scrolling menus](../engine/menus/scrolling_menu.asm).
+
 
 ## Contents
 

@@ -42,6 +42,10 @@ assembly dependencies.
 7. Run `git status --short` and inspect the diff. Generated ROM, object, symbol,
    map, palette, tile, compression, and patch outputs must stay untracked.
 
+For documentation-only changes, check local links and anchors, run
+`git diff --check`, and run any existing test that parses the changed document.
+Record gameplay validation only when that validation was actually performed.
+
 ## Validate the Crystal Legends build
 
 From a clean graphics state:

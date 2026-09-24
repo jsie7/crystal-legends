@@ -1,5 +1,15 @@
 # Bugs and Glitches
 
+[Documentation](README.md) · [Related references](README.md#original-game-issues)
+
+Original-game bug catalog with proposed patches; it is not a list of open Crystal Legends defects.
+This inherited reference retains upstream examples and source links. For Crystal
+Legends, the checked-out implementation is authoritative: [repository routing](repository-guide.md#where-to-make-common-changes) and [fork decisions](decisions.md).
+
+Check each patch against the fork and keep reference builds exact. The
+[Fast Ball entry](#fast-ball-only-boosts-catch-rate-for-three-pokémon) records
+a verified custom-only exception.
+
 These are known bugs and glitches in the original Pokémon Crystal game: code that clearly does not work as intended, or that only works in limited circumstances but has the possibility to fail or crash.
 
 Fixes are written in the `diff` format. If you've used Git before, this should look familiar:
@@ -1146,6 +1156,13 @@ Note that this fix only accounts for Pokémon that evolve via Moon Stone as thei
 
 
 ### Fast Ball only boosts catch rate for three Pokémon
+
+**Crystal Legends:** already fixed behind `_CRYSTALLEGENDS` in the local
+[FastBallMultiplier implementation](../engine/items/item_effects.asm).
+Reference builds deliberately retain the original branch. See the
+[roamer/Fast Ball decision](decisions.md#2026-08-12--preserve-stock-roamers-and-fix-only-the-custom-fast-ball-scan)
+for scope and the [automated coverage](../tests/coverage.md#roamers-and-fast-balls-phase-6)
+for validation. The inherited patch below explains the original defect.
 
 **Fix:** Edit `FastBallMultiplier` in [engine/items/item_effects.asm](https://github.com/pret/pokecrystal/blob/master/engine/items/item_effects.asm):
 

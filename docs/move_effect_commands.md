@@ -1,5 +1,11 @@
 # Move Effect Commands
 
+[Documentation](README.md) · [Related references](README.md#other-scripting-languages-and-subsystems)
+
+Move-effect opcode index; entries mainly identify commands rather than explain them.
+This inherited reference retains upstream examples and source links. For Crystal
+Legends, the checked-out implementation is authoritative: [battle macros](../macros/scripts/battle_commands.asm) and [dispatch table](../data/battle/effect_command_pointers.asm).
+
 Defined in [macros/scripts/battle_commands.asm](https://github.com/pret/pokecrystal/blob/master/macros/scripts/battle_commands.asm) and [data/battle/effect_command_pointers.asm:BattleCommandPointers](https://github.com/pret/pokecrystal/blob/master/data/battle/effect_command_pointers.asm).
 
 

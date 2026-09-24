@@ -1,5 +1,11 @@
 # Music Commands
 
+[Documentation](README.md) · [Related references](README.md#other-scripting-languages-and-subsystems)
+
+Audio-script reference for music and sound effects.
+This inherited reference retains upstream examples and source links. For Crystal
+Legends, the checked-out implementation is authoritative: [audio macros](../macros/scripts/audio.asm) and [sound engine](../audio/engine.asm).
+
 Defined in [macros/scripts/audio.asm](https://github.com/pret/pokecrystal/blob/master/macros/scripts/audio.asm) and [audio/engine.asm:MusicCommands](https://github.com/pret/pokecrystal/blob/master/audio/engine.asm).
 
 Note: Commands that are intended for the song channels (1-4) can be used by the sound effect channels (5-8) if the sound effect channel exits sound effect mode with the `toggle_sfx` command.

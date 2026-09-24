@@ -1,5 +1,10 @@
 # FAQ
 
+This FAQ covers inherited build and editing questions. For Crystal Legends,
+start with the [repository guide](docs/repository-guide.md), use the
+[build workflow](docs/workflows.md), and check the [test guide](tests/README.md)
+for automated validation.
+
 
 ## Questions
 
@@ -33,7 +38,11 @@ The Australian release of Pokémon Crystal, which is based on the international 
 
 ## I can't build the ROM, `make` just prints an error!
 
-Reread [INSTALL.md](INSTALL.md) carefully, and make sure you're following all its steps.
+Follow [INSTALL.md](INSTALL.md) for your operating system. Use the RGBDS version
+pinned in [.rgbds-version](.rgbds-version), currently 1.0.3, to reproduce the
+reference builds. The assembly guard accepts 1.0.0 or newer; the pinned version
+is the supported reproduction target. See the
+[build workflow](docs/workflows.md#first-time-setup) for the shared checks.
 
 ### `gcc`: command not found
 
@@ -41,15 +50,18 @@ You need to install `gcc`. If you're using Cygwin, re-run its setup, and at "Sel
 
 ### "ERROR: `UNION` already defined"
 
-Download [**rgbds 1.0.3**][rgbds] or newer. Versions older than 1.0.0 will not work.
+Install the [pinned RGBDS release][rgbds], then run `make clean` and rebuild.
+See the [toolchain guidance above](#i-cant-build-the-rom-make-just-prints-an-error).
 
 ### "ERROR: Macro not defined"
 
-Download [**rgbds 1.0.3**][rgbds] or newer. Versions older than 1.0.0 will not work.
+Install the [pinned RGBDS release][rgbds], then run `make clean` and rebuild.
+See the [toolchain guidance above](#i-cant-build-the-rom-make-just-prints-an-error).
 
 ### "Expression must be 8-bit"
 
-Download [**rgbds 1.0.3**][rgbds] or newer. Versions older than 1.0.0 will not work.
+Install the [pinned RGBDS release][rgbds], then run `make clean` and rebuild.
+See the [toolchain guidance above](#i-cant-build-the-rom-make-just-prints-an-error).
 
 ### "Segmentation fault" from `rgbgfx`
 
@@ -59,7 +71,12 @@ If you are using 64-bit Windows, download [**64-bit Cygwin**][cygwin] and [**64-
 
 If you have not changed any of the asm, make sure you have the latest version of pokecrystal and the correct version of rgbds (see [INSTALL.md](INSTALL.md)).
 
-If you added or changed any code, it has to fit in the **memory banks**. The 2 MiB ROM is divided into 128 banks of 16 KiB ($4000 bytes) each, numbered $00 to $7F. The linkerscript [layout.link](layout.link) lists which `SECTION`s go in which banks. Try moving some code into a new section.
+If you added or changed any code, it has to fit in the **memory banks**. The 2
+MiB ROM is divided into 128 banks of 16 KiB ($4000 bytes) each, numbered $00 to
+$7F. The linkerscript [layout.link](layout.link) lists which `SECTION` s go in
+which banks. Inspect the generated `.map` report and the section’s banked calls
+and data references before moving it; see the
+[build architecture](docs/repository-guide.md#how-the-build-is-assembled).
 
 ### "Invalid file or object file version"
 
@@ -74,7 +91,7 @@ If you added or changed any code, you've made a mistake while writing some of it
 
 ## How do I edit maps?
 
-For `asm` scripts, read [docs/map_event_scripts.md](https://pret.github.io/pokecrystal/map_event_scripts). For `blk` layouts, use [Polished Map][polished-map].
+For `asm` scripts, read [the local map/event guide](docs/map_event_scripts.md). For `blk` layouts, use [Polished Map][polished-map].
 
 
 ## How do I edit the colors of an image?
@@ -88,7 +105,7 @@ It really depends on what image you're trying to change the colors of, where the
 
 ## How do I write new features?
 
-There are a number of special-purpose scripting languages, as described in [docs](https://pret.github.io/pokecrystal/). For more general features, you'll need to code directly in [assembly language][asm]. Some of the [tutorials][tutorials] for specific features may also be helpful.
+There are a number of special-purpose scripting languages, as described in [the local command references](docs/README.md). For more general features, you'll need to code directly in [assembly language][asm]. Some of the [tutorials][tutorials] for specific features may also be helpful.
 
 
 ## How do I share code on Discord?
@@ -107,7 +124,7 @@ If your code is on GitHub, you can [link to specific lines][snippethelp]. Put "`
 Try asking on Discord or IRC (see [README.md](README.md)).
 
 [cygwin]: https://cygwin.com/install.html
-[rgbds]: https://github.com/gbdev/rgbds/releases
+[rgbds]: https://github.com/gbdev/rgbds/releases/tag/v1.0.3
 [polished-map]: https://github.com/Rangi42/polished-map
 [gimp]: https://www.gimp.org/
 [paintdotnet]: https://www.getpaint.net/

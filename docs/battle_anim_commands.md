@@ -1,5 +1,11 @@
 # Battle Animation Commands
 
+[Documentation](README.md) · [Related references](README.md#other-scripting-languages-and-subsystems)
+
+Partial battle-animation reference; TODOs mark missing explanations.
+This inherited reference retains upstream examples and source links. For Crystal
+Legends, the checked-out implementation is authoritative: [animation macros](../macros/scripts/battle_anims.asm) and [dispatcher](../engine/battle_anims/anim_commands.asm).
+
 Defined in [macros/scripts/battle_anims.asm](https://github.com/pret/pokecrystal/blob/master/macros/scripts/battle_anims.asm) and [engine/battle_anims/anim_commands.asm:BattleAnimCommands](https://github.com/pret/pokecrystal/blob/master/engine/battle_anims/anim_commands.asm).
 
 

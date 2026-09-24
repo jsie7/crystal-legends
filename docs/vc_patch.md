@@ -1,5 +1,13 @@
 # Nintendo 2DS/3DS Virtual Console Patch
 
+[Documentation](README.md) · [Related references](README.md#other-scripting-languages-and-subsystems)
+
+Upstream Nintendo 2DS/3DS patch workflow for the v1.1 reference target.
+This inherited reference retains upstream examples and source links. For Crystal
+Legends, the checked-out implementation is authoritative: [patch inputs](../vc/) and [Makefile](../Makefile).
+
+This describes `make crystal11_vc`; it does not define a Crystal Legends VC target.
+
 The Nintendo Virtual Console is an emulator on the 2DS and 3DS consoles. It can emulate the Game Boy Color (among other consoles), while applying enhancements or modifications to some games, such as replacing Link Cable functionality with the DS' Wireless Link capabilities, or disabling Game Boy Printer features.
 
 Game-specific enhancements are determined by a `.patch` file corresponding to the `.gbc` ROM file. These files are bundled together in a `.cia` file; creating such a file is outside the scope of this project.

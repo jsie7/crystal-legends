@@ -24,6 +24,7 @@ manual acceptance, and remaining work. Dated evidence is linked from that page.
 - [Manual playtesting](playtesting.md): preparation, reporting, and regional checklists.
 - [Custom graphics procedures](assets.md): lab fixtures and Giovanni artwork.
 - [Validation history](history/validation.md): dated manual and automated evidence.
+- [Historical decisions](history/decisions.md): superseded staging and acceptance notes.
 - [Decisions](decisions.md): durable technical and policy decisions for this
   fork.
 - [Pokémon acquisition ledger](pokemon-acquisition.md): canonical single-save
@@ -32,6 +33,10 @@ manual acceptance, and remaining work. Dated evidence is linked from that page.
   to these same guides and references.
 
 ## Map and event scripting
+
+These are inherited references. Event, movement, map-setup, and move-effect
+pages have incomplete prose; the battle-animation page also contains TODOs.
+Each page links to its local implementation for undocumented behavior.
 
 - [Map event scripts](map_event_scripts.md)
 - [Event commands](event_commands.md)

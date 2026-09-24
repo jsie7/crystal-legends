@@ -1,5 +1,11 @@
 # Event Commands
 
+[Documentation](README.md) · [Related references](README.md#map-and-event-scripting)
+
+Partial event-command reference; many entries only name an opcode.
+This inherited reference retains upstream examples and source links. For Crystal
+Legends, the checked-out implementation is authoritative: [event macros](../macros/scripts/events.asm) and [script dispatcher](../engine/overworld/scripting.asm).
+
 Defined in [macros/scripts/events.asm](https://github.com/pret/pokecrystal/blob/master/macros/scripts/events.asm) and [engine/overworld/scripting.asm:ScriptCommandTable](https://github.com/pret/pokecrystal/blob/master/engine/overworld/scripting.asm).
 
 Until this document is filled out, the [G/S Scripting Compendium](https://hax.iimarckus.org/files/scriptingcodes_eng.htm) has descriptions for most of these commands. It was written for G/S binary hacking and not Crystal assembly hacking, so it's not 100% accurate for pokecrystal.

@@ -1,5 +1,11 @@
 # Text Commands
 
+[Documentation](README.md) · [Related references](README.md#map-and-event-scripting)
+
+Text commands and control characters; confirm bank and pointer use at the call site.
+This inherited reference retains upstream examples and source links. For Crystal
+Legends, the checked-out implementation is authoritative: [text macros](../macros/scripts/text.asm) and [text engine](../home/text.asm).
+
 Defined in [macros/scripts/text.asm](https://github.com/pret/pokecrystal/blob/master/macros/scripts/text.asm) and [home/text.asm:TextCommands](https://github.com/pret/pokecrystal/blob/master/home/text.asm).
 
 

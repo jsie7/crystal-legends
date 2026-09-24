@@ -1,5 +1,9 @@
 # Style Guide
 
+These are source-code conventions. Read the [repository guide](docs/repository-guide.md)
+for file ownership, [decisions](docs/decisions.md) for fork constraints, and
+[workflows](docs/workflows.md) for validation.
+
 Some of the code will disagree with this guide. Older code is less likely to be correct. Use your best judgement.
 
 When you come across an edge case that isn't referenced in this guide, please add it.

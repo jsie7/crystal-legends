@@ -94,14 +94,14 @@ far calls and data-bank assumptions can introduce runtime bugs.
 | Change items, shops, or item behavior | `data/items/`, `constants/item*_constants.asm`, `engine/items/` | Upstream item and Mart tutorials |
 | Change trainers or battle AI | `data/trainers/`, `data/battle/`, `engine/battle/ai/`, `engine/battle/` | Existing neighboring tables and the upstream wiki |
 | Change wild encounters | `data/wild/`, `engine/overworld/wildmons.asm` | Upstream wild-slot tutorials |
-| Change Phase 9 Kanto starter services | `maps/CeladonGym.asm`, `maps/CeladonCity.asm`, `maps/CeruleanGym.asm`, `maps/SeafoamGym.asm`, `maps/CinnabarIsland.asm` | `pokemon-acquisition.md`, `workflows.md`, and `decisions.md` |
-| Change the unattended Safari preserve | `maps/SafariZoneWardensHome.asm`, `maps/FuchsiaCity.asm`, `maps/SafariZoneFuchsiaGateBeta.asm`, `maps/SafariZoneBeta.asm`, `data/wild/kanto_*.asm` | `pokemon-acquisition.md` and the Phase 9 workflow |
+| Change Phase 9 Kanto starter services | `maps/CeladonGym.asm`, `maps/CeladonCity.asm`, `maps/CeruleanGym.asm`, `maps/SeafoamGym.asm`, `maps/CinnabarIsland.asm` | `pokemon-acquisition.md`, `playtesting/kanto.md`, and `decisions.md` |
+| Change the unattended Safari preserve | `maps/SafariZoneWardensHome.asm`, `maps/FuchsiaCity.asm`, `maps/SafariZoneFuchsiaGateBeta.asm`, `maps/SafariZoneBeta.asm`, `data/wild/kanto_*.asm` | `pokemon-acquisition.md` and `playtesting/kanto.md` |
 | Change Phase 9 legendary-bird locations or branches | `maps/Phase9LegendaryBirds.asm`, `maps/SeafoamIslandsCave.asm`, `maps/PowerPlant.asm`, `maps/PowerPlantGeneratorAnnex.asm`, `maps/VictoryRoad.asm`, `maps/OaksLab.asm` | `decisions.md`, `pokemon-acquisition.md`, and the Phase 9 scenario contract |
-| Change Phase 10 Giovanni or Cerulean Cave | `maps/CeruleanCave.asm`, `maps/Route4.asm`, `maps/CeruleanCity.asm`, `data/trainers/`, `data/wild/`, and the Cerulean map/graphics registrations | `decisions.md`, `workflows.md`, and the Phase 10 scenario contract |
-| Change Phase 11 Red, Oak, or true-ending flow | `maps/SilverCaveRoom3.asm`, `maps/OaksLab.asm`, `maps/Phase11Endgame.asm`, `maps/SilverCavePokecenter1F.asm`, `data/trainers/`, `engine/events/halloffame.asm`, `engine/menus/intro_menu.asm`, and the event/spawn constants | `decisions.md`, `workflows.md`, and `tests/fixtures/scenarios/phase_11_endgame.json` |
-| Change Phase 12 trainer or wild balance | `data/trainers/parties.asm`, `data/wild/kanto_grass.asm`, `data/wild/kanto_water.asm` | `phase-12-balance.md`, `workflows.md`, `tests/contracts/phase_12_trainers.json`, `tests/contracts/phase_12_wild.json`, and owning Phase 8–11 numeric contracts |
+| Change Phase 10 Giovanni or Cerulean Cave | `maps/CeruleanCave.asm`, `maps/Route4.asm`, `maps/CeruleanCity.asm`, `data/trainers/`, `data/wild/`, and the Cerulean map/graphics registrations | `decisions.md`, `playtesting/endgame.md`, and the Phase 10 scenario contract |
+| Change Phase 11 Red, Oak, or true-ending flow | `maps/SilverCaveRoom3.asm`, `maps/OaksLab.asm`, `maps/Phase11Endgame.asm`, `maps/SilverCavePokecenter1F.asm`, `data/trainers/`, `engine/events/halloffame.asm`, `engine/menus/intro_menu.asm`, and the event/spawn constants | `decisions.md`, `playtesting/endgame.md`, and `tests/fixtures/scenarios/phase_11_endgame.json` |
+| Change Phase 12 trainer or wild balance | `data/trainers/parties.asm`, `data/wild/kanto_grass.asm`, `data/wild/kanto_water.asm` | `phase-12-balance.md`, `playtesting/endgame.md`, `tests/contracts/phase_12_trainers.json`, `tests/contracts/phase_12_wild.json`, and owning Phase 8–11 numeric contracts |
 | Change menus or UI behavior | `engine/menus/`, subsystem-specific menu code | `menus.md`; search for the visible label or controlling routine |
-| Change Crystal Legends CHEAT MODE | `maps/PlayersHouse2F.asm`, `maps/PlayersHouse2FDebug.asm`, `data/maps/scripts.asm` | `workflows.md`, `decisions.md`, and the neighboring event-script conventions |
+| Change Crystal Legends CHEAT MODE | `maps/PlayersHouse2F.asm`, `maps/PlayersHouse2FDebug.asm`, `data/maps/scripts.asm` | `playtesting/johto.md`, `decisions.md`, and the neighboring event-script conventions |
 | Change battle animations | `data/moves/animations.asm`, `engine/battle_anims/`, `gfx/battle_anims/` | `battle_anim_commands.md` |
 | Change Pokémon picture animations | `gfx/pokemon/`, `engine/gfx/pic_animation.asm`, generated frame/bitmask tables | `pic_animations.md` and Pokémon animation rules in `Makefile` |
 | Change graphics | Source `.png`/`.pal` files, relevant `gfx/*.asm` aggregator, `Makefile` rule | `FAQ.md` graphics guidance and the RGBGFX documentation |
@@ -131,21 +131,10 @@ pinned version is the safest way to reproduce CI and the reference hashes.
 | `make crystal11_debug` | v1.1 debug ROM |
 | `make crystal11_vc` | v1.1 ROM plus Nintendo Virtual Console patch artifacts |
 | `make crystallegends` | Crystal Legends ROM, `.sym`, and `.map` using `_CRYSTAL11` plus `_CRYSTALLEGENDS` |
-| `make tools` | Only the local C helper programs |
-| `make compare` | Build all reference outputs and verify them against `roms.sha1` |
-| `make tidy` | Remove ROMs, maps, symbols, patches, objects, and compiled helpers |
-| `make clean` | Run `tidy` and also remove generated graphics intermediates |
-| `make test-static` | Run source/data contracts without building a ROM |
-| `make test-rom` | Build and inspect compiled Crystal Legends/reference contracts |
-| `make test-emulator-smoke` | Run the short production-ROM PyBoy smoke profile |
-| `make test-emulator` | Run all implemented production-ROM PyBoy scenarios |
-| `make test-crystallegends` | Run the focused local static/build/ROM/smoke/cleanliness gate |
-| `make test-all` | Run the complete local gate, including all emulator scenarios and reference comparisons |
 
-`make compare` is the strongest upstream-reproduction check. Crystal Legends
-changes are gated behind `_CRYSTALLEGENDS`, so the target must still pass after
-project changes. Validate the custom ROM separately with `make crystallegends`
-and `rgbfix -v crystallegends.gbc`.
+For setup, helper builds, cleanup, and reference comparison commands, use
+[workflows](workflows.md). For test profiles, fixtures, and failure triage, use
+the [test guide](../tests/README.md).
 
 The GitHub workflow has an important fork-specific branch: repositories owned
 by `pret` run `make ... compare`, while forks run the default `make` target. Both
@@ -153,24 +142,10 @@ paths run `.github/checkdiff.sh` to ensure the build did not modify tracked
 sources. CI exercises Ubuntu and macOS, but the Python/PyBoy harness remains
 local and `.github/workflows/main.yml` does not invoke it.
 
-The local harness has three test layers beneath its aggregate runners:
-
-1. `tests/static/` parses active Crystal Legends source and data for exhaustive
-   geometry, collision, acquisition, evolution, encounter, and trainer
-   contracts.
-2. `tests/rom/` resolves labels from generated symbol files and checks the
-   bytes, headers, save-layout fingerprint, variant isolation, and linker
-   budgets of the assembled artifact.
-3. `tests/emulator/` copies immutable battery fixtures into temporary
-   directories, drives the production ROM with PyBoy, and asserts short
-   stateful behaviors through symbolic RAM/SRAM views.
-
-Shared parsers, ROM/symbol readers, state views, and scenario drivers live in
-`tests/support/`; reviewed expected behavior lives in `tests/contracts/` and
-`tests/fixtures/scenarios/`. Manual emulator validation remains separate and
-authoritative for presentation, audio, pacing, balance, long progression, and
-cross-emulator confidence. See [workflows.md](workflows.md) for commands,
-fixture rules, and triage.
+The harness separates source contracts, assembled-ROM checks, and production-ROM
+emulator scenarios. Shared readers and drivers live in `tests/support/`;
+reviewed expectations live in `tests/contracts/` and `tests/fixtures/scenarios/`.
+[Manual playtesting](playtesting.md) covers presentation and natural progression.
 
 ## Generated-file and compatibility boundaries
 
@@ -195,30 +170,21 @@ fixture rules, and triage.
 
 ## Local documentation map
 
-Use `docs/index.md` for the published documentation table of contents and this
-file for repository orientation.
+The [documentation index](README.md) routes to current status, decisions,
+procedures, acquisition and balance contracts, dated evidence, and inherited
+references. The [published index](index.md) points to the same owners.
 
-- Map/event scripting: `map_event_scripts.md`, `event_commands.md`,
-  `movement_commands.md`, `text_commands.md`, `map_setup_scripts.md`.
-- Battle and other scripting languages: `battle_anim_commands.md`,
-  `move_effect_commands.md`, `music_commands.md`.
-- Data formats and subsystems: `menus.md`, `pic_animations.md`, `vc_patch.md`.
-- Original behavior and repair candidates: `bugs_and_glitches.md`,
-  `design_flaws.md`.
-- Repository operations: `workflows.md`.
-- Durable fork decisions: `decisions.md`.
-- Single-save species availability: `pokemon-acquisition.md`.
-- Build setup and troubleshooting outside `docs/`: `INSTALL.md`, `FAQ.md`, and
-  `STYLE.md`.
-
-The command-reference docs are close to implementation details and usually link
-to both the defining macros and the dispatch table. `event_commands.md` still
-describes itself as incomplete, and `battle_anim_commands.md` contains open
-TODOs, so confirm uncertain behavior in the implementation.
+Outside `docs/`, [INSTALL.md](../INSTALL.md) owns setup,
+[FAQ.md](../FAQ.md) troubleshooting, [STYLE.md](../STYLE.md) code conventions,
+and [tests/README.md](../tests/README.md) the automated harness. Command indexes
+have uneven prose coverage; confirm undocumented behavior in local macros and
+engine dispatchers. Catalogued original-game fixes are not an applied-fix list.
 
 ## External documentation and wiki map
 
-These external resources were checked during the 2026-08-08 review:
+Use these upstream resources with the stated boundaries. The dated
+[August 8 audit](history/external-link-audit-2026-08-08.md) records their earlier review;
+it does not establish current reachability.
 
 | Resource | Best use | Boundary |
 | --- | --- | --- |
@@ -244,27 +210,6 @@ or data-layout conflicts.
 
 ## External-link audit notes
 
-Before this guide was added, the inherited Markdown set contained 282 external
-URL occurrences and 202 unique URLs. Most are upstream source links embedded in
-the issue catalogs: 126 distinct `pret/pokecrystal/blob/master/...` paths were
-checked against this checkout.
-
-Four stale source paths were found and corrected in this documentation change:
-
-- One map-setup link referenced the removed
-  `macros/scripts/map_setup.asm`; the encoding macro now lives in
-  `data/maps/setup_scripts.asm` and dispatch metadata in
-  `data/maps/setup_script_pointers.asm`.
-- Three unique links in `design_flaws.md` contained an accidental duplicate
-  `/master/` path component.
-
-The central published docs, wiki, Tutorials page, Assembly programming page,
-symbols branch, RGBDS release, Polished Map project, and gb-asm-tools project
-were reachable at review time. The old Microsoft WSL URL in `INSTALL.md`
-redirects to the current Microsoft Learn page, and the Cygwin installer page is
-still live.
-
-Most source links in the inherited docs point to the moving upstream `master`
-branch. They are useful for browsing upstream, but the same relative file in
-this checkout is the source of truth for Crystal Legends. Prefer local relative
-links in new fork-specific documentation.
+See the [August 8 audit](history/external-link-audit-2026-08-08.md) for its
+original URL counts, corrections, and reachability boundary. Prefer local
+relative links for new fork-specific documentation.

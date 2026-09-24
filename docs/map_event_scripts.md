@@ -1,5 +1,11 @@
 # Map Event Scripts
 
+[Documentation](README.md) · [Related references](README.md#map-and-event-scripting)
+
+Map/event structure guide; verify fork-specific scenes and objects in the current maps.
+This inherited reference retains upstream examples and source links. For Crystal
+Legends, the checked-out implementation is authoritative: [map macros](../macros/scripts/maps.asm) and [map scripts](../maps/).
+
 
 ## Contents
 
