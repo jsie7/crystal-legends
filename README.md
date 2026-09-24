@@ -15,7 +15,7 @@ Game Boy Color world.
 | :---: | :---: |
 | <img src="docs/images/game/starter.png" width="320" height="288" alt="Inspecting Articuno's Poké Ball in Professor Elm's Lab"> | <img src="docs/images/game/ilex-forest.png" width="320" height="288" alt="Chikorita waiting beside the Ilex Forest shrine"> |
 | **Explore the Safari preserve** | **Some secrets won't stay buried** |
-| <img src="docs/images/game/safari-preserve.png" width="320" height="288" alt="Exploring the trees, grass, and pond of the restored Safari preserve"> | <img src="docs/images/game/cerulean-cave.png" width="320" height="288" alt="Approaching the hidden lab beside an underground pool in Cerulean Cave"> |
+| <img src="docs/images/game/safari-preserve.png" width="320" height="288" alt="Standing on the path just inside the Safari preserve entrance"> | <img src="docs/images/game/cerulean-cave.png" width="320" height="288" alt="Approaching the hidden lab beside an underground pool in Cerulean Cave"> |
 
 ## What awaits you
 
@@ -31,9 +31,6 @@ Game Boy Color world.
   preserve, and uncover new Ruins of Alph rewards.
 - **Keep going after the League.** Restored Cerulean Cave, further legendary
   encounters, and an expanded ending give your team more to work toward.
-- **Face reworked teams and progression.** Revised trainer parties and Kanto
-  encounter levels carry the adventure through Johto, the League, and the
-  postgame. Natural-play balance is still being refined.
 
 ## Build and play
 

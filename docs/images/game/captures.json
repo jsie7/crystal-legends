@@ -19,8 +19,14 @@
     },
     {
       "file": "safari-preserve.png",
-      "description": "Exploring the restored Safari preserve beside its northern pond.",
-      "frames": 3560
+      "description": "Standing on the clear path just inside the Safari preserve entrance, reached by walking through the gate.",
+      "frames": 3737,
+      "source_revision": "b3bfbf564ef1299f426f3cd720b2549da88bdf5f",
+      "player_position": {
+        "map": "SAFARI_ZONE_BETA",
+        "x": 9,
+        "y": 21
+      }
     },
     {
       "file": "cerulean-cave.png",
