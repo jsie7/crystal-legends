@@ -32,10 +32,22 @@ Game Boy Color world.
 - **Keep going after the League.** Restored Cerulean Cave, further legendary
   encounters, and an expanded ending give your team more to work toward.
 
-## Build and play
+<a id="build-and-play"></a>
 
-Follow [INSTALL.md](INSTALL.md) to install the tools, build the game, and open
-it in a Game Boy Color emulator. Once the prerequisites are ready:
+## Play
+
+### Download from Releases
+
+The first alpha download is coming soon. Once published, download
+**`crystallegends.gbc`** from the assets on
+[GitHub Releases](https://github.com/jsie7/crystal-legends/releases).
+Open it in a Game Boy Color emulator with battery-save and real-time-clock
+support; see [playing and saves](INSTALL.md#play) for details.
+
+### Build the ROM yourself
+
+For added security, review the source and build the ROM yourself using trusted
+build tools. Follow [INSTALL.md](INSTALL.md) to install the prerequisites, then:
 
 ```bash
 git clone https://github.com/jsie7/crystal-legends.git
@@ -48,11 +60,12 @@ it does not require an original ROM as input.
 
 ## Development status
 
-The core gameplay additions are implemented and covered by automated checks.
+Crystal Legends is an **alpha release**. The core gameplay additions are
+implemented and covered by automated checks.
 Playtesting continues across natural progression, balance, alternate story
 branches, and a complete single-save Pokédex run. See [project status](docs/status.md)
 for the current acceptance boundaries and [manual playtesting](docs/playtesting.md)
-for ways to help. This is an in-development build.
+for ways to help.
 
 <a id="see-also"></a>
 
