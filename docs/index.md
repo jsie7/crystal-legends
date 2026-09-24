@@ -1,37 +1,31 @@
-These pages are for documenting pieces of the [pokecrystal](https://github.com/pret/pokecrystal) disassembly project. For more information, please see its [README.md](https://github.com/pret/pokecrystal/blob/master/README.md) and [wiki](https://github.com/pret/pokecrystal/wiki).
+# Crystal Legends documentation
 
+Start with the [documentation directory](README.md) to find a guide by task.
+The reference pages also document the inherited
+[pokecrystal disassembly](https://github.com/pret/pokecrystal).
 
 ## Repository orientation
 
-- [repository-guide.md](repository-guide.md)
-- [workflows.md](workflows.md)
-- [decisions.md](decisions.md)
-
+- [Project status and remaining acceptance](status.md)
+- [Architecture and task-to-file guide](repository-guide.md)
+- [Build and validation workflows](workflows.md)
+- [Technical and design decisions](decisions.md)
+- [Pokémon acquisition ledger](pokemon-acquisition.md)
+- [Trainer and encounter balance](phase-12-balance.md)
 
 ## Issues with the source code
 
-- [bugs_and_glitches.md](bugs_and_glitches.md)
-- [design_flaws.md](design_flaws.md)
-
+See [original-game issue references](README.md#original-game-issues).
 
 ## Map event scripts
 
-- [map_event_scripts.md](map_event_scripts.md)
-- [event_commands.md](event_commands.md)
-- [movement_commands.md](movement_commands.md)
-- [text_commands.md](text_commands.md)
-- [map_setup_scripts.md](map_setup_scripts.md)
-
+See [map and event scripting](README.md#map-and-event-scripting).
 
 ## Other types of scripts
 
-- [battle_anim_commands.md](battle_anim_commands.md)
-- [move_effect_commands.md](move_effect_commands.md)
-- [music_commands.md](music_commands.md)
-- [vc_patch.md](vc_patch.md)
-
+See [other scripting languages and subsystems](README.md#other-scripting-languages-and-subsystems).
 
 ## Other subsystems
 
-- [pic_animations.md](pic_animations.md)
-- [menus.md](menus.md)
+The same [subsystem directory](README.md#other-scripting-languages-and-subsystems)
+includes menu formats, picture animations, and the Virtual Console patch.

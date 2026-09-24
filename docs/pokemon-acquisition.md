@@ -4,13 +4,9 @@ This ledger is the canonical single-save acquisition inventory for Crystal
 Legends. It covers National Pokédex numbers 001 through 251 exactly once.
 
 All listed acquisition paths are implemented through Phase 10, with current
-Phase 12 encounter levels. The automated Phase 2 evolution/item/Celebi matrix
-has passed. The user confirmed Celebi, all three Johto gift checkpoints
-(including Chikorita with Lucky Egg), and Cerulean Cave/Giovanni passed on
-2026-09-23. Other acquisition presentation, unreported alternate branches, and
-a natural single-save 251-species completion run remain open. See the
-[playtest review](playtest-review-2026-09-23.md) and
-[workflows.md](workflows.md) for the validation boundaries.
+Phase 12 encounter levels. See [project status](status.md) for automated and
+manual acceptance boundaries, including the remaining natural single-save
+251-species collection run.
 
 `Existing` means the method was inherited from the upstream game. `Phase N`
 identifies a method implemented by that Crystal Legends milestone. `Reserved

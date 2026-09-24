@@ -6,48 +6,13 @@ state as of 2026-09-23.
 
 ## Current project state
 
-This repository is a fork of the pret Pokémon Crystal disassembly. It retains
-the exact upstream ROM variants and adds Crystal Legends as an isolated custom
-build. The v0.1 implementation includes legendary-bird starters, the matching
-Silver branches, Oak's third-bird handoff, and minimal title-screen branding.
+Crystal Legends is an isolated custom build of the pret Pokémon Crystal
+disassembly, preserving exact upstream reference variants. See
+[project status](status.md) for implementation and acceptance, the
+[acquisition ledger](pokemon-acquisition.md) for obtainable species, and the
+[balance guide](phase-12-balance.md) for current trainer and wild rules.
 
-The Phase 2 completion foundation adds the 251-species acquisition ledger,
-single-player replacements for all ten trade evolutions, renewable evolution
-items, and the post-League retryable Celebi event. Phase 9 closes its reserved
-Kanto starter, Safari-family, and legendary-bird sources, and Phase 10 closes
-the ledger with the opposite Project Mew species in Cerulean Cave.
-
-Phase 9's production routes are intentionally compact. Leader scripts own the
-three level-28 Kanto gifts; the Warden's granddaughter and Fuchsia tile callback
-own access to one unattended `SafariZoneBeta`; and shared branch logic in
-`maps/Phase9LegendaryBirds.asm` selects the Seafoam Articuno, Generator Annex
-Zapdos, and Victory Road Moltres encounters without duplicating the Elm starter.
-Conditional Kanto, Park, and Facility assets keep all reference builds exact.
-
-Phase 10 restores one derived-access Cerulean Cave with Rocket remnants,
-Giovanni, and the branch-correct level-70 Project Mew counterpart. Phase 11
-then closes the playable endgame: Red records a durable first-victory fact,
-and Professor Oak offers a one-time final battle after Red plus at least 240
-caught species. Oak's branch-selected team, credits sentinel, Pallet return,
-and completed dialogue add no map, save field, or Hall of Fame entry. Phase 12
-now implements the accepted trainer and Kanto wild balance: 166 trainer
-records, 39 encounter tables, 252 added trainer bytes and no save-layout change.
-The [balance guide](phase-12-balance.md) owns current levels, exact contracts
-and evidence. The prepared Celebi, Johto gift, Cerulean Cave/Giovanni, and
-Oak-through-credits playtests passed on 2026-09-23 within the boundaries recorded
-in the [playtest review](playtest-review-2026-09-23.md). Natural-play balance,
-unreported alternate branches, and the remaining Phase 11 unlock and persistence
-checks remain open separately from the passing automated gate.
-
-The Phase 3 bedroom-TV CHEAT MODE is also implemented in source. Its renewable
-supplies, capped money grants, and four ordinary Pokémon gifts deliberately
-exclude story progression. A user-run manual pass confirmed CHEAT MODE and the
-three v0.1 branches through Elm's post-break-in handoff, including title,
-starter, first-Silver, third-bird, and player-learnset behavior. The user also
-confirmed that progression through Falkner was completed manually; see the
-[manual follow-up](workflows.md#falkner-follow-up--2026-09-16). The remaining
-phase-specific manual gates are tracked in [workflows.md](workflows.md); the
-project is not yet fully playtest-certified.
+## Source authority
 
 Use sources in this order when they disagree:
 

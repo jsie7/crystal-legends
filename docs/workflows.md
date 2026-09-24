@@ -37,53 +37,9 @@ assembly dependencies.
 7. Run `git status --short` and inspect the diff. Generated ROM, object, symbol,
    map, palette, tile, compression, and patch outputs must stay untracked.
 
-For the current Crystal Legends sequence, the v0.1 path through Falkner, the
-Phase 2 automated matrix, and the Phase 3 CHEAT MODE safety pass are complete.
-Phase 4's Johto starter events are source-complete and pass their automated
-source, ROM, and headless production-map matrices. The user confirmed all three
-prepared gift playtests passed on 2026-09-23, including Chikorita with Lucky Egg.
-Natural discovery and the Lucky Eggs' effect on progression remain separate
-from that checkpoint acceptance.
-Phase 5's Ruins gifts and Route 14 Girafarig trade are likewise source-complete:
-their automated dual-gate, delivery, trade, and persistence matrices pass, while
-their user-owned presentation and natural puzzle-flow review remains pending.
-Phase 6 is source-complete: preservation tests cover stock Raikou/Entei roaming
-and Pokédex route tracking, and the custom Fast Ball scan covers all 23 stock
-fleeing-list species. Its user-owned hunt and presentation review remains
-pending.
-Phase 7 is source-complete: its story buildup, four-fact state model, permanent
-Mew/Mewtwo terminal decision, optional level-30 capture, retry paths, and stock
-Radio Tower resume pass all automated layers. Its user-owned story, map, pacing,
-and branch-feel review remains pending.
-Phase 8 is source-complete: all three Mt. Moon-to-Elm release branches,
-species-specific availability state, bird-free Indigo rematch, and Dragon's
-Den chronology pass every automated layer. Its user-owned presentation,
-discoverability, and provisional balance review also passed on 2026-08-19, so
-Phase 8 is playtest-certified.
-Phase 9 is source-complete: all three level-28 Kanto service gifts, the
-Soul Badge-gated unattended Safari preserve, and both branch-correct
-non-starter birds pass every automated layer and the combined single-save
-flow. Its user-owned starter, Safari, bird-route, dialogue, palette, and
-provisional-balance review remains pending.
-Phase 10 is source-complete: derived Route 4 access, the single-floor Cerulean
-Cave, Rocket remnants and rewards, Giovanni's finale, and both branch-correct
-counterpart encounters pass every automated layer. The prepared cave/Giovanni
-playtest passed after the label fix on 2026-09-23; unreported alternate branches,
-access/retry variants, and natural balance remain open. Phase 11 is
-source-complete: durable Red victory, the 240-caught Oak
-challenge, all three Oak teams, the true-ending credits, Pallet return, and
-ordinary save/reload pass every automated layer. The prepared Oak battle through
-credits passed on 2026-09-23; natural unlock progression, remaining team variants,
-and post-ending persistence are not separately reported. Phase 12 trainer and Kanto
-wild balancing is source-complete and passes the clean full gate; its separate
-natural-play acceptance matrix below remains pending.
-
-Celebi's prepared sequence also passed, with the natural Kurt wait bypassed in
-the repaired save. The [2026-09-23 review](playtest-review-2026-09-23.md) owns the
-current manual evidence boundaries, full-gate result (642 tests plus six
-reference checks), known behavior, and prioritized follow-ups. The detailed
-matrices below remain repeatable procedures; they include already-passed
-checks and should not be read as a list of wholly untested features.
+[Project status](status.md) owns current acceptance and remaining work. The
+matrices below are repeatable procedures, including checks already passed;
+they are not a list of wholly untested features.
 
 ## Validate the Crystal Legends build
 

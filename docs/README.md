@@ -6,105 +6,16 @@ guide.
 
 ## Current milestone
 
-Crystal Legends v0.1, the Phase 2 completion foundation, Phase 3 CHEAT MODE,
-the Phase 4 Johto starter events, the Phase 5 Ruins gifts, Phase 6 roamer
-quality-of-life, Phase 7 Project Mew, Phase 8 Silver arc, Phase 9 Kanto
-completion, Phase 10 Giovanni/Cerulean Cave finale, Phase 11 Red/Oak
-endgame, and Phase 12 trainer/wild balance are source-complete.
-Chikorita is a
-level-14 gift at the Ilex Forest shrine after Cut, Cyndaquil is a level-19 gift
-in Burned Tower after the legendary beasts awaken, and Totodile is a level-24
-rescue on Cianwood's east shore after SecretPotion receipt. All three arrive
-holding a Lucky Egg. Their independent,
-retry-safe gift paths pass the static, compiled-ROM, and production-ROM PyBoy
-matrices, including storage failure, save/reload, and duplicate prevention.
-Phase 5 adds level-10 Kabuto, level-26 Omanyte, and level-23 Aerodactyl gifts
-after their picture and hidden-wall conditions, plus Kim's same-level
-Girafarig trade. These paths have the same automated retry and persistence
-ownership; their presentation remains user-owned.
-Phase 6 preserves the stock Raikou and Entei hunt, permanent removal after
-defeat or capture, and Pokédex Area route tracking. Its custom-only Fast Ball
-correction now applies the intended multiplier to all 23 stock fleeing-list
-species. The static, compiled-ROM, and production-ROM matrices pass without a
-save-layout change or any Suicune behavior change.
-Phase 7 builds Project Mew from subtle Slowpoke Well research hints through the
-Lake of Rage proof and Mahogany reveal, then resolves it in a compact Radio
-Tower transmitter annex. Its one-step north-facing entry seals behind the
-player and reveals a southern two-console control bay facing a continuous glass
-wall and northern containment chamber. The permanent terminal decision opens
-the center glass and exit together, leaving the single level-30 subject as Mew
-or stabilizing it as Mewtwo. Capture is optional for Johto progression, and any
-knockout, escape, or player defeat leaves a fresh retry available.
-Phase 8 closes Silver's stolen-bird arc after the Mt. Moon battle. Silver
-returns the branch-correct legendary bird to Elm, Elm releases it after a final
-look back, and the completed scene records only that species' availability for
-Phase 9. The release also becomes the chronology gate for Silver's bird-free
-Monday/Wednesday Indigo rematch, Tuesday/Thursday Dragon's Den training cameo,
-and the Dragon Shrine elder hint. Phase 8 adds no physical bird encounter or
-Oak handoff; Phase 9 now consumes those branch facts without changing the
-release sequence.
-Phase 9 makes Bulbasaur, Squirtle, and Charmander independent level-28 service
-rewards; opens one Soul Badge-gated unattended Safari preserve with renewable
-Mareep, Vulpix, Mankey, and Remoraid; and places the two non-starter legendary
-birds in Seafoam, the Power Plant Generator Annex, and Victory Road according
-to the existing branch. Only capture finalizes a bird. Phase 10 closes the
-remaining main-story acquisition gap. Its Route 4 entrance derives access from
-Project Mew resolution, Silver's released bird, and 14 badges without a saved
-open flag. The single-floor cave contains six independent Rocket remnants,
-five one-time rewards, repeatable lab records, custom encounters, and
-Giovanni's six-Pokémon final team. Defeating Giovanni removes the cave crew and
-reveals the opposite level-70 Project Mew species; only capture removes that
-counterpart, so knockout, escape, player loss, and full storage remain retryable.
-Phase 11 strengthens Red while preserving his six-species identity and rematch
-behavior, records his first defeat independently of his current visibility,
-and unlocks Professor Oak's one-time final challenge after Red plus at least
-240 caught species. Oak selects one of three teams from the original legendary
-starter branch, now uses level-90 Tyranitar as his ace, and awards the true ending
-through completion dialogue, a party heal, the full credits, and a return to
-Pallet Town. The completed state persists through an ordinary save without a
-Hall of Fame mutation or save-layout change.
-Phase 12 applies all 166 approved trainer records and 39 Kanto wild tables.
-Johto leaders gain one partner each, the Elite Four have six-member teams,
-ordinary Kanto trainers use capped +10 gym/+8 route levels, and Silver ends
-with Crobat 52 after release. Giovanni is 60–65, Red returns to stock levels
-with softened custom moves, and Oak is 84–90. See the
-[balance guide](phase-12-balance.md) for exact contracts and validation.
-
-The earlier manual pass confirmed the title screen, all three legendary-bird
-starter branches, the first Silver battle, the Elm/Oak handoff, player-bird
-learnsets, and CHEAT MODE. Progression through Falkner and the complete Phase 8
-story matrix also passed within their recorded boundaries.
-
-On 2026-09-23 the user confirmed successful prepared-checkpoint playtests of
-Celebi, all three Johto starter gifts (including Chikorita with Lucky Egg),
-Cerulean Cave/Giovanni after the label fix, and Oak through the credits.
-These flows no longer have a blanket pending presentation status. The
-[playtest review](playtest-review-2026-09-23.md) records the exact scope and
-prioritizes the remaining scenarios. Kurt's natural overnight wait was bypassed
-in the repaired checkpoint; unreported alternate branches, capacity/retry
-variants, and natural unlock/discovery remain separate checks.
-
-The 2026-09-23 full automated gate passed all 642 tests and all six upstream
-reference checks on `98c8a5904` plus the existing Oak text-bank correction.
-That correction was subsequently committed as `f1f94cb8c`; the report identifies
-the tested ROM hash and the older test-package differences.
-No additional confirmed defect was found in the reviewed working build.
-
-Remaining manual work includes Phase 2 evolution/item presentation and natural
-day timing, Phase 5 Ruins/trade flow, Phase 6 hunting, both Project Mew choices,
-Phase 9 services/Safari/bird routes, untested cave and Red/Oak branches, and
-Phase 12 natural balance with the early Lucky Eggs. Phase 13 final polish and
-a complete no-cheat/single-save acquisition run remain open. Automated battle
-outcomes and prepared checkpoints do not establish full-game balance or release
-readiness. See [workflows.md](workflows.md) for repeatable procedures and
-[decisions.md](decisions.md) for the validation policy.
+See [project status](status.md) for implementation, automated validation,
+manual acceptance, and remaining work. Dated evidence is linked from that page.
 
 ## Repository guidance
 
-- [Playtest review — 2026-09-23](playtest-review-2026-09-23.md): confirmed manual
-  successes, cross-feature review findings, and prioritized remaining scenarios.
-- [Phase 12 balance](phase-12-balance.md): implemented scope, exact contracts,
-  preservation boundaries and validation.
+- [Project status](status.md): current acceptance boundaries and remaining work.
+- [Playtest review — 2026-09-23](playtest-review-2026-09-23.md): dated manual
+  confirmations and regression-review evidence.
+- [Phase 12 balance](phase-12-balance.md): current trainer and encounter rules,
+  exact contracts, and preservation boundaries.
 
 - [Repository guide](repository-guide.md): what the codebase contains and where
   to make common changes.
@@ -116,8 +27,8 @@ readiness. See [workflows.md](workflows.md) for repeatable procedures and
   fork.
 - [Pokémon acquisition ledger](pokemon-acquisition.md): canonical single-save
   method, availability, renewability, and source for all 251 species.
-- [Published documentation index](index.md): the original pokecrystal subsystem
-  and command-reference table of contents.
+- [Published documentation index](index.md): the published entry point
+  to these same guides and references.
 
 ## Map and event scripting
 
