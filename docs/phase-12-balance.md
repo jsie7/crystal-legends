@@ -4,6 +4,13 @@ Phase 12 applies the approved trainer and Kanto encounter balance targets. The
 implementation and automated validation are complete. Natural-play acceptance
 remains pending; the automated scenarios do not certify enjoyable difficulty.
 
+The 2026-09-23 user playtests passed the prepared Cerulean Cave/Giovanni and
+Oak-through-credits flows. They do not measure the complete progression curve.
+The later addition of Lucky Eggs to all three Johto gifts also needs natural
+EXP/pacing review with ordinary four- and six-member teams. See the
+[current playtest review](playtest-review-2026-09-23.md) for evidence and remaining
+scenarios.
+
 ## Implementation status
 
 Completed slices: A–K. All approved gameplay/data changes are implemented and

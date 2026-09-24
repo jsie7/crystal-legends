@@ -40,8 +40,10 @@ assembly dependencies.
 For the current Crystal Legends sequence, the v0.1 path through Falkner, the
 Phase 2 automated matrix, and the Phase 3 CHEAT MODE safety pass are complete.
 Phase 4's Johto starter events are source-complete and pass their automated
-source, ROM, and headless production-map matrices. Their user-owned presentation
-matrix remains pending, so do not call Phase 4 playtest-certified yet.
+source, ROM, and headless production-map matrices. The user confirmed all three
+prepared gift playtests passed on 2026-09-23, including Chikorita with Lucky Egg.
+Natural discovery and the Lucky Eggs' effect on progression remain separate
+from that checkpoint acceptance.
 Phase 5's Ruins gifts and Route 14 Girafarig trade are likewise source-complete:
 their automated dual-gate, delivery, trade, and persistence matrices pass, while
 their user-owned presentation and natural puzzle-flow review remains pending.
@@ -65,14 +67,23 @@ flow. Its user-owned starter, Safari, bird-route, dialogue, palette, and
 provisional-balance review remains pending.
 Phase 10 is source-complete: derived Route 4 access, the single-floor Cerulean
 Cave, Rocket remnants and rewards, Giovanni's finale, and both branch-correct
-counterpart encounters pass every automated layer. Its user-owned cave,
-dialogue, encounter, presentation, and provisional-balance review remains
-pending. Phase 11 is source-complete: durable Red victory, the 240-caught Oak
+counterpart encounters pass every automated layer. The prepared cave/Giovanni
+playtest passed after the label fix on 2026-09-23; unreported alternate branches,
+access/retry variants, and natural balance remain open. Phase 11 is
+source-complete: durable Red victory, the 240-caught Oak
 challenge, all three Oak teams, the true-ending credits, Pallet return, and
-ordinary save/reload pass every automated layer. Its user-owned presentation
-and natural-play balance review remains pending. Phase 12 trainer and Kanto
+ordinary save/reload pass every automated layer. The prepared Oak battle through
+credits passed on 2026-09-23; natural unlock progression, remaining team variants,
+and post-ending persistence are not separately reported. Phase 12 trainer and Kanto
 wild balancing is source-complete and passes the clean full gate; its separate
 natural-play acceptance matrix below remains pending.
+
+Celebi's prepared sequence also passed, with the natural Kurt wait bypassed in
+the repaired save. The [2026-09-23 review](playtest-review-2026-09-23.md) owns the
+current manual evidence boundaries, full-gate result (642 tests plus six
+reference checks), known behavior, and prioritized follow-ups. The detailed
+matrices below remain repeatable procedures; they include already-passed
+checks and should not be read as a list of wholly untested features.
 
 ## Validate the Crystal Legends build
 
@@ -243,6 +254,11 @@ game input. Compiled-ROM checks require delivery and its failure branch before
 the choice event and receipt text. Dialogue presentation remains a manual check.
 
 ### Validate the Phase 4 Johto starter events
+
+Manual status: the user confirmed the Cyndaquil, Totodile, and Chikorita gift
+checkpoints passed on 2026-09-23, including Chikorita's Lucky Egg. See the
+[review](playtest-review-2026-09-23.md#confirmed-manual-results) for the remaining
+natural-discovery, item-transfer, and progression checks.
 
 Run the focused Phase 4 suites while editing, then the aggregate and clean
 handoff gates:
@@ -724,10 +740,12 @@ branch, badge count, and pass/fail result. Manually confirm:
    behavior, disappearance after capture, containment-terminal reaction, and
    the narrative handoff toward Phase 11.
 
-Phase 10 is source-complete but not playtest-certified until this SameBoy matrix
-is reported and any presentation failure is fixed or explicitly assigned. Its
-automated evidence does not certify visual polish, story feel, final balance, a
-full-game playthrough, or release readiness.
+The cave/Giovanni prepared flow passed its user playtest on 2026-09-23 after
+the label fix. The complete matrix above is broader than that report: both
+counterpart branches, gate boundaries, and every failure path were not
+individually confirmed. Retain those follow-ups without reopening the accepted
+main flow. Neither the checkpoint nor automated evidence certifies a complete
+natural playthrough or release readiness.
 
 ### Validate Phase 11 Red, Oak, and the true ending
 
@@ -796,12 +814,12 @@ caught count, and pass/fail result. Manually confirm:
    pacing, Pallet return, later Oak and Mt. Silver dialogue, normal save/reset/
    Continue, and a post-Oak Red rematch that still returns to Mt. Silver.
 
-Phase 11 is source-complete but not playtest-certified until this SameBoy matrix
-is reported and any presentation failure is fixed or explicitly assigned. Its
-automated evidence does not certify visual polish, dialogue tone, audio,
-credits pacing, final balance, a natural 240-species playthrough, or release
-readiness. Phase 12 implements the accepted difficulty targets; natural-play
-validation of the complete curve is still required.
+The prepared Oak battle through the credits passed its user playtest on
+2026-09-23. Red's natural progression, all three Oak parties, the unlock
+boundaries, and post-ending save/Continue were not individually reported; those
+parts of the broader matrix remain follow-ups. Phase 12 implements the accepted
+difficulty targets, but natural-play validation of the complete curve and a
+natural 240-species journey are still required.
 
 ### Validate Phase 12 trainer and wild balance
 
@@ -928,6 +946,42 @@ This supersedes the Falkner progression deferral above. The confirmation did
 not identify a ROM revision, emulator/version, or separate save/reload result;
 it does not extend the original ROM-specific evidence or certify the later
 Phase 12 balance changes. The remaining manual gates retain their own status.
+
+### Celebi follow-up — 2026-09-23
+
+The user reported that Celebi's sequence works perfectly in the repaired
+Celebi playtest checkpoint. The supplied ROM was commit `edd1960da` plus the
+recorded Oak text-bank patch, SHA-256
+`c8d954b4b61b79023d526dd9605846b1063c3fa3fc7f0b7d1759fcc5df00c390`.
+The checkpoint targets SameBoy; the exact emulator version was not reported.
+
+Record the sequence presentation as passed. The prepared save's premature
+outdoor Kurt was hidden and Kurt's waiting bit was cleared manually before
+this confirmation, so natural next-day timing was not validated. Individual
+capture-retry and capacity variants were not separately reported, and the
+remaining Phase 2 evolution/item and full-game gates stay open.
+
+Chikorita was unclaimed and Cut was already received in this independent save.
+Its availability beside the shrine is expected. The supplied ROM predates the
+Lucky Egg gift change, so this report does not validate the newer held items.
+
+### Combined playtest follow-up — 2026-09-23
+
+Asked which of Cyndaquil, Totodile, Chikorita with Lucky Egg, Cerulean
+Cave/Giovanni, and Oak through the credits passed after the fixes, the user
+confirmed: "they all passed". Record each as a successful prepared-checkpoint
+playtest alongside Celebi. This includes the retested sprite and Giovanni
+label presentation; Chikorita's dedicated Lucky Egg test is distinct from its
+appearance in the old Celebi ROM.
+
+The confirmation did not separately enumerate every starter/Project Mew branch,
+failure outcome, or post-credits persistence check, and did not supply a final
+ROM hash or emulator version for each retest. The
+[review and remaining scenarios](playtest-review-2026-09-23.md) distinguish
+these confirmed successes from the remaining integration and natural-play
+checks. Its automated review used the current working build, including the
+existing Oak bank fix, and passed the complete 642-test gate and six reference
+checks. No game code or user save was changed during that review.
 
 ## Exercise CHEAT MODE safely
 

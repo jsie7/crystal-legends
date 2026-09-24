@@ -14,7 +14,8 @@ endgame, and Phase 12 trainer/wild balance are source-complete.
 Chikorita is a
 level-14 gift at the Ilex Forest shrine after Cut, Cyndaquil is a level-19 gift
 in Burned Tower after the legendary beasts awaken, and Totodile is a level-24
-rescue on Cianwood's east shore after SecretPotion receipt. Their independent,
+rescue on Cianwood's east shore after SecretPotion receipt. All three arrive
+holding a Lucky Egg. Their independent,
 retry-safe gift paths pass the static, compiled-ROM, and production-ROM PyBoy
 matrices, including storage failure, save/reload, and duplicate prevention.
 Phase 5 adds level-10 Kabuto, level-26 Omanyte, and level-23 Aerodactyl gifts
@@ -71,38 +72,37 @@ with softened custom moves, and Oak is 84–90. See the
 
 The earlier manual pass confirmed the title screen, all three legendary-bird
 starter branches, the first Silver battle, the Elm/Oak handoff, player-bird
-learnsets, and CHEAT MODE. Progression through Falkner was also completed
-manually, as recorded in the
-[manual follow-up](workflows.md#falkner-follow-up--2026-09-16). Phase 4 still needs
-the user-owned presentation matrix for sprite appearance, dialogue,
-discoverability, scene choreography, and story feel. Phase 5 also needs its
-user-owned Ruins and Route 14 presentation matrix. Phase 6 still needs its tracker,
-hunt-feel, and Fast Ball presentation review. Phase 7 still needs its user-owned
-story clarity, annex presentation, pacing, and both-branch review. Phase 8
-has passed its complete user-owned manual matrix: all three Mt. Moon/lab
-branches, loss/retry and return travel, one natural Indigo rematch, and one
-natural Dragon's Den cameo. Silver's Phase 12 balance changes are implemented;
-their natural-play review remains separate from that earlier story acceptance.
-Phase 2 presentation and full-game acceptance also remain deferred. Phase 8 is
-playtest-certified, but the overall milestone is not yet release-ready because
-the other listed manual gates remain open. Phase 9 passes its static,
-compiled-ROM, production-ROM, persistence, and reference-isolation gates but is
-not yet playtest-certified: starter presentation, Safari exploration, bird
-routes, dialogue, palettes, and provisional balance still require user review
-in SameBoy. Phase 10 likewise passes its complete automated and reference
-gates, but its entrance, cave presentation, trainer flow, Giovanni battle,
-blackout, and both counterpart branches still require user review in SameBoy.
-Phase 11 passes its complete automated and reference gates, but Red/Oak battle
-balance, dialogue, music, presentation, credits pacing, and the Pallet return
-still require user review in SameBoy. Phase 12 passes its clean automated and
-reference gates; its natural-play difficulty and progression review remains
-pending. Automated battle outcomes do not certify pacing or enjoyable balance.
-See
-[workflows.md](workflows.md) for the validation boundary and
-[decisions.md](decisions.md) for the sequencing decision.
+learnsets, and CHEAT MODE. Progression through Falkner and the complete Phase 8
+story matrix also passed within their recorded boundaries.
+
+On 2026-09-23 the user confirmed successful prepared-checkpoint playtests of
+Celebi, all three Johto starter gifts (including Chikorita with Lucky Egg),
+Cerulean Cave/Giovanni after the label fix, and Oak through the credits.
+These flows no longer have a blanket pending presentation status. The
+[playtest review](playtest-review-2026-09-23.md) records the exact scope and
+prioritizes the remaining scenarios. Kurt's natural overnight wait was bypassed
+in the repaired checkpoint; unreported alternate branches, capacity/retry
+variants, and natural unlock/discovery remain separate checks.
+
+The 2026-09-23 full automated gate passed all 642 tests and all six upstream
+reference checks on `98c8a5904` plus the existing Oak text-bank correction.
+That correction was subsequently committed as `f1f94cb8c`; the report identifies
+the tested ROM hash and the older test-package differences.
+No additional confirmed defect was found in the reviewed working build.
+
+Remaining manual work includes Phase 2 evolution/item presentation and natural
+day timing, Phase 5 Ruins/trade flow, Phase 6 hunting, both Project Mew choices,
+Phase 9 services/Safari/bird routes, untested cave and Red/Oak branches, and
+Phase 12 natural balance with the early Lucky Eggs. Phase 13 final polish and
+a complete no-cheat/single-save acquisition run remain open. Automated battle
+outcomes and prepared checkpoints do not establish full-game balance or release
+readiness. See [workflows.md](workflows.md) for repeatable procedures and
+[decisions.md](decisions.md) for the validation policy.
 
 ## Repository guidance
 
+- [Playtest review — 2026-09-23](playtest-review-2026-09-23.md): confirmed manual
+  successes, cross-feature review findings, and prioritized remaining scenarios.
 - [Phase 12 balance](phase-12-balance.md): implemented scope, exact contracts,
   preservation boundaries and validation.
 
