@@ -20,9 +20,10 @@ manual acceptance, and remaining work. Dated evidence is linked from that page.
 - [Repository guide](repository-guide.md): what the codebase contains and where
   to make common changes.
 - [Workflows](workflows.md): repeatable build and validation procedures.
-- [Automated testing workflow](workflows.md#run-the-local-automated-test-harness):
-  local source, compiled-ROM, and headless-emulator profiles, fixture policy,
-  and failure triage.
+- [Automated tests](../tests/README.md): local profiles, fixtures, and failure triage.
+- [Manual playtesting](playtesting.md): preparation, reporting, and regional checklists.
+- [Custom graphics procedures](assets.md): lab fixtures and Giovanni artwork.
+- [Validation history](history/validation.md): dated manual and automated evidence.
 - [Decisions](decisions.md): durable technical and policy decisions for this
   fork.
 - [Pokémon acquisition ledger](pokemon-acquisition.md): canonical single-save

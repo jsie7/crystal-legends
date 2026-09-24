@@ -48,15 +48,15 @@ starter services, every world-bird branch, and Safari/Ruins discovery. Then clos
 the focused timing, evolution/item, roamer, and ending-persistence gaps. Finish
 with natural progression and 251-species collection.
 
-Use the [playtest scenarios](playtest-review-2026-09-23.md#recommended-next-playtests)
+Use the [playtest scenarios](playtesting.md#recommended-next-playtests)
 and [repeatable procedures](workflows.md) to prepare those checks. Successful
 checkpoint flows do not need wholesale repetition unless the behavior changes.
 
 ## Evidence and maintenance
 
-- [Early manual report and follow-ups](workflows.md#manual-validation-record--2026-08-10)
-- [Silver story acceptance](workflows.md#validate-phase-8-silvers-kanto-arc)
-- [Phase 12 integration evidence](phase-12-balance.md#final-validation--2026-09-15)
+- [Early manual report and follow-ups](history/validation.md#manual-validation-record--2026-08-10)
+- [Silver story acceptance](history/validation.md#silver-story-acceptance--2026-08-19)
+- [Phase 12 integration evidence](history/phase-12-validation-2026-09-15.md#final-validation--2026-09-15)
 - [September 23 review and manual confirmations](playtest-review-2026-09-23.md)
 
 When results arrive, update this matrix and append a dated evidence record with

@@ -1,5 +1,10 @@
 # Playtest status and review — 2026-09-23
 
+This is a dated evidence record. Use [project status](status.md) for current
+acceptance and [manual playtesting](playtesting.md#recommended-next-playtests)
+for the maintained priorities. The recommendations below are the September 23
+snapshot.
+
 The user confirmed that the Celebi sequence, Cyndaquil gift, Totodile gift,
 Chikorita gift with Lucky Egg, Cerulean Cave/Giovanni, and Oak through the credits
 all passed their prepared-checkpoint playtests after the reported fixes.
@@ -21,7 +26,7 @@ branch and failure case.
 The confirmation did not identify exact emulator versions or a final ROM hash
 for each retest. Keep it as user-reported acceptance of the listed flows;
 do not attribute every result to the current build. The earlier
-[Celebi record](workflows.md#celebi-follow-up--2026-09-23) retains its specific
+[Celebi record](history/validation.md#celebi-follow-up--2026-09-23) retains its specific
 ROM provenance. Earlier title, starter, CHEAT MODE, Falkner, and complete
 Phase 8 story acceptance remain valid within their recorded boundaries.
 
