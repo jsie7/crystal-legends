@@ -120,8 +120,8 @@ UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest tests/emulator/test_p
 UV_CACHE_DIR=.uv-cache uv run --frozen --group test pytest -m phase7
 ```
 
-Phase 7 has 39 focused tests: 16 source contracts, eight compiled-ROM
-contracts, and 15 production-ROM scenarios. They own the story ordering,
+Phase 7 has 47 focused tests: 17 source contracts, nine compiled-ROM
+contracts, and 21 production-ROM scenarios. They own the story ordering,
 four-fact state model, custom-only annex layout and boundary, one-step sealed
 entry, southern controls, gated glass observation and opening, both permanent
 outcomes, retry-until-captured encounter, save/reload behavior, stock Radio
@@ -143,13 +143,13 @@ Phase 8 has 41 focused tests: 12 source contracts, six compiled-ROM contracts,
 and 23 production-ROM scenarios. They own all three Mt. Moon and lab branches,
 loss and pending/completed save-reload behavior, exact release-state isolation,
 custom lab objects and cross-bank scene entry, both Indigo entrances and the
-five-member bird-free rematch, Champion music and weekly cadence, and the
+six-member bird-free rematch, Champion music and weekly cadence, and the
 Dragon's Den cameo and shrine hint across their accepted and excluded days.
 Temporary checkpoints are derived from the approved initialized save; no new
 committed save is required. The user-owned manual matrix in
 [`docs/workflows.md`](../docs/workflows.md#validate-phase-8-silvers-kanto-arc)
 owns travel discoverability, visual and audio presentation, dialogue pacing,
-look-back readability, and provisional Silver balance.
+look-back readability, and the current Phase 12 Silver balance.
 
 Run the focused Phase 9 profile with:
 

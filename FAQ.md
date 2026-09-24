@@ -59,7 +59,7 @@ If you are using 64-bit Windows, download [**64-bit Cygwin**][cygwin] and [**64-
 
 If you have not changed any of the asm, make sure you have the latest version of pokecrystal and the correct version of rgbds (see [INSTALL.md](INSTALL.md)).
 
-If you added or changed any code, it has to fit in the **memory banks**. The 2MB ROM is divided into 128 banks of 4KB ($4000 bytes) each, numbered $00 to $7F. The linkerscript [layout.link](layout.link) lists which `SECTION`s go in which banks. Try moving some code into a new section.
+If you added or changed any code, it has to fit in the **memory banks**. The 2 MiB ROM is divided into 128 banks of 16 KiB ($4000 bytes) each, numbered $00 to $7F. The linkerscript [layout.link](layout.link) lists which `SECTION`s go in which banks. Try moving some code into a new section.
 
 ### "Invalid file or object file version"
 
@@ -79,7 +79,7 @@ For `asm` scripts, read [docs/map_event_scripts.md](https://pret.github.io/pokec
 
 ## How do I edit the colors of an image?
 
-Most `.png` images are paletted PNGs. You can edit these with any program that supports creating PNGs with palette information. These palettes should consist of exactly 4 colors. Additionally, for Pokémon images, the first color should be white, and the last black. Tools such as Paint and [GIMP](gimp) will do the right job, while other tools such as [paint.net](paintdotnet) or Photoshop might mess it up and output palettes of 255 colors even though only using 4. You may try using tools like [GraphicsGale](graphicsgale) or [IrfanView](irfanview) to fix this, or sometimes resaving the image in Paint seems to help.
+Most `.png` images are paletted PNGs. You can edit these with any program that supports creating PNGs with palette information. These palettes should consist of exactly 4 colors. Additionally, for Pokémon images, the first color should be white, and the last black. Tools such as Paint and [GIMP][gimp] will do the right job, while other tools such as [paint.net][paintdotnet] or Photoshop might mess it up and output palettes of 255 colors even though only using 4. You may try using tools like [GraphicsGale][graphicsgale] or [IrfanView][irfanview] to fix this, or sometimes resaving the image in Paint seems to help.
 
 Some image `.png` files are grayscale. This indicates that even though these images do have proper colors in-game, they're shared with something else, and as such changing them will affect other things as well. Don't try opening the `.2bpp` files, these only contain the image data as well, not the palettes.
 

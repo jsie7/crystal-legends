@@ -786,7 +786,7 @@ The accepted automated boundary on 2026-09-07 is:
   `$21=$16fc`, `$22=$05dc`, `$63=$0bb0`, `$66=$046d`, `$6b=$1371`, and
   `$6c=$05cf`.
 
-Automation owns Red's exact provisional party, loss/victory state order,
+Automation owns Red's accepted Phase 12 party, loss/victory state order,
 durable completion, rematch visibility, heal, credits, and Mt. Silver return.
 It also owns Oak's exact `Red + at least 240 caught` truth table, multiple
 240-species omission sets, all three starter-selected teams, invalid-state
@@ -1013,9 +1013,10 @@ After accepting the warning, verify these boundaries:
    trigger.
 
 Record the emulator/version, ROM commit, date, save boundary, actions used, and
-pass/fail result. Run this safety pass first, then the v0.1 and Phase 2 matrices
-above. A CHEAT MODE gift must never substitute for a starter, rival, evolution,
-or canonical acquisition test.
+pass/fail result. Follow the [playtest review](playtest-review-2026-09-23.md#recommended-next-playtests)
+for the remaining progression, evolution/item, and Celebi checks. A CHEAT MODE
+gift must never substitute for a starter, rival, evolution, or canonical
+acquisition test.
 
 ## Verify the upstream baseline
 

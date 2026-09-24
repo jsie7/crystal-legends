@@ -2,7 +2,7 @@
 
 This guide explains what is in the repository, how the pieces fit together, and
 where to look before changing a subsystem. It reflects the Crystal Legends fork
-state as of 2026-09-15.
+state as of 2026-09-23.
 
 ## Current project state
 
@@ -33,8 +33,11 @@ and completed dialogue add no map, save field, or Hall of Fame entry. Phase 12
 now implements the accepted trainer and Kanto wild balance: 166 trainer
 records, 39 encounter tables, 252 added trainer bytes and no save-layout change.
 The [balance guide](phase-12-balance.md) owns current levels, exact contracts
-and evidence. Natural-play balance and the Phase 11 SameBoy presentation
-matrix remain separate from the passing automated gate.
+and evidence. The prepared Celebi, Johto gift, Cerulean Cave/Giovanni, and
+Oak-through-credits playtests passed on 2026-09-23 within the boundaries recorded
+in the [playtest review](playtest-review-2026-09-23.md). Natural-play balance,
+unreported alternate branches, and the remaining Phase 11 unlock and persistence
+checks remain open separately from the passing automated gate.
 
 The Phase 3 bedroom-TV CHEAT MODE is also implemented in source. Its renewable
 supplies, capped money grants, and four ordinary Pokémon gifts deliberately
@@ -216,8 +219,7 @@ fixture rules, and triage.
   original-ROM quirks. Simplifying those rules can produce a valid but
   non-matching ROM.
 - The 2 MiB ROM uses 128 banks numbered `$00` through `$7f`; a `$4000`-byte
-  switchable ROM bank is 16 KiB. `FAQ.md` currently calls that 4 KB, which is a
-  documentation error.
+  switchable ROM bank is 16 KiB.
 - Version, Australian, Virtual Console, and debug builds use conditional
   assembly across code and RAM. Search all relevant conditionals before moving
   structures or deleting apparently duplicate paths.
