@@ -1,0 +1,31 @@
+{
+  "rom": "crystallegends.gbc",
+  "rom_sha256": "e62ceca29477cc382bca5d8d78ce81e4b48ac77c28fe352fe01e8c260a202200",
+  "source_revision": "19dd9b5aab6d42dacc19231d5c86786c90d36039",
+  "emulator": "PyBoy 2.6.0",
+  "captured_on": "2026-09-24",
+  "pixels": "Unmodified 160 × 144 emulator framebuffer; PNG screenshots, no overlays or compositing.",
+  "save_boundary": "Gameplay scenes use temporary copies of the initialized battery fixture with prepared map/story prerequisites. These are screenshots, not natural-play acceptance evidence.",
+  "captures": [
+    {
+      "file": "title.png",
+      "description": "Title screen reached from a fresh boot, without a save.",
+      "frames": 3237
+    },
+    {
+      "file": "starter.png",
+      "description": "Inspecting the Articuno starter Poké Ball in Elm’s Lab before choosing.",
+      "frames": 3650
+    },
+    {
+      "file": "ilex-forest.png",
+      "description": "Chikorita waiting beside the Ilex Forest shrine after Cut; gift unclaimed.",
+      "frames": 3574
+    },
+    {
+      "file": "safari-preserve.png",
+      "description": "Exploring the restored Safari preserve beside its northern pond.",
+      "frames": 3560
+    }
+  ]
+}

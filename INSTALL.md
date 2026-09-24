@@ -1,170 +1,243 @@
-# Instructions
+# Build and play Crystal Legends
 
-These instructions explain how to set up the tools required to build **pokecrystal**, including [**rgbds**](https://github.com/gbdev/rgbds), which assembles the source files into a ROM.
+This guide builds **`crystallegends.gbc`** from this repository's source and
+explains how to play it. No original ROM is needed as build input.
 
-If you run into trouble, ask for help on IRC or Discord (see [README.md](README.md)).
+1. Install the [platform prerequisites](#platform-setup).
+2. Install [RGBDS 1.0.3](#install-rgbds-103).
+3. [Build Crystal Legends](#build-crystal-legends), then [open it in an emulator](#play).
 
+## Requirements
 
-## Windows 10, 11, or newer
+- Git, Make, and a C17 compiler for the repository's build helpers.
+- **RGBDS 1.0.3**, pinned in [.rgbds-version](.rgbds-version).
+- A Game Boy Color emulator with battery-save and real-time-clock support to play.
 
-Download and install [**Windows Subsystem for Linux**](https://docs.microsoft.com/en-us/windows/wsl/install-win10). Then open the **WSL terminal**.
+Building RGBDS from source also needs a C++20 compiler, Bison, libpng, and
+pkg-config; the main setup paths below install those prerequisites. Python,
+uv, and PyBoy are only needed for the optional [automated tests](tests/README.md).
 
-Update WSL's software before continuing. If you chose Debian, Ubuntu, or another distribution that uses `apt-get`, then enter this command:
+## Platform setup
 
-```bash
-apt-get update && apt-get upgrade
+<a id="windows-10-11-or-newer"></a>
+
+### Windows with WSL
+
+Use [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/install).
+If it is not installed, open PowerShell as administrator and run:
+
+```powershell
+wsl --install -d Ubuntu
 ```
 
-WSL has its own file system that's not accessible from Windows, but Windows files *are* accessible from WSL. So you're going to want to install pokecrystal within Windows. You'll have to change the **current working directory** every time you open WSL.
+Restart if prompted, open Ubuntu, and finish creating your Linux account.
+Run the remaining build commands in the **Ubuntu terminal**. Continue with
+[Debian or Ubuntu](#debian-or-ubuntu) below.
 
-For example, if you want to store pokecrystal in **C:\Users\\*\<user>*\Desktop**, enter this command:
+Keep the checkout in the Linux filesystem, for example `~/src/crystal-legends`.
+It is accessible from Windows: run `explorer.exe .` in the project directory
+or browse `\\wsl$` in File Explorer. This follows
+[Microsoft's filesystem guidance](https://learn.microsoft.com/en-us/windows/wsl/filesystems)
+and avoids the slower cross-filesystem build path under `/mnt/c/`.
 
-```bash
-cd /mnt/c/Users/<user>/Desktop
-```
+### macOS
 
-(The Windows `C:\` drive is called `/mnt/c/` in WSL. Replace *\<user>* in the example path with your username.)
-
-If this works, then follow [the instructions for **Linux**](#linux) below for whatever distribution you installed for WSL.
-
-Otherwise, continue reading below for [the older Windows instructions](#windows-8-or-older).
-
-
-## Windows 8 or older
-
-Download [**Cygwin**](http://cygwin.com/install.html): **setup-x86_64.exe** for 64-bit Windows, **setup-x86.exe** for 32-bit.
-
-Run setup and leave the default settings. At the "**Select Packages**" step, choose to install the following, all of which are in the "**Devel**" category:
-
-- `make`
-- `git`
-- `gcc-core`
-
-Double click on the text that says "**Skip**" next to each package to select the most recent version to install.
-
-Then follow the [**rgbds** instructions](https://rgbds.gbdev.io/install#pre-built) for Windows with Cygwin to install **rgbds 1.0.3**.
-
-**Note:** If you already have an installed rgbds older than 1.0.0, you will need to update to 1.0.3. Ignore this if you have never installed rgbds before. If a version newer than 1.0.3 does not work, try downloading 1.0.3.
-
-Now open the **Cygwin terminal** and enter the following commands.
-
-Cygwin has its own file system that's within Windows, at **C:\cygwin64\home\\*\<user>***. If you don't want to store pokecrystal there, you'll have to change the **current working directory** every time you open Cygwin.
-
-For example, if you want to store pokecrystal in **C:\Users\\*\<user>*\Desktop**:
+Install Apple's Command Line Tools if they are missing:
 
 ```bash
-cd /cygdrive/c/Users/<user>/Desktop
+xcode-select --install
 ```
 
-(The Windows `C:\` drive is called `/cygdrive/c/` in Cygwin. Replace *\<user>* in the example path with your username.)
-
-Now you're ready to [build **pokecrystal**](#build-pokecrystal).
-
-
-## macOS
-
-Install [**Homebrew**](https://brew.sh/). Follow the official instructions.
-
-Open **Terminal** and prepare to enter commands.
-
-Then follow the [**rgbds** instructions](https://rgbds.gbdev.io/install#pre-built) for macOS to install **rgbds 1.0.3**.
-
-Now you're ready to [build **pokecrystal**](#build-pokecrystal).
-
-
-## Linux
-
-Open **Terminal** and enter the following commands, depending on which distro you're using.
-
-### Debian or Ubuntu
-
-To install the software required for **pokecrystal**:
+After that installation finishes, install [Homebrew](https://brew.sh/) if needed,
+then run in Terminal:
 
 ```bash
-sudo apt-get install make gcc git
+brew install bison libpng pkg-config
+export PATH="$(brew --prefix bison)/bin:$PATH"
 ```
 
-Then follow the [**rgbds** instructions](https://rgbds.gbdev.io/install#building-from-source) to build **rgbds 1.0.3** from source.
+The Command Line Tools provide Git, Make, and the compilers. Keep this terminal
+open so the Homebrew Bison path is used, then [install RGBDS](#install-rgbds-103).
 
-### OpenSUSE
+### Linux
 
-To install the software required for **pokecrystal**:
+#### Debian or Ubuntu
 
 ```bash
-sudo zypper install make gcc git
+sudo apt-get update
+sudo apt-get install build-essential git bison libpng-dev pkg-config
 ```
 
-Then follow the [**rgbds** instructions](https://rgbds.gbdev.io/install#building-from-source) to build **rgbds 1.0.3** from source.
+Then [install RGBDS](#install-rgbds-103). Other distributions can use the
+[additional environments](#additional-environments) section.
 
-### Arch Linux
+## Install RGBDS 1.0.3
 
-To install the software required for **pokecrystal**:
+If all four RGBDS tools already report version 1.0.3, skip to
+[building the game](#build-crystal-legends). Otherwise, the following installs
+that exact release under your user account on macOS, Linux, or WSL:
 
 ```bash
-sudo pacman -S make gcc git rgbds
+mkdir -p "$HOME/.local/src"
+git clone --branch v1.0.3 --depth 1 https://github.com/gbdev/rgbds.git "$HOME/.local/src/rgbds-1.0.3"
+make -C "$HOME/.local/src/rgbds-1.0.3"
+make -C "$HOME/.local/src/rgbds-1.0.3" install PREFIX="$HOME/.local"
+export PATH="$HOME/.local/bin:$PATH"
 ```
 
-If you want to compile and install **rgbds** yourself instead, then follow the [**rgbds** instructions](https://rgbds.gbdev.io/install#building-from-source) to build **rgbds 1.0.3** from source.
+If that source directory already exists, reuse the existing v1.0.3 checkout
+instead of cloning over it. Add the final `export PATH` line to your shell's
+startup file to make the installed tools available in future terminals.
+The [RGBDS v1.0.3 build instructions](https://github.com/gbdev/rgbds/tree/v1.0.3#installing)
+also describe alternate installation options.
 
-### Termux
-
-To install the software required for **pokecrystal**:
+Verify the version of every tool:
 
 ```bash
-pkg install make clang git sed
+rgbasm --version
+rgblink --version
+rgbfix --version
+rgbgfx --version
 ```
 
-To install **rgbds**:
+Use the pinned version even if a package manager offers a newer one. The
+assembly guard accepts 1.0.0 or newer, but 1.0.3 is the project's reproduction
+baseline.
+
+<a id="build-pokecrystal"></a>
+
+## Build Crystal Legends
+
+Choose a directory for your source checkout, then run:
 
 ```bash
-pkg install rgbds
+mkdir -p "$HOME/src"
+cd "$HOME/src"
+git clone https://github.com/jsie7/crystal-legends.git
+cd crystal-legends
+make crystallegends
 ```
 
-If you want to compile and install **rgbds** yourself instead, then follow the [**rgbds** instructions](https://rgbds.gbdev.io/install#building-from-source) to build **rgbds 1.0.3** from source.
+If you already cloned this repository, run `make crystallegends` from its root.
+The build compiles the local C helpers automatically. On systems that provide
+Clang without a `gcc` command, use `make CC=clang crystallegends`.
 
-### Other distros
+Successful output appears in the repository root:
 
-If your distro is not listed here, try to find the required software in its repositories:
+| File | Purpose |
+| --- | --- |
+| `crystallegends.gbc` | The playable game |
+| `crystallegends.sym` | Symbols for debugging |
+| `crystallegends.map` | The linker layout report |
 
-- `make`
-- `gcc` (or `clang`)
-- `git`
-- `rgbds`
-
-If `rgbds` is not available, you'll need to follow the [**rgbds** instructions](https://rgbds.gbdev.io/install#building-from-source) to build **rgbds 1.0.3** from source.
-
-Now you're ready to [build **pokecrystal**](#build-pokecrystal).
-
-
-## Build pokecrystal
-
-To download the **pokecrystal** source files:
-
-```bash
-git clone https://github.com/pret/pokecrystal
-cd pokecrystal
-```
-
-To build **pokecrystal.gbc**:
-
-```bash
-make
-```
-
-To build **pokecrystal11.gbc**:
-
-```bash
-make crystal11
-```
+**Use the explicit `crystallegends` target.** Plain `make` builds the original
+Pokémon Crystal v1.0; `make crystal11` builds the original v1.1. Those are
+reference builds, not the custom game.
 
 ### Build with a local rgbds version
 
-If you have different projects that require different versions of `rgbds`, it might not be convenient to install rgbds 1.0.3 globally. Instead, you can put its files in a directory within pokecrystal, such as `pokecrystal/rgbds-1.0.3/`. Then specify it when you run `make`:
+To keep multiple RGBDS versions side by side, point `RGBDS` at the directory
+containing the four tools. Include the trailing slash:
 
 ```bash
-make RGBDS=rgbds-1.0.3/
+make RGBDS="$HOME/.local/bin/" crystallegends
 ```
 
+A project-local directory works too:
+
 ```bash
-make RGBDS=rgbds-1.0.3/ crystal11
+make RGBDS=rgbds-1.0.3/ crystallegends
 ```
+
+Use the same override on subsequent builds. Keep local tool binaries untracked.
+
+## Play
+
+Open `crystallegends.gbc` in a Game Boy Color emulator.
+[SameBoy](https://sameboy.github.io/) was used for the recorded manual playtests;
+those reports do not establish compatibility with every emulator or device.
+
+Start a new game for the full Crystal Legends journey. Keep the emulator's
+real-time clock working normally: time of day, weekdays, and daily events are
+part of the game.
+
+Use the in-game **SAVE** command and **CONTINUE** after restarting. The emulator
+stores a battery-save file separately from the ROM; its name and location
+depend on the emulator. Keep that file when moving or updating your game.
+Emulator snapshots are separate from normal game saves.
+
+## Update and rebuild
+
+Close the emulator and back up its battery save before changing your ROM.
+After committing or otherwise preserving any local source edits, update an
+existing checkout from its repository root:
+
+```bash
+git pull --ff-only
+make clean
+make crystallegends
+```
+
+If you use `RGBDS=...` or `CC=clang`, add the same override to the build command.
+Recheck [.rgbds-version](.rgbds-version) after updating. Replace the ROM in your
+emulator's game folder and retain the matching save using that emulator's
+naming convention. Read [project status](docs/status.md) for recorded limitations;
+updating a ROM does not add held items to Pokémon already received.
+
+`make clean` removes generated build products, including the ROM and graphics
+intermediates. It does not remove game saves or hand-written source files.
+
+## Troubleshooting and development
+
+For toolchain errors, missing compilers, or bank overflows, start with the
+[FAQ](FAQ.md). When reporting a problem, include the failing command, full error,
+operating system, RGBDS version, and source commit (`git rev-parse --short HEAD`).
+For gameplay reports, also include the emulator version and starting save state.
+
+- [Automated test setup and profiles](tests/README.md) — optional for building or playing.
+- [Build and validation workflows](docs/workflows.md) — including `make compare` for upstream reference ROMs.
+- [Repository guide](docs/repository-guide.md) — source layout and variant targets.
+
+The existing GitHub CI builds the reference target on this fork; it does not
+run the custom-ROM test harness or publish a playable artifact.
+
+## Additional environments
+
+These are alternatives to the main setup paths; install the same pinned RGBDS
+release and use the same `make crystallegends` target.
+
+### OpenSUSE
+
+Install Make, Git, C/C++ compilers, Bison, libpng development headers, and
+pkg-config using your distribution's package manager, then follow the
+[RGBDS source-install steps](#install-rgbds-103).
+
+### Arch Linux
+
+Install `base-devel`, `git`, and `libpng` with pacman. Check the version before
+using a packaged `rgbds`; use the [pinned source build](#install-rgbds-103) if it
+differs from 1.0.3.
+
+### Termux
+
+Install `make`, `clang`, `git`, and `sed` with `pkg`. Check whether its `rgbds`
+package supplies 1.0.3; otherwise follow the
+[upstream build instructions](https://github.com/gbdev/rgbds/tree/v1.0.3#installing)
+with the required dependencies and Termux's installation prefix. Build the game
+with `make CC=clang crystallegends`.
+
+<a id="windows-8-or-older"></a>
+
+### Cygwin
+
+Use the [current Cygwin installer](https://cygwin.com/install.html), install
+`make`, `git`, and `gcc-core`, and obtain the matching Windows/Cygwin tools from
+the [RGBDS 1.0.3 release](https://github.com/gbdev/rgbds/releases/tag/v1.0.3).
+Run the build in the Cygwin terminal.
+
+### Other distros
+
+Install Git, Make, a C17 compiler, and RGBDS 1.0.3. If building RGBDS from
+source, also install a C++20 compiler, Bison, libpng headers, and pkg-config.
+Use the [upstream source guide](https://github.com/gbdev/rgbds/tree/v1.0.3#installing)
+for platform-specific adjustments.
