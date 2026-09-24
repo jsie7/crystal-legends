@@ -38,8 +38,7 @@ Game Boy Color world.
 
 ### Download from Releases
 
-The first alpha download is coming soon. Once published, download
-**`crystallegends.gbc`** from the assets on
+Download the alpha ROM, **`crystallegends.gbc`**, from the release assets on
 [GitHub Releases](https://github.com/jsie7/crystal-legends/releases).
 Open it in a Game Boy Color emulator with battery-save and real-time-clock
 support; see [playing and saves](INSTALL.md#play) for details.
