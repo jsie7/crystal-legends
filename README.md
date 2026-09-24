@@ -11,11 +11,11 @@ Follow Team Rocket's research, discover new rewards in places you remember,
 and take your team beyond the original League challenge—all in Crystal's
 Game Boy Color world.
 
-| A new beginning | A legendary partner |
+| A legendary partner | Discover Johto's gifts |
 | :---: | :---: |
-| <img src="docs/images/game/title.png" width="320" height="288" alt="The Crystal Legends title screen with Suicune running beneath the logo"> | <img src="docs/images/game/starter.png" width="320" height="288" alt="Inspecting Articuno's Poké Ball in Professor Elm's Lab"> |
-| **Discover Johto's gifts** | **Explore the Safari preserve** |
-| <img src="docs/images/game/ilex-forest.png" width="320" height="288" alt="Chikorita waiting beside the Ilex Forest shrine"> | <img src="docs/images/game/safari-preserve.png" width="320" height="288" alt="Exploring the trees, grass, and pond of the restored Safari preserve"> |
+| <img src="docs/images/game/starter.png" width="320" height="288" alt="Inspecting Articuno's Poké Ball in Professor Elm's Lab"> | <img src="docs/images/game/ilex-forest.png" width="320" height="288" alt="Chikorita waiting beside the Ilex Forest shrine"> |
+| **Explore the Safari preserve** | **Some secrets won't stay buried** |
+| <img src="docs/images/game/safari-preserve.png" width="320" height="288" alt="Exploring the trees, grass, and pond of the restored Safari preserve"> | <img src="docs/images/game/cerulean-cave.png" width="320" height="288" alt="Approaching the hidden lab beside an underground pool in Cerulean Cave"> |
 
 ## What awaits you
 

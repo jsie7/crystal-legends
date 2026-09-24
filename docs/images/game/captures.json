@@ -8,11 +8,6 @@
   "save_boundary": "Gameplay scenes use temporary copies of the initialized battery fixture with prepared map/story prerequisites. These are screenshots, not natural-play acceptance evidence.",
   "captures": [
     {
-      "file": "title.png",
-      "description": "Title screen reached from a fresh boot, without a save.",
-      "frames": 3237
-    },
-    {
       "file": "starter.png",
       "description": "Inspecting the Articuno starter Poké Ball in Elm’s Lab before choosing.",
       "frames": 3650
@@ -26,6 +21,12 @@
       "file": "safari-preserve.png",
       "description": "Exploring the restored Safari preserve beside its northern pond.",
       "frames": 3560
+    },
+    {
+      "file": "cerulean-cave.png",
+      "description": "Approaching Giovanni in Cerulean Cave's hidden lab before the showdown.",
+      "frames": 3573,
+      "source_revision": "68ef6a2694161ed64cabb721bf4dd53f26445683"
     }
   ]
 }
