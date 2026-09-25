@@ -31,18 +31,18 @@ data, an external distribution, or the optional cheat menu.
 | 007 | Squirtle | Gift | Level 28 from Misty after the Cascade Badge and restored Kanto power | Kanto | Phase 9 | Yes after the gift through breeding | `maps/CeruleanGym.asm`; existing Machine Part/Power Plant arc |
 | 008 | Wartortle | Evolution | Level up the Phase 9 Squirtle once; it is already above level 16 | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Squirtle source |
 | 009 | Blastoise | Evolution | Wartortle at level 36 | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Squirtle source |
-| 010 | Caterpie | Wild | Ilex Forest, morning or day | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
-| 011 | Metapod | Evolution or wild | Caterpie at level 7; Ilex Forest | After Badge 2 | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
-| 012 | Butterfree | Evolution | Metapod at level 10 | After Badge 2 | Existing | Yes | `data/pokemon/evos_attacks.asm` |
-| 013 | Weedle | Wild | Ilex Forest, morning or day | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
-| 014 | Kakuna | Evolution or wild | Weedle at level 7; Ilex Forest | After Badge 2 | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
-| 015 | Beedrill | Evolution | Kakuna at level 10 | After Badge 2 | Existing | Yes | `data/pokemon/evos_attacks.asm` |
+| 010 | Caterpie | Wild | Routes 30/31 or Ilex Forest, morning or day | Before Badge 1 | Existing | Yes | `data/wild/johto_grass.asm` |
+| 011 | Metapod | Evolution or wild | Caterpie at level 7; Ilex Forest | Before Badge 1 via evolution | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
+| 012 | Butterfree | Evolution or wild | Metapod at level 10; Ilex Forest Headbutt trees | Before Badge 1 via evolution | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/treemons.asm` |
+| 013 | Weedle | Wild | Routes 30/31 or Ilex Forest, morning or day | Before Badge 1 | Existing | Yes | `data/wild/johto_grass.asm` |
+| 014 | Kakuna | Evolution or wild | Weedle at level 7; Ilex Forest | Before Badge 1 via evolution | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
+| 015 | Beedrill | Evolution or wild | Kakuna at level 10; Ilex Forest Headbutt trees | Before Badge 1 via evolution | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/treemons.asm` |
 | 016 | Pidgey | Wild | National Park or early Johto routes | Early Johto | Existing | Yes | `data/wild/johto_grass.asm` |
 | 017 | Pidgeotto | Evolution or wild | Pidgey at level 18; Route 37 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
 | 018 | Pidgeot | Evolution | Pidgeotto at level 36 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 019 | Rattata | Wild | Sprout Tower and early Johto | Before Badge 1 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 020 | Raticate | Evolution or wild | Rattata at level 20; Burned Tower | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
-| 021 | Spearow | Wild | Route 33 or Headbutt trees | Before Badge 2 | Existing | Yes | `data/wild/johto_grass.asm`; `data/wild/treemons.asm` |
+| 021 | Spearow | Wild | Routes 46/33 in the morning or day; Headbutt trees | Before Badge 1 via Route 46 | Existing | Yes | `data/wild/johto_grass.asm`; `data/wild/treemons.asm` |
 | 022 | Fearow | Evolution or wild | Spearow at level 20; Route 42 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
 | 023 | Ekans | Wild | Route 32 | Before Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 024 | Arbok | Evolution or wild | Ekans at level 22; Route 42 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
@@ -69,13 +69,13 @@ data, an external distribution, or the optional cheat menu.
 | 045 | Vileplume | Evolution | Use Leaf Stone on Gloom | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 046 | Paras | Wild | Ilex Forest | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 047 | Parasect | Evolution or wild | Paras at level 24; Silver Cave | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
-| 048 | Venonat | Wild | National Park or Route 43 at night | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
+| 048 | Venonat | Wild | Ilex Forest, National Park, or Route 43 at night | Ilex Forest | Existing | Yes | `data/wild/johto_grass.asm` |
 | 049 | Venomoth | Evolution or wild | Venonat at level 31; Route 43 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
 | 050 | Diglett | Wild | Diglett's Cave | Kanto | Existing | Yes | `data/wild/kanto_grass.asm` |
 | 051 | Dugtrio | Evolution or wild | Diglett at level 26; Diglett's Cave | Kanto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/kanto_grass.asm` |
 | 052 | Meowth | Wild | Route 38 | After Badge 3 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 053 | Persian | Evolution or wild | Meowth at level 28; Route 7 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/kanto_grass.asm` |
-| 054 | Psyduck | Wild | National Park or via Surf | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm`; `data/wild/johto_water.asm` |
+| 054 | Psyduck | Wild | Ilex Forest at night; National Park or via Surf | Ilex Forest | Existing | Yes | `data/wild/johto_grass.asm`; `data/wild/johto_water.asm` |
 | 055 | Golduck | Evolution or wild | Psyduck at level 33; Silver Cave | Late Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
 | 056 | Mankey | Wild | Level 32 in unattended SafariZoneBeta grass; one of the three common slots at morning, day, and night | Kanto | Phase 9 | Yes | `data/wild/kanto_grass.asm`; `maps/SafariZoneBeta.asm` |
 | 057 | Primeape | Evolution | Mankey at level 28 | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Mankey source |
@@ -93,7 +93,7 @@ data, an external distribution, or the optional cheat menu.
 | 069 | Bellsprout | Wild | Route 31 | Before Badge 1 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 070 | Weepinbell | Evolution or wild | Bellsprout at level 21; Route 44 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
 | 071 | Victreebel | Evolution | Use Leaf Stone on Weepinbell | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
-| 072 | Tentacool | Wild | Surf on Johto sea routes | After Surf | Existing | Yes | `data/wild/johto_water.asm` |
+| 072 | Tentacool | Fishing or wild | Old Rod on Route 32 or at New Bark Town; Surf on Johto sea routes | Before Badge 2 with the Old Rod | Existing | Yes | `data/wild/fish.asm`; `data/maps/maps.asm`; `data/wild/johto_water.asm` |
 | 073 | Tentacruel | Evolution or wild | Tentacool at level 30; Johto sea routes | After Surf | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_water.asm` |
 | 074 | Geodude | Wild | Union Cave | Before Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 075 | Graveler | Evolution or wild | Geodude at level 25; Mt. Mortar | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
@@ -139,7 +139,7 @@ data, an external distribution, or the optional cheat menu.
 | 115 | Kangaskhan | Wild | Rock Tunnel B1F | Kanto | Existing | Yes | `data/wild/kanto_grass.asm` |
 | 116 | Horsea | Wild or fishing | Whirl Islands; ocean fishing groups | After Surf | Existing | Yes | `data/wild/johto_water.asm`; `data/wild/fish.asm` |
 | 117 | Seadra | Evolution or wild | Horsea at level 32; Whirl Islands | Late Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_water.asm` |
-| 118 | Goldeen | Wild or fishing | Mt. Mortar water; lake fishing groups | After Surf | Existing | Yes | `data/wild/johto_water.asm`; `data/wild/fish.asm` |
+| 118 | Goldeen | Fishing or wild | Old Rod in Union Cave or Slowpoke Well; Mt. Mortar water | Before Badge 2 with the Old Rod | Existing | Yes | `data/wild/fish.asm`; `data/maps/maps.asm`; `data/wild/johto_water.asm` |
 | 119 | Seaking | Evolution or wild | Goldeen at level 33; Mt. Mortar water | Late Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_water.asm` |
 | 120 | Staryu | Fishing | Ocean fishing groups at night | After obtaining the appropriate rod | Existing | Yes | `data/wild/fish.asm` |
 | 121 | Starmie | Evolution | Use Water Stone on Staryu | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
@@ -198,7 +198,7 @@ data, an external distribution, or the optional cheat menu.
 | 174 | Igglybuff | Breeding or Odd Egg | Breed Jigglypuff or Wigglytuff; possible Odd Egg result | After reaching Day Care | Existing | Yes through breeding | `engine/pokemon/breeding.asm`; `data/events/odd_eggs.asm`; `maps/DayCare.asm` |
 | 175 | Togepi | Gift Egg | Mr. Pokémon's Egg delivered through Violet Pokémon Center | After Badge 1 | Existing | Yes after gift through breeding | `maps/VioletPokecenter1F.asm` |
 | 176 | Togetic | Evolution | Togepi with high friendship | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
-| 177 | Natu | Wild | Ruins of Alph outside | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
+| 177 | Natu | Wild | Ruins of Alph grass reached through Union Cave using Surf | After Badge 4 | Existing | Yes | `data/wild/johto_grass.asm`; `maps/UnionCaveB1F.asm` |
 | 178 | Xatu | Evolution or NPC trade | Natu at level 25; trade Haunter | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/events/npc_trades.asm` |
 | 179 | Mareep | Wild | Level 28 in unattended SafariZoneBeta grass; one of the three common slots at morning, day, and night | Kanto | Phase 9 | Yes | `data/wild/kanto_grass.asm`; `maps/SafariZoneBeta.asm` |
 | 180 | Flaaffy | Evolution | Level up the Phase 9 Mareep once; it is already above level 15 | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; Phase 9 Mareep source |
@@ -207,7 +207,7 @@ data, an external distribution, or the optional cheat menu.
 | 183 | Marill | Wild | Mt. Mortar | Mid-Johto | Existing | Yes | `data/wild/johto_grass.asm` |
 | 184 | Azumarill | Evolution | Marill at level 18 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 185 | Sudowoodo | Static encounter | Route 36 after using SquirtBottle | After Badge 3 | Existing | Yes after capture through breeding; failed stock battle is not retryable | `maps/Route36.asm` |
-| 186 | Politoed | Evolution | Use King's Rock on Poliwhirl | Kanto item source | Phase 2 | Yes | `data/pokemon/evos_attacks.asm`; `data/items/marts.asm` |
+| 186 | Politoed | Evolution | Use King's Rock on Poliwhirl; one is gifted in Slowpoke Well B2F, with renewable purchases later in Celadon | After Surf and Strength | Phase 2 | Yes | `data/pokemon/evos_attacks.asm`; `maps/SlowpokeWellB2F.asm`; `data/items/marts.asm` |
 | 187 | Hoppip | Wild | Route 29 and other Johto routes | Start | Existing | Yes | `data/wild/johto_grass.asm` |
 | 188 | Skiploom | Evolution or wild | Hoppip at level 18; Route 14 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/kanto_grass.asm` |
 | 189 | Jumpluff | Evolution | Skiploom at level 27 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
@@ -220,25 +220,25 @@ data, an external distribution, or the optional cheat menu.
 | 196 | Espeon | Evolution | Eevee with high friendship during morning or day | Mid-Johto | Existing | Yes through breeding Eevee | `data/pokemon/evos_attacks.asm`; `maps/BillsFamilysHouse.asm` |
 | 197 | Umbreon | Evolution | Eevee with high friendship at night | Mid-Johto | Existing | Yes through breeding Eevee | `data/pokemon/evos_attacks.asm`; `maps/BillsFamilysHouse.asm` |
 | 198 | Murkrow | Wild | Route 7 at night | Kanto | Existing | Yes | `data/wild/kanto_grass.asm` |
-| 199 | Slowking | Evolution | Use King's Rock on Slowpoke | Kanto item source | Phase 2 | Yes | `data/pokemon/evos_attacks.asm`; `data/items/marts.asm` |
+| 199 | Slowking | Evolution | Use King's Rock on Slowpoke; one is gifted in Slowpoke Well B2F, with renewable purchases later in Celadon | After Surf and Strength | Phase 2 | Yes | `data/pokemon/evos_attacks.asm`; `maps/SlowpokeWellB2F.asm`; `data/items/marts.asm` |
 | 200 | Misdreavus | Wild | Silver Cave Room 2 at night | After 16 badges | Existing | Yes | `data/wild/johto_grass.asm` |
-| 201 | Unown | Wild | Ruins of Alph inner chambers | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
+| 201 | Unown | Wild | Ruins of Alph inner chamber after solving the Kabuto picture puzzle | Before Badge 1 | Existing | Yes | `data/wild/johto_grass.asm`; `maps/RuinsOfAlphKabutoChamber.asm` |
 | 202 | Wobbuffet | Wild or prize | Dark Cave Blackthorn entrance; Goldenrod Game Corner | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm`; `maps/GoldenrodGameCorner.asm` |
 | 203 | Girafarig | NPC trade | Trade Chansey to Kim on Route 14 for a same-level Girafarig named `GIRAFY`; Phase 9 deliberately adds no wild Safari source | Kanto | Phase 5 | Yes through breeding after the one-time trade | `data/events/npc_trades.asm`; `maps/Route14.asm` |
 | 204 | Pineco | Wild | Headbutt trees | After obtaining Headbutt | Existing | Yes | `data/wild/treemons.asm`; `data/wild/treemon_maps.asm` |
 | 205 | Forretress | Evolution | Pineco at level 31 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 206 | Dunsparce | Wild | Dark Cave Violet entrance, including swarm | Before Badge 1 | Existing | Yes | `data/wild/johto_grass.asm` |
-| 207 | Gligar | Wild | Route 45 | After Badge 8 | Existing | Yes | `data/wild/johto_grass.asm` |
-| 208 | Steelix | Evolution | Use Metal Coat on Onix | Kanto item source | Phase 2 | Yes | `data/pokemon/evos_attacks.asm`; `data/items/marts.asm` |
+| 207 | Gligar | Wild | Route 45 | On reaching Blackthorn, before Badge 8 | Existing | Yes | `data/wild/johto_grass.asm` |
+| 208 | Steelix | Evolution | Use Metal Coat on Onix; wild Magnemite can hold one, with renewable purchases later in Celadon | After Badge 3 via Route 38 Magnemite's rare held item | Phase 2 | Yes | `data/pokemon/evos_attacks.asm`; `data/pokemon/base_stats/magnemite.asm`; `data/wild/johto_grass.asm`; `data/items/marts.asm` |
 | 209 | Snubbull | Wild | Route 34, including swarm | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 210 | Granbull | Evolution or wild | Snubbull at level 23; Route 6 | Mid-Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/kanto_grass.asm` |
 | 211 | Qwilfish | Fishing | Route 32 fishing group, including swarm | After obtaining the appropriate rod | Existing | Yes | `data/wild/fish.asm`; `data/maps/maps.asm` |
-| 212 | Scizor | Evolution | Use Metal Coat on Scyther | Kanto item source | Phase 2 | Yes | `data/pokemon/evos_attacks.asm`; `data/items/marts.asm` |
+| 212 | Scizor | Evolution | Use Metal Coat on Scyther; wild Magnemite can hold one, with renewable purchases later in Celadon | After Badge 3 via Route 38 Magnemite's rare held item | Phase 2 | Yes | `data/pokemon/evos_attacks.asm`; `data/pokemon/base_stats/magnemite.asm`; `data/wild/johto_grass.asm`; `data/items/marts.asm` |
 | 213 | Shuckle | Gift or wild | Mania's house in Cianwood; Rock Smash encounters | After Surf | Existing | Yes after gift through breeding; wild encounters renewable | `maps/ManiasHouse.asm`; `data/wild/treemons.asm` |
 | 214 | Heracross | Wild | Rare Headbutt trees | After obtaining Headbutt | Existing | Yes | `data/wild/treemons.asm`; `data/wild/treemon_maps.asm` |
 | 215 | Sneasel | Wild | Ice Path at night | Before Badge 8 | Existing | Yes | `data/wild/johto_grass.asm` |
-| 216 | Teddiursa | Wild | Dark Cave Violet entrance | Before Badge 1 | Existing | Yes | `data/wild/johto_grass.asm` |
-| 217 | Ursaring | Evolution or wild | Teddiursa at level 30; Silver Cave | Late Johto | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
+| 216 | Teddiursa | Wild | Dark Cave Violet entrance in the morning | Before Badge 1 | Existing | Yes | `data/wild/johto_grass.asm` |
+| 217 | Ursaring | Evolution or wild | Teddiursa at level 30; Dark Cave Blackthorn entrance or Silver Cave | Johto via level-30 evolution | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
 | 218 | Slugma | Wild | Routes 16-18 | Kanto | Existing | Yes | `data/wild/kanto_grass.asm` |
 | 219 | Magcargo | Evolution | Slugma at level 38 | Kanto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
 | 220 | Swinub | Wild | Ice Path | Before Badge 8 | Existing | Yes | `data/wild/johto_grass.asm` |
@@ -248,15 +248,15 @@ data, an external distribution, or the optional cheat menu.
 | 224 | Octillery | Evolution or wild | Remoraid at level 25; optional third SafariZoneBeta surf slot at base 31 (actual levels 31–35) | Kanto | Phase 9 | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/kanto_water.asm` |
 | 225 | Delibird | Wild | Ice Path at night | Before Badge 8 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 226 | Mantine | Wild | Surf on Route 41 | After Surf | Existing | Yes | `data/wild/johto_water.asm` |
-| 227 | Skarmory | Wild | Route 45 | After Badge 8 | Existing | Yes | `data/wild/johto_grass.asm` |
+| 227 | Skarmory | Wild | Route 45 in the morning or day | On reaching Blackthorn, before Badge 8 | Existing | Yes | `data/wild/johto_grass.asm` |
 | 228 | Houndour | Wild | Route 7 at night | Kanto | Existing | Yes | `data/wild/kanto_grass.asm` |
 | 229 | Houndoom | Evolution | Houndour at level 24 | Kanto | Existing | Yes | `data/pokemon/evos_attacks.asm` |
-| 230 | Kingdra | Evolution | Use Dragon Scale on Seadra | Kanto item source | Phase 2 | Yes | `data/pokemon/evos_attacks.asm`; `data/items/marts.asm` |
-| 231 | Phanpy | Wild | Route 45 | After Badge 8 | Existing | Yes | `data/wild/johto_grass.asm` |
-| 232 | Donphan | Evolution or wild | Phanpy at level 25; Route 45 | After Badge 8 | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
+| 230 | Kingdra | Evolution | Use Dragon Scale on Seadra; wild Horsea/Seadra can hold one, Mt. Mortar 2F has a pickup, and Celadon sells replacements | Johto via a rare held Scale and Seadra; fixed pickup after Waterfall | Phase 2 | Yes | `data/pokemon/evos_attacks.asm`; `data/pokemon/base_stats/horsea.asm`; `data/pokemon/base_stats/seadra.asm`; `maps/MountMortar2FInside.asm`; `data/items/marts.asm` |
+| 231 | Phanpy | Wild | Route 46 or Route 45 in the morning | Before Badge 1 via Route 46 | Existing | Yes | `data/wild/johto_grass.asm` |
+| 232 | Donphan | Evolution or wild | Phanpy at level 25; Route 45 in the morning or day | Johto via level-25 evolution | Existing | Yes | `data/pokemon/evos_attacks.asm`; `data/wild/johto_grass.asm` |
 | 233 | Porygon2 | Evolution | Use Up-Grade on Porygon | Kanto | Phase 2 | Repeatable while Porygon remains purchasable | `data/pokemon/evos_attacks.asm`; `data/items/marts.asm` |
 | 234 | Stantler | Wild | Route 37 | Mid-Johto | Existing | Yes | `data/wild/johto_grass.asm` |
-| 235 | Smeargle | Wild | Ruins of Alph outside | After Badge 2 | Existing | Yes | `data/wild/johto_grass.asm` |
+| 235 | Smeargle | Wild | Ruins of Alph grass reached through Union Cave using Surf, morning or day | After Badge 4 | Existing | Yes | `data/wild/johto_grass.asm`; `maps/UnionCaveB1F.asm` |
 | 236 | Tyrogue | Gift or Odd Egg | Kiyo in Mt. Mortar; possible Odd Egg result | Late Johto | Existing | Yes after gift through breeding | `maps/MountMortarB1F.asm`; `data/events/odd_eggs.asm` |
 | 237 | Hitmontop | Evolution | Tyrogue at level 20 with equal Attack and Defense | Late Johto | Existing | Yes through breeding Tyrogue | `data/pokemon/evos_attacks.asm`; `maps/MountMortarB1F.asm` |
 | 238 | Smoochum | Breeding or Odd Egg | Breed Jynx; possible Odd Egg result | After obtaining parent | Existing | Yes through breeding | `engine/pokemon/breeding.asm`; `data/events/odd_eggs.asm` |
